@@ -8,7 +8,6 @@
 
 #include <array>
 #include <memory>
-#include <utility>
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
@@ -18,9 +17,12 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/turret/SimTurretIO.h"
+#include "subsystem/turret/TurretSubsystem.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
+  m_turret = CreateTurret();
 //   m_elevator = CreateElevator();
 //   m_vision = CreateVision();
   ConfigureBindings();
@@ -56,29 +58,33 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
               HardwareMap::CAN::TalonFX::FrontLeftSteer,
               HardwareMap::CAN::CANCoder::FrontLeftEncoder},
           ModuleConfig{ModulePosition::FrontLeft, kEncoderOffsets[0]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::FrontRightDrive,
               HardwareMap::CAN::TalonFX::FrontRightSteer,
               HardwareMap::CAN::CANCoder::FrontRightEncoder},
           ModuleConfig{ModulePosition::FrontRight, kEncoderOffsets[1]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::BackLeftDrive,
               HardwareMap::CAN::TalonFX::BackLeftSteer,
               HardwareMap::CAN::CANCoder::BackLeftEncoder},
           ModuleConfig{ModulePosition::BackLeft, kEncoderOffsets[2]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::BackRightDrive,
               HardwareMap::CAN::TalonFX::BackRightSteer,
               HardwareMap::CAN::CANCoder::BackRightEncoder},
           ModuleConfig{ModulePosition::BackRight, kEncoderOffsets[3]}),
-      
+
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
+}
+
+std::unique_ptr<TurretSubsystem> RobotContainer::CreateTurret() {
+    return std::make_unique<TurretSubsystem>(std::make_unique<SimTurretIO>());
 }
 
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
