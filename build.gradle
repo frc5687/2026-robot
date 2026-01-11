@@ -112,7 +112,7 @@ tasks.register("setupCompileCommands") {
         def filePath = ""
         if (OperatingSystem.current().isWindows()) {
             filePath = "build/TargetedCompileCommands/windowsx86-64debug"
-        } else if (OperatingSystem.current().isMac()) {
+        } else if (OperatingSystem.current().isMacOsX()) {
             filePath = "build/TargetedCompileCommands/osxuniversalrelease"
         } else if (OperatingSystem.current().isLinux()) {
             // Todo: 
