@@ -7,7 +7,7 @@
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
-// #include <pathplanner/lib/config/RobotConfig.h>
+#include <pathplanner/lib/config/RobotConfig.h>
 #include <units/acceleration.h>
 #include <units/temperature.h>
 
@@ -102,5 +102,5 @@ private:
       Constants::SwerveDrive::kMaxLinearSpeed;
   units::radians_per_second_t m_maxAngularSpeed =
       Constants::SwerveDrive::kMaxAngularSpeed;
-  // pathplanner::RobotConfig m_robotConfig{};
+  pathplanner::RobotConfig m_robotConfig{};
 };
