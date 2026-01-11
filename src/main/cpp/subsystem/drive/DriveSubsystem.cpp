@@ -2,8 +2,8 @@
 #include "subsystem/drive/DriveSubsystem.h"
 
 #include <frc/smartdashboard/SmartDashboard.h>
-// #include <pathplanner/lib/auto/AutoBuilder.h>
-// #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
 #include <algorithm>
 #include <memory>
@@ -14,8 +14,8 @@
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/ChassisSpeeds.h"
 #include "frc/kinematics/SwerveModuleState.h"
-// #include "pathplanner/lib/config/ModuleConfig.h"
-// #include "pathplanner/lib/config/RobotConfig.h"
+#include "pathplanner/lib/config/ModuleConfig.h"
+#include "pathplanner/lib/config/RobotConfig.h"
 #include "subsystem/drive/PoseEstimator.h"
 #include "subsystem/drive/SwerveConstants.h"
 
@@ -30,19 +30,19 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                 std::make_unique<Module>(std::move(backLeft)),
                 std::make_unique<Module>(std::move(backRight))},
       m_gyro(std::move(gyro)) {
-  // pathplanner::ModuleConfig moduleConfig(
-  //     Constants::SwerveDrive::Module::kWheelRadius,
-  //     Constants::SwerveDrive::Module::kMaxModuleLinearSpeed,
-  //     Constants::SwerveDrive::Module::kFrictionCoefficient,
-  //     Constants::SwerveDrive::Module::kDriveMotor,
-  //     Constants::SwerveDrive::Module::kDriveGearRatio,
-  //     Constants::SwerveDrive::Module::kDriveSupplyCurrentLimit, 1.0);
-  // m_robotConfig = pathplanner::RobotConfig(
-  //     Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
-  //     moduleConfig,
-  //     std::vector<frc::Translation2d>(
-  //         Constants::SwerveDrive::kModuleTranslations.begin(),
-  //         Constants::SwerveDrive::kModuleTranslations.end()));
+  pathplanner::ModuleConfig moduleConfig(
+      Constants::SwerveDrive::Module::kWheelRadius,
+      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed,
+      Constants::SwerveDrive::Module::kFrictionCoefficient,
+      Constants::SwerveDrive::Module::kDriveMotor,
+      Constants::SwerveDrive::Module::kDriveGearRatio,
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimit, 1.0);
+  m_robotConfig = pathplanner::RobotConfig(
+      Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
+      moduleConfig,
+      std::vector<frc::Translation2d>(
+          Constants::SwerveDrive::kModuleTranslations.begin(),
+          Constants::SwerveDrive::kModuleTranslations.end()));
   m_gyro->Reset();
   PoseEstimator::Config config{};
   config.odometryXStdDev = 0.08;       // Trust odometry more on smooth field
@@ -53,43 +53,43 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
   m_odometryThread =
       std::make_unique<OdometryThread>(m_modules, m_gyro, config);
   StartOdometryThread();
-  // pathplanner::AutoBuilder::configure(
-  //     [this]() { return GetPose(); }, // Robot pose supplier
-  //     [this](frc::Pose2d pose) {
-  //       ResetPose(pose);
-  //     }, // Method to reset odometry (will be called if your auto has a
-  //        // starting pose)
-  //     [this]() {
-  //       return GetChassisSpeeds();
-  //     }, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-  //     [this](auto speeds, auto feedforwards) {
-  //       Drive(speeds);
-  //     }, // Method that will drive the robot given ROBOT RELATIVE
-  //        // ChassisSpeeds. Also optionally outputs individual module
-  //        // feedforwards
-  //     std::make_shared<
-  //         pathplanner::PPHolonomicDriveController>( // PPHolonomicController is
-  //                                                   // the built in path
-  //                                                   // following controller for
-  //                                                   // holonomic drive trains
-  //         pathplanner::PIDConstants(5.0, 0.0,
-  //                                   0.0),          // Translation PID constants
-  //         pathplanner::PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-  //         ),
-  //     m_robotConfig, // The robot configuration
-  //     []() {
-  //       // Boolean supplier that controls when the path will be mirrored for the
-  //       // red alliance This will flip the path being followed to the red side
-  //       // of the field. THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+  pathplanner::AutoBuilder::configure(
+      [this]() { return GetPose(); }, // Robot pose supplier
+      [this](frc::Pose2d pose) {
+        ResetPose(pose);
+      }, // Method to reset odometry (will be called if your auto has a
+         // starting pose)
+      [this]() {
+        return GetChassisSpeeds();
+      }, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      [this](auto speeds, auto feedforwards) {
+        Drive(speeds);
+      }, // Method that will drive the robot given ROBOT RELATIVE
+         // ChassisSpeeds. Also optionally outputs individual module
+         // feedforwards
+      std::make_shared<
+          pathplanner::PPHolonomicDriveController>( // PPHolonomicController is
+                                                    // the built in path
+                                                    // following controller for
+                                                    // holonomic drive trains
+          pathplanner::PIDConstants(5.0, 0.0,
+                                    0.0),          // Translation PID constants
+          pathplanner::PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+          ),
+      m_robotConfig, // The robot configuration
+      []() {
+        // Boolean supplier that controls when the path will be mirrored for the
+        // red alliance This will flip the path being followed to the red side
+        // of the field. THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-  //       auto alliance = frc::DriverStation::GetAlliance();
-  //       if (alliance) {
-  //         return alliance.value() == frc::DriverStation::Alliance::kRed;
-  //       }
-  //       return false;
-  //     },
-  //     this // Reference to this subsystem to set requirements
-  // );
+        auto alliance = frc::DriverStation::GetAlliance();
+        if (alliance) {
+          return alliance.value() == frc::DriverStation::Alliance::kRed;
+        }
+        return false;
+      },
+      this // Reference to this subsystem to set requirements
+  );
 }
 
 DriveSubsystem::~DriveSubsystem() { StopOdometryThread(); }
