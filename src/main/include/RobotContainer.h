@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "subsystem/drive/DriveSubsystem.h"
+#include "subsystem/vision/VisionSubsystem.h"
 
 class RobotContainer {
  public:
@@ -20,9 +21,9 @@ class RobotContainer {
   void ConfigureBindings();
   
   std::unique_ptr<DriveSubsystem> CreateDrive();
-  // std::unique_ptr<VisionSubsystem> CreateVision();
+  std::unique_ptr<VisionSubsystem> CreateVision();
 
   std::unique_ptr<DriveSubsystem> m_drive;
-  // std::unique_ptr<VisionSubsystem> m_vision;
+  std::unique_ptr<VisionSubsystem> m_vision;
   frc2::CommandPS5Controller m_driver{0};
 };

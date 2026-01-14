@@ -18,11 +18,12 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/vision/SimVisionIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
 //   m_elevator = CreateElevator();
-//   m_vision = CreateVision();
+  m_vision = CreateVision();
   ConfigureBindings();
 }
 
@@ -93,11 +94,11 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 //           HardwareMap::CAN::TalonFX::RightElevator));
 // }
 
-// std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
-//   return std::make_unique<VisionSubsystem>(
-//       std::make_unique<SimVisionIO>(),
-//       m_drive->GetOdometryThread());
-// }
+std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
+  return std::make_unique<VisionSubsystem>(
+      std::make_unique<SimVisionIO>(),
+      m_drive->GetOdometryThread());
+}
 
 void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
