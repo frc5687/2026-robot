@@ -11,6 +11,7 @@ void TurretSubsystem::UpdateInputs() {
 
 void TurretSubsystem::SetAngle(units::radian_t desiredAngle) {
     m_desiredAngle = desiredAngle;
+    m_io->SetTurretAngle(m_desiredAngle);
 }
 
 void TurretSubsystem::LogTelemetry() {

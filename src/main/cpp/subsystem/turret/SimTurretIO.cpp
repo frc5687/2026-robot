@@ -1,8 +1,9 @@
-#include "frc/simulation/LinearSystemSim.h"
 #include "subsystem/turret/SimTurretIO.h"
 #include "subsystem/turret/TurretConstants.h"
 #include "frc/system/plant/LinearSystemId.h"
 #include "frc/Timer.h"
+
+#include <units/voltage.h>
 
 using namespace Constants::Turret;
 
@@ -32,7 +33,11 @@ void SimTurretIO::UpdateInputs(TurretIOInputs& inputs) {
     inputs.angle = turretPosition;
     inputs.angularVelocity = turretVelocity;
     inputs.timestamp = frc::Timer::GetFPGATimestamp();
+
+    auto output = m_controller.Calculate(m_turretSim.GetAngularPosition().value());
+    m_turretSim.SetInputVoltage(units::volt_t{output});
 }
 
 void SimTurretIO::SetTurretAngle(units::radian_t angle) {
+    m_controller.SetSetpoint(angle.value());
 }

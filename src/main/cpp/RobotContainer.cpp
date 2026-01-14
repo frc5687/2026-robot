@@ -122,6 +122,13 @@ void RobotContainer::ConfigureBindings() {
           []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
           false)
       .ToPtr());
+  m_driver.Circle().OnTrue(
+    Run([this] {m_turret->SetAngle(0.0_rad);}, {m_turret.get()})
+  );
+  
+  m_driver.Cross().OnTrue(
+    Run([this] {m_turret->SetAngle(3.14_rad);}, {m_turret.get()})
+  );
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
