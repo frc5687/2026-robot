@@ -22,6 +22,7 @@
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
+  m_intakeRoller = CreateIntakeRoller();
 //   m_elevator = CreateElevator();
   m_vision = CreateVision();
   ConfigureBindings();
@@ -82,6 +83,13 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
+
+std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
+    return std::make_unique<IntakeRoller>(
+        std::make_unique<CTREIntakeRollerIO>(
+            HardwareMap::CAN::TalonFX::LeftRollerMotor,
+            HardwareMap::CAN::TalonFX::RightRollerMotor));
+}
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
 //     return std::make_unique<ElevatorSubsystem>(
@@ -117,6 +125,17 @@ void RobotContainer::ConfigureBindings() {
           []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
           false)
       .ToPtr());
+
+    m_driver.R1().OnTrue(Run(
+      [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
+
+    m_driver.L1().OnTrue(Run(
+      [this] { m_intakeRoller->SetVoltage(6_V); }, {m_intakeRoller.get()}));
+
+    m_driver.Triangle().OnTrue(Run(
+      [this] { m_intakeRoller->SetVoltage(-6_V); }, {m_intakeRoller.get()}));
+
+
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
