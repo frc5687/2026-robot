@@ -9,7 +9,8 @@
 #include <memory>
 
 #include "subsystem/drive/DriveSubsystem.h"
-
+#include "subsystem/intake/IntakeRoller.h"
+#include "subsystem/intake/CTREIntakeRollerIO.h"
 class RobotContainer {
  public:
   RobotContainer();
@@ -23,6 +24,9 @@ class RobotContainer {
   // std::unique_ptr<VisionSubsystem> CreateVision();
 
   std::unique_ptr<DriveSubsystem> m_drive;
+
+  std::unique_ptr<IntakeRoller> CreateIntakeRoller();
+  std::unique_ptr<IntakeRoller> m_intakeRoller;
   // std::unique_ptr<VisionSubsystem> m_vision;
   frc2::CommandPS5Controller m_driver{0};
 };
