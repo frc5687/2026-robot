@@ -22,6 +22,8 @@ inline constexpr auto kCircumference =
 
 inline constexpr double kRotationsToMeters = 1;
 
+inline constexpr units::kilogram_square_meter_t kInertia = 0.04_kg_sq_m;
+
 inline constexpr units::kilogram_t kMass = 1_kg;
 
 inline constexpr int kNumMotors = 1;

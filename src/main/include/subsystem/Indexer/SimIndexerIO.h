@@ -11,10 +11,10 @@ class SimIndexerIO : public IndexerIO {
   ~SimIndexerIO() = default;
 
   void UpdateInputs(IndexerIOInputs& inputs) override;
-  void SetIndexerSpeed(units::turn_meter_t desiredHeight) override;
+  void SetMotorSpeed(units::meter_t desiredHeight) override;
 
   // note to self: talk to denis about this
  private:
    frc::sim::DCMotorSim m_indexerSim;
-  frc::ProfiledPIDController<units::meter> m_pidController;
+   frc::PIDController m_controller;
 };

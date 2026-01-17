@@ -1,30 +1,28 @@
-#include "subsystem/SimIndexerIO.h"
+#include "subsystem/Indexer/SimIndexerIO.h"
 
 #include "frc/Timer.h"
 #include "frc/trajectory/TrapezoidProfile.h"
-#include "subsystem/elevator/IndexerConstants.h"
+#include "subsystem/Indexer/IndexerConstants.h"
+#include "frc/system/plant/LinearSystemId.h"
 
-SimIndexerIO::SimIndexerIO()
-    : m_indexerSim(Constants::Indexer::kMotor,
-                    Constants::Indexer::kGearRatio, Constants::Indexer::kMass,
-                    Constants::Indexer::kDrumRadius,
-                    Constants::Indexer::kMinHeight,
-                    Constants::Indexer::kMaxHeight, true, 0_m, {0.001, 0.001}),
-      m_pidController(100, 0, 0,
-                      frc::TrapezoidProfile<units::meter>::Constraints(
-                          Constants::Indexer::kMaxVelocity,
-                          Constants::Indexer::kMaxAccel)) {}
+SimIndexerIO::SimIndexerIO() :
+    m_indexerSim(frc::LinearSystemId::DCMotorSystem(Constants::Indexer::kMotor, Constants::Indexer::kInertia, Constants::Indexer::kGearRatio), Constants::Indexer::kMotor, {0.001, 0.001}),
+    m_controller(Constants::Indexer::kP, Constants::Indexer::kI, Constants::Indexer::kD) {}
+
+// SimTurretIO::SimTurretIO() :
+//     m_turretSim(frc::LinearSystemId::DCMotorSystem(kMotor, kInertia, kGearRatio), kMotor, {0.001, 0.001}),
+//     m_controller(kP, kI, kD){}
 
 void SimIndexerIO::UpdateInputs(IndexerIOInputs& inputs) {
   m_indexerSim.Update(20_ms);
-  inputs.indexerPosition = m_indexerSim.GetPosition();
-  inputs.indexerVelocity = m_indexerSim.GetVelocity();
+  inputs.MotorPosition = m_indexerSim.GetPosition();
+  inputs.MotorVelocity = m_indexerSim.GetVelocity();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
-void SimIndexerIO::SetIndexerSpeed(units::meter_per_second_t desiredSpeed) {
+void SimIndexerIO::SetMotorSpeed(units::meter_per_second_t desiredSpeed) {
   auto position = m_indexerSim.GetPosition();
   auto pidOutput = m_pidController.Calculate(position, desiredHeight);
 
-  m_indexerSim.SetInputVoltage(units::volt_t{pidOutput});
+  m_indexerSim.SetMotorVoltage(units::volt_t{pidOutput});
 }
