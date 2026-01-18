@@ -30,10 +30,10 @@ RobotContainer::RobotContainer() {
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.079569_tr,               // FL
-      0.43359375_tr - 0.5_tr,    // FR
-      0.35595703125_tr - 0.5_tr, // BL
-      -0.2431540625_tr + 0.5_tr  // BR
+      0.412841796875_tr,               // FL
+      0.33837890625_tr - 0.5_tr,    // FR
+      0.27099609375_tr, // BL
+      -0.0537109375_tr  // BR
   };
 
   if (frc::RobotBase::IsSimulation()) {
@@ -129,10 +129,10 @@ void RobotContainer::ConfigureBindings() {
       [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
 
     m_driver.L1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(6_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
 
     m_driver.Triangle().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(-6_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
 
 
 }
