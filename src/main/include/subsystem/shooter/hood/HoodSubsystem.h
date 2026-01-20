@@ -8,6 +8,7 @@ class HoodSubsystem : public LoggedSubsystem{
      explicit HoodSubsystem(std::unique_ptr<HoodIO> io);
      ~HoodSubsystem() = default;
      void setHoodAngle();
+     void getArbitraryFraction();
     protected : 
     void UpdateInputs() override;
     void LogTelemetry() override;
