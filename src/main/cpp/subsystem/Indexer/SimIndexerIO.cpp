@@ -15,14 +15,16 @@ SimIndexerIO::SimIndexerIO() :
 
 void SimIndexerIO::UpdateInputs(IndexerIOInputs& inputs) {
   m_indexerSim.Update(20_ms);
-  inputs.MotorPosition = m_indexerSim.GetPosition();
-  inputs.MotorVelocity = m_indexerSim.GetVelocity();
+  inputs.MotorPosition = m_indexerSim.GetAngularPosition();
+  inputs.MotorVelocity = m_indexerSim.GetAngularVelocity();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
-void SimIndexerIO::SetMotorSpeed(units::meter_per_second_t desiredSpeed) {
-  auto position = m_indexerSim.GetPosition();
-  auto pidOutput = m_pidController.Calculate(position, desiredHeight);
+void SimIndexerIO::SetMotorSpeed(units::meters_per_second_t desiredSpeed) {
+  auto position = m_indexerSim.GetAngularPosition();
+  // auto pidOutput = m_controller.Calculate(position, desiredSpeed);
+  // m_indexerSim.SetMotorVoltage(units::volt_t{pidOutput});
 
-  m_indexerSim.SetMotorVoltage(units::volt_t{pidOutput});
+  // wip code
+  // m_indexerSim.Set(pid.Calculate(encoder.GetDistance(), setpoint));
 }

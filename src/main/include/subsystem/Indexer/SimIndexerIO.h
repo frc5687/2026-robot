@@ -1,9 +1,10 @@
 #pragma once
 
-#include <frc/simulation/DCMotorSim.h>
 
-#include "IndexerIO.h"
-#include "frc/controller/ProfiledPIDController.h"
+#include <frc/simulation/DCMotorSim.h>
+#include <frc/controller/PIDController.h>
+
+#include "subsystem/Indexer/IndexerIO.h"
 
 class SimIndexerIO : public IndexerIO {
  public:
@@ -11,7 +12,7 @@ class SimIndexerIO : public IndexerIO {
   ~SimIndexerIO() = default;
 
   void UpdateInputs(IndexerIOInputs& inputs) override;
-  void SetMotorSpeed(units::meter_t desiredHeight) override;
+  void SetMotorSpeed(units::meters_per_second_t desiredSpeed) override;
 
   // note to self: talk to denis about this
  private:
