@@ -12,10 +12,10 @@ class SimIndexerIO : public IndexerIO {
   ~SimIndexerIO() = default;
 
   void UpdateInputs(IndexerIOInputs& inputs) override;
-  void SetMotorSpeed(units::meters_per_second_t desiredSpeed) override;
+  void SetMotorVoltage(units::volt_t desiredVoltage) override;
 
   // note to self: talk to denis about this
  private:
    frc::sim::DCMotorSim m_indexerSim;
-   frc::PIDController m_controller;
+  //  frc::PIDController m_controller;
 };
