@@ -18,9 +18,11 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/flywheel/SimFlywheelIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
+  m_flywheel = CreateFlywheel();
 //   m_elevator = CreateElevator();
 //   m_vision = CreateVision();
   ConfigureBindings();
@@ -99,6 +101,13 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 //       m_drive->GetOdometryThread());
 // }
 
+std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
+    if (frc::RobotBase::IsSimulation()) {
+        return std::make_unique<FlywheelSubsystem>(
+            std::make_unique<SimFlywheelIO>());
+    };
+}
+
 void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
 
@@ -116,6 +125,12 @@ void RobotContainer::ConfigureBindings() {
           []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
           false)
       .ToPtr());
+
+    m_driver.Circle().OnTrue(Run(
+        [this] { m_flywheel->SetRPM(5_rpm); }, {m_flywheel.get()}));
+
+    m_driver.Square().OnTrue(Run(
+        [this] { m_flywheel->SetRPM(0_rpm); }, {m_flywheel.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
