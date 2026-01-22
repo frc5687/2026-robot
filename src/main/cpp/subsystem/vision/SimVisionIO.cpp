@@ -7,7 +7,6 @@
 #include <units/length.h>
 
 #include <algorithm>
-#include <map>
 #include <memory>
 #include <vector>
 
