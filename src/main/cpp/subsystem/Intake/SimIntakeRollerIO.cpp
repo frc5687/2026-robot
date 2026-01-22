@@ -1,26 +1,32 @@
-// #include "subsystem/intake/SimIntakeRollerIO.h"
+#include "subsystem/intake/SimIntakeRollerIO.h"
+#include "frc/trajectory/TrapezoidProfile.h"
+#include "frc/Timer.h"
+#include "frc/system/plant/LinearSystemId.h"
+#include "subsystem/intake/IntakeRoller.h"
+#include <units/voltage.h>
 
-// #include "frc/Timer.h"
-// #include "frc/trajectory/TrapezoidProfile.h"
-// #include "subsystem/intake/IntakeRoller.h"
 
-// SimIntakeRollerIO::SimIntakeRollerIO()
-//     : m_IntakeRollerSim(),
-//       m_pidController(100, 0, 0,
-//                       frc::TrapezoidProfile<units::meter>::Constraints(
-//                           Constants::IntakeRoller::kMaxVelocity,
-//                           Constants::IntakeRoller::kMaxAccel)) {}
+using namespace Constants::IntakeRoller;
+ 
+SimIntakeRollerIO::SimIntakeRollerIO()
+     : m_IntakeRollerSim(frc::LinearSystemId::DCMotorSystem(kMotor, kMass, kMotorGearRatio), kMotor, {0.001}),m_pidController(kP,kI,kD,kMaxVelocity,kMaxAccel)
+     {
 
-// void SimElevatorIO::UpdateInputs(ElevatorIOInputs& inputs) {
-//   m_elevatorSim.Update(20_ms);
-//   inputs.elevatorPosition = m_elevatorSim.GetPosition();
-//   inputs.elevatorVelocity = m_elevatorSim.GetVelocity();
-//   inputs.timestamp = frc::Timer::GetFPGATimestamp();
-// }
+     }
 
-// void SimElevatorIO::SetElevatorHeight(units::meter_t desiredHeight) {
-//   auto position = m_elevatorSim.GetPosition();
-//   auto pidOutput = m_pidController.Calculate(position, desiredHeight);
 
-//   m_elevatorSim.SetInputVoltage(units::volt_t{pidOutput});
-// }
+void SimIntakeRollerIO::UpdateInputs(IntakeRollerIOInputs& inputs) {
+   m_IntakeRollerSim.Update(20_ms);
+   inputs.IntakeRollerPosition = m_IntakeRollerSim.GetAngularPosition();
+   inputs.IntakeRollerVelocity = m_IntakeRollerSim.GetAngularVelocity();
+   inputs.timestamp = frc::Timer::GetFPGATimestamp();
+ }
+
+void SimIntakeRollerIO::SetIntakeRPM(units::radians_per_second_t DesiredAngularVelocity) {
+auto AngularVelocity = m_IntakeRollerSim.GetAngularVelocity();
+auto pidOutput = m_pidController.Calculate(AngularVelocity, DesiredAngularVelocity);
+
+
+
+ m_IntakeRollerSim.SetInputVoltage(units::volt_t{});
+}
