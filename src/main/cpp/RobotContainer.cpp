@@ -12,15 +12,19 @@
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "subsystem/Indexer/SimIndexerIO.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
 #include "subsystem/drive/module/ModuleConfig.h"
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/Indexer/IndexerIO.h"
+#include "subsystem/Indexer/IndexerSubsystem.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
+  m_indexer = CreateIndexer();
 //   m_elevator = CreateElevator();
 //   m_vision = CreateVision();
   ConfigureBindings();
@@ -81,6 +85,10 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
+std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
+    return std::make_unique<IndexerSubsystem>(std::make_unique<SimIndexerIO>());
+}
+
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
 //     return std::make_unique<ElevatorSubsystem>(
@@ -100,22 +108,28 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 // }
 
 void RobotContainer::ConfigureBindings() {
-  using frc2::cmd::Run;
+    using frc2::cmd::Run;
 
-  // Set default drive command
-  m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
-      m_drive.get(),
-      [this] { return -m_driver.GetLeftY(); },
-      [this] { return -m_driver.GetLeftX(); },
-      [this] { return -m_driver.GetRightX(); },
-      false)); //s lew limiter
+    // Set default drive command
+    m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
+        m_drive.get(),
+        [this] { return -m_driver.GetLeftY(); },
+        [this] { return -m_driver.GetLeftX(); },
+        [this] { return -m_driver.GetRightX(); },
+        false)); //s lew limiter
 
-  m_driver.Square().WhileTrue(
-      DriveWithNormalVectorAlignment(
-          m_drive.get(),
-          []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
-          false)
-      .ToPtr());
+    m_driver.Square().WhileTrue(
+        DriveWithNormalVectorAlignment(
+            m_drive.get(),
+            []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
+            false)
+        .ToPtr());
+    m_driver.Circle().OnTrue(
+        Run([this] {m_indexer->SetVoltage(9_V);}, {m_indexer.get()})
+    );
+    m_driver.Triangle().OnTrue(
+        Run([this] {m_indexer->SetVoltage(0_V);}, {m_indexer.get()})
+    );
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
