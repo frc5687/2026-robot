@@ -19,6 +19,6 @@ class IntakeRollerIO {
  public:
   virtual ~IntakeRollerIO() = default;
   virtual void UpdateInputs(IntakeRollerIOInputs& inputs) = 0;
-  virtual void SetIntakeRPM(units::radians_per_second_t desiredAngularVelocity) = 0;
+  virtual void SetIntakeRPM(units::radians_per_second_t desiredVelocity) = 0;
   virtual void SetVoltage(units::volt_t voltage) {}
 };

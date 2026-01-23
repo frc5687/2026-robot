@@ -11,7 +11,7 @@ class CTREIntakeRollerIO : public IntakeRollerIO {
     public:
     CTREIntakeRollerIO(const CANDevice &rightMotor, const CANDevice &leftMotor);
     void UpdateInputs(IntakeRollerIOInputs& inputs) override;
-    //void SetIntakeRPM(units::revolutions_per_minute_t desiredRPM) override;
+    void SetIntakeRPM(units::radians_per_second_t desiredRPM) override;
     void SetVoltage(units::volt_t voltage) override;
 
     private:

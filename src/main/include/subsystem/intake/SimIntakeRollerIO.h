@@ -10,11 +10,12 @@ class SimIntakeRollerIO : public IntakeRollerIO {
   SimIntakeRollerIO();
   ~SimIntakeRollerIO() = default;
 
-  void UpdateInputs(IntakeRollerIOInputs& inputs) = 0;
-  void SetIntakeRPM(units::radians_per_second_t DesiredAngularVelocity);
+  void UpdateInputs(IntakeRollerIOInputs& inputs) override;
+  void SetIntakeRPM(units::angular_velocity::radians_per_second_t DesiredAngularVelocity) override;
 
  private:
   frc::sim::DCMotorSim m_IntakeRollerSim;
-  frc::ProfiledPIDController<units::radians_per_second> m_pidController;
+  // frc::ProfiledPIDController<units::radians_per_second> m_pidController;
+  frc::PIDController m_pidController;
 
 };

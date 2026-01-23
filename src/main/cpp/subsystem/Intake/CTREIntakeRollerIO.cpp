@@ -3,6 +3,7 @@
 #include "subsystem/intake/IntakeRoller.h"
 #include "subsystem/intake/IntakeRollerIO.h"
 #include "units/voltage.h"
+#include "subsystem/intake/CTREIntakeRollerIO.h"
 
 
 CTREIntakeRollerIO::CTREIntakeRollerIO(const CANDevice &rightMotor, const CANDevice &leftMotor):
@@ -23,7 +24,13 @@ CTREIntakeRollerIO::CTREIntakeRollerIO(const CANDevice &rightMotor, const CANDev
     }
 
 void CTREIntakeRollerIO::UpdateInputs(IntakeRollerIOInputs &inputs){
+    
 }
+
+void CTREIntakeRollerIO::SetIntakeRPM(units::radians_per_second_t desiredRPM)
+{
+}
+
 
 void CTREIntakeRollerIO::SetVoltage(units::volt_t voltage) {
     m_rightMotor.SetControl(m_rightVoltage.WithOutput(voltage));

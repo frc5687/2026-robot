@@ -4,12 +4,14 @@
 #include "frc/system/plant/LinearSystemId.h"
 #include "subsystem/intake/IntakeRoller.h"
 #include <units/voltage.h>
+#include <ostream>
 
 
 using namespace Constants::IntakeRoller;
  
 SimIntakeRollerIO::SimIntakeRollerIO()
-     : m_IntakeRollerSim(frc::LinearSystemId::DCMotorSystem(kMotor, kMass, kMotorGearRatio), kMotor, {0.001}),m_pidController(kP,kI,kD,kMaxVelocity,kMaxAccel)
+     : m_IntakeRollerSim(frc::LinearSystemId::DCMotorSystem(kMotor, kMass, kMotorGearRatio), kMotor, {0.001}), 
+     m_pidController(kP, kI, kD)
      {
 
      }
@@ -22,11 +24,8 @@ void SimIntakeRollerIO::UpdateInputs(IntakeRollerIOInputs& inputs) {
    inputs.timestamp = frc::Timer::GetFPGATimestamp();
  }
 
-void SimIntakeRollerIO::SetIntakeRPM(units::radians_per_second_t DesiredAngularVelocity) {
+void SimIntakeRollerIO::SetIntakeRPM(units::angular_velocity::radians_per_second_t DesiredAngularVelocity) {
 auto AngularVelocity = m_IntakeRollerSim.GetAngularVelocity();
-auto pidOutput = m_pidController.Calculate(AngularVelocity, DesiredAngularVelocity);
-
-
-
- m_IntakeRollerSim.SetInputVoltage(units::volt_t{});
+auto pidOutput = m_pidController.Calculate(AngularVelocity.value(), DesiredAngularVelocity.value());
+ m_IntakeRollerSim.SetInputVoltage(units::volt_t{pidOutput});
 }

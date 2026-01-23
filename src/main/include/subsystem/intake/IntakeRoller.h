@@ -13,6 +13,7 @@
 #include "subsystem/intake/IntakeRollerIO.h"
 #include "subsystem/LoggedSubsystem.h"
 #include <units/angle.h>
+#include <frc/trajectory/TrapezoidProfile.h>
 
 
 
@@ -39,21 +40,23 @@ namespace Constants::IntakeRoller {
     // inline constexpr units::meters_per_second_t kMaxVelocity =
     //     (kMotor.freeSpeed / kMotorGearRatio) * kUpperDrumRadius / 1_rad;
 
-     inline constexpr units::radians_per_second_t kMaxVelocity = 3_rad_per_s;
-     inline constexpr units::radians_per_second_squared_t kMaxAccel = 5_rad_per_s_sq;
+    //  inline constexpr units::radians_per_second_t kMaxVelocity = 3_rad_per_s;
+    //  inline constexpr units::radians_per_second_squared_t kMaxAccel = 5_rad_per_s_sq;
+    //  inline constexpr frc::TrapezoidProfile<units::radians_per_second>::Constraints kConstraints{kMaxVelocity, kMaxAccel};
 
-     inline constexpr units::revolutions_per_minute_t kRPMTolerance = 4000_rpm;
-     inline constexpr double kP = 3.0;
+    //  inline constexpr units::revolutions_per_minute_t kRPMTolerance = 4000_rpm;
+     inline constexpr double kP = 20.0;
      inline constexpr double kI = 0.0;
      inline constexpr double kD = 0.0;
      inline constexpr units::millisecond_t kPeriod = 20_ms;
+     
 } 
 
 class IntakeRoller : public LoggedSubsystem {
  public:
   explicit IntakeRoller(std::unique_ptr<IntakeRollerIO> io);
   ~IntakeRoller() = default;
- void SetIntakeRPM(units::revolutions_per_minute_t desiredRPM);
+ void SetIntakeRPM(units::radians_per_second_t desiredRPM);
   void SetVoltage(units::volt_t);
 
  protected:

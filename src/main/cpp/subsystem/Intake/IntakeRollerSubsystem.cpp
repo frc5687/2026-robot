@@ -12,7 +12,11 @@ void IntakeRoller::SetVoltage(units::volt_t voltage) {
     m_io ->SetVoltage(voltage);
 }
 
-void IntakeRoller::LogTelemetry(){
+void IntakeRoller::SetIntakeRPM(units::radians_per_second_t rads){
+    m_io ->SetIntakeRPM(rads);
+}
 
+void IntakeRoller::LogTelemetry(){
+    Log("intake velocity", m_inputs.IntakeRollerVelocity.value());
 }
     
