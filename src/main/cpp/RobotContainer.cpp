@@ -18,10 +18,13 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
+#include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
   m_intakeRoller = CreateIntakeRoller();
+  m_linearIntake = CreateLinearIntake();
 //   m_elevator = CreateElevator();
 //   m_vision = CreateVision();
   ConfigureBindings();
@@ -88,6 +91,18 @@ std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
         std::make_unique<CTREIntakeRollerIO>(
             HardwareMap::CAN::TalonFX::LeftRollerMotor,
             HardwareMap::CAN::TalonFX::RightRollerMotor));
+}
+
+std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
+    if(frc::RobotBase::IsSimulation()){
+        return std::make_unique<LinearIntake>(
+            std::make_unique<SimLinearIntakeIO>());
+    }
+
+    return std::make_unique<LinearIntake>(
+        std::make_unique<CTRELinearIntakeIO>(
+            HardwareMap::CAN::TalonFX::LinearIntake
+        ));
 }
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
