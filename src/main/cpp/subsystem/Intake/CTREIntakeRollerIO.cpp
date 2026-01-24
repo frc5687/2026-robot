@@ -27,9 +27,9 @@ void CTREIntakeRollerIO::UpdateInputs(IntakeRollerIOInputs &inputs){
     
 }
 
-void CTREIntakeRollerIO::SetIntakeRPM(units::radians_per_second_t desiredRPM)
-{
-}
+//void CTREIntakeRollerIO::SetIntakeRPM(units::radians_per_second_t desiredRPM)
+//{
+//}
 
 
 void CTREIntakeRollerIO::SetVoltage(units::volt_t voltage) {

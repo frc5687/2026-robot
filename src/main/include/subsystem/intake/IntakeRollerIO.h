@@ -9,8 +9,8 @@
 struct IntakeRollerIOInputs {
   units::turn_t IntakeRollerPosition{0_tr};
   units::turns_per_second_t IntakeRollerVelocity{0_tps};
-
   units::meters_per_second_t intakeSpeed{0_mps};
+  units::volt_t voltage{0_V};
 
   units::second_t timestamp{0_s};
 };
@@ -19,6 +19,6 @@ class IntakeRollerIO {
  public:
   virtual ~IntakeRollerIO() = default;
   virtual void UpdateInputs(IntakeRollerIOInputs& inputs) = 0;
-  virtual void SetIntakeRPM(units::radians_per_second_t desiredVelocity) = 0;
-  virtual void SetVoltage(units::volt_t voltage) {}
+ // virtual void SetIntakeRPM(units::radians_per_second_t desiredVelocity) = 0;
+  virtual void SetVoltage(units::volt_t voltage){}; 
 };

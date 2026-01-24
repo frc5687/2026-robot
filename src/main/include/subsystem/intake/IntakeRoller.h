@@ -28,7 +28,7 @@ namespace Constants::IntakeRoller {
     inline constexpr auto kCircumference =
         2.0 * std::numbers::pi_v<double> * kDrumRadius;
 
-    inline constexpr units::kilogram_square_meter_t kMass = 1_kg_sq_m;
+    inline constexpr units::kilogram_square_meter_t kMass = 0.05_kg_sq_m;
 
     inline constexpr int kNumMotors = 2;
     inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(kNumMotors);
@@ -45,9 +45,9 @@ namespace Constants::IntakeRoller {
     //  inline constexpr frc::TrapezoidProfile<units::radians_per_second>::Constraints kConstraints{kMaxVelocity, kMaxAccel};
 
     //  inline constexpr units::revolutions_per_minute_t kRPMTolerance = 4000_rpm;
-     inline constexpr double kP = 20.0;
-     inline constexpr double kI = 0.0;
-     inline constexpr double kD = 0.0;
+     //inline constexpr double kP = 0.01;
+     //inline constexpr double kI = 0.01;
+     //inline constexpr double kD = 0.01;
      inline constexpr units::millisecond_t kPeriod = 20_ms;
      
 } 
@@ -56,7 +56,7 @@ class IntakeRoller : public LoggedSubsystem {
  public:
   explicit IntakeRoller(std::unique_ptr<IntakeRollerIO> io);
   ~IntakeRoller() = default;
- void SetIntakeRPM(units::radians_per_second_t desiredRPM);
+ // void SetIntakeRPM(units::radians_per_second_t desiredRPM);
   void SetVoltage(units::volt_t);
 
  protected:

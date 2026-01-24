@@ -85,19 +85,16 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 
 
 std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
-    if(frc::RobotBase::IsSimulation()){
-    return std::make_unique<IntakeRoller>(
-        std::make_unique<CTREIntakeRollerIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor));
-}else{
+    //if(frc::RobotBase::IsSimulation()){
+    return std::make_unique<IntakeRoller>(std::make_unique<SimIntakeRollerIO>());
+///}else{
 
 
-    return std::make_unique<IntakeRoller>(
-        std::make_unique<CTREIntakeRollerIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor));
-        }
+ //   return std::make_unique<IntakeRoller>(
+ //       std::make_unique<CTREIntakeRollerIO>(
+   //         HardwareMap::CAN::TalonFX::LeftRollerMotor,
+     //       HardwareMap::CAN::TalonFX::RightRollerMotor));
+  //      }
 }
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
@@ -145,7 +142,7 @@ void RobotContainer::ConfigureBindings() {
       [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
 
 
-    m_driver.R2().OnTrue(Run([this] {m_intakeRoller->SetIntakeRPM(3000_rad_per_s);}, {m_intakeRoller.get()}));
+    //m_driver.Triangle().OnTrue(Run([this] {m_intakeRoller->SetIntakeRPM(3000_rad_per_s);}, {m_intakeRoller.get()}));
 
 
 }
