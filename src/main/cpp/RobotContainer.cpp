@@ -132,17 +132,17 @@ void RobotContainer::ConfigureBindings() {
           false)
       .ToPtr());
 
-    m_driver.R1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
+    //m_driver.R1().OnTrue(Run(
+    //  [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
 
-    m_driver.L1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
+    //m_driver.L1().OnTrue(Run(
+    //  [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
 
-    m_driver.Triangle().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
+    //m_driver.Triangle().OnTrue(Run(
+    // [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
 
 
-    //m_driver.Triangle().OnTrue(Run([this] {m_intakeRoller->SetIntakeRPM(3000_rad_per_s);}, {m_intakeRoller.get()}));
+    m_driver.Triangle().OnTrue(Run([this] {m_intakeRoller->SetIntakeRPM(300_rad_per_s);}, {m_intakeRoller.get()}));
 
 
 }
