@@ -28,7 +28,7 @@ inline constexpr double kSteerJoystickDeadband = 0.1;
 namespace Field {
 inline const frc::AprilTagFieldLayout kFieldTagLayout =
     frc::AprilTagFieldLayout::LoadField(
-        frc::AprilTagField::k2025ReefscapeAndyMark);
+        frc::AprilTagField::k2026RebuiltAndyMark);
 } // namespace Field
 
 } // namespace Constants
