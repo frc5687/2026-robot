@@ -18,12 +18,16 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
+#include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 #include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
 #include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
+  m_intakeRoller = CreateIntakeRoller();
+  m_linearIntake = CreateLinearIntake();
   m_intakeRoller = CreateIntakeRoller();
   m_linearIntake = CreateLinearIntake();
 //   m_elevator = CreateElevator();
@@ -34,6 +38,10 @@ RobotContainer::RobotContainer() {
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
+      0.412841796875_tr,               // FL
+      0.33837890625_tr - 0.5_tr,    // FR
+      0.27099609375_tr, // BL
+      -0.0537109375_tr  // BR
       0.412841796875_tr,               // FL
       0.33837890625_tr - 0.5_tr,    // FR
       0.27099609375_tr, // BL
@@ -105,6 +113,25 @@ std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
             HardwareMap::CAN::TalonFX::LinearIntake
         ));
 }
+
+std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
+    return std::make_unique<IntakeRoller>(
+        std::make_unique<CTREIntakeRollerIO>(
+            HardwareMap::CAN::TalonFX::LeftRollerMotor,
+            HardwareMap::CAN::TalonFX::RightRollerMotor));
+}
+
+std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
+    if(frc::RobotBase::IsSimulation()){
+        return std::make_unique<LinearIntake>(
+            std::make_unique<SimLinearIntakeIO>());
+    }
+
+    return std::make_unique<LinearIntake>(
+        std::make_unique<CTRELinearIntakeIO>(
+            HardwareMap::CAN::TalonFX::LinearIntake
+        ));
+}
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
 //     return std::make_unique<ElevatorSubsystem>(
@@ -140,6 +167,17 @@ void RobotContainer::ConfigureBindings() {
           []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
           false)
       .ToPtr());
+
+    m_driver.R1().OnTrue(Run(
+      [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
+
+    m_driver.L1().OnTrue(Run(
+      [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
+
+    m_driver.Triangle().OnTrue(Run(
+      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
+
+
 
     m_driver.R1().OnTrue(Run(
       [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
