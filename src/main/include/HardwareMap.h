@@ -28,6 +28,8 @@ inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 
 inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
 inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
+
+inline constexpr CANDevice Flywheel{14, Bus::kDriveTrain}; // not real values
 } // namespace TalonFX
 
 namespace CANCoder {

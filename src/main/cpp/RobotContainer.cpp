@@ -19,6 +19,7 @@
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
+#include "subsystem/flywheel/CTREFlywheelIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
@@ -106,6 +107,10 @@ std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
         return std::make_unique<FlywheelSubsystem>(
             std::make_unique<SimFlywheelIO>());
     };
+
+    return std::make_unique<FlywheelSubsystem>(
+        std::make_unique<CTREFlywheelIO>(
+            HardwareMap::CAN::TalonFX::Flywheel));
 }
 
 void RobotContainer::ConfigureBindings() {
