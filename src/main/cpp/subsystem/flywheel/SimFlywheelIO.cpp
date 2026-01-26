@@ -10,22 +10,41 @@
 using namespace Constants::Flywheel;
 
 SimFlywheelIO::SimFlywheelIO() : m_flywheelSim(
-  frc::LinearSystemId::FlywheelSystem(kMotor, 0.02_kg_sq_m, kGearRatio),
+  frc::LinearSystemId::FlywheelSystem(kMotor, kInertia, kGearRatio),
   kMotor,
-  {0.01}), m_controller(kP, kI, kD){}
+  {0.01}), m_controller(kP, kI, kD),
+  m_feedForward(0_V, 0_V / 1_rpm, 0_V / 1_rev_per_m_per_s, 20_ms),
+  m_kP("Flywheel", "kP", kP),
+  m_kI("Flywheel", "kI", kI),
+  m_kD("Flywheel", "kD", kD),
+  m_kS("Flywheel", "kS", kS),
+  m_kV("Flywheel", "kV", kV),
+  m_kA("Flywheel", "kA", kA){}
 
 void SimFlywheelIO::UpdateInputs(FlywheelIOInputs& inputs) {
+  if (m_kP.HasChanged() || m_kI.HasChanged() || m_kD.HasChanged()) {
+    m_controller.SetPID(m_kP.Get(), m_kI.Get(), m_kD.Get());
+  }
+
+  if (m_kS.HasChanged() || m_kV.HasChanged() || m_kA.HasChanged()) {
+    m_feedForward.SetKs(units::volt_t{m_kS.Get()});
+    m_feedForward.SetKv(units::volt_t{m_kV.Get()} / 1_rpm);
+    m_feedForward.SetKa(units::volt_t{m_kA.Get()} / 1_rev_per_m_per_s);
+  }
+     
+  auto pidOutput = m_controller.Calculate(m_flywheelSim.GetAngularVelocity().value());
+  auto ffOutput = m_feedForward.Calculate(m_desiredRPM);
+  m_flywheelSim.SetInputVoltage(units::volt_t{pidOutput} + units::volt_t{ffOutput});
+  
   constexpr auto kDt = 20_ms;
   m_flywheelSim.Update(kDt);
-  
+    
   inputs.flywheelVelocity = m_flywheelSim.GetAngularVelocity();
   inputs.motorVelocity = m_flywheelSim.GetAngularVelocity() / kGearRatio;
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
-
-  auto output = m_controller.Calculate(m_flywheelSim.GetAngularVelocity().value());
-  m_flywheelSim.SetInputVoltage(units::volt_t{output});
 }
 
 void SimFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) {
   m_controller.SetSetpoint(desiredRPM.value());
+  m_desiredRPM = desiredRPM;
 }

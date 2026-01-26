@@ -3,8 +3,8 @@
 #include <memory>
 #include "subsystem/LoggedSubsystem.h"
 #include "FlywheelIO.h"
-#include "units/angle.h"
 #include "units/angular_velocity.h"
+#include <frc/filter/LinearFilter.h>
 
 class FlywheelSubsystem : public LoggedSubsystem {
 public:
@@ -21,4 +21,6 @@ private:
   FlywheelIOInputs m_inputs{};
 
   units::revolutions_per_minute_t m_desiredRPM{0_rpm};
+
+  frc::LinearFilter<units::revolutions_per_minute_t> filter = frc::LinearFilter<units::revolutions_per_minute_t>::SinglePoleIIR(0.1, 0.02_s);  
 };
