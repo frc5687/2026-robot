@@ -7,6 +7,7 @@
 #include "units/angular_velocity.h"
 #include "utils/CANDevice.h"
 #include "subsystem/flywheel/FlywheelConstants.h"
+#include "units/frequency.h"
 
 using namespace ctre::phoenix6;
 
@@ -26,9 +27,13 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &motor) :
     m_config.Slot0.kA = Constants::Flywheel::kA;
 
     m_motor.GetConfigurator().Apply(m_config);
-  };
+
+    m_motorVelocitySignal.SetUpdateFrequency(50_Hz);
+  }
 
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs){
+  m_motorVelocitySignal.Refresh();
+
   inputs.motorVelocity = m_motorVelocitySignal.GetValue();
   inputs.flywheelVelocity = m_motorVelocitySignal.GetValue() / Constants::Flywheel::kGearRatio;
 
