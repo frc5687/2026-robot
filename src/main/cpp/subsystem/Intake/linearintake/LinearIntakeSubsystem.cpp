@@ -13,5 +13,5 @@ void LinearIntake::SetPosition(units::meter_t meters){
 }
 
 void LinearIntake::LogTelemetry(){
-
+    Log("Intake Position Meters", m_inputs.linearIntakePosition.value());
 }

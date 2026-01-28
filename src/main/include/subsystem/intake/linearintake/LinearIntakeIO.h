@@ -5,8 +5,11 @@
 #include<units/angular_velocity.h>
 struct LinearIntakeIOInputs{
 
-    units::meter_t linearIntakePosition{0_m};
-    units::angular_velocity::radians_per_second_t linearIntakeVelocity{0_rad_per_s};
+    units::turn_t motorPosition{0.0_tr};
+    units::turns_per_second_t motorVelocity{0.0_tps};
+
+    units::meter_t linearIntakePosition{0.0_m};
+    units::meters_per_second_t linearIntakeVelocity{0_mps};
 
     units::second_t timestamp{0_s};
 };

@@ -5,25 +5,35 @@
 #include "frc/trajectory/TrapezoidProfile.h"
 #include "subsystem/intake/linearintake/LinearIntake.h"
 #include "subsystem/intake/linearintake/LinearIntakeIO.h"
+#include "units/angle.h"
+#include "units/length.h"
+#include <iostream>
+#include <numbers>
 #include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 
 using namespace Constants::LinearIntake;
 
 SimLinearIntakeIO::SimLinearIntakeIO()
-    : m_linearIntakeSim(frc::LinearSystemId::DCMotorSystem(kMotor, kInertia, kGearRatio), kMotor, {0.001,0.001}),
-      m_pidController(kP, kI, kD) {
-}
+    : m_linearIntakeSim(kMotor,
+                    kGearRatio, kMass,
+                    kDrumRadius,
+                    kMinExtension,
+                    kMaxExtension, true, 0_m, {0.001, 0.001}),
+      m_pidController(100, 0, 0,
+                      frc::TrapezoidProfile<units::meter>::Constraints(
+                          kMaxVelocity,
+                          kMaxAccel)) {}
 
 void SimLinearIntakeIO::UpdateInputs(LinearIntakeIOInputs& inputs) {
   m_linearIntakeSim.Update(20_ms);
-  inputs.linearIntakePosition = m_linearIntakeSim.GetAngularPosition().value() * kCircumference / kGearRatio;
-  inputs.linearIntakeVelocity = m_linearIntakeSim.GetAngularVelocity();
+  inputs.linearIntakePosition = m_linearIntakeSim.GetPosition();
+  inputs.linearIntakeVelocity = m_linearIntakeSim.GetVelocity();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
 void SimLinearIntakeIO::SetPosition(units::meter_t desiredMeters) {
-  auto position = m_linearIntakeSim.GetAngularPosition().value() / kCircumference.value() * kGearRatio;
-  auto pidOutput = m_pidController.Calculate(position);
+ auto position = m_linearIntakeSim.GetPosition();
+  auto pidOutput = m_pidController.Calculate(position, desiredMeters);
 
   m_linearIntakeSim.SetInputVoltage(units::volt_t{pidOutput});
 }

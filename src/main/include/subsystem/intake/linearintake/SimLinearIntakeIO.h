@@ -1,6 +1,6 @@
 #pragma once
 
-#include <frc/simulation/DCMotorSim.h>
+#include <frc/simulation/ElevatorSim.h>
 
 #include "LinearIntakeIO.h"
 #include "frc/controller/PIDController.h"
@@ -16,6 +16,6 @@ class SimLinearIntakeIO : public LinearIntakeIO {
   virtual void SetPosition(units::meter_t desiredMeters) override;
 
  private:
-  frc::sim::DCMotorSim m_linearIntakeSim;
-  frc::PIDController m_pidController;
+  frc::sim::ElevatorSim m_linearIntakeSim;
+  frc::ProfiledPIDController<units::meter> m_pidController;
 };

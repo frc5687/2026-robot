@@ -42,12 +42,8 @@ class RobotContainer {
   
   std::unique_ptr<VisionSubsystem> m_vision;
 
-  std::unique_ptr<LinearIntake> CreateLinearIntake();
-  std::unique_ptr<LinearIntake> m_linearIntake;
-  
-  std::unique_ptr<IntakeRoller> CreateIntakeRoller();
-  std::unique_ptr<IntakeRoller> m_intakeRoller;
-  
   // std::unique_ptr<VisionSubsystem> m_vision;
   frc2::CommandPS5Controller m_driver{0};
+
+
 };

@@ -28,8 +28,6 @@ RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
   m_intakeRoller = CreateIntakeRoller();
   m_linearIntake = CreateLinearIntake();
-  m_intakeRoller = CreateIntakeRoller();
-  m_linearIntake = CreateLinearIntake();
 //   m_elevator = CreateElevator();
   m_vision = CreateVision();
   ConfigureBindings();
@@ -42,12 +40,8 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       0.33837890625_tr - 0.5_tr,    // FR
       0.27099609375_tr, // BL
       -0.0537109375_tr  // BR
-      0.412841796875_tr,               // FL
-      0.33837890625_tr - 0.5_tr,    // FR
-      0.27099609375_tr, // BL
-      -0.0537109375_tr  // BR
-  };
-
+      };
+    
   if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<DriveSubsystem>(
         std::make_unique<SimModuleIO>(
@@ -95,24 +89,6 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 }
 
 
-std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
-    return std::make_unique<IntakeRoller>(
-        std::make_unique<CTREIntakeRollerIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor));
-}
-
-std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
-    if(frc::RobotBase::IsSimulation()){
-        return std::make_unique<LinearIntake>(
-            std::make_unique<SimLinearIntakeIO>());
-    }
-
-    return std::make_unique<LinearIntake>(
-        std::make_unique<CTRELinearIntakeIO>(
-            HardwareMap::CAN::TalonFX::LinearIntake
-        ));
-}
 
 std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
     return std::make_unique<IntakeRoller>(
@@ -175,20 +151,13 @@ void RobotContainer::ConfigureBindings() {
       [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
 
     m_driver.Triangle().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()})); 
 
+    m_driver.Circle().OnTrue(Run(
+      [this] { m_linearIntake->SetPosition(1.0_m); }, {m_linearIntake.get()}));
 
-
-    m_driver.R1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
-
-    m_driver.L1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
-
-    m_driver.Triangle().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()}));
-
-
+    m_driver.Cross().OnTrue(Run(
+      [this] { m_linearIntake->SetPosition(0.0_m); }, {m_linearIntake.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -6,31 +6,42 @@
 #include "frc/system/plant/DCMotor.h"
 #include "subsystem/LoggedSubsystem.h"
 #include "subsystem/intake/linearintake/LinearIntakeIO.h"
+#include "units/acceleration.h"
+#include "units/angle.h"
+#include "units/mass.h"
 #include "units/moment_of_inertia.h"
+#include "units/velocity.h"
 
 #include <memory>
+#include <numbers>
 #include <units/length.h>
 
 namespace Constants::LinearIntake {
 
 
-    constexpr bool kLinearMotorInverted = false;
+    inline constexpr bool kLinearMotorInverted = false;
 
-    constexpr double kP = 0.0;
-    constexpr double kI = 0.0;
-    constexpr double kD = 0.0;
+    inline constexpr double kP = 5.0;
+    inline constexpr double kI = 0.0;
+    inline constexpr double kD = 0.05;
+ 
+    inline constexpr double kGearRatio = 9.0;
 
-    constexpr units::meter_t kCircumference = 0.0_m;
-    constexpr double kGearRatio = 0.0;
-    constexpr units::kilogram_square_meter_t kInertia = 1.0_kg_sq_m;
+    inline constexpr int kNumMotors = 2;
+    inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(kNumMotors);
 
-    constexpr units::meter_t maxExtension = 1.0_m;
-    constexpr units::meter_t minExtension = 0.0_m;
+    inline constexpr units::meter_t kDrumRadius = 1.125_in;
+    inline constexpr auto kCircumference =
+    2.0 * std::numbers::pi_v<double> * kDrumRadius;
 
-    constexpr double kMaxVelocity = 1.0;
-    constexpr double kMaxAccel = 2.0;
+    inline constexpr units::mass::kilogram_t kMass = 1.0_kg;
 
-    constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60();
+    inline constexpr units::meter_t kMaxExtension = 1.0_m;
+    inline constexpr units::meter_t kMinExtension = 0.0_m;
+
+    inline constexpr units::meters_per_second_t kMaxVelocity =
+    (kMotor.freeSpeed / kGearRatio) * kDrumRadius / 1_rad;
+    inline constexpr units::meters_per_second_squared_t kMaxAccel = 2.0_mps_sq;
 
 };
 
