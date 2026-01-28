@@ -14,7 +14,9 @@ using namespace ctre::phoenix6;
 CTREFlywheelIO::CTREFlywheelIO(const CANDevice &motor) :
   m_motor(motor.id, motor.bus),
   m_request(controls::VelocityVoltage{0_rpm}.WithSlot(0)),
-  m_motorVelocitySignal(m_motor.GetVelocity())
+  m_motorVelocitySignal(m_motor.GetVelocity()),
+  m_motorCurrentSignal(m_motor.GetStatorCurrent()),
+  m_batchSignals{&m_motorVelocitySignal, &m_motorCurrentSignal}
   {
     m_config.MotorOutput.Inverted = Constants::Flywheel::kMotorInverted ? signals::InvertedValue::Clockwise_Positive : signals::InvertedValue::CounterClockwise_Positive;
 
@@ -28,11 +30,11 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &motor) :
 
     m_motor.GetConfigurator().Apply(m_config);
 
-    m_motorVelocitySignal.SetUpdateFrequency(50_Hz);
+    BaseStatusSignal::SetUpdateFrequencyForAll(50_Hz, m_batchSignals);
   }
 
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs){
-  m_motorVelocitySignal.Refresh();
+  BaseStatusSignal::RefreshAll(m_batchSignals);
 
   inputs.motorVelocity = m_motorVelocitySignal.GetValue();
   inputs.flywheelVelocity = m_motorVelocitySignal.GetValue() / Constants::Flywheel::kGearRatio;

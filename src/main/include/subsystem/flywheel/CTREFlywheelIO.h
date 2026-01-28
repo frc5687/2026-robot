@@ -4,7 +4,9 @@
 #include "ctre/phoenix6/core/CoreTalonFX.hpp"
 #include "subsystem/flywheel/FlywheelIO.h"
 #include "units/angular_velocity.h"
+#include "units/current.h"
 #include "utils/CANDevice.h"
+#include <array>
 
 using namespace ctre::phoenix6;
 
@@ -22,4 +24,7 @@ class CTREFlywheelIO : public FlywheelIO {
     controls::VelocityVoltage m_request;
 
     StatusSignal<units::turns_per_second_t> &m_motorVelocitySignal;
+    StatusSignal<units::ampere_t> &m_motorCurrentSignal;
+
+    std::array<BaseStatusSignal*, 2> m_batchSignals;
 };
