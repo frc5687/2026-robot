@@ -3,6 +3,7 @@
 #include <memory>
 #include "subsystem/LoggedSubsystem.h"
 #include "FlywheelIO.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 #include "units/angular_velocity.h"
 #include <frc/filter/LinearFilter.h>
 
@@ -22,5 +23,5 @@ private:
 
   units::revolutions_per_minute_t m_desiredRPM{0_rpm};
 
-  frc::LinearFilter<units::revolutions_per_minute_t> filter = frc::LinearFilter<units::revolutions_per_minute_t>::SinglePoleIIR(0.1, 0.02_s);  
+  frc::LinearFilter<units::revolutions_per_minute_t> m_filter = frc::LinearFilter<units::revolutions_per_minute_t>::SinglePoleIIR(Constants::Flywheel::kFilterTime, Constants::Flywheel::kFilterPeriod);
 };

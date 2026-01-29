@@ -10,7 +10,7 @@ FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io) :
 
 void FlywheelSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
-  m_inputs.flywheelVelocity = filter.Calculate(m_inputs.flywheelVelocity);  
+  m_inputs.flywheelVelocity = m_filter.Calculate(m_inputs.flywheelVelocity);
 };
 
 void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {

@@ -2,9 +2,10 @@
 
 #include "frc/system/plant/DCMotor.h"
 #include "units/moment_of_inertia.h"
+#include "units/time.h"
 
 namespace Constants::Flywheel {
-  // im doing a bunch of lies
+  // all lies rn btw
   inline constexpr double kGearRatio = 1.0;
   inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC();
 
@@ -22,4 +23,7 @@ namespace Constants::Flywheel {
   inline constexpr double kS = 0.0001;
   inline constexpr double kV = 0.001400;
   inline constexpr double kA = 0.0003;
+
+  inline constexpr double kFilterTime = 0.1;
+  inline constexpr units::time::second_t kFilterPeriod = 0.02_s;
 }
