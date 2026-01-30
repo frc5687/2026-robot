@@ -12,7 +12,7 @@ class CTREHoodIO : public HoodIO {
     public:
         CTREHoodIO(const CANDevice& hoodmotor);
         void UpdateInputs(HoodIOInputs& inputs);
-        void SetHoodAngle(double angle) override;
+        void setHoodPosition(units::angle::turn_t hoodPosition) override;
         
     private:
 

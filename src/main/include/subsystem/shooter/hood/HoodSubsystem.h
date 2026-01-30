@@ -1,5 +1,5 @@
 #include "subsystem/LoggedSubsystem.h"
-#include "CTREHoodIO.h"
+#include "HoodIO.h"
 
 
 class HoodSubsystem : public LoggedSubsystem{
@@ -7,14 +7,13 @@ class HoodSubsystem : public LoggedSubsystem{
     public :
      explicit HoodSubsystem(std::unique_ptr<HoodIO> io);
      ~HoodSubsystem() = default;
-     void setHoodAngle();
-     void getArbitraryFraction();
+     void SetHoodPosition();
+
     protected : 
     void UpdateInputs() override;
     void LogTelemetry() override;
 
     private :
-
 
 
 };
