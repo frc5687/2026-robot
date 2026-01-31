@@ -59,28 +59,28 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
               HardwareMap::CAN::TalonFX::FrontLeftSteer,
               HardwareMap::CAN::CANCoder::FrontLeftEncoder},
           ModuleConfig{ModulePosition::FrontLeft, kEncoderOffsets[0]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::FrontRightDrive,
               HardwareMap::CAN::TalonFX::FrontRightSteer,
               HardwareMap::CAN::CANCoder::FrontRightEncoder},
           ModuleConfig{ModulePosition::FrontRight, kEncoderOffsets[1]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::BackLeftDrive,
               HardwareMap::CAN::TalonFX::BackLeftSteer,
               HardwareMap::CAN::CANCoder::BackLeftEncoder},
           ModuleConfig{ModulePosition::BackLeft, kEncoderOffsets[2]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::BackRightDrive,
               HardwareMap::CAN::TalonFX::BackRightSteer,
               HardwareMap::CAN::CANCoder::BackRightEncoder},
           ModuleConfig{ModulePosition::BackRight, kEncoderOffsets[3]}),
-      
+
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
@@ -132,7 +132,7 @@ void RobotContainer::ConfigureBindings() {
       .ToPtr());
 
     m_driver.Circle().OnTrue(Run(
-        [this] { m_flywheel->SetRPM(5_rpm); }, {m_flywheel.get()}));
+        [this] { m_flywheel->SetRPM(500_rpm); }, {m_flywheel.get()}));
 
     m_driver.Square().OnTrue(Run(
         [this] { m_flywheel->SetRPM(0_rpm); }, {m_flywheel.get()}));

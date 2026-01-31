@@ -24,7 +24,8 @@ SimFlywheelIO::SimFlywheelIO() : m_flywheelSim(
   m_kD("Flywheel", "kD", kD),
   m_kS("Flywheel", "kS", kS),
   m_kV("Flywheel", "kV", kV),
-  m_kA("Flywheel", "kA", kA){}
+  m_kA("Flywheel", "kA", kA),
+  m_desiredRPM(0_rpm){}
 
 void SimFlywheelIO::UpdateInputs(FlywheelIOInputs& inputs) {
   if (m_kP.HasChanged() || m_kI.HasChanged() || m_kD.HasChanged()) {

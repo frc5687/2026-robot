@@ -16,13 +16,13 @@ namespace Constants::Flywheel {
 
   inline constexpr bool kMotorInverted = false;
 
-  inline constexpr double kP = 0.0;
-  inline constexpr double kI = 0.0;
+  inline constexpr double kP = 0.01;
+  inline constexpr double kI = 0.001;
   inline constexpr double kD = 0.0;
 
-  inline constexpr double kS = 0.0001;
-  inline constexpr double kV = 0.001400;
-  inline constexpr double kA = 0.0003;
+  inline constexpr double kS = 0.0;
+  inline constexpr double kV = 0.00162;
+  inline constexpr double kA = 0.0;
 
   inline constexpr double kFilterTime = 0.1;
   inline constexpr units::time::second_t kFilterPeriod = 0.02_s;
