@@ -6,7 +6,7 @@
 #include <frc/system/plant/DCMotor.h>
 
 namespace Constants::Turret {
-// THese are all bad guesses right now
+// These are all bad guesses right now
 inline constexpr bool kMotorInverted = false;
 inline constexpr double kGearRatio = 5.0;
 inline constexpr units::kilogram_square_meter_t kInertia = 0.04_kg_sq_m;
