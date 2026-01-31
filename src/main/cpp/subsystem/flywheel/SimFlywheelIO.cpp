@@ -13,7 +13,11 @@ SimFlywheelIO::SimFlywheelIO() : m_flywheelSim(
   frc::LinearSystemId::FlywheelSystem(kMotor, kInertia, kGearRatio),
   kMotor,
   {0.01}), m_controller(kP, kI, kD),
-  m_feedForward(0_V, 0_V / 1_rpm, 0_V / 1_rev_per_m_per_s, 20_ms),
+  m_feedForward(
+    units::volt_t{kS},
+    units::volt_t{kV} / 1_rpm,
+    units::volt_t{kA} / 1_rev_per_m_per_s,
+    20_ms),
   m_kP("Flywheel", "kP", kP),
   m_kI("Flywheel", "kI", kI),
   m_kD("Flywheel", "kD", kD),
@@ -31,14 +35,14 @@ void SimFlywheelIO::UpdateInputs(FlywheelIOInputs& inputs) {
     m_feedForward.SetKv(units::volt_t{m_kV.Get()} / 1_rpm);
     m_feedForward.SetKa(units::volt_t{m_kA.Get()} / 1_rev_per_m_per_s);
   }
-     
+
   auto pidOutput = m_controller.Calculate(m_flywheelSim.GetAngularVelocity().value());
   auto ffOutput = m_feedForward.Calculate(m_desiredRPM);
   m_flywheelSim.SetInputVoltage(units::volt_t{pidOutput} + units::volt_t{ffOutput});
-  
+
   constexpr auto kDt = 20_ms;
   m_flywheelSim.Update(kDt);
-    
+
   inputs.flywheelVelocity = m_flywheelSim.GetAngularVelocity();
   inputs.motorVelocity = m_flywheelSim.GetAngularVelocity() / kGearRatio;
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
