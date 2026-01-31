@@ -34,8 +34,8 @@ void CTRETurretIO::UpdateInputs(TurretIOInputs &inputs) {
   // math might be wrong
   inputs.angle = (m_motorPositionSignal.GetValue() / Constants::Turret::kGearRatio) / (2.0 * std::numbers::pi * 1_rad) * 1_tr;
   inputs.angularVelocity = (m_motorVelocitySignal.GetValue() / Constants::Turret::kGearRatio) / (2.0 * std::numbers::pi * 1_rad_per_s) * 1_tps;
-  inputs.motorPosition = m_motorVelocitySignal.GetValue();
-  inputs.motorVelocity = m_motorPositionSignal.GetValue();
+  inputs.motorPosition = m_motorPositionSignal.GetValue();
+  inputs.motorVelocity = m_motorVelocitySignal.GetValue();
 
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
