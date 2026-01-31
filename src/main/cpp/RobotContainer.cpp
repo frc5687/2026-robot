@@ -88,17 +88,6 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
       return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
 }
-// std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
-//   if (frc::RobotBase::IsSimulation()) {
-//     return std::make_unique<ElevatorSubsystem>(
-//         std::make_unique<SimElevatorIO>());
-//   }
-
-//   return std::make_unique<ElevatorSubsystem>(
-//       std::make_unique<CTREElevatorIO>(
-//           HardwareMap::CAN::TalonFX::LeftElevator,
-//           HardwareMap::CAN::TalonFX::RightElevator));
-// }
 
 std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
   return std::make_unique<VisionSubsystem>(

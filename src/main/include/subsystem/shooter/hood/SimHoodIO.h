@@ -16,7 +16,7 @@ class SimHoodIO : public HoodIO {
         ~SimHoodIO() = default;
 
         virtual void UpdateInputs(HoodIOInputs& inputs) override;
-        virtual void SetHoodPosition(units::angle::turn_t hoodPosition) ;
+        virtual void SetHoodPosition(units::angle::turn_t hoodPosition) override;
 
     private:
         frc::sim::SingleJointedArmSim m_simHood;
