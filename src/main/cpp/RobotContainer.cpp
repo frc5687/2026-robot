@@ -17,6 +17,7 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/turret/CTRETurretIO.h"
 #include "subsystem/turret/SimTurretIO.h"
 #include "subsystem/turret/TurretSubsystem.h"
 
@@ -84,7 +85,11 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 }
 
 std::unique_ptr<TurretSubsystem> RobotContainer::CreateTurret() {
+    if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<TurretSubsystem>(std::make_unique<SimTurretIO>());
+    }
+
+    return std::make_unique<TurretSubsystem>(std::make_unique<CTRETurretIO>(HardwareMap::CAN::TalonFX::Turret));
 }
 
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
@@ -125,7 +130,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.Circle().OnTrue(
     Run([this] {m_turret->SetAngle(0.0_rad);}, {m_turret.get()})
   );
-  
+
   m_driver.Cross().OnTrue(
     Run([this] {m_turret->SetAngle(3.14_rad);}, {m_turret.get()})
   );
