@@ -6,6 +6,7 @@
 #include "subsystem/turret/TurretIO.h"
 #include "units/angle.h"
 #include "utils/CANDevice.h"
+#include <numbers>
 
 using namespace ctre::phoenix6;
 
@@ -30,8 +31,9 @@ CTRETurretIO::CTRETurretIO(const CANDevice &motor) :
 void CTRETurretIO::UpdateInputs(TurretIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_batchSignals);
 
-
-  // TODO: angle and angular velocity updates
+  // math might be wrong
+  inputs.angle = (m_motorPositionSignal.GetValue() / Constants::Turret::kGearRatio) / (2.0 * std::numbers::pi * 1_rad) * 1_tr;
+  inputs.angularVelocity = (m_motorVelocitySignal.GetValue() / Constants::Turret::kGearRatio) / (2.0 * std::numbers::pi * 1_rad_per_s) * 1_tps;
   inputs.motorPosition = m_motorVelocitySignal.GetValue();
   inputs.motorVelocity = m_motorPositionSignal.GetValue();
 
