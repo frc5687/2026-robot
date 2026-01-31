@@ -2,6 +2,7 @@
 #include "frc/Timer.h"
 #include "frc/system/plant/DCMotor.h"
 #include "subsystem/flywheel/FlywheelIO.h"
+#include "units/angular_velocity.h"
 #include "units/moment_of_inertia.h"
 #include <frc/system/plant/LinearSystemId.h>
 #include "subsystem/flywheel/FlywheelConstants.h"
@@ -36,7 +37,8 @@ void SimFlywheelIO::UpdateInputs(FlywheelIOInputs& inputs) {
     m_feedForward.SetKa(units::volt_t{m_kA.Get()} / 1_rev_per_m_per_s);
   }
 
-  auto pidOutput = m_controller.Calculate(m_flywheelSim.GetAngularVelocity().value());
+  units::revolutions_per_minute_t currentVelocity = m_flywheelSim.GetAngularVelocity();
+  auto pidOutput = m_controller.Calculate(currentVelocity.value());
   auto ffOutput = m_feedForward.Calculate(m_desiredRPM);
   m_flywheelSim.SetInputVoltage(units::volt_t{pidOutput} + units::volt_t{ffOutput});
 
