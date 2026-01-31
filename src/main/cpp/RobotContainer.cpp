@@ -19,9 +19,12 @@
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/vision/SimVisionIO.h"
+#include "subsystem/shooter/hood/SimHoodIO.h"
+#include "subsystem/shooter/hood/HoodIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
+  m_hood = CreateHood();
 //   m_elevator = CreateElevator();
   m_vision = CreateVision();
   ConfigureBindings();
@@ -82,6 +85,9 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
+std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
+      return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+}
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
 //     return std::make_unique<ElevatorSubsystem>(
@@ -117,6 +123,12 @@ void RobotContainer::ConfigureBindings() {
           []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
           false)
       .ToPtr());
+
+   m_driver.Triangle().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(1.0_tr); }, {m_hood.get()})); 
+
+     m_driver.Circle().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.0_tr); }, {m_hood.get()})); 
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

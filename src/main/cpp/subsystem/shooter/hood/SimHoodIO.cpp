@@ -7,16 +7,25 @@
 using namespace Constants::Hood;
 
 SimHoodIO::SimHoodIO()
- : m_simHood(kMotor, kGearRatio, kMoi, kArmLength, kMinAngle, kMaxAngle, true, 0_rad),
+ : m_simHood(kMotor, 
+    kGearRatio,
+    kMoi, 
+    kArmLength, 
+    kMinAngle, 
+    kMaxAngle, 
+    true, 
+    0_rad),
  m_pidController(10, 0, 0) {}
 
 
-void UpdateInputs(HoodIOInputs& inputs){
+void SimHoodIO::UpdateInputs(HoodIOInputs& inputs){
     m_simHood.Update(20_ms);
-
+    inputs.hoodRotation = units::turn_t{m_simHood.GetAngle()};
 }
 
 
-void SetHoodPosition(units::angle::turn_t hoodRotation){
+void SimHoodIO::SetHoodPosition(units::angle::turn_t hoodRotation){
+    auto pidOutput = m_pidController.Calculate(hoodRotation.value());
 
-}
+    m_simHood.SetInputVoltage(units::volt_t{pidOutput});
+} 

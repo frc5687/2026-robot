@@ -9,7 +9,7 @@
 #include "units/angle.h"
 
 
-class SimHoodIO : HoodIO {
+class SimHoodIO : public HoodIO {
 
     public:
         SimHoodIO();
@@ -19,6 +19,6 @@ class SimHoodIO : HoodIO {
         virtual void SetHoodPosition(units::angle::turn_t hoodPosition) ;
 
     private:
-    frc::sim::SingleJointedArmSim m_simHood;
-    frc::PIDController m_pidController;
+        frc::sim::SingleJointedArmSim m_simHood;
+        frc::PIDController m_pidController;
 };
