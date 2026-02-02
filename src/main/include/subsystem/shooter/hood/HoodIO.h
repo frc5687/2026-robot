@@ -5,8 +5,6 @@
 struct HoodIOInputs{
 
     units::angle::turn_t hoodRotation{0_tr};
-    
-
 };
 
 class HoodIO {

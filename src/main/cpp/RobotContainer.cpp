@@ -12,12 +12,15 @@
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "rev/ServoChannel.h"
+#include "rev/ServoHub.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
 #include "subsystem/drive/module/ModuleConfig.h"
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/shooter/hood/REVHoodIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 #include "subsystem/shooter/hood/SimHoodIO.h"
 #include "subsystem/shooter/hood/HoodIO.h"
@@ -25,7 +28,6 @@
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
   m_hood = CreateHood();
-//   m_elevator = CreateElevator();
   m_vision = CreateVision();
   ConfigureBindings();
 }
@@ -86,7 +88,16 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 }
 
 std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
-      return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+   if (frc::RobotBase::IsSimulation()) {
+        return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+    }
+
+    return std::make_unique<HoodSubsystem>(
+        std::make_unique<REVHoodIO>(
+            rev::servohub::ServoHub(1),
+            HardwareMap::CAN::CANCoder::HoodEncoder
+        )
+    );
 }
 
 std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
@@ -114,7 +125,13 @@ void RobotContainer::ConfigureBindings() {
       .ToPtr());
 
    m_driver.Triangle().OnTrue(Run(
-      [this] { m_hood->SetHoodPosition(1.0_tr); }, {m_hood.get()})); 
+      [this] { m_hood->SetHoodPosition(0.65_tr); }, {m_hood.get()})); 
+
+    m_driver.Square().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.25_tr); }, {m_hood.get()})); 
+
+    m_driver.Cross().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.2_tr); }, {m_hood.get()})); 
 
      m_driver.Circle().OnTrue(Run(
       [this] { m_hood->SetHoodPosition(0.0_tr); }, {m_hood.get()})); 
