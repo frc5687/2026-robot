@@ -27,19 +27,19 @@
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
   m_intakeRoller = CreateIntakeRoller();
-  m_linearIntake = CreateLinearIntake();
+ // m_linearIntake = CreateLinearIntake();
 //   m_elevator = CreateElevator();
-  m_vision = CreateVision();
+  //m_vision = CreateVision();
   ConfigureBindings();
 }
 
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.412841796875_tr,               // FL
-      0.33837890625_tr - 0.5_tr,    // FR
-      0.27099609375_tr, // BL
-      -0.0537109375_tr  // BR
+      0.3505859375_tr,               // FL
+      -0.05517578125_tr,    // FR
+      0.27099609375_tr - 0.5_tr, // BL
+      0.096923828125_tr  // BR
       };
     
   if (frc::RobotBase::IsSimulation()) {
@@ -94,20 +94,21 @@ std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
     return std::make_unique<IntakeRoller>(
         std::make_unique<CTREIntakeRollerIO>(
             HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor));
-}
-
-std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
-    if(frc::RobotBase::IsSimulation()){
-        return std::make_unique<LinearIntake>(
-            std::make_unique<SimLinearIntakeIO>());
-    }
-
-    return std::make_unique<LinearIntake>(
-        std::make_unique<CTRELinearIntakeIO>(
-            HardwareMap::CAN::TalonFX::LinearIntake
+            HardwareMap::CAN::TalonFX::RightRollerMotor
         ));
 }
+
+// std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
+//     if(frc::RobotBase::IsSimulation()){
+//         return std::make_unique<LinearIntake>(
+//             std::make_unique<SimLinearIntakeIO>());
+//     }
+
+//     return std::make_unique<LinearIntake>(
+//         std::make_unique<CTRELinearIntakeIO>(
+//             HardwareMap::CAN::TalonFX::LinearIntake
+//         ));
+// }
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
 //     return std::make_unique<ElevatorSubsystem>(
@@ -120,16 +121,16 @@ std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
 //           HardwareMap::CAN::TalonFX::RightElevator));
 // }
 
-std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
-  return std::make_unique<VisionSubsystem>(
-      std::make_unique<SimVisionIO>(),
-      m_drive->GetOdometryThread());
-}
+// std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
+//   return std::make_unique<VisionSubsystem>(
+//       std::make_unique<SimVisionIO>(),
+//       m_drive->GetOdometryThread());
+// }
 
 void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
 
-  // Set default drive command
+  //Set default drive command
   m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
       m_drive.get(),
       [this] { return -m_driver.GetLeftY(); },
@@ -137,12 +138,12 @@ void RobotContainer::ConfigureBindings() {
       [this] { return -m_driver.GetRightX(); },
       false)); //s lew limiter
 
-  m_driver.Square().WhileTrue(
-      DriveWithNormalVectorAlignment(
-          m_drive.get(),
-          []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
-          false)
-      .ToPtr());
+//   m_driver.Square().WhileTrue(
+//       DriveWithNormalVectorAlignment(
+//           m_drive.get(),
+//           []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
+//           false)
+//       .ToPtr());
 
     m_driver.R1().OnTrue(Run(
       [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
@@ -153,11 +154,11 @@ void RobotContainer::ConfigureBindings() {
     m_driver.Triangle().OnTrue(Run(
       [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()})); 
 
-    m_driver.Circle().OnTrue(Run(
-      [this] { m_linearIntake->SetPosition(1.0_m); }, {m_linearIntake.get()}));
+    // m_driver.Circle().OnTrue(Run(
+    //   [this] { m_linearIntake->SetPosition(1.0_m); }, {m_linearIntake.get()}));
 
-    m_driver.Cross().OnTrue(Run(
-      [this] { m_linearIntake->SetPosition(0.0_m); }, {m_linearIntake.get()}));
+    // m_driver.Cross().OnTrue(Run(
+    //   [this] { m_linearIntake->SetPosition(0.0_m); }, {m_linearIntake.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
