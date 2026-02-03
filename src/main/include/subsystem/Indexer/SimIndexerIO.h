@@ -12,7 +12,7 @@ class SimIndexerIO : public IndexerIO {
   ~SimIndexerIO() = default;
 
   void UpdateInputs(IndexerIOInputs& inputs) override;
-  void SetMotorVoltage(units::volt_t desiredVoltage) override;
+  void SetVoltage(units::volt_t desiredVoltage) override;
 
   // note to self: talk to denis about this
  private:

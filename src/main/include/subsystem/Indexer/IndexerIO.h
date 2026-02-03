@@ -19,5 +19,5 @@ class IndexerIO {
  public:
   virtual ~IndexerIO() = default;
   virtual void UpdateInputs(IndexerIOInputs& inputs) = 0;
-  virtual void SetMotorVoltage(units::volt_t voltage) {std::cout<<"Didn't make motor voltage function";}
+  virtual void SetVoltage(units::volt_t voltage) = 0;
 };
