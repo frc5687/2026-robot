@@ -8,7 +8,9 @@
 #include <array>
 #include <memory>
 
+#include "frc2/command/SubsystemBase.h"
 #include "subsystem/drive/DriveSubsystem.h"
+#include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
 #include "subsystem/shooter/hood/HoodSubsystem.h"
 
@@ -22,12 +24,16 @@ class RobotContainer {
   void ConfigureBindings();
   
   std::unique_ptr<DriveSubsystem> CreateDrive();
+  std::unique_ptr<FlywheelSubsystem> CreateFlywheel();
   std::unique_ptr<VisionSubsystem> CreateVision();
 
   // std::unique_ptr<VisionSubsystem> CreateVision();
 
   
   std::unique_ptr<DriveSubsystem> m_drive;
+  std::unique_ptr<FlywheelSubsystem> m_flywheel;
+  // std::unique_ptr<VisionSubsystem> m_vision;
+
   std::unique_ptr<VisionSubsystem> m_vision;
 
   std::unique_ptr<HoodSubsystem> CreateHood();

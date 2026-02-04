@@ -20,12 +20,15 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/flywheel/SimFlywheelIO.h"
+#include "subsystem/flywheel/CTREFlywheelIO.h"  
 #include "subsystem/shooter/hood/REVHoodIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 #include "subsystem/shooter/hood/SimHoodIO.h"
 #include "subsystem/shooter/hood/HoodIO.h"
 
 RobotContainer::RobotContainer() {
+m_flywheel = CreateFlywheel();
   m_drive = CreateDrive();
   m_hood = CreateHood();
   m_vision = CreateVision();
@@ -62,28 +65,28 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
               HardwareMap::CAN::TalonFX::FrontLeftSteer,
               HardwareMap::CAN::CANCoder::FrontLeftEncoder},
           ModuleConfig{ModulePosition::FrontLeft, kEncoderOffsets[0]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::FrontRightDrive,
               HardwareMap::CAN::TalonFX::FrontRightSteer,
               HardwareMap::CAN::CANCoder::FrontRightEncoder},
           ModuleConfig{ModulePosition::FrontRight, kEncoderOffsets[1]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::BackLeftDrive,
               HardwareMap::CAN::TalonFX::BackLeftSteer,
               HardwareMap::CAN::CANCoder::BackLeftEncoder},
           ModuleConfig{ModulePosition::BackLeft, kEncoderOffsets[2]}),
-      
+
       std::make_unique<CTREModuleIO>(
           CTREModuleIO::DeviceIDs{
               HardwareMap::CAN::TalonFX::BackRightDrive,
               HardwareMap::CAN::TalonFX::BackRightSteer,
               HardwareMap::CAN::CANCoder::BackRightEncoder},
           ModuleConfig{ModulePosition::BackRight, kEncoderOffsets[3]}),
-      
+
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
@@ -106,6 +109,17 @@ std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
       m_drive->GetOdometryThread());
 }
 
+std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
+    if (frc::RobotBase::IsSimulation()) {
+        return std::make_unique<FlywheelSubsystem>(
+            std::make_unique<SimFlywheelIO>());
+    };
+
+    return std::make_unique<FlywheelSubsystem>(
+        std::make_unique<CTREFlywheelIO>(
+            HardwareMap::CAN::TalonFX::Flywheel));
+}
+
 void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
 
@@ -124,6 +138,12 @@ void RobotContainer::ConfigureBindings() {
           false)
       .ToPtr());
 
+    m_driver.Circle().OnTrue(Run(
+        [this] { m_flywheel->SetRPM(500_rpm); }, {m_flywheel.get()}));
+
+    m_driver.Square().OnTrue(Run(
+        [this] { m_flywheel->SetRPM(0_rpm); }, {m_flywheel.get()}));
+  
    m_driver.Triangle().OnTrue(Run(
       [this] { m_hood->SetHoodPosition(0.65_tr); }, {m_hood.get()})); 
 
