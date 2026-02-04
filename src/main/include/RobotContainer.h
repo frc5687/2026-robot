@@ -11,6 +11,7 @@
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/intake/IntakeRoller.h"
 #include "subsystem/intake/CTREIntakeRollerIO.h"
+#include "subsystem/intake/IntakeSubsystem.h"
 #include "subsystem/intake/linearintake/LinearIntake.h"
 #include "subsystem/vision/VisionSubsystem.h"
 
@@ -40,6 +41,9 @@ class RobotContainer {
   std::unique_ptr<IntakeRoller> CreateIntakeRoller();
   std::unique_ptr<IntakeRoller> m_intakeRoller;
   
+  std::unique_ptr<IntakeSubsystem> CreateIntakeSubsystem();
+  std::unique_ptr<IntakeSubsystem>m_intakeSubsystem;
+
   std::unique_ptr<VisionSubsystem> m_vision;
 
   // std::unique_ptr<VisionSubsystem> m_vision;

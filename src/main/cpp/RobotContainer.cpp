@@ -18,6 +18,7 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
+#include "subsystem/intake/IntakeSubsystem.h"
 #include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
 #include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 #include "subsystem/vision/SimVisionIO.h"
@@ -96,6 +97,18 @@ std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
             HardwareMap::CAN::TalonFX::LeftRollerMotor,
             HardwareMap::CAN::TalonFX::RightRollerMotor
         ));
+}
+
+std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
+    return std::make_unique<IntakeSubsystem>(
+        std::make_unique<CTRELinearIntakeIO>(
+            HardwareMap::CAN::TalonFX::LinearIntake
+        ),
+        std::make_unique<CTREIntakeRollerIO>(
+            HardwareMap::CAN::TalonFX::LeftRollerMotor,
+            HardwareMap::CAN::TalonFX::RightRollerMotor
+        )
+    );
 }
 
 // std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
