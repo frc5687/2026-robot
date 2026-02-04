@@ -26,11 +26,13 @@ inline constexpr CANDevice BackLeftSteer{6, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightDrive{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 
-inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
-inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
+inline constexpr CANDevice LeftRollerMotor{8, Bus::kRio};
+inline constexpr CANDevice RightRollerMotor{9, Bus::kRio};
 
-inline constexpr CANDevice LeftRollerMotor{10, Bus::kDriveTrain};
-inline constexpr CANDevice RightRollerMotor{11, Bus::kDriveTrain};
+inline constexpr CANDevice LeftIndexerMotor{10, Bus::kDriveTrain};
+inline constexpr CANDevice CenterIndexerMotor{11, Bus::kDriveTrain};
+inline constexpr CANDevice RightIndexerMotor{12, Bus::kDriveTrain};
+
 
 inline constexpr CANDevice LinearIntake{13, Bus::kDriveTrain};
 } // namespace TalonFX

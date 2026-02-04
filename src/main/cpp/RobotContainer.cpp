@@ -12,6 +12,7 @@
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "subsystem/Indexer/CTREIndexerIO.h"
 #include "subsystem/Indexer/SimIndexerIO.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
@@ -30,11 +31,8 @@
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
-//   m_intakeRoller = CreateIntakeRoller();
   m_intakeSubsystem = CreateIntakeSubsystem();
- // m_linearIntake = CreateLinearIntake();
   m_indexer = CreateIndexer();
-//   m_elevator = CreateElevator();
   //m_vision = CreateVision();
   ConfigureBindings();
 }
@@ -95,21 +93,7 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 }
 
 std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
-    return std::make_unique<IndexerSubsystem>(std::make_unique<SimIndexerIO>());
-}
-
-std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
-    return std::make_unique<IndexerSubsystem>(std::make_unique<SimIndexerIO>());
-}
-
-
-
-std::unique_ptr<IntakeRoller> RobotContainer::CreateIntakeRoller(){
-    return std::make_unique<IntakeRoller>(
-        std::make_unique<CTREIntakeRollerIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor
-        ));
+    return std::make_unique<IndexerSubsystem>(std::make_unique<CTREIndexerIO>(HardwareMap::CAN::TalonFX::RightIndexerMotor, HardwareMap::CAN::TalonFX::LeftIndexerMotor, HardwareMap::CAN::TalonFX::CenterIndexerMotor));
 }
 
 std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
@@ -133,7 +117,8 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
 //     return std::make_unique<LinearIntake>(
 //         std::make_unique<CTRELinearIntakeIO>(
 //             HardwareMap::CAN::TalonFX::LinearIntake
-//         ));
+//         ));]\[
+
 // }
 // std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
 //   if (frc::RobotBase::IsSimulation()) {
@@ -163,13 +148,6 @@ void RobotContainer::ConfigureBindings() {
       [this] { return -m_driver.GetLeftX(); },
       [this] { return -m_driver.GetRightX(); },
       false)); //s lew limiter
-    // Set default drive command
-    m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
-        m_drive.get(),
-        [this] { return -m_driver.GetLeftY(); },
-        [this] { return -m_driver.GetLeftX(); },
-        [this] { return -m_driver.GetRightX(); },
-        false)); //s lew limiter
 
 //   m_driver.Square().WhileTrue(
 //       DriveWithNormalVectorAlignment(
@@ -179,30 +157,16 @@ void RobotContainer::ConfigureBindings() {
 //       .ToPtr());
 
     m_driver.R1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeSubsystem.get()}));
 
     m_driver.L1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(9_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeSubsystem->SetVoltage(8_V); }, {m_intakeSubsystem.get()}));
 
-    m_driver.Triangle().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(-9_V); }, {m_intakeRoller.get()})); 
-
-    // m_driver.Circle().OnTrue(Run(
-    //   [this] { m_linearIntake->SetPosition(1.0_m); }, {m_linearIntake.get()}));
-
-    // m_driver.Cross().OnTrue(Run(
-    //   [this] { m_linearIntake->SetPosition(0.0_m); }, {m_linearIntake.get()}));
-    m_driver.Square().WhileTrue(
-        DriveWithNormalVectorAlignment(
-            m_drive.get(),
-            []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
-            false)
-        .ToPtr());
     m_driver.Circle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(9_V);}, {m_indexer.get()})
+        Run([this] {m_indexer->SetVoltage(12.0_V);}, {m_indexer.get()})
     );
     m_driver.Triangle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(0_V);}, {m_indexer.get()})
+        Run([this] {m_indexer->SetVoltage(0.0_V);}, {m_indexer.get()})
     );
 }
 

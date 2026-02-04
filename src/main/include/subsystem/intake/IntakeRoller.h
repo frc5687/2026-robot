@@ -16,8 +16,8 @@
 
 namespace Constants::IntakeRoller {
 
-    inline constexpr bool kLeftMotorInverted = false;
-    inline constexpr bool kRightMotorInverted = true;
+    inline constexpr bool kLeftMotorInverted = true;
+    inline constexpr bool kRightMotorInverted = false;
 
     inline constexpr double kMotorGearRatio = 9.0;
 

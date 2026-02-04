@@ -38,7 +38,7 @@ CTRELinearIntakeIO::CTRELinearIntakeIO(const CANDevice &linearMotor):
 };
 
 void CTRELinearIntakeIO::UpdateInputs(LinearIntakeIOInputs &inputs){
-    ctre::phoenix6::BaseStatusSignal::RefreshAll(m_batchStatusSignals);
+    //ctre::phoenix6::BaseStatusSignal::RefreshAll(m_batchStatusSignals);
 
     inputs.motorPosition = m_linearMotorPosition.GetValue();
     inputs.motorVelocity = m_linearMotorVelocity.GetValue();

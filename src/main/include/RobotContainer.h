@@ -37,11 +37,11 @@ class RobotContainer {
 
   std::unique_ptr<DriveSubsystem> m_drive;
 
-  std::unique_ptr<LinearIntake> CreateLinearIntake();
-  std::unique_ptr<LinearIntake> m_linearIntake;
+  // std::unique_ptr<LinearIntake> CreateLinearIntake();
+  // std::unique_ptr<LinearIntake> m_linearIntake;
   
-  std::unique_ptr<IntakeRoller> CreateIntakeRoller();
-  std::unique_ptr<IntakeRoller> m_intakeRoller;
+  // std::unique_ptr<IntakeRoller> CreateIntakeRoller();
+  // std::unique_ptr<IntakeRoller> m_intakeRoller;
   
   std::unique_ptr<IntakeSubsystem> CreateIntakeSubsystem();
   std::unique_ptr<IntakeSubsystem>m_intakeSubsystem;
