@@ -12,6 +12,8 @@
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "rev/ServoChannel.h"
+#include "rev/ServoHub.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
 #include "subsystem/drive/module/ModuleConfig.h"
@@ -19,23 +21,27 @@
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
-#include "subsystem/flywheel/CTREFlywheelIO.h"
+#include "subsystem/flywheel/CTREFlywheelIO.h"  
+#include "subsystem/shooter/hood/REVHoodIO.h"
+#include "subsystem/vision/SimVisionIO.h"
+#include "subsystem/shooter/hood/SimHoodIO.h"
+#include "subsystem/shooter/hood/HoodIO.h"
 
 RobotContainer::RobotContainer() {
+m_flywheel = CreateFlywheel();
   m_drive = CreateDrive();
-  m_flywheel = CreateFlywheel();
-//   m_elevator = CreateElevator();
-//   m_vision = CreateVision();
+  m_hood = CreateHood();
+  m_vision = CreateVision();
   ConfigureBindings();
 }
 
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.079569_tr,               // FL
-      0.43359375_tr - 0.5_tr,    // FR
-      0.35595703125_tr - 0.5_tr, // BL
-      -0.2431540625_tr + 0.5_tr  // BR
+      0.412841796875_tr,               // FL
+      0.33837890625_tr - 0.5_tr,    // FR
+      0.27099609375_tr, // BL
+      -0.0537109375_tr  // BR
   };
 
   if (frc::RobotBase::IsSimulation()) {
@@ -84,23 +90,24 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
-// std::unique_ptr<ElevatorSubsystem> RobotContainer::CreateElevator() {
-//   if (frc::RobotBase::IsSimulation()) {
-//     return std::make_unique<ElevatorSubsystem>(
-//         std::make_unique<SimElevatorIO>());
-//   }
+std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
+   if (frc::RobotBase::IsSimulation()) {
+        return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+    }
 
-//   return std::make_unique<ElevatorSubsystem>(
-//       std::make_unique<CTREElevatorIO>(
-//           HardwareMap::CAN::TalonFX::LeftElevator,
-//           HardwareMap::CAN::TalonFX::RightElevator));
-// }
+    return std::make_unique<HoodSubsystem>(
+        std::make_unique<REVHoodIO>(
+            rev::servohub::ServoHub(1),
+            HardwareMap::CAN::CANCoder::HoodEncoder
+        )
+    );
+}
 
-// std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
-//   return std::make_unique<VisionSubsystem>(
-//       std::make_unique<SimVisionIO>(),
-//       m_drive->GetOdometryThread());
-// }
+std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
+  return std::make_unique<VisionSubsystem>(
+      std::make_unique<SimVisionIO>(),
+      m_drive->GetOdometryThread());
+}
 
 std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
     if (frc::RobotBase::IsSimulation()) {
@@ -136,6 +143,18 @@ void RobotContainer::ConfigureBindings() {
 
     m_driver.Square().OnTrue(Run(
         [this] { m_flywheel->SetRPM(0_rpm); }, {m_flywheel.get()}));
+  
+   m_driver.Triangle().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.65_tr); }, {m_hood.get()})); 
+
+    m_driver.Square().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.25_tr); }, {m_hood.get()})); 
+
+    m_driver.Cross().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.2_tr); }, {m_hood.get()})); 
+
+     m_driver.Circle().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.0_tr); }, {m_hood.get()})); 
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -2,7 +2,7 @@
 #pragma once
 
 #include <frc/geometry/Transform3d.h>
-// #include <photon/targeting/PhotonTrackedTarget.h>
+#include <photon/targeting/PhotonTrackedTarget.h>
 #include <units/angle.h>
 #include <units/time.h>
 
@@ -18,19 +18,19 @@ public:
         m_yaw{yaw}, m_pitch{pitch}, m_timestamp{timestamp},
         m_confidence{confidence} {}
 
-  // static AprilTagObservation
-  // FromPhotonVision(const photon::PhotonTrackedTarget &target,
-  //                  units::second_t timestamp) {
-  //   const int id = target.GetFiducialId();
-  //   const frc::Transform3d transform = target.GetBestCameraToTarget();
-  //   const double ambiguity = target.GetPoseAmbiguity();
-  //   const double area = target.GetArea();
-  //   const units::degree_t yaw{target.GetYaw()};
-  //   const units::degree_t pitch{target.GetPitch()};
-  //   const double confidence = std::clamp(1.0 - ambiguity, 0.0, 1.0);
-  //   return AprilTagObservation(id, transform, ambiguity, area, yaw, pitch,
-  //                              timestamp, confidence);
-  // }
+  static AprilTagObservation
+  FromPhotonVision(const photon::PhotonTrackedTarget &target,
+                   units::second_t timestamp) {
+    const int id = target.GetFiducialId();
+    const frc::Transform3d transform = target.GetBestCameraToTarget();
+    const double ambiguity = target.GetPoseAmbiguity();
+    const double area = target.GetArea();
+    const units::degree_t yaw{target.GetYaw()};
+    const units::degree_t pitch{target.GetPitch()};
+    const double confidence = std::clamp(1.0 - ambiguity, 0.0, 1.0);
+    return AprilTagObservation(id, transform, ambiguity, area, yaw, pitch,
+                               timestamp, confidence);
+  }
 
   [[nodiscard]]
   int Id() const {
