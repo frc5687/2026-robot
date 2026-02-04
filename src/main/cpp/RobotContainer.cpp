@@ -27,7 +27,8 @@
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
-  m_intakeRoller = CreateIntakeRoller();
+//   m_intakeRoller = CreateIntakeRoller();
+  m_intakeSubsystem = CreateIntakeSubsystem();
  // m_linearIntake = CreateLinearIntake();
 //   m_elevator = CreateElevator();
   //m_vision = CreateVision();
@@ -159,13 +160,13 @@ void RobotContainer::ConfigureBindings() {
 //       .ToPtr());
 
     m_driver.R1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeRoller.get()}));
 
     m_driver.L1().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(9_V); }, {m_intakeRoller.get()}));
+      [this] { m_intakeSubsystem->SetVoltage(9_V); }, {m_intakeRoller.get()}));
 
     m_driver.Triangle().OnTrue(Run(
-      [this] { m_intakeRoller->SetVoltage(-9_V); }, {m_intakeRoller.get()})); 
+      [this] { m_intakeSubsystem->SetVoltage(-9_V); }, {m_intakeRoller.get()})); 
 
     // m_driver.Circle().OnTrue(Run(
     //   [this] { m_linearIntake->SetPosition(1.0_m); }, {m_linearIntake.get()}));
