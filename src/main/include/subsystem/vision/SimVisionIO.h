@@ -1,14 +1,14 @@
 
 #pragma once
 
-// #include <photon/simulation/VisionSystemSim.h>
+#include <photon/simulation/VisionSystemSim.h>
 
 #include <memory>
 #include <string>
 #include <unordered_map>
 
 #include "VisionIO.h"
-// #include "subsystem/vision/SimulatedPhotonVisionCamera.h"
+#include "subsystem/vision/SimulatedPhotonVisionCamera.h"
 
 class SimVisionIO : public VisionIO {
 public:
@@ -18,9 +18,9 @@ public:
   void UpdateInputs(VisionIOInputs &inputs) override;
 
 private:
-  // std::shared_ptr<photon::VisionSystemSim> m_visionSim;
-  // std::unordered_map<std::string, std::unique_ptr<SimulatedPhotonVisionCamera>>
-  //     m_cams;
+  std::shared_ptr<photon::VisionSystemSim> m_visionSim;
+  std::unordered_map<std::string, std::unique_ptr<SimulatedPhotonVisionCamera>>
+      m_cams;
 
   frc::Pose2d m_robotPose{}; // updated externally each loop
 };
