@@ -29,7 +29,9 @@ inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
 inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
 
-inline constexpr CANDevice Flywheel{14, Bus::kDriveTrain}; // not real values
+inline constexpr CANDevice LeftFlywheel{14, Bus::kDriveTrain};
+inline constexpr CANDevice RightFlywheel{15, Bus::kDriveTrain};
+
 } // namespace TalonFX
 
 namespace CANCoder {
@@ -37,7 +39,7 @@ inline constexpr CANDevice FrontLeftEncoder{2, Bus::kDriveTrain};
 inline constexpr CANDevice FrontRightEncoder{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackLeftEncoder{3, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightEncoder{0, Bus::kDriveTrain};
-inline constexpr CANDevice HoodEncoder{5, Bus::kRio};
+inline constexpr CANDevice HoodEncoder{5, Bus::kDriveTrain};
 } // namespace CANCoder
 
 namespace Pidgeon2 {

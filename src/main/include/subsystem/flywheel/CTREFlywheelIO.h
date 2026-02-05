@@ -12,14 +12,16 @@ using namespace ctre::phoenix6;
 
 class CTREFlywheelIO : public FlywheelIO {
   public:
-    CTREFlywheelIO(const CANDevice &motor);
+    CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &leftMotor);
     void UpdateInputs(FlywheelIOInputs& inputs) override;
     void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) override;
 
   private:
-    hardware::TalonFX m_motor;
+    hardware::TalonFX m_rightMotor;
+    hardware::TalonFX m_leftMotor;
 
-    configs::TalonFXConfiguration m_config{};
+    configs::TalonFXConfiguration m_rightconfig{};
+    configs::TalonFXConfiguration m_leftconfig{};
 
     controls::VelocityVoltage m_request;
 

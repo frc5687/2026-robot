@@ -44,11 +44,11 @@ m_flywheel = CreateFlywheel();
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.412841796875_tr,               // FL
-      0.33837890625_tr - 0.5_tr,    // FR
-      0.27099609375_tr, // BL
-      -0.0537109375_tr  // BR
-  };
+      0.3505859375_tr,               // FL
+      -0.05517578125_tr,    // FR
+      0.27099609375_tr - 0.5_tr, // BL
+      0.096923828125_tr  // BR
+      };
 
   if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<DriveSubsystem>(
@@ -123,7 +123,7 @@ std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
 
     return std::make_unique<FlywheelSubsystem>(
         std::make_unique<CTREFlywheelIO>(
-            HardwareMap::CAN::TalonFX::Flywheel));
+            HardwareMap::CAN::TalonFX::RightFlywheel, HardwareMap::CAN::TalonFX::LeftFlywheel));
 }
 
 void RobotContainer::ConfigureBindings() {

@@ -14,7 +14,9 @@ namespace Constants::Flywheel {
 
   inline constexpr units::kilogram_square_meter_t kInertia = 0.5 * kFlywheelMass * kFlywheelRadius * kFlywheelRadius;
 
-  inline constexpr bool kMotorInverted = false;
+  inline constexpr bool kLeftMotorInverted = false;
+  inline constexpr bool kRightMotorInverted = true;
+
 
   inline constexpr double kP = 9.0;
   inline constexpr double kI = 0.02;
