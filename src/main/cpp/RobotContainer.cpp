@@ -26,13 +26,19 @@
 #include "subsystem/vision/SimVisionIO.h"
 #include "subsystem/shooter/hood/SimHoodIO.h"
 #include "subsystem/shooter/hood/HoodIO.h"
+#include "units/angular_velocity.h"
+#include "utils/TunableDouble.h"
 
-RobotContainer::RobotContainer() {
+RobotContainer::RobotContainer():
+    m_shooterRPM1("shooterrpm","rpm1", 1000),
+    m_shooterRPM2("shooterrpm","rpm2", 1000)
+ {
 m_flywheel = CreateFlywheel();
   m_drive = CreateDrive();
   m_hood = CreateHood();
-  m_vision = CreateVision();
+ // m_vision = CreateVision();
   ConfigureBindings();
+
 }
 
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
@@ -103,11 +109,11 @@ std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
     );
 }
 
-std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
-  return std::make_unique<VisionSubsystem>(
-      std::make_unique<SimVisionIO>(),
-      m_drive->GetOdometryThread());
-}
+// std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
+//   return std::make_unique<VisionSubsystem>(
+//       std::make_unique<SimVisionIO>(),
+//       m_drive->GetOdometryThread());
+// }
 
 std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
     if (frc::RobotBase::IsSimulation()) {
@@ -139,10 +145,10 @@ void RobotContainer::ConfigureBindings() {
       .ToPtr());
 
     m_driver.Circle().OnTrue(Run(
-        [this] { m_flywheel->SetRPM(500_rpm); }, {m_flywheel.get()}));
+        [this] { m_flywheel->SetRPM(units::angular_velocity::revolutions_per_minute_t{m_shooterRPM1.Get()}); }, {m_flywheel.get()}));
 
     m_driver.Square().OnTrue(Run(
-        [this] { m_flywheel->SetRPM(0_rpm); }, {m_flywheel.get()}));
+        [this] { m_flywheel->SetRPM(units::angular_velocity::revolutions_per_minute_t{m_shooterRPM2.Get()});  }, {m_flywheel.get()}));
   
    m_driver.Triangle().OnTrue(Run(
       [this] { m_hood->SetHoodPosition(0.65_tr); }, {m_hood.get()})); 

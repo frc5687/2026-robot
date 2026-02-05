@@ -13,6 +13,7 @@
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
 #include "subsystem/shooter/hood/HoodSubsystem.h"
+#include "utils/TunableDouble.h"
 
 class RobotContainer {
  public:
@@ -40,6 +41,9 @@ class RobotContainer {
   std::unique_ptr<HoodSubsystem> m_hood;
   // std::unique_ptr<VisionSubsystem> m_vision;
 
-  
+  TunableDouble m_shooterRPM1;
+  TunableDouble m_shooterRPM2;
+
+
   frc2::CommandPS5Controller m_driver{0};
 };

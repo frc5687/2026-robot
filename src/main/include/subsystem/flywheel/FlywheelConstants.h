@@ -6,7 +6,7 @@
 
 namespace Constants::Flywheel {
   // all lies rn btw
-  inline constexpr double kGearRatio = 1.0;
+  inline constexpr double kGearRatio = (18.0/24.0);
   inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC();
 
   inline constexpr units::inch_t kFlywheelRadius = 4_in;
@@ -16,12 +16,12 @@ namespace Constants::Flywheel {
 
   inline constexpr bool kMotorInverted = false;
 
-  inline constexpr double kP = 0.01;
-  inline constexpr double kI = 0.001;
+  inline constexpr double kP = 9.0;
+  inline constexpr double kI = 0.02;
   inline constexpr double kD = 0.0;
 
   inline constexpr double kS = 0.0;
-  inline constexpr double kV = 0.00162;
+  inline constexpr double kV = 0.0000;
   inline constexpr double kA = 0.0;
 
   inline constexpr double kFilterTime = 0.1;

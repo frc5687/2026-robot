@@ -37,13 +37,13 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs){
   BaseStatusSignal::RefreshAll(m_batchSignals);
 
   inputs.motorVelocity = m_motorVelocitySignal.GetValue();
-  inputs.flywheelVelocity = m_motorVelocitySignal.GetValue() / Constants::Flywheel::kGearRatio;
+  inputs.flywheelVelocity = m_motorVelocitySignal.GetValue() * Constants::Flywheel::kGearRatio;
 
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
 void CTREFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredVelocity) {
-  m_motor.SetControl(m_request.WithVelocity(desiredVelocity));
+  m_motor.SetControl(m_request.WithVelocity(desiredVelocity / Constants::Flywheel::kGearRatio));
 }
 
 

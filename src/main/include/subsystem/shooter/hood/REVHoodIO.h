@@ -3,6 +3,7 @@
 #include "HoodIO.h"
 #include "ctre/phoenix6/CANcoder.hpp"
 #include "ctre/phoenix6/StatusSignal.hpp"
+#include "ctre/phoenix6/core/CoreCANcoder.hpp"
 #include "rev/ServoChannel.h"
 #include "units/angle.h"
 #include "units/time.h"
@@ -25,7 +26,7 @@ private:
 
     ctre::phoenix6::hardware::CANcoder m_encoder;
     ctre::phoenix6::StatusSignal<units::turn_t> m_encoderAngle;
-
+    ctre::phoenix6::configs::CANcoderConfiguration m_encoderConfigs;
     units::turn_t m_servoAngle{0_tr};
     int m_microseconds{1500};
     int m_stepSize{10};

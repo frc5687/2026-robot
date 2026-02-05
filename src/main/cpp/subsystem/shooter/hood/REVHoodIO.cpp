@@ -10,6 +10,8 @@
 #include "utils/TunableDouble.h"
 #include <algorithm>
 #include <cmath>
+#include "subsystem/shooter/hood/HoodConstants.h"
+
 
 REVHoodIO::REVHoodIO(
     rev::servohub::ServoHub servoHub,
@@ -26,6 +28,7 @@ REVHoodIO::REVHoodIO(
 {
     m_servoChannel.SetEnabled(true);
     m_servoChannel.SetPowered(true);
+    m_encoderConfigs.MagnetSensor.MagnetOffset = Constants::Hood::kEncoderOffset;
 }
 
 void REVHoodIO::UpdateInputs(HoodIOInputs &inputs){
