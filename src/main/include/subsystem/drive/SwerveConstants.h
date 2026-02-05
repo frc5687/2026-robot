@@ -25,7 +25,7 @@ inline constexpr auto kWheelCircumference =
 inline constexpr auto kMeterPerTurn = kWheelCircumference / 1_tr;
 
 inline constexpr double kDriveGearRatio =
-    (54.0 / 14.0) * (18.0 / 34.0) * (45.0 / 15.0);
+    (54.0 / 12.0) * (18.0 / 34.0) * (45.0 / 15.0);
 // kraken x60 version
 inline constexpr double kSteerGearRatio = (48.0 / 18.0) * (96.0 / 16.0);
 // x44 version

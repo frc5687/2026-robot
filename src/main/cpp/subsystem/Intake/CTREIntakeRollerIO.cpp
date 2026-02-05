@@ -17,6 +17,8 @@ CTREIntakeRollerIO::CTREIntakeRollerIO(const CANDevice &rightMotor, const CANDev
         m_rightConfigs.MotorOutput.Inverted = Constants::IntakeRoller::kRightMotorInverted ? 
         ctre::phoenix6::signals::InvertedValue::Clockwise_Positive : ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
 
+        m_rightConfigs.CurrentLimits.SupplyCurrentLimit = 20_A;
+        m_leftConfigs.CurrentLimits.SupplyCurrentLimit = 20_A;
 
         m_leftMotor.GetConfigurator().Apply(m_leftConfigs);
         m_rightMotor.GetConfigurator().Apply(m_rightConfigs);
