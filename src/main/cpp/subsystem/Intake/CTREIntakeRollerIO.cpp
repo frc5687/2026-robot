@@ -19,6 +19,9 @@ CTREIntakeRollerIO::CTREIntakeRollerIO(const CANDevice &rightMotor, const CANDev
 
         m_rightConfigs.CurrentLimits.SupplyCurrentLimit = 20_A;
         m_leftConfigs.CurrentLimits.SupplyCurrentLimit = 20_A;
+        m_leftConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        m_rightConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+
 
         m_leftMotor.GetConfigurator().Apply(m_leftConfigs);
         m_rightMotor.GetConfigurator().Apply(m_rightConfigs);

@@ -27,6 +27,10 @@ CTREIndexerIO::CTREIndexerIO(const CANDevice &rightIndexer, const CANDevice &lef
         m_centerConfigs.CurrentLimits.SupplyCurrentLimit = 20_A;
         m_rightConfigs.CurrentLimits.SupplyCurrentLimit = 20_A;
 
+        m_rightConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;        
+        m_leftConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        m_centerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+
         m_leftMotor.GetConfigurator().Apply(m_leftConfigs);
         m_rightMotor.GetConfigurator().Apply(m_rightConfigs);
         m_centerMotor.GetConfigurator().Apply(m_centerConfigs);
