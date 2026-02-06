@@ -160,7 +160,7 @@ void RobotContainer::ConfigureBindings() {
       [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeSubsystem.get()}));
 
     m_driver.L1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(8_V); }, {m_intakeSubsystem.get()}));
+      [this] { m_intakeSubsystem->SetVoltage(12_V); }, {m_intakeSubsystem.get()}));
 
     m_driver.Circle().OnTrue(
         Run([this] {m_indexer->SetVoltage(12.0_V);}, {m_indexer.get()})
