@@ -3,6 +3,7 @@
 #include <memory>
 #include "subsystem/LoggedSubsystem.h"
 #include "IndexerIO.h"
+#include "units/angular_velocity.h"
 #include "units/voltage.h"
 
 class IndexerSubsystem : public LoggedSubsystem {
@@ -11,7 +12,7 @@ public:
     ~IndexerSubsystem() = default;
 
     // void SetAngle(units::radian_t desiredAngle);
-    void SetVoltage(units::volt_t voltage);
+    void SetVoltage(units::volt_t voltage, units::angular_velocity::turns_per_second_t rpm);
 protected:
     void UpdateInputs() override;
     void LogTelemetry() override;

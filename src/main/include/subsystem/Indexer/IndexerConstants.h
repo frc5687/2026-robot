@@ -17,4 +17,16 @@ namespace Constants::Indexer {
     inline constexpr bool kCenterMotorInverted = false;
     inline constexpr bool kRightMotorInverted = false;
 
+
+    inline constexpr double kP = 5.0;
+    inline constexpr double kI = 0.0;
+    inline constexpr double kD = 0.0;
+
+    inline constexpr double centerkP = 0.0;
+    inline constexpr double centerkI = 0.0;
+    inline constexpr double centerkD = 0.0;
+
+    inline constexpr double kGearRatio = (9.0/42.0);
+
+
 }  // namespace Constants::Elevator

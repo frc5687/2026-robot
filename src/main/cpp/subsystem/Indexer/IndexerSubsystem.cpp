@@ -1,4 +1,6 @@
 #include "subsystem/Indexer/IndexerSubsystem.h"
+#include "subsystem/indexer/IndexerConstants.h"
+#include "units/angular_velocity.h"
 
 IndexerSubsystem::IndexerSubsystem(std::unique_ptr<IndexerIO> io) :
     LoggedSubsystem("Indexer"),
@@ -11,10 +13,10 @@ void IndexerSubsystem::UpdateInputs() {
 }
 
 
-void IndexerSubsystem::SetVoltage(units::volt_t voltage) {
-    m_io->SetVoltage(voltage);
+void IndexerSubsystem::SetVoltage(units::volt_t voltage, units::angular_velocity::turns_per_second_t rpm) {
+    m_io->SetVoltage(voltage, rpm);
 }
 
 void IndexerSubsystem::LogTelemetry() {
-  Log("AngularVelocity", m_inputs.MotorVelocity.value());
+  Log("AngularVelocity", m_inputs.MotorVelocity.value() * Constants::Indexer::kGearRatio);
 }
