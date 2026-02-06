@@ -1,5 +1,7 @@
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
+#include "ctre/phoenix6/controls/VelocityTorqueCurrentFOC.hpp"
 #include "ctre/phoenix6/controls/VelocityVoltage.hpp"
 #include "ctre/phoenix6/core/CoreTalonFX.hpp"
 #include "subsystem/flywheel/FlywheelIO.h"
@@ -23,7 +25,8 @@ class CTREFlywheelIO : public FlywheelIO {
     configs::TalonFXConfiguration m_rightconfig{};
     configs::TalonFXConfiguration m_leftconfig{};
 
-    controls::VelocityVoltage m_request;
+    controls::VelocityTorqueCurrentFOC m_request;
+    controls::Follower m_follower;
 
     StatusSignal<units::turns_per_second_t> &m_motorVelocitySignal;
     StatusSignal<units::ampere_t> &m_motorCurrentSignal;

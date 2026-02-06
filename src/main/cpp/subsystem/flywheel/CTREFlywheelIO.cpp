@@ -1,5 +1,6 @@
 #include "subsystem/flywheel/CTREFlywheelIO.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
+#include "ctre/phoenix6/controls/VelocityTorqueCurrentFOC.hpp"
 #include "ctre/phoenix6/controls/VelocityVoltage.hpp"
 #include "ctre/phoenix6/signals/SpnEnums.hpp"
 #include "frc/Timer.h"
@@ -14,7 +15,8 @@ using namespace ctre::phoenix6;
 CTREFlywheelIO::CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &leftMotor) :
   m_rightMotor(rightMotor.id, rightMotor.bus),
   m_leftMotor(leftMotor.id, leftMotor.bus),
-  m_request(controls::VelocityVoltage{0_rpm}.WithSlot(0)),
+  m_request(controls::VelocityTorqueCurrentFOC{0_rpm}.WithSlot(0)),
+  m_follower(rightMotor.id, signals::MotorAlignmentValue::Opposed),
   m_motorVelocitySignal(m_leftMotor.GetVelocity()),
   m_motorCurrentSignal(m_leftMotor.GetStatorCurrent()),
   m_batchSignals{&m_motorVelocitySignal, &m_motorCurrentSignal}
@@ -29,17 +31,6 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &lef
     m_rightconfig.Slot0.kV = Constants::Flywheel::kV;
     m_rightconfig.Slot0.kA = Constants::Flywheel::kA;
 
-    m_leftconfig.MotorOutput.Inverted = Constants::Flywheel::kLeftMotorInverted ? signals::InvertedValue::Clockwise_Positive : signals::InvertedValue::CounterClockwise_Positive;
-
-    m_leftconfig.Slot0.kP = Constants::Flywheel::kP;
-    m_leftconfig.Slot0.kI = Constants::Flywheel::kI;
-    m_leftconfig.Slot0.kD = Constants::Flywheel::kD;
-
-    m_leftconfig.Slot0.kS = Constants::Flywheel::kS;
-    m_leftconfig.Slot0.kV = Constants::Flywheel::kV;
-    m_leftconfig.Slot0.kA = Constants::Flywheel::kA;
-
-    m_leftMotor.GetConfigurator().Apply(m_leftconfig);
     m_rightMotor.GetConfigurator().Apply(m_rightconfig);
 
 
@@ -56,8 +47,8 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs){
 }
 
 void CTREFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredVelocity) {
-  m_leftMotor.SetControl(m_request.WithVelocity(desiredVelocity / Constants::Flywheel::kGearRatio));
-  m_rightMotor.SetControl(m_request.WithVelocity(desiredVelocity / Constants::Flywheel::kGearRatio));
+  m_leftMotor.SetControl(m_follower);
+  m_rightMotor.SetControl(m_request.WithVelocity(desiredVelocity / Constants::Flywheel::kGearRatio).WithSlot(0));
 
 }
 
