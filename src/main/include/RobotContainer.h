@@ -42,7 +42,7 @@ class RobotContainer {
   // std::unique_ptr<VisionSubsystem> m_vision;
 
   TunableDouble m_shooterRPM1;
-  TunableDouble m_shooterRPM2;
+  TunableDouble  m_shooterHoodAngle;
 
 
   frc2::CommandPS5Controller m_driver{0};
