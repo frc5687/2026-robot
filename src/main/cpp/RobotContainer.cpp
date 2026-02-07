@@ -143,23 +143,23 @@ void RobotContainer::ConfigureBindings() {
 //           false)
 //       .ToPtr());
 
-    m_driver.Circle().OnTrue(Run(
-        [this] { m_flywheel->SetRPM(units::angular_velocity::revolutions_per_minute_t{m_shooterRPM1.Get()}); }, {m_flywheel.get()}));
+    // m_driver.Circle().OnTrue(Run(
+    //     [this] { m_flywheel->SetRPM(units::angular_velocity::revolutions_per_minute_t{m_shooterRPM1.Get()}); }, {m_flywheel.get()}));
+
+    // m_driver.Square().OnTrue(Run(
+        // [this] { m_flywheel->SetRPM(units::angular_velocity::revolutions_per_minute_t{3500});  }, {m_flywheel.get()}));
+  
+   m_driver.Triangle().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.65_tr); }, {m_hood.get()})); 
 
     m_driver.Square().OnTrue(Run(
-        [this] { m_flywheel->SetRPM(units::angular_velocity::revolutions_per_minute_t{3500});  }, {m_flywheel.get()}));
-  
-//    m_driver.Triangle().OnTrue(Run(
-//       [this] { m_hood->SetHoodPosition(0.65_tr); }, {m_hood.get()})); 
+      [this] { m_hood->SetHoodPosition(0.25_tr); }, {m_hood.get()})); 
 
-//     m_driver.Square().OnTrue(Run(
-//       [this] { m_hood->SetHoodPosition(0.25_tr); }, {m_hood.get()})); 
+    m_driver.Cross().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.2_tr); }, {m_hood.get()})); 
 
-//     m_driver.Cross().OnTrue(Run(
-//       [this] { m_hood->SetHoodPosition(0.2_tr); }, {m_hood.get()})); 
-
-//      m_driver.Circle().OnTrue(Run(
-//       [this] { m_hood->SetHoodPosition(0.0_tr); }, {m_hood.get()})); 
+     m_driver.Circle().OnTrue(Run(
+      [this] { m_hood->SetHoodPosition(0.0_tr); }, {m_hood.get()})); 
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

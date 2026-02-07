@@ -3,7 +3,7 @@
 #include <units/angle.h>
 
 struct HoodIOInputs{
-
+    int microseconds = 0;
     units::angle::turn_t hoodRotation{0_tr};
 };
 

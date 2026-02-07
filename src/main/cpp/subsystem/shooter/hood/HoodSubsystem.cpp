@@ -12,4 +12,5 @@ void HoodSubsystem::SetHoodPosition(units::turn_t hoodRotation){
 
 void HoodSubsystem::LogTelemetry(){
     Log("Intake Position Meters", m_inputs.hoodRotation.value());
+    Log("microseconds", m_inputs.microseconds);
 }
