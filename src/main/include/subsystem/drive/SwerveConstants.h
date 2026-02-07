@@ -51,8 +51,10 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
 inline constexpr units::ampere_t kDriveSlipCurrent =
     120_A; // TODO: Tune, this is the max stator current to prevent sliping of
            // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 80_A;
-inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
+
+//tuned these to try to prevent robot drawing too much total power from 80->20
+inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 20_A;   
+inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 20_A;
 
 inline constexpr bool kDriveInverted =
     false; // true is clockwise positive, false is counter clockwise positive

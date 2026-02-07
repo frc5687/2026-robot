@@ -46,6 +46,7 @@ void CTREModuleIO::ConfigureDevices() {
   m_driveConfig.Voltage.PeakForwardVoltage = 12_V;
   m_driveConfig.Voltage.PeakReverseVoltage = -12_V;
 
+
   m_driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = kDriveSlipCurrent;
   m_driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -kDriveSlipCurrent;
 

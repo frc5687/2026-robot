@@ -33,8 +33,8 @@ CTREIndexerIO::CTREIndexerIO(const CANDevice &rightIndexer, const CANDevice &lef
         // m_rightConfigs.Slot0.kP = Constants::Indexer::kD;
 
         m_leftConfigs.Slot0.kP = Constants::Indexer::kP;
-        m_leftConfigs.Slot0.kP = Constants::Indexer::kI;
-        m_leftConfigs.Slot0.kP = Constants::Indexer::kD;
+        m_leftConfigs.Slot0.kI = Constants::Indexer::kI;
+        m_leftConfigs.Slot0.kD = Constants::Indexer::kD;
 
         // m_centerConfigs.Slot0.kP = Constants::Indexer::centerkP;
         // m_centerConfigs.Slot0.kP = Constants::Indexer::centerkI;
