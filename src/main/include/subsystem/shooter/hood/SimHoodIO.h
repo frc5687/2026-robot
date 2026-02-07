@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 #include "HoodIO.h"
 #include "frc/controller/PIDController.h"
 #include "frc/simulation/SingleJointedArmSim.h"

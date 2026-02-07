@@ -29,6 +29,7 @@ REVHoodIO::REVHoodIO(
     m_servoChannel.SetEnabled(true);
     m_servoChannel.SetPowered(true);
     m_encoderConfigs.MagnetSensor.MagnetOffset = Constants::Hood::kEncoderOffset;
+    m_encoder.GetConfigurator().Apply(m_encoderConfigs);
 }
 
 void REVHoodIO::UpdateInputs(HoodIOInputs &inputs){
