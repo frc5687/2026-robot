@@ -22,7 +22,7 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "commands/drive/DriveWithNormalVectorAlignment.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
-    #include "subsystem/flywheel/SimFlywheelIO.h"
+#include "subsystem/flywheel/SimFlywheelIO.h"
 #include "subsystem/flywheel/CTREFlywheelIO.h"  
 #include "subsystem/shooter/hood/REVHoodIO.h"
 #include "subsystem/intake/IntakeSubsystem.h"
@@ -201,10 +201,14 @@ void RobotContainer::ConfigureBindings() {
       [this] { m_intakeSubsystem->SetVoltage(12_V); }, {m_intakeSubsystem.get()}));
 
     m_driver.Circle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(12.0_V, 100_tps);}, {m_indexer.get()})
+        Run([this] {m_indexer->SetVoltage(12.0_V, 80_tps);}, {m_indexer.get()})
     );
     m_driver.Triangle().OnTrue(
         Run([this] {m_indexer->SetVoltage(0.0_V, 0_tps);}, {m_indexer.get()})
+    );
+
+    m_driver.R2().OnTrue(
+        Run([this] {m_flywheel->SetRPM(1500_rpm);}, {m_flywheel.get()})
     );
 }
 

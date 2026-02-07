@@ -35,9 +35,6 @@ class RobotContainer {
   std::unique_ptr<DriveSubsystem> CreateDrive();
   std::unique_ptr<FlywheelSubsystem> CreateFlywheel();
   std::unique_ptr<IndexerSubsystem> CreateIndexer();
-  // std::unique_ptr<VisionSubsystem> CreateVision();
-
-  std::unique_ptr<VisionSubsystem> CreateVision();
 
   // std::unique_ptr<VisionSubsystem> CreateVision();
 
@@ -56,17 +53,12 @@ class RobotContainer {
   std::unique_ptr<FlywheelSubsystem> m_flywheel;
   // std::unique_ptr<VisionSubsystem> m_vision;
 
-  std::unique_ptr<VisionSubsystem> m_vision;
-
   std::unique_ptr<IndexerSubsystem> m_indexer;
   // std::unique_ptr<VisionSubsystem> m_vision;
 
   std::unique_ptr<HoodSubsystem> CreateHood();
   std::unique_ptr<HoodSubsystem> m_hood;
   // std::unique_ptr<VisionSubsystem> m_vision;
-
-  TunableDouble m_shooterRPM1;
-  TunableDouble  m_shooterHoodAngle;
 
 
   frc2::CommandPS5Controller m_driver{0};
