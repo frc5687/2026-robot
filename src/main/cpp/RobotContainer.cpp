@@ -35,7 +35,7 @@ RobotContainer::RobotContainer():
  {
 m_flywheel = CreateFlywheel();
   m_drive = CreateDrive();
-//   m_hood = CreateHood();
+  m_hood = CreateHood();
  // m_vision = CreateVision();
   ConfigureBindings();
 
@@ -96,18 +96,17 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
-// std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
+std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
 //    if (frc::RobotBase::IsSimulation()) {
 //         return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
 //     }
-
-//     return std::make_unique<HoodSubsystem>(
-//         std::make_unique<REVHoodIO>(
-//             rev::servohub::ServoHub(1),
-//             HardwareMap::CAN::CANCoder::HoodEncoder
-//         )
-//     );
-// }
+    return std::make_unique<HoodSubsystem>(
+        std::make_unique<REVHoodIO>(
+            1,
+            HardwareMap::CAN::CANCoder::HoodEncoder
+        )
+    );
+}
 
 // std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
 //   return std::make_unique<VisionSubsystem>(

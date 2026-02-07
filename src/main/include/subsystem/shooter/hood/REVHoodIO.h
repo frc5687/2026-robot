@@ -13,7 +13,7 @@
 class REVHoodIO : public HoodIO { 
 public:
     REVHoodIO(
-        rev::servohub::ServoHub servoHub,
+        const int& servoHubId,
         const CANDevice& encoder
     );
 

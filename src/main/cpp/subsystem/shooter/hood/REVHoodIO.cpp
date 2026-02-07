@@ -14,12 +14,12 @@
 
 
 REVHoodIO::REVHoodIO(
-    rev::servohub::ServoHub servoHub,
+    const int& servoHubId,
     const CANDevice &encoder
 )
-    : m_servoHub(servoHub.GetDeviceId()),
+    : m_servoHub(servoHubId),
       m_servoChannel(
-          servoHub.GetServoChannel(
+          m_servoHub.GetServoChannel(
               rev::servohub::ServoChannel::ChannelId::kChannelId0
           )
       ),
