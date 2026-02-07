@@ -18,7 +18,7 @@ namespace Constants::Indexer {
     inline constexpr bool kRightMotorInverted = false;
 
 
-    inline constexpr double kP = 5.0;
+    inline constexpr double kP = 7.0;
     inline constexpr double kI = 0.0;
     inline constexpr double kD = 0.0;
 
