@@ -43,6 +43,7 @@ RobotContainer::RobotContainer() {
   m_intakeSubsystem = CreateIntakeSubsystem();
   m_indexer = CreateIndexer();
   m_hood = CreateHood();
+  m_flywheel = CreateFlywheel();
   //m_vision = CreateVision();
   ConfigureBindings();
 }
