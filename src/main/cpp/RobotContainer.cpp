@@ -3,6 +3,7 @@
 
     #include <frc/RobotBase.h>
     #include <frc2/command/Commands.h>
+#include <functional>
     #include <units/angle.h>
     #include <units/length.h>
 
@@ -12,6 +13,7 @@
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "frc2/command/RunCommand.h"
 #include "rev/ServoChannel.h"
 #include "rev/ServoHub.h"
 #include "subsystem/Indexer/CTREIndexerIO.h"
@@ -38,7 +40,9 @@
 #include "subsystem/Indexer/IndexerIO.h"
 #include "subsystem/Indexer/IndexerSubsystem.h"
 
-RobotContainer::RobotContainer() {
+RobotContainer::RobotContainer():
+ m_shooterRPM("shooterrpm","rpm1", 1000)
+ {
   m_drive = CreateDrive();
   m_intakeSubsystem = CreateIntakeSubsystem();
   m_indexer = CreateIndexer();
@@ -211,6 +215,18 @@ void RobotContainer::ConfigureBindings() {
     m_driver.R2().OnTrue(
         Run([this] {m_flywheel->SetRPM(1500_rpm);}, {m_flywheel.get()})
     );
+
+m_driver.R1().OnTrue(
+    Run(
+        [this] {
+            m_flywheel->SetRPM(
+                units::revolutions_per_minute_t{m_shooterRPM.Get()}
+            );
+        },
+        {m_flywheel.get()}
+    )
+);
+
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
