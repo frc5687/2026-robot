@@ -63,5 +63,6 @@ class RobotContainer {
 
   frc2::CommandPS5Controller m_driver{0};
 
-  TunableDouble m_shooterRPM;
+  TunableDouble m_shooterRPMLeft;
+  TunableDouble m_shooterRPMRight;
 };

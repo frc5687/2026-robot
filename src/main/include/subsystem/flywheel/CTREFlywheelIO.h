@@ -14,22 +14,32 @@ using namespace ctre::phoenix6;
 
 class CTREFlywheelIO : public FlywheelIO {
   public:
-    CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &leftMotor);
+    CTREFlywheelIO(const CANDevice &rightLeaderMotor, const CANDevice &rightFollowerMotor, 
+  const CANDevice &leftLeaderMotor, const CANDevice &leftFollowerMotor);
     void UpdateInputs(FlywheelIOInputs& inputs) override;
-    void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) override;
+    void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPMLeft, units::revolutions_per_minute_t desiredRPMRight) override;
 
   private:
-    hardware::TalonFX m_rightMotor;
-    hardware::TalonFX m_leftMotor;
+    hardware::TalonFX m_rightLeaderMotor;
+    hardware::TalonFX m_rightFollowerMotor;
 
-    configs::TalonFXConfiguration m_rightconfig{};
-    configs::TalonFXConfiguration m_leftconfig{};
+    hardware::TalonFX m_leftLeaderMotor;
+    hardware::TalonFX m_leftFollowerMotor;
 
-    controls::VelocityTorqueCurrentFOC m_request;
-    controls::Follower m_follower;
+    configs::TalonFXConfiguration m_rightLeaderConfig{};
+    configs::TalonFXConfiguration m_leftLeaderConfig{};
 
-    StatusSignal<units::turns_per_second_t> &m_motorVelocitySignal;
-    StatusSignal<units::ampere_t> &m_motorCurrentSignal;
+    controls::VelocityTorqueCurrentFOC m_rightLeader;
+    controls::Follower m_rightFollower;
 
-    std::array<BaseStatusSignal*, 2> m_batchSignals;
+    controls::VelocityTorqueCurrentFOC m_leftLeader;
+    controls::Follower m_leftFollower;
+
+    StatusSignal<units::turns_per_second_t> &m_rightLeaderVelocitySignal;
+    StatusSignal<units::ampere_t> &m_rightLeaderCurrentSignal;
+
+    StatusSignal<units::turns_per_second_t> &m_leftLeaderVelocitySignal;
+    StatusSignal<units::ampere_t> &m_leftLeaderCurrentSignal;
+
+    std::array<BaseStatusSignal*, 4> m_batchSignals;
 };

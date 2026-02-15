@@ -41,7 +41,8 @@
 #include "subsystem/Indexer/IndexerSubsystem.h"
 
 RobotContainer::RobotContainer():
- m_shooterRPM("shooterrpm","rpm1", 1000)
+m_shooterRPMLeft("shooterrpm","rpm1", 1000),
+m_shooterRPMRight("shooterrpm","rpm1", 1000)
  {
   m_drive = CreateDrive();
   m_intakeSubsystem = CreateIntakeSubsystem();
@@ -159,7 +160,7 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
         return std::make_unique<HoodSubsystem>(
             std::make_unique<REVHoodIO>(
                 1,
-                HardwareMap::CAN::CANCoder::HoodEncoder
+                HardwareMap::CAN::CANCoder::leftHoodEncoder, HardwareMap::CAN::CANCoder::rightHoodEncoder
             )
         );
     }
@@ -178,7 +179,8 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
 
         return std::make_unique<FlywheelSubsystem>(
             std::make_unique<CTREFlywheelIO>(
-                HardwareMap::CAN::TalonFX::RightFlywheel, HardwareMap::CAN::TalonFX::LeftFlywheel));
+                HardwareMap::CAN::TalonFX::LeftFlywheelLeader, HardwareMap::CAN::TalonFX::LeftFlywheelFollower,
+                HardwareMap::CAN::TalonFX::RightFlywheelLeader, HardwareMap::CAN::TalonFX::RightFlywheelFollower));
     }
 
 void RobotContainer::ConfigureBindings() {
@@ -212,15 +214,12 @@ void RobotContainer::ConfigureBindings() {
         Run([this] {m_indexer->SetVoltage(0.0_V, 0_tps);}, {m_indexer.get()})
     );
 
-    m_driver.R2().OnTrue(
-        Run([this] {m_flywheel->SetRPM(1500_rpm);}, {m_flywheel.get()})
-    );
-
-m_driver.R1().OnTrue(
+m_driver.R2().OnTrue(
     Run(
         [this] {
             m_flywheel->SetRPM(
-                units::revolutions_per_minute_t{m_shooterRPM.Get()}
+                units::revolutions_per_minute_t{m_shooterRPMLeft.Get()},
+                 units::revolutions_per_minute_t{m_shooterRPMRight.Get()}
             );
         },
         {m_flywheel.get()}

@@ -17,7 +17,23 @@ namespace Constants::Flywheel {
   inline constexpr bool kLeftMotorInverted = false;
   inline constexpr bool kRightMotorInverted = false;
 
+  inline constexpr double rightkP = 9.0;
+  inline constexpr double rightkI = 0.0;
+  inline constexpr double rightkD = 0.0;
 
+  inline constexpr double rightkS = 0.0;
+  inline constexpr double rightkV = 0.0000;
+  inline constexpr double rightkA = 0.0;
+
+  inline constexpr double leftkP = 9.0;
+  inline constexpr double leftkI = 0.0;
+  inline constexpr double leftkD = 0.0;
+
+  inline constexpr double leftkS = 0.0;
+  inline constexpr double leftkV = 0.0000;
+  inline constexpr double leftkA = 0.0;
+
+  //For sim only was too lazy to change the value names
   inline constexpr double kP = 9.0;
   inline constexpr double kI = 0.0;
   inline constexpr double kD = 0.0;

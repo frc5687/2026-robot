@@ -12,27 +12,51 @@
 
 using namespace ctre::phoenix6;
 
-CTREFlywheelIO::CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &leftMotor) :
-  m_rightMotor(rightMotor.id, rightMotor.bus),
-  m_leftMotor(leftMotor.id, leftMotor.bus),
-  m_request(controls::VelocityTorqueCurrentFOC{0_rpm}.WithSlot(0)),
-  m_follower(rightMotor.id, signals::MotorAlignmentValue::Opposed),
-  m_motorVelocitySignal(m_leftMotor.GetVelocity()),
-  m_motorCurrentSignal(m_leftMotor.GetStatorCurrent()),
-  m_batchSignals{&m_motorVelocitySignal, &m_motorCurrentSignal}
+CTREFlywheelIO::CTREFlywheelIO(const CANDevice &rightLeaderMotor, const CANDevice &rightFollowerMotor, 
+  const CANDevice &leftLeaderMotor, const CANDevice &leftFollowerMotor) :
+  m_rightLeaderMotor(rightLeaderMotor.id, rightLeaderMotor.bus),
+  m_rightFollowerMotor(rightFollowerMotor.id, rightFollowerMotor.bus),
+  m_leftLeaderMotor(leftLeaderMotor.id, leftLeaderMotor.bus),
+  m_leftFollowerMotor(leftFollowerMotor.id, leftFollowerMotor.bus),
+
+  m_rightLeader(controls::VelocityTorqueCurrentFOC{0_rpm}.WithSlot(0)),
+  m_rightFollower(rightLeaderMotor.id, signals::MotorAlignmentValue::Opposed),
+
+  m_leftLeader(controls::VelocityTorqueCurrentFOC{0_rpm}.WithSlot(0)),
+  m_leftFollower(leftLeaderMotor.id, signals::MotorAlignmentValue::Opposed),
+
+  m_rightLeaderVelocitySignal(m_rightLeaderMotor.GetVelocity()),
+  m_rightLeaderCurrentSignal(m_rightLeaderMotor.GetStatorCurrent()),
+
+  m_leftLeaderVelocitySignal(m_leftLeaderMotor.GetVelocity()),
+  m_leftLeaderCurrentSignal(m_leftLeaderMotor.GetStatorCurrent()),
+
+  m_batchSignals{&m_rightLeaderVelocitySignal, &m_rightLeaderCurrentSignal, 
+    &m_leftLeaderVelocitySignal, &m_leftLeaderCurrentSignal}
   {
-    m_rightconfig.MotorOutput.Inverted = Constants::Flywheel::kRightMotorInverted ? signals::InvertedValue::Clockwise_Positive : signals::InvertedValue::CounterClockwise_Positive;
+    m_rightLeaderConfig.MotorOutput.Inverted = Constants::Flywheel::kRightMotorInverted ? signals::InvertedValue::Clockwise_Positive : signals::InvertedValue::CounterClockwise_Positive;
 
-    m_rightconfig.Slot0.kP = Constants::Flywheel::kP;
-    m_rightconfig.Slot0.kI = Constants::Flywheel::kI;
-    m_rightconfig.Slot0.kD = Constants::Flywheel::kD;
+    m_rightLeaderConfig.Slot0.kP = Constants::Flywheel::rightkP;
+    m_rightLeaderConfig.Slot0.kI = Constants::Flywheel::rightkI;
+    m_rightLeaderConfig.Slot0.kD = Constants::Flywheel::rightkD;
 
-    m_rightconfig.Slot0.kS = Constants::Flywheel::kS;
-    m_rightconfig.Slot0.kV = Constants::Flywheel::kV;
-    m_rightconfig.Slot0.kA = Constants::Flywheel::kA;
+    m_rightLeaderConfig.Slot0.kS = Constants::Flywheel::rightkS;
+    m_rightLeaderConfig.Slot0.kV = Constants::Flywheel::rightkV;
+    m_rightLeaderConfig.Slot0.kA = Constants::Flywheel::rightkA;
 
-    m_rightMotor.GetConfigurator().Apply(m_rightconfig);
+    m_rightLeaderMotor.GetConfigurator().Apply(m_rightLeaderConfig);
 
+    m_leftLeaderConfig.MotorOutput.Inverted = Constants::Flywheel::kLeftMotorInverted ? signals::InvertedValue::Clockwise_Positive : signals::InvertedValue::CounterClockwise_Positive;
+
+    m_leftLeaderConfig.Slot0.kP = Constants::Flywheel::leftkP;
+    m_leftLeaderConfig.Slot0.kI = Constants::Flywheel::leftkI;
+    m_leftLeaderConfig.Slot0.kD = Constants::Flywheel::leftkD;
+    
+    m_leftLeaderConfig.Slot0.kS = Constants::Flywheel::leftkS;
+    m_leftLeaderConfig.Slot0.kV = Constants::Flywheel::leftkV;
+    m_leftLeaderConfig.Slot0.kA = Constants::Flywheel::leftkA;
+
+    m_leftLeaderMotor.GetConfigurator().Apply(m_leftLeaderConfig);
 
     BaseStatusSignal::SetUpdateFrequencyForAll(50_Hz, m_batchSignals);
   }
@@ -40,16 +64,18 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &lef
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs){
   BaseStatusSignal::RefreshAll(m_batchSignals);
 
-  inputs.motorVelocity = m_motorVelocitySignal.GetValue();
-  inputs.flywheelVelocity = m_motorVelocitySignal.GetValue() * Constants::Flywheel::kGearRatio;
+  inputs.rightFlywheelVelocity = m_rightLeaderVelocitySignal.GetValue() * Constants::Flywheel::kGearRatio;
+  inputs.leftFlywheelVelocity = m_rightLeaderVelocitySignal.GetValue() * Constants::Flywheel::kGearRatio;
 
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
-void CTREFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredVelocity) {
-  m_leftMotor.SetControl(m_follower);
-  m_rightMotor.SetControl(m_request.WithVelocity(desiredVelocity / Constants::Flywheel::kGearRatio).WithSlot(0));
+void CTREFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredRPMLeft, units::revolutions_per_minute_t desiredRPMRight) {
+  m_rightLeaderMotor.SetControl(m_rightLeader.WithVelocity(desiredRPMRight / Constants::Flywheel::kGearRatio).WithSlot(0));
+  m_rightFollowerMotor.SetControl(m_rightFollower);
 
+  m_leftLeaderMotor.SetControl(m_leftLeader.WithVelocity(desiredRPMLeft / Constants::Flywheel::kGearRatio).WithSlot(0));
+  m_leftFollowerMotor.SetControl(m_leftFollower);
 }
 
 

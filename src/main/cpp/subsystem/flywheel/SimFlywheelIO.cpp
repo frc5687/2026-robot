@@ -46,12 +46,12 @@ void SimFlywheelIO::UpdateInputs(FlywheelIOInputs& inputs) {
   constexpr auto kDt = 20_ms;
   m_flywheelSim.Update(kDt);
 
-  inputs.flywheelVelocity = m_flywheelSim.GetAngularVelocity();
+  inputs.rightFlywheelVelocity = m_flywheelSim.GetAngularVelocity();
   inputs.motorVelocity = m_flywheelSim.GetAngularVelocity() / kGearRatio;
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
-void SimFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) {
+void SimFlywheelIO::SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM, units::revolutions_per_minute_t desiredRPMfake) {
   m_controller.SetSetpoint(desiredRPM.value());
   m_desiredRPM = desiredRPM;
 }

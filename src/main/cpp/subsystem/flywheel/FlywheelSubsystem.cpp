@@ -10,16 +10,19 @@ FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io) :
 
 void FlywheelSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
-  m_inputs.flywheelVelocity = m_filter.Calculate(m_inputs.flywheelVelocity);
+  m_inputs.rightFlywheelVelocity = m_filter.Calculate(m_inputs.rightFlywheelVelocity);
 };
 
-void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {
-  m_desiredRPM = desiredRPM;
-  m_io->SetFlywheelRPM(m_desiredRPM);
+void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPMLeft, units::revolutions_per_minute_t desiredRPMRight) {
+  m_desiredRPMLeft = desiredRPMLeft;
+  m_desiredRPMRight = desiredRPMRight;
+  m_io->SetFlywheelRPM(m_desiredRPMLeft, m_desiredRPMRight);
 };
 
 void FlywheelSubsystem::LogTelemetry() {
-  Log("Desired RPM", m_desiredRPM.value());
-  Log("Motor Velocity", m_inputs.motorVelocity.value());
-  Log("Flywheel Velocity", m_inputs.flywheelVelocity.value());
+  Log("Desired RPM Left", m_desiredRPMLeft.value());
+  Log("Flywheel Velocity Left", m_inputs.leftFlywheelVelocity.value());
+
+  Log("Desired RPM Right", m_desiredRPMRight.value());
+  Log("Flywheel Velocity Right", m_inputs.rightFlywheelVelocity.value());
 }
