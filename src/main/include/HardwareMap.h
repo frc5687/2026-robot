@@ -9,7 +9,7 @@ namespace HardwareMap {
 namespace Bus {
 inline constexpr std::string_view kDriveTrain = "DriveTrain";
 inline constexpr std::string_view kRio = "rio";
-inline constexpr std::string_view kStructure = "SuperStructure";
+inline constexpr std::string_view kShooter = "Shooter";
 } // namespace Bus
 
 namespace CAN {
@@ -35,14 +35,14 @@ inline constexpr CANDevice RightIndexerMotor{12, Bus::kDriveTrain};
 
 
 inline constexpr CANDevice LinearIntake{13, Bus::kDriveTrain};
-inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
-inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
 
-inline constexpr CANDevice LeftFlywheelLeader{14, Bus::kDriveTrain};
-inline constexpr CANDevice LeftFlywheelFollower{15, Bus::kDriveTrain};
+inline constexpr CANDevice LeftFlywheelLeader{14, Bus::kShooter};
+inline constexpr CANDevice LeftFlywheelFollower{15, Bus::kShooter};
 
-inline constexpr CANDevice RightFlywheelLeader{16, Bus::kDriveTrain};
-inline constexpr CANDevice RightFlywheelFollower{17, Bus::kDriveTrain};
+inline constexpr CANDevice RightFlywheelLeader{16, Bus::kShooter};
+inline constexpr CANDevice RightFlywheelFollower{17, Bus::kShooter};
+
+inline constexpr CANDevice TurretMotor{18, Bus::kDriveTrain};
 
 } // namespace TalonFX
 
@@ -51,8 +51,8 @@ inline constexpr CANDevice FrontLeftEncoder{2, Bus::kDriveTrain};
 inline constexpr CANDevice FrontRightEncoder{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackLeftEncoder{3, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightEncoder{0, Bus::kDriveTrain};
-inline constexpr CANDevice leftHoodEncoder{5, Bus::kDriveTrain};
-inline constexpr CANDevice rightHoodEncoder{6, Bus::kDriveTrain};
+inline constexpr CANDevice leftHoodEncoder{5, Bus::kShooter};
+inline constexpr CANDevice rightHoodEncoder{6, Bus::kShooter};
 
 } // namespace CANCoder
 
