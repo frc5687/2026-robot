@@ -34,7 +34,7 @@ inline constexpr auto kWheelCircumference =
 inline constexpr auto kMeterPerTurn = kWheelCircumference / 1_tr;
 
 inline constexpr double kDriveGearRatio =
-    (54.0 / 14.0) * (18.0 / 34.0) * (45.0 / 15.0);
+    (54.0 / 12.0) * (18.0 / 34.0) * (45.0 / 15.0);
 // kraken x60 version
 inline constexpr double kSteerGearRatio = (48.0 / 18.0) * (96.0 / 16.0);
 // x44 version
@@ -173,7 +173,7 @@ inline constexpr double kD = 0.0;
 }  // namespace Turret
 
 namespace Flywheel {
-inline constexpr double kGearRatio = 1.0;
+inline constexpr double kGearRatio = 250.0 / 30.0;
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC();
 inline constexpr units::kilogram_t kMass = 0.15_kg;
 inline constexpr units::meter_t kRadius = 7.5_in;
@@ -186,11 +186,39 @@ inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 }  // namespace Flywheel
 
+namespace Hood {
+inline constexpr int kNumMotors = 1;
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44(kNumMotors);
+inline constexpr double kGearRatio = 10;
+
+inline constexpr units::moment_of_inertia::kilogram_square_meter_t kMoi = 1.0_kg_sq_m;
+inline constexpr units::meter_t kArmLength = 1.0_m;
+
+inline constexpr units::turn_t kLeftEncoderOffset = 0.365712890625_tr;
+inline constexpr units::turn_t kRightEncoderOffset = 0.365712890625_tr;
+
+inline constexpr units::turn_t kMinAngle = 0.0_tr;
+inline constexpr units::turn_t kMaxAngle = 1.0_tr;
+
+namespace SimPID {
+inline constexpr double kP = 10;
+inline constexpr double kI = 0;
+inline constexpr double kD = 0;
+} // namespace Hood::SimPID
+
+namespace PID {
+// TODO: Tune
+inline constexpr double kP = 0;
+inline constexpr double kI = 0;
+inline constexpr double kD = 0;
+} // namespace Hood::PID
+
+} // namespace Hood
+
 namespace Geometry {
 inline constexpr frc::Transform3d kRobotToTurretLeft{
-   // frc::Translation3d{units::meter_t{-0.114}, units::meter_t{0.191},
-   //     units::meter_t{0.372}},
-    frc::Translation3d{},
+    frc::Translation3d{units::meter_t{-0.114}, units::meter_t{0.191},
+       units::meter_t{0.372}},
     frc::Rotation3d{0_rad, 0_rad, 0_rad}
 };
 inline constexpr frc::Transform3d kRobotToTurretRight{

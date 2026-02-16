@@ -7,16 +7,10 @@
 #include "Constants.h"
 #include "frc/Timer.h"
 
-frc::Pose3d RobotViz::CalculateTurretPoseLeft(const frc::Pose2d& drivePose,
+frc::Pose3d RobotViz::CalculateTurretPoseLeftRobotFrame(const frc::Pose2d& drivePose,
                                           const TurretState& turretState) {
-  frc::Pose3d drive3d{drivePose};
-
-  auto turretMountPose =
-      drive3d.TransformBy(Constants::Geometry::kRobotToTurretLeft);
-
-  frc::Transform3d turretRotation{{0_m, 0_m, 0_m},
+  return {Constants::Geometry::kRobotToTurretLeft.Translation(),
                                   {0_rad, 0_rad, turretState.angle}};
-  return turretMountPose.TransformBy(turretRotation);
 }
 
 frc::Pose3d RobotViz::CalculateTurretPoseRight(const frc::Pose2d& drivePose,
@@ -35,7 +29,7 @@ void RobotViz::Update() {
   units::second_t timestamp = frc::Timer::GetFPGATimestamp();
   auto driveState = m_robotState.GetDriveState(timestamp);
   auto turretState = m_robotState.GetTurretState(timestamp);
-  auto turretPoseLeft = CalculateTurretPoseLeft(driveState.pose, turretState);
+  auto turretPoseLeft = CalculateTurretPoseLeftRobotFrame(driveState.pose, turretState);
   auto turretPoseRight = CalculateTurretPoseRight(driveState.pose, turretState);
   const std::array<frc::Pose3d, 2> components{
     turretPoseLeft,
@@ -52,7 +46,9 @@ void RobotViz::FutureViz(units::second_t futureDt) {
   units::second_t timestamp = frc::Timer::GetFPGATimestamp() + futureDt;
   auto driveState = m_robotState.GetDriveState(timestamp);
   auto turretState = m_robotState.GetTurretState(timestamp);
-  auto turretPoseLeft = CalculateTurretPoseLeft(driveState.pose, turretState);
+  auto turretPoseLeft = CalculateTurretPoseLeftRobotFrame(
+        driveState.pose,
+        turretState);
   auto turretPoseRight = CalculateTurretPoseRight(driveState.pose, turretState);
   const std::array<frc::Pose3d, 2> components{
     turretPoseLeft,

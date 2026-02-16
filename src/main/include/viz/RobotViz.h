@@ -15,7 +15,7 @@ class RobotViz {
  public:
   RobotViz() : m_robotState(RobotState::Instance()) {}
   void Update();
-  frc::Pose3d CalculateTurretPoseLeft(const frc::Pose2d& drivePose,
+  frc::Pose3d CalculateTurretPoseLeftRobotFrame(const frc::Pose2d& drivePose,
                                   const TurretState& turretState);
   frc::Pose3d CalculateTurretPoseRight(const frc::Pose2d& drivePose,
                                   const TurretState& turretState);

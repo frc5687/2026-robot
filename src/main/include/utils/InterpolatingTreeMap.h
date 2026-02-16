@@ -21,3 +21,5 @@ class InterpolatingTreeMap : wpi::interpolating_map<Key, Value> {
 
   Value GetValue(const Key& key) const { return this->operator[](key); }
 };
+
+using InterpolatingDoubleTreeMap = InterpolatingTreeMap<double, double>;
