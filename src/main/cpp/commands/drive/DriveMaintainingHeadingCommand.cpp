@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
 
@@ -8,21 +9,24 @@
 #include <numbers>
 
 #include "Constants.h"
-#include "subsystem/drive/SwerveConstants.h"
 
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
-    DriveSubsystem *driveSubsystem, std::function<double()> throttle,
+    DriveSubsystem* driveSubsystem, std::function<double()> throttle,
     std::function<double()> strafe, std::function<double()> turn,
     bool enableSlewRate)
-    : m_driveSubsystem(driveSubsystem), m_throttleSupplier(throttle),
-      m_strafeSupplier(strafe), m_turnSupplier(turn),
-      m_enableSlewRate(enableSlewRate), m_joystickLastTouched(-1.0) {
+    : m_driveSubsystem(driveSubsystem),
+      m_throttleSupplier(throttle),
+      m_strafeSupplier(strafe),
+      m_turnSupplier(turn),
+      m_enableSlewRate(enableSlewRate),
+      m_joystickLastTouched(-1.0) {
   AddRequirements(driveSubsystem);
   SetName("Drive Maintaining Heading");
 
   m_headingController.EnableContinuousInput(-std::numbers::pi,
                                             std::numbers::pi);
-  m_headingController.SetTolerance(0.05); // 0.05 radians (~3 degrees) tolerance
+  m_headingController.SetTolerance(
+      0.05);  // 0.05 radians (~3 degrees) tolerance
 
   m_headingController.SetIntegratorRange(-1.0, 1.0);
 }
@@ -73,8 +77,8 @@ void DriveMaintainingHeadingCommand::Execute() {
 
   if (useManualRotation) {
     rotVelocity = turnInput * Constants::SwerveDrive::kMaxAngularSpeed;
-    m_headingSetpoint = std::nullopt;
-    m_headingController.Reset(); 
+    m_headingSetpoint = std::nullopt;  // Clear heading setpoint
+    m_headingController.Reset();       // Reset PID controller
   } else {
     if (!m_headingSetpoint.has_value()) {
       m_headingSetpoint = m_driveSubsystem->GetHeading();
@@ -95,7 +99,9 @@ void DriveMaintainingHeadingCommand::End(bool interrupted) {
   m_headingController.Reset();
 }
 
-bool DriveMaintainingHeadingCommand::IsFinished() { return false; }
+bool DriveMaintainingHeadingCommand::IsFinished() {
+  return false;
+}
 
 void DriveMaintainingHeadingCommand::SetHeadingPID(double kP, double kI,
                                                    double kD) {

@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -18,8 +19,8 @@
 class DriveMaintainingHeadingCommand
     : public frc2::CommandHelper<frc2::Command,
                                  DriveMaintainingHeadingCommand> {
-public:
-  DriveMaintainingHeadingCommand(DriveSubsystem *driveSubsystem,
+ public:
+  DriveMaintainingHeadingCommand(DriveSubsystem* driveSubsystem,
                                  std::function<double()> throttle,
                                  std::function<double()> strafe,
                                  std::function<double()> turn,
@@ -32,8 +33,8 @@ public:
 
   void SetHeadingPID(double kP, double kI, double kD);
 
-private:
-  DriveSubsystem *m_driveSubsystem;
+ private:
+  DriveSubsystem* m_driveSubsystem;
   std::function<double()> m_throttleSupplier;
   std::function<double()> m_strafeSupplier;
   std::function<double()> m_turnSupplier;
@@ -54,8 +55,8 @@ private:
 
   double ApplyDeadband(double value, double deadband);
 
-  units::radians_per_second_t
-  CalculateHeadingCorrection(frc::Rotation2d current, frc::Rotation2d target);
+  units::radians_per_second_t CalculateHeadingCorrection(
+      frc::Rotation2d current, frc::Rotation2d target);
 
   bool IsTurnInputActive(double turnInput, double deadband);
 };

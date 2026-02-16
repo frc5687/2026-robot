@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -26,13 +27,13 @@ struct GyroIOInputs {
 };
 
 class GyroIO {
-public:
+ public:
   virtual ~GyroIO() = default;
 
-  virtual void UpdateInputs(GyroIOInputs &inputs, bool isBatched) = 0;
+  virtual void UpdateInputs(GyroIOInputs& inputs, bool isBatched) = 0;
   virtual void Reset(units::degree_t angle = 0_deg) = 0;
 
-  virtual void UpdateWithOdometry(const frc::ChassisSpeeds &robotSpeeds) {
+  virtual void UpdateWithOdometry(const frc::ChassisSpeeds& robotSpeeds) {
     // Default implementation does nothing, only SimGyroIO overrides this
   }
 };

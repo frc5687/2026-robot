@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -8,7 +9,7 @@
 #include "utils/vision/VisionMeasurement.h"
 
 class Camera {
-public:
+ public:
   struct VisionResult {
     std::vector<AprilTagObservation> tags;
     std::optional<VisionMeasurement> poseEstimate;

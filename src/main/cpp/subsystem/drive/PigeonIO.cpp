@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "subsystem/drive/PigeonIO.h"
 
@@ -8,9 +9,11 @@
 #include "utils/CANDevice.h"
 
 PigeonIO::PigeonIO(CANDevice device)
-    : m_pigeon(device.id, device.bus), m_yawSignal(m_pigeon.GetYaw()),
+    : m_pigeon(device.id, device.bus),
+      m_yawSignal(m_pigeon.GetYaw()),
       m_yawRateSignal(m_pigeon.GetAngularVelocityZWorld()),
-      m_pitchSignal(m_pigeon.GetPitch()), m_rollSignal(m_pigeon.GetRoll()),
+      m_pitchSignal(m_pigeon.GetPitch()),
+      m_rollSignal(m_pigeon.GetRoll()),
       m_temp(m_pigeon.GetTemperature()),
       m_batchedSignals{&m_yawSignal, &m_yawRateSignal} {
   ctre::phoenix6::configs::Pigeon2Configuration config{};
@@ -20,7 +23,7 @@ PigeonIO::PigeonIO(CANDevice device)
   m_pigeon.GetConfigurator().Apply(config);
 }
 
-void PigeonIO::UpdateInputs(GyroIOInputs &inputs, bool isBatched) {
+void PigeonIO::UpdateInputs(GyroIOInputs& inputs, bool isBatched) {
   if (!isBatched) {
     ctre::phoenix6::BaseStatusSignal::RefreshAll(m_yawSignal, m_yawRateSignal);
   }
@@ -45,4 +48,6 @@ void PigeonIO::UpdateInputs(GyroIOInputs &inputs, bool isBatched) {
   inputs.timestamp = currentTime.value();
 }
 
-void PigeonIO::Reset(units::degree_t angle) { m_pigeon.SetYaw(angle); }
+void PigeonIO::Reset(units::degree_t angle) {
+  m_pigeon.SetYaw(angle);
+}

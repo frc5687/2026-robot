@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "Robot.h"
 
@@ -10,12 +11,15 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
-Robot::Robot() { frc::DriverStation::SilenceJoystickConnectionWarning(true); }
+Robot::Robot() {
+  frc::DriverStation::SilenceJoystickConnectionWarning(true);
+}
 
 void Robot::RobotPeriodic() {
   auto startTime = frc::Timer::GetFPGATimestamp();
 
   frc2::CommandScheduler::GetInstance().Run();
+  m_container.Periodic();
 
   auto endTime = frc::Timer::GetFPGATimestamp();
   auto updateTime = (endTime - startTime);
@@ -29,7 +33,7 @@ void Robot::DisabledExit() {}
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
   if (m_autonomousCommand) {
-    m_autonomousCommand->Schedule();
+    frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand->get());
   }
 }
 
@@ -46,11 +50,15 @@ void Robot::TeleopPeriodic() {}
 
 void Robot::TeleopExit() {}
 
-void Robot::TestInit() { frc2::CommandScheduler::GetInstance().CancelAll(); }
+void Robot::TestInit() {
+  frc2::CommandScheduler::GetInstance().CancelAll();
+}
 
 void Robot::TestPeriodic() {}
 void Robot::TestExit() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main() { return frc::StartRobot<Robot>(); }
+int main() {
+  return frc::StartRobot<Robot>();
+}
 #endif

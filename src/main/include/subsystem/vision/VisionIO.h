@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -14,8 +15,8 @@ struct VisionIOInputs {
 };
 
 class VisionIO {
-public:
+ public:
   virtual ~VisionIO() = default;
-  virtual void UpdateInputs(VisionIOInputs &inputs) = 0;
-  virtual void SetRobotPose(const frc::Pose2d &pose) = 0;
+  virtual void UpdateInputs(VisionIOInputs& inputs) = 0;
+  virtual void SetRobotPose(const frc::Pose2d& pose) = 0;
 };

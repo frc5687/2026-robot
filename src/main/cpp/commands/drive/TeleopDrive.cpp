@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "commands/drive/TeleopDrive.h"
 
@@ -6,14 +7,16 @@
 #include <cmath>
 
 #include "Constants.h"
-#include "subsystem/drive/SwerveConstants.h"
 
-TeleopDrive::TeleopDrive(DriveSubsystem *driveSubsystem,
+TeleopDrive::TeleopDrive(DriveSubsystem* driveSubsystem,
                          std::function<double()> xStrafe,
                          std::function<double()> yStrafe,
                          std::function<double()> turn, bool enableSlewRate)
-    : m_driveSubsystem(driveSubsystem), m_xStrafe(xStrafe), m_yStrafe(yStrafe),
-      m_turn(turn), m_enableSlewRate(enableSlewRate) {
+    : m_driveSubsystem(driveSubsystem),
+      m_xStrafe(xStrafe),
+      m_yStrafe(yStrafe),
+      m_turn(turn),
+      m_enableSlewRate(enableSlewRate) {
   AddRequirements(driveSubsystem);
 }
 
@@ -46,9 +49,13 @@ void TeleopDrive::Execute() {
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});
 }
 
-void TeleopDrive::End(bool interrupted) { m_driveSubsystem->Stop(); }
+void TeleopDrive::End(bool interrupted) {
+  m_driveSubsystem->Stop();
+}
 
-bool TeleopDrive::IsFinished() { return false; }
+bool TeleopDrive::IsFinished() {
+  return false;
+}
 
 double TeleopDrive::ApplyDeadband(double value, double deadband) {
   if (std::abs(value) < deadband) {

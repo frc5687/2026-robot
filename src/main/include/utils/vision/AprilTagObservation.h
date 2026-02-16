@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -9,18 +10,22 @@
 #include <algorithm>
 
 class AprilTagObservation final {
-public:
-  AprilTagObservation(int id, const frc::Transform3d &transform,
+ public:
+  AprilTagObservation(int id, const frc::Transform3d& transform,
                       double ambiguity, double area, units::degree_t yaw,
                       units::degree_t pitch, units::second_t timestamp,
                       double confidence)
-      : m_id{id}, m_transform{transform}, m_ambiguity{ambiguity}, m_area{area},
-        m_yaw{yaw}, m_pitch{pitch}, m_timestamp{timestamp},
+      : m_id{id},
+        m_transform{transform},
+        m_ambiguity{ambiguity},
+        m_area{area},
+        m_yaw{yaw},
+        m_pitch{pitch},
+        m_timestamp{timestamp},
         m_confidence{confidence} {}
 
-  static AprilTagObservation
-  FromPhotonVision(const photon::PhotonTrackedTarget &target,
-                   units::second_t timestamp) {
+  static AprilTagObservation FromPhotonVision(
+      const photon::PhotonTrackedTarget& target, units::second_t timestamp) {
     const int id = target.GetFiducialId();
     const frc::Transform3d transform = target.GetBestCameraToTarget();
     const double ambiguity = target.GetPoseAmbiguity();
@@ -37,7 +42,7 @@ public:
     return m_id;
   }
   [[nodiscard]]
-  const frc::Transform3d &Transform() const {
+  const frc::Transform3d& Transform() const {
     return m_transform;
   }
   [[nodiscard]]
@@ -65,7 +70,7 @@ public:
     return m_confidence;
   }
 
-private:
+ private:
   const int m_id;
   const frc::Transform3d m_transform;
   const double m_ambiguity;

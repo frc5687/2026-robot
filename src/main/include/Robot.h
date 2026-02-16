@@ -1,7 +1,4 @@
-
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// Team 5687 2026
 
 #pragma once
 
@@ -21,7 +18,7 @@
  * real robot.
  */
 class Robot : public frc::TimedRobot {
-public:
+ public:
   Robot();
   void RobotPeriodic() override;
   void DisabledInit() override;
@@ -37,7 +34,7 @@ public:
   void TestPeriodic() override;
   void TestExit() override;
 
-private:
+ private:
   std::optional<frc2::CommandPtr> m_autonomousCommand;
 
   RobotContainer m_container;

@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "subsystem/vision/VisionSubsystem.h"
 
@@ -11,7 +12,8 @@
 
 VisionSubsystem::VisionSubsystem(std::unique_ptr<VisionIO> io,
                                  std::shared_ptr<OdometryThread> odometryThread)
-    : LoggedSubsystem("Vision"), m_io(std::move(io)),
+    : LoggedSubsystem("Vision"),
+      m_io(std::move(io)),
       m_odometryThread(odometryThread) {}
 
 void VisionSubsystem::UpdateInputs() {
@@ -50,4 +52,12 @@ void VisionSubsystem::LogTelemetry() {
   }
 
   Log("Tag Poses", tags);
+  constexpr std::array<frc::Transform3d, 4> camTransforms{
+      Constants::Vision::kRobotToBLCam,
+      Constants::Vision::kRobotToFLCam,
+      Constants::Vision::kRobotToBRCam,
+      Constants::Vision::kRobotToFRCam,
+  };
+
+  Log("Transforms", camTransforms);
 }

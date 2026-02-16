@@ -115,9 +115,9 @@ tasks.register("setupCompileCommands") {
         } else if (OperatingSystem.current().isMacOsX()) {
             filePath = "build/TargetedCompileCommands/osxuniversalrelease"
         } else if (OperatingSystem.current().isLinux()) {
-            // Todo: 
+            // Todo:
         }
-        
+
         copy {
             from fileTree(filePath).include('compile_commands.json')
             into projectDir

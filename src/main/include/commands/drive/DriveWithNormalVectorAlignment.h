@@ -1,3 +1,5 @@
+// Team 5687 2026
+
 // DriveWithNormalVectorAlignment.h
 #pragma once
 
@@ -14,6 +16,7 @@
 
 #include <functional>
 #include <optional>
+
 #include "subsystem/drive/DriveSubsystem.h"
 
 namespace Constants {
@@ -43,12 +46,12 @@ constexpr double kSmoothingFactor = 0.5;
 }  // namespace Constants
 
 class DriveWithNormalVectorAlignment
-    : public frc2::CommandHelper<frc2::Command, DriveWithNormalVectorAlignment> {
+    : public frc2::CommandHelper<frc2::Command,
+                                 DriveWithNormalVectorAlignment> {
  public:
-  DriveWithNormalVectorAlignment(
-      DriveSubsystem* drive,
-      std::function<frc::Pose2d()> finalPoseSupplier,
-      bool isAlgae = false);
+  DriveWithNormalVectorAlignment(DriveSubsystem* drive,
+                                 std::function<frc::Pose2d()> finalPoseSupplier,
+                                 bool isAlgae = false);
 
   void Initialize() override;
   void Execute() override;
@@ -91,6 +94,6 @@ class DriveWithNormalVectorAlignment
   double m_counteractGain;
   double m_aggressiveAccelMultiplier;
   double m_smoothingFactor;
-  
+
   bool m_isAlgae;
 };

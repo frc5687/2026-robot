@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -7,15 +8,15 @@ enum class ModulePosition { FrontLeft, FrontRight, BackLeft, BackRight };
 
 inline constexpr std::string ModulePositionToString(ModulePosition pos) {
   switch (pos) {
-  case ModulePosition::FrontLeft:
-    return "FL";
-  case ModulePosition::FrontRight:
-    return "FR";
-  case ModulePosition::BackLeft:
-    return "BL";
-  case ModulePosition::BackRight:
-    return "BR";
-  default:
-    return "Unknown";
+    case ModulePosition::FrontLeft:
+      return "FL";
+    case ModulePosition::FrontRight:
+      return "FR";
+    case ModulePosition::BackLeft:
+      return "BL";
+    case ModulePosition::BackRight:
+      return "BR";
+    default:
+      return "Unknown";
   }
 }

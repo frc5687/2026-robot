@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "subsystem/vision/SimVisionIO.h"
 
@@ -19,12 +20,12 @@
 using units::degree_t;
 using units::meter_t;
 
-inline const AprilTagObservation *
-BestTag(const std::vector<AprilTagObservation> &tags) {
+inline const AprilTagObservation* BestTag(
+    const std::vector<AprilTagObservation>& tags) {
   if (tags.empty())
     return nullptr;
   return &*std::ranges::max_element(
-      tags, [](const AprilTagObservation &a, const AprilTagObservation &b) {
+      tags, [](const AprilTagObservation& a, const AprilTagObservation& b) {
         if (a.Confidence() != b.Confidence())
           return a.Confidence() < b.Confidence();
         return a.Area() < b.Area();
@@ -38,27 +39,31 @@ SimVisionIO::SimVisionIO()
   m_cams.emplace(
       "limelightleft",
       std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelightleft", Constants::Vision::kRobotToNWCam, m_visionSim));
+          "limelightleft", Constants::Vision::kRobotToFLCam, m_visionSim));
   m_cams.emplace(
       "limelight-center",
       std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelightcenter", Constants::Vision::kRobotToNECam, m_visionSim));
+          "limelightcenter", Constants::Vision::kRobotToBLCam, m_visionSim));
   m_cams.emplace(
-      "South_Camera",
+      "limelightleft1",
       std::make_unique<SimulatedPhotonVisionCamera>(
-          "SouthCamera", Constants::Vision::kRobotToSouthCam, m_visionSim));
+          "limelightleft1", Constants::Vision::kRobotToFRCam, m_visionSim));
+  m_cams.emplace(
+      "limelight-center1",
+      std::make_unique<SimulatedPhotonVisionCamera>(
+          "limelightcenter1", Constants::Vision::kRobotToBRCam, m_visionSim));
 }
 
-void SimVisionIO::UpdateInputs(VisionIOInputs &inputs) {
+void SimVisionIO::UpdateInputs(VisionIOInputs& inputs) {
   m_visionSim->Update(m_robotPose);
 
   inputs.cameraTagObservations.clear();
   inputs.visionPoseMeasurements.clear();
 
-  for (auto &[name, cam] : m_cams) {
+  for (auto& [name, cam] : m_cams) {
     Camera::VisionResult res = cam->GetLatestResult();
 
-    if (const AprilTagObservation *best = BestTag(res.tags)) {
+    if (const AprilTagObservation* best = BestTag(res.tags)) {
       inputs.cameraTagObservations.erase(name);
       inputs.cameraTagObservations.emplace(name, *best);
     } else {

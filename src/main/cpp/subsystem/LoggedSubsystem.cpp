@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "subsystem/LoggedSubsystem.h"
 
@@ -7,7 +8,7 @@
 
 #include <string>
 
-LoggedSubsystem::LoggedSubsystem(const std::string &name)
+LoggedSubsystem::LoggedSubsystem(const std::string& name)
     : m_name(name),
       m_table(nt::NetworkTableInstance::GetDefault().GetTable(name)) {}
 
@@ -21,7 +22,7 @@ void LoggedSubsystem::Periodic() {
   auto avgUpdateTime =
       m_updateCount > 0 ? m_totalUpdateTime / m_updateCount : 0_s;
 
-  Log("Performance/AverageUpdateTime", avgUpdateTime.value() * 1000.0); // ms
+  Log("Performance/AverageUpdateTime", avgUpdateTime.value() * 1000.0);  // ms
   Log("Performance/UpdateCount", static_cast<double>(m_updateCount));
 
   auto endTime = frc::Timer::GetFPGATimestamp();
