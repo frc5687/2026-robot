@@ -6,6 +6,7 @@
 #include "ctre/phoenix6/core/CoreCANcoder.hpp"
 #include "rev/ServoChannel.h"
 #include "units/angle.h"
+#include "units/time.h"
 #include "utils/CANDevice.h"
 #include <rev/ServoHub.h>
 

@@ -40,7 +40,7 @@
 #include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
 #include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 #include "subsystem/vision/SimVisionIO.h"
-#include "subsystem/shooter/hood/SimHoodIO.h"
+// #include "subsystem/shooter/hood/SimHoodIO.h"
 #include "subsystem/shooter/hood/HoodIO.h"
 #include "units/angular_velocity.h"
 #include "utils/TunableDouble.h"
