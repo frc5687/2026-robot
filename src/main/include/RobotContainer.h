@@ -65,4 +65,7 @@ class RobotContainer {
 
   TunableDouble m_shooterRPMLeft;
   TunableDouble m_shooterRPMRight;
+
+  TunableDouble m_hoodPositionLeft;
+  TunableDouble m_hoodPositionRight;
 };

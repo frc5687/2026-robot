@@ -19,7 +19,7 @@ public:
     );
 
     void UpdateInputs(HoodIOInputs& inputs);
-    void SetHoodPosition(units::angle::turn_t leftHoodPosition, units::angle::turn_t rightHoodPosition);
+    void SetHoodPosition(units::angle::turn_t leftHoodPosition, units::angle::turn_t rightHoodPosition) override;
 
 private:
     rev::servohub::ServoHub m_servoHub;

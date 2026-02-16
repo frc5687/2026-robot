@@ -41,8 +41,11 @@
 #include "subsystem/Indexer/IndexerSubsystem.h"
 
 RobotContainer::RobotContainer():
-m_shooterRPMLeft("shooterrpm","rpm1", 1000),
-m_shooterRPMRight("shooterrpm","rpm1", 1000)
+m_shooterRPMLeft("shooterrpm","rpmleft", 1000),
+m_shooterRPMRight("shooterrpm","rpmright", 1000),
+
+m_hoodPositionLeft("hoodposition","hoodleft", 0.0),
+m_hoodPositionRight("hoodposition","hoodright", 0.0)
  {
   m_drive = CreateDrive();
   m_intakeSubsystem = CreateIntakeSubsystem();
@@ -226,7 +229,15 @@ m_driver.R2().OnTrue(
     )
 );
 
-}
+m_driver.L2().OnTrue(Run([this] {
+            m_hood->SetHoodPosition(
+                units::turn_t{m_hoodPositionLeft.Get()},
+                 units::turn_t{m_hoodPositionRight.Get()}
+            );
+        },
+        {m_hood.get()}));
+
+    }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");

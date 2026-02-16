@@ -8,7 +8,7 @@ class HoodSubsystem : public LoggedSubsystem{
     public :
      explicit HoodSubsystem(std::unique_ptr<HoodIO> io);
      ~HoodSubsystem() = default;
-     void SetHoodPosition(units::angle::turn_t);
+     void SetHoodPosition(units::angle::turn_t leftHoodRotation, units::angle::turn_t rightHoodRotation);
 
     protected : 
     void UpdateInputs() override;
