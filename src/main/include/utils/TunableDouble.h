@@ -19,8 +19,10 @@ class TunableDouble {
                          double defaultValue = 0.0);
 
   bool HasChanged();
-  double Get() const noexcept { return m_cached; }
-
+  
+double Get() const noexcept {
+  return m_entry.Get(m_defaultValue);
+}
   int64_t LastChangeUsec() const noexcept { return m_lastChange; }
 
  private:

@@ -25,7 +25,7 @@ inline constexpr auto kWheelCircumference =
 inline constexpr auto kMeterPerTurn = kWheelCircumference / 1_tr;
 
 inline constexpr double kDriveGearRatio =
-    (54.0 / 14.0) * (18.0 / 34.0) * (45.0 / 15.0);
+    (54.0 / 12.0) * (18.0 / 34.0) * (45.0 / 15.0);
 // kraken x60 version
 inline constexpr double kSteerGearRatio = (48.0 / 18.0) * (96.0 / 16.0);
 // x44 version
@@ -51,8 +51,10 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
 inline constexpr units::ampere_t kDriveSlipCurrent =
     120_A; // TODO: Tune, this is the max stator current to prevent sliping of
            // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 80_A;
-inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
+
+//tuned these to try to prevent robot drawing too much total power from 80->20
+inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 20_A;   
+inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 20_A;
 
 inline constexpr bool kDriveInverted =
     false; // true is clockwise positive, false is counter clockwise positive

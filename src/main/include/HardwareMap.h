@@ -10,8 +10,8 @@ namespace HardwareMap {
 namespace Bus {
 inline constexpr std::string_view kDriveTrain = "DriveTrain";
 inline constexpr std::string_view kRio = "rio";
-inline constexpr std::string_view kStructure = "SuperStructure";
-}  // namespace Bus
+inline constexpr std::string_view kShooter = "Shooter";
+} // namespace Bus
 
 namespace CAN {
 namespace TalonFX {
@@ -27,16 +27,35 @@ inline constexpr CANDevice BackLeftSteer{6, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightDrive{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 
-inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
-inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
-}  // namespace TalonFX
+inline constexpr CANDevice LeftRollerMotor{8, Bus::kRio};
+inline constexpr CANDevice RightRollerMotor{9, Bus::kRio};
+
+inline constexpr CANDevice LeftIndexerMotor{10, Bus::kDriveTrain};
+inline constexpr CANDevice CenterIndexerMotor{11, Bus::kDriveTrain};
+inline constexpr CANDevice RightIndexerMotor{12, Bus::kDriveTrain};
+
+
+inline constexpr CANDevice LinearIntake{13, Bus::kDriveTrain};
+
+inline constexpr CANDevice LeftFlywheelLeader{14, Bus::kShooter};
+inline constexpr CANDevice LeftFlywheelFollower{15, Bus::kShooter};
+
+inline constexpr CANDevice RightFlywheelLeader{16, Bus::kShooter};
+inline constexpr CANDevice RightFlywheelFollower{17, Bus::kShooter};
+
+inline constexpr CANDevice TurretMotor{18, Bus::kDriveTrain};
+
+} // namespace TalonFX
 
 namespace CANCoder {
 inline constexpr CANDevice FrontLeftEncoder{2, Bus::kDriveTrain};
 inline constexpr CANDevice FrontRightEncoder{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackLeftEncoder{3, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightEncoder{0, Bus::kDriveTrain};
-}  // namespace CANCoder
+inline constexpr CANDevice leftHoodEncoder{5, Bus::kShooter};
+inline constexpr CANDevice rightHoodEncoder{6, Bus::kShooter};
+
+} // namespace CANCoder
 
 namespace Pidgeon2 {
 inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
