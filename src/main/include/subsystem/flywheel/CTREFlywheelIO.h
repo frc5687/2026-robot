@@ -14,20 +14,30 @@ using namespace ctre::phoenix6;
 
 class CTREFlywheelIO : public FlywheelIO {
   public:
-    CTREFlywheelIO(const CANDevice &rightMotor, const CANDevice &leftMotor);
+    CTREFlywheelIO(const CANDevice &rightMotorLeader, const CANDevice &rightMotor2, 
+  const CANDevice &rightMotor3, const CANDevice &rightMotor4, 
+  const CANDevice &leftMotor1, const CANDevice &leftMotor2, const CANDevice &leftMotor3, 
+  const CANDevice &leftMotor4);
     void UpdateInputs(FlywheelIOInputs& inputs) override;
     void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) override;
 
   private:
-    hardware::TalonFX m_rightMotor;
-    hardware::TalonFX m_leftMotor;
+    hardware::TalonFX m_rightMotorLeader;
+    hardware::TalonFX m_rightMotor2;
+    hardware::TalonFX m_rightMotor3;
+    hardware::TalonFX m_rightMotor4;
+
+    hardware::TalonFX m_leftMotor1;
+    hardware::TalonFX m_leftMotor2;
+    hardware::TalonFX m_leftMotor3;
+    hardware::TalonFX m_leftMotor4;
+
 
     configs::TalonFXConfiguration m_rightconfig{};
-    configs::TalonFXConfiguration m_leftconfig{};
 
     controls::VelocityTorqueCurrentFOC m_request;
-    controls::Follower m_follower;
-
+    controls::Follower m_followerAligned;
+    controls::Follower m_followerOpposed;
     StatusSignal<units::turns_per_second_t> &m_motorVelocitySignal;
     StatusSignal<units::ampere_t> &m_motorCurrentSignal;
 
