@@ -1,6 +1,7 @@
 #include "subsystem/hood/HoodSubsystem.h"
 #include "Constants.h"
 #include "subsystem/LoggedSubsystem.h"
+#include "RobotState.h"
 #include <numbers>
 
 HoodSubsystem::HoodSubsystem(std::unique_ptr<HoodIO> io) :
@@ -25,6 +26,7 @@ HoodState HoodSubsystem::GetHoodState() const {
 
 void HoodSubsystem::UpdateInputs() {
     m_io->UpdateInputs(m_inputs);
+    RobotState::Instance().AddHoodObservation(GetHoodState());
 }
 
 void HoodSubsystem::LogTelemetry() {

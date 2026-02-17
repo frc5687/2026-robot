@@ -8,14 +8,16 @@
 
 class SimHoodIO : public HoodIO {
 
-    public:
-        SimHoodIO();
-        ~SimHoodIO() = default;
+public:
+    SimHoodIO();
+    ~SimHoodIO() = default;
 
-        virtual void UpdateInputs(HoodIOInputs& inputs) override;
-        virtual void SetHoodPosition(units::angle::turn_t hoodPosition) override;
+    void UpdateInputs(HoodIOInputs& inputs) override;
+    void SetHoodPosition(units::angle::turn_t hoodPosition) override;
+    void SetHoodPosition(units::turn_t leftHoodPosition, units::turn_t rightHoodPosition) override;
 
-    private:
-        frc::sim::SingleJointedArmSim m_simHood;
-        frc::PIDController m_pidController;
+private:
+    frc::sim::SingleJointedArmSim m_simHood;
+    frc::PIDController m_pidController;
+    units::turn_t m_desiredRotation{0_tr};
 };

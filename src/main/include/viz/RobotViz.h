@@ -17,6 +17,7 @@ class RobotViz {
   void Update();
   frc::Pose3d CalculateTurretPoseLeftRobotFrame(const frc::Pose2d& drivePose,
                                   const TurretState& turretState);
+  frc::Pose3d CalculateHoodPoseLeftRobotFrame(const HoodState& hoodStaet);
   frc::Pose3d CalculateTurretPoseRight(const frc::Pose2d& drivePose,
                                   const TurretState& turretState);
 

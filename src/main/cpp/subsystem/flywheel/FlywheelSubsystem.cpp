@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "Constants.h"
+#include "RobotState.h"
 #include "subsystem/LoggedSubsystem.h"
 
 FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io)
@@ -12,6 +13,7 @@ FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io)
 
 void FlywheelSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
+  RobotState::Instance().AddFlywheelObservation(GetFlywheelState());
 }
 
 FlywheelState FlywheelSubsystem::GetFlywheelState() const {

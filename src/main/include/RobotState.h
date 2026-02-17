@@ -7,9 +7,11 @@
 
 #include <string>
 
+#include <frc/Timer.h>
 #include "subsystem/drive/OdometryData.h"
 #include "subsystem/flywheel/FlywheelState.h"
 #include "subsystem/turret/TurretState.h"
+#include "subsystem/hood/HoodState.h"
 #include "utils/Logger.h"
 
 // This will store the entire state of subsystems we care about, this includes
@@ -28,11 +30,13 @@ class RobotState {
   void AddDriveObservation(const OdometryData& state);
   void AddTurretObservation(const TurretState& state);
   void AddFlywheelObservation(const FlywheelState& state);
+  void AddHoodObservation(const HoodState& state);
 
   // Interpolated or exterpolated based on time, limit to BUFFER_TIME
   OdometryData GetDriveState(units::second_t timestamp);
   TurretState GetTurretState(units::second_t timestamp);
   FlywheelState GetFlywheelState(units::second_t timestamp);
+  HoodState GetHoodState(units::second_t timestamp);
 
   void LogState(units::second_t timestamp);
 
@@ -41,9 +45,22 @@ class RobotState {
   frc::TimeInterpolatableBuffer<OdometryData> m_driveBuffer;
   frc::TimeInterpolatableBuffer<TurretState> m_turretBuffer;
   frc::TimeInterpolatableBuffer<FlywheelState> m_flywheelBuffer;
+  frc::TimeInterpolatableBuffer<HoodState> m_hoodBuffer;
 
   template <typename T>
   void Log(const std::string& key, T val) {
     Logger::Instance().Log("RobotState/" + key, val);
   }
+
+  template <typename T>
+  T GetState(const frc::TimeInterpolatableBuffer<T>& buffer, units::second_t timestamp) {
+        auto currentTime = frc::Timer::GetFPGATimestamp();
+        // We are looking to the future, extrapolate state
+        if (currentTime < timestamp) {
+            return buffer.Sample(timestamp).value().Extrapolate(timestamp - currentTime);
+        }
+        // Otherwise use interpolation
+        return buffer.Sample(timestamp).value();
+  }
+
 };

@@ -158,7 +158,7 @@ inline constexpr size_t kTotalSignals =
 }  // namespace SwerveDrive
 
 namespace Turret {
-inline constexpr double kGearRatio = 1.0;
+inline constexpr double kGearRatio = (130.0/24.0)*(42.0/12.0);
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC();
 inline constexpr units::kilogram_t kMass = 0.15_kg;
 inline constexpr units::meter_t kRadius = 7.5_in;
@@ -166,7 +166,7 @@ inline constexpr units::meter_t kRadius = 7.5_in;
 inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kMass * kRadius * kRadius;
 
-inline constexpr double kP = 0.1;
+inline constexpr double kP = 2.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 
@@ -221,6 +221,13 @@ inline constexpr frc::Transform3d kRobotToTurretLeft{
        units::meter_t{0.372}},
     frc::Rotation3d{0_rad, 0_rad, 0_rad}
 };
+
+inline constexpr frc::Transform3d kRobotToHoodLeft{
+    frc::Translation3d{units::meter_t{-0.228}, units::meter_t{0.191},
+       units::meter_t{0.4344}},
+    frc::Rotation3d{0_rad, 0.0_rad, 0_rad}
+};
+
 inline constexpr frc::Transform3d kRobotToTurretRight{
     frc::Translation3d{units::meter_t{-0.114}, units::meter_t{-0.191},
                        units::meter_t{0.372}},

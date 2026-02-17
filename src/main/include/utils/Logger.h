@@ -55,6 +55,12 @@ class Logger {
       });
       pub.Set(value, ts);
 
+    } else if constexpr (std::is_same_v<T, std::string>) {
+      auto& pub = GetOrCreate(name, m_stringPubs, [this, name] {
+        return m_instance.GetStringTopic(name).Publish();
+      });
+      pub.Set(value, ts);
+
     } else if constexpr (wpi::StructSerializable<T>) {
       auto& pub = GetOrCreate(name, m_structPubs<T>(), [this, name] {
         return m_instance.GetStructTopic<T>(name).Publish();
@@ -98,6 +104,12 @@ class Logger {
       });
       pub.Set(values, ts);
 
+    } else if constexpr (std::is_same_v<T, std::string>) {
+      auto& pub = GetOrCreate(name, m_stringArrPubs, [this, name] {
+        return m_instance.GetStringArrayTopic(name).Publish();
+      });
+      pub.Set(values, ts);
+
     } else if constexpr (wpi::StructSerializable<T>) {
       auto& pub = GetOrCreate(name, m_structArrPubs<T>(), [this, name] {
         return m_instance.GetStructArrayTopic<T>(name).Publish();
@@ -134,10 +146,13 @@ class Logger {
   std::unordered_map<std::string, nt::IntegerPublisher> m_intPubs;
   std::unordered_map<std::string, nt::FloatPublisher> m_floatPubs;
   std::unordered_map<std::string, nt::DoublePublisher> m_doublePubs;
+  std::unordered_map<std::string, nt::StringPublisher> m_stringPubs;
+
   std::unordered_map<std::string, nt::BooleanArrayPublisher> m_boolArrPubs;
   std::unordered_map<std::string, nt::IntegerArrayPublisher> m_intArrPubs;
   std::unordered_map<std::string, nt::FloatArrayPublisher> m_floatArrPubs;
   std::unordered_map<std::string, nt::DoubleArrayPublisher> m_doubleArrPubs;
+  std::unordered_map<std::string, nt::StringArrayPublisher> m_stringArrPubs;
 
   template <typename T>
   auto& m_structPubs() const {

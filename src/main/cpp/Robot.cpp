@@ -1,6 +1,7 @@
 // Team 5687 2026
 
 #include "Robot.h"
+#include "subsystem/CoordinatedSystemManager.h"
 
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
@@ -20,6 +21,7 @@ void Robot::RobotPeriodic() {
 
   frc2::CommandScheduler::GetInstance().Run();
   m_container.Periodic();
+  CoordinatedSystemManager::Instance().UpdateAll();
 
   auto endTime = frc::Timer::GetFPGATimestamp();
   auto updateTime = (endTime - startTime);

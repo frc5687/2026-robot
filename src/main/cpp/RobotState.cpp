@@ -5,13 +5,15 @@
 #include <ctime>
 
 #include "frc/Timer.h"
+#include "subsystem/flywheel/FlywheelState.h"
 #include "subsystem/turret/TurretState.h"
 #include "units/time.h"
 
 RobotState::RobotState()
     : m_driveBuffer(BUFFER_TIME, OdometryData::Interpolate),
       m_turretBuffer(BUFFER_TIME, TurretState::Interpolate),
-      m_flywheelBuffer(BUFFER_TIME, FlywheelState::Interpolate) {}
+      m_flywheelBuffer(BUFFER_TIME, FlywheelState::Interpolate),
+      m_hoodBuffer(BUFFER_TIME, HoodState::Interpolate) {}
 
 void RobotState::AddDriveObservation(const OdometryData& state) {
   m_driveBuffer.AddSample(state.timestamp, state);
@@ -25,31 +27,24 @@ void RobotState::AddFlywheelObservation(const FlywheelState& state) {
   m_flywheelBuffer.AddSample(state.timestamp, state);
 }
 
+void RobotState::AddHoodObservation(const HoodState& state) {
+  m_hoodBuffer.AddSample(state.timestamp, state);
+}
+
 OdometryData RobotState::GetDriveState(units::second_t timestamp) {
-  auto current = frc::Timer::GetFPGATimestamp();
-  if (current < timestamp) {
-    return m_driveBuffer.Sample(timestamp).value().Extrapolate(timestamp -
-                                                               current);
-  }
-  return m_driveBuffer.Sample(timestamp).value();
+    return GetState<OdometryData>(m_driveBuffer, timestamp);
 }
 
 TurretState RobotState::GetTurretState(units::second_t timestamp) {
-  auto current = frc::Timer::GetFPGATimestamp();
-  if (current < timestamp) {
-    return m_turretBuffer.Sample(timestamp).value().Extrapolate(timestamp -
-                                                                current);
-  }
-  return m_turretBuffer.Sample(timestamp).value();
+    return GetState<TurretState>(m_turretBuffer, timestamp);
 }
 
 FlywheelState RobotState::GetFlywheelState(units::second_t timestamp) {
-  auto current = frc::Timer::GetFPGATimestamp();
-  if (current < timestamp) {
-    return m_flywheelBuffer.Sample(timestamp).value().Extrapolate(timestamp -
-                                                                  current);
-  }
-  return m_flywheelBuffer.Sample(timestamp).value();
+  return GetState<FlywheelState>(m_flywheelBuffer, timestamp);
+}
+
+HoodState RobotState::GetHoodState(units::second_t timestamp) {
+    return GetState<HoodState>(m_hoodBuffer, timestamp);
 }
 
 void RobotState::LogState(units::second_t timestamp) {

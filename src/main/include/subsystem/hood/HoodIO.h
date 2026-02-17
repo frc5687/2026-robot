@@ -2,14 +2,18 @@
 
 #include <units/angle.h>
 #include <units/time.h>
+#include <units/angular_velocity.h>
 
 struct HoodIOInputs{
     units::second_t timestamp{0_s};
     int leftMicroseconds = 0;
     units::angle::turn_t leftHoodRotation{0_tr};
+    units::turns_per_second_t leftHoodVelocity{0_tps};
 
-    int rightMicroseconds = 0;
+    int rightMicroseconds = 0; // TODO: units::micro_seconds
     units::angle::turn_t rightHoodRotation{0_tr};
+    units::turns_per_second_t rightHoodVelocity{0_tps};
+
 };
 
 class HoodIO {

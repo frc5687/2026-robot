@@ -11,6 +11,11 @@ frc::Pose3d RobotViz::CalculateTurretPoseLeftRobotFrame(const frc::Pose2d& drive
                                           const TurretState& turretState) {
   return {Constants::Geometry::kRobotToTurretLeft.Translation(),
                                   {0_rad, 0_rad, turretState.angle}};
+
+}
+
+frc::Pose3d RobotViz::CalculateHoodPoseLeftRobotFrame(const HoodState& hoodState) {
+    return {Constants::Geometry::kRobotToHoodLeft.Translation(), {0_rad, hoodState.angle, 0_rad}};
 }
 
 frc::Pose3d RobotViz::CalculateTurretPoseRight(const frc::Pose2d& drivePose,
@@ -29,17 +34,20 @@ void RobotViz::Update() {
   units::second_t timestamp = frc::Timer::GetFPGATimestamp();
   auto driveState = m_robotState.GetDriveState(timestamp);
   auto turretState = m_robotState.GetTurretState(timestamp);
+  auto hoodState = m_robotState.GetHoodState(timestamp);
+
   auto turretPoseLeft = CalculateTurretPoseLeftRobotFrame(driveState.pose, turretState);
+  auto hoodPoseLeft = CalculateHoodPoseLeftRobotFrame(hoodState);
   auto turretPoseRight = CalculateTurretPoseRight(driveState.pose, turretState);
-  const std::array<frc::Pose3d, 2> components{
+
+  const std::array<frc::Pose3d, 3> components{
     turretPoseLeft,
+    hoodPoseLeft,
     turretPoseRight
   };
+
   Log("DrivePose", driveState.pose);
-  Log("DrivePose3d", frc::Pose3d{driveState.pose});
   Log("Components", components);
-  Log("Turret", turretPoseLeft);
-  // Log("TurretPose", turretPose);
 }
 
 void RobotViz::FutureViz(units::second_t futureDt) {
