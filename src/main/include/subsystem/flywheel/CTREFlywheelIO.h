@@ -8,14 +8,15 @@
 #include "units/angular_velocity.h"
 #include "units/current.h"
 #include "utils/CANDevice.h"
+#include "utils/TunableDouble.h"
 #include <array>
 
 using namespace ctre::phoenix6;
 
 class CTREFlywheelIO : public FlywheelIO {
   public:
-    CTREFlywheelIO(const CANDevice &rightLeaderMotor, const CANDevice &rightFollowerMotor, 
-  const CANDevice &leftLeaderMotor, const CANDevice &leftFollowerMotor);
+    CTREFlywheelIO(const CANDevice &leftLeaderMotor, const CANDevice &leftFollowerMotor, 
+  const CANDevice &rightLeaderMotor, const CANDevice &rightFollowerMotor);
     void UpdateInputs(FlywheelIOInputs& inputs) override;
     void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPMLeft, units::revolutions_per_minute_t desiredRPMRight) override;
 
@@ -42,4 +43,14 @@ class CTREFlywheelIO : public FlywheelIO {
     StatusSignal<units::ampere_t> &m_leftLeaderCurrentSignal;
 
     std::array<BaseStatusSignal*, 4> m_batchSignals;
+
+    TunableDouble m_rightkS;
+    TunableDouble m_rightkV;
+    TunableDouble m_rightkA;
+
+    TunableDouble m_leftkS;
+    TunableDouble m_leftkV;
+    TunableDouble m_leftkA;
+
+
 };
