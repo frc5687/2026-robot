@@ -6,17 +6,13 @@
 #include "units/length.h"
 #include <memory>
 
-IntakeSubsystem::IntakeSubsystem(std::unique_ptr<LinearIntakeIO> lio, std::unique_ptr<IntakeRollerIO> rio) 
-    : LoggedSubsystem("Intake"), m_Lio(std::move(lio)), m_Rio(std::move(rio)){}
+IntakeSubsystem::IntakeSubsystem(std::unique_ptr<IntakeRollerIO> io) 
+    : LoggedSubsystem("Intake Roller"), m_io(std::move(io)){}
 
-void IntakeSubsystem::UpdateInputs() {m_Rio->UpdateInputs(m_Rinputs); m_Lio->UpdateInputs(m_Linputs);}
+void IntakeSubsystem::UpdateInputs() {m_io->UpdateInputs(m_inputs);}
 
 void IntakeSubsystem::SetVoltage(units::volt_t voltage) {
-    m_Rio ->SetVoltage(voltage);
-}
-
-void IntakeSubsystem::SetPosition(units::meter_t meter){
-    m_Lio ->SetPosition(meter);
+    m_io ->SetVoltage(voltage);
 }
 
 void IntakeSubsystem::LogTelemetry(){

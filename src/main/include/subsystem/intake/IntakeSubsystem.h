@@ -9,9 +9,8 @@
 
 class IntakeSubsystem : public LoggedSubsystem{
     public:
-    explicit IntakeSubsystem(std::unique_ptr<LinearIntakeIO> lio, std::unique_ptr<IntakeRollerIO> rio);
+    explicit IntakeSubsystem(std::unique_ptr<IntakeRollerIO> io);
     ~IntakeSubsystem() = default;
-    void SetPosition(units::meter_t);
     void SetVoltage(units::volt_t);
     protected:
         void UpdateInputs() override;
@@ -19,9 +18,7 @@ class IntakeSubsystem : public LoggedSubsystem{
 
     private:
 
-        std::unique_ptr<LinearIntakeIO> m_Lio;
-        std::unique_ptr<IntakeRollerIO> m_Rio;
-        LinearIntakeIOInputs m_Linputs{};
-        IntakeRollerIOInputs m_Rinputs{};
+        std::unique_ptr<IntakeRollerIO> m_io;
+        IntakeRollerIOInputs m_inputs{};
         units::meter_t m_desiredMeters;
 };

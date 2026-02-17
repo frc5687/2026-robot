@@ -17,5 +17,8 @@ class HoodSubsystem : public LoggedSubsystem{
     private :
         std::unique_ptr<HoodIO> m_io;
         HoodIOInputs m_inputs{};
-        units::angle::turn_t hoodRotation;
+        units::angle::turn_t m_leftDesiredSetpoint = 0.4_tr;
+        units::angle::turn_t m_rightDesiredSetpoint = 0.4_tr;
+
+        
 };

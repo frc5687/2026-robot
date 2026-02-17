@@ -24,6 +24,7 @@ REVHoodIO::REVHoodIO(
       m_leftServoChannel(
           m_servoHub.GetServoChannel(
               rev::servohub::ServoChannel::ChannelId::kChannelId0
+
           )
       ),
       m_rightServoChannel(m_servoHub.GetServoChannel(rev::servohub::ServoChannel::ChannelId::kChannelId1)),
@@ -38,14 +39,21 @@ REVHoodIO::REVHoodIO(
 {
     m_leftServoChannel.SetEnabled(true);
     m_leftServoChannel.SetPowered(true);
-    m_leftEncoderConfigs.MagnetSensor.MagnetOffset = Constants::Hood::kLeftEncoderOffset;
-    m_leftEncoderConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
-    m_leftEncoder.GetConfigurator().Apply(m_leftEncoderConfigs);
 
     m_rightServoChannel.SetEnabled(true);
     m_rightServoChannel.SetPowered(true);
+    
+    m_leftServoChannel.SetPulseWidth(0);
+    m_rightServoChannel.SetPulseWidth(0);
+
+    m_leftEncoderConfigs.MagnetSensor.MagnetOffset = Constants::Hood::kLeftEncoderOffset;
+    m_leftEncoderConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
+    m_leftEncoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0_tr;
+    m_leftEncoder.GetConfigurator().Apply(m_leftEncoderConfigs);
+
     m_rightEncoderConfigs.MagnetSensor.MagnetOffset = Constants::Hood::kRightEncoderOffset;
     m_rightEncoderConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
+    m_rightEncoderConfigs.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0_tr;
     m_rightEncoder.GetConfigurator().Apply(m_rightEncoderConfigs);
 }
 
@@ -63,26 +71,29 @@ void REVHoodIO::UpdateInputs(HoodIOInputs &inputs){
     m_rightMicroseconds = m_rightServoChannel.GetPulseWidth();
 }
 
-void REVHoodIO::SetHoodPosition(units::turn_t leftHoodRotation, units::turn_t rightHoodRotation){
-    
+
+void REVHoodIO::SetHoodPosition(units::turn_t leftHood, units::turn_t rightHood){
+    auto leftHoodRotation = std::clamp(leftHood, Constants::Hood::kMinAngle, Constants::Hood::kMaxAngle);
+    auto rightHoodRotation = std::clamp(rightHood, Constants::Hood::kMinAngle, Constants::Hood::kMaxAngle);
+
     if(!frc::IsNear(leftHoodRotation, m_leftServoAngle, 0.1_tr)){
         (std::signbit(m_leftServoAngle.value() - leftHoodRotation.value())) ? 
-        m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds + 200, 500, 2500)) 
-        : m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds - 200, 500, 2500));
+        m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds - 200, 500, 2500)) 
+        : m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds + 200, 500, 2500));
     }else if (!frc::IsNear(leftHoodRotation, m_leftServoAngle, 0.01_tr)){
         (std::signbit(m_leftServoAngle.value() - leftHoodRotation.value())) ? 
-        m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds + 25, 500, 2500))
-         : m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds - 25, 500, 2500));
+        m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds - 25, 500, 2500))
+         : m_leftServoChannel.SetPulseWidth(std::clamp(m_leftMicroseconds + 25, 500, 2500));
     }
 
     if(!frc::IsNear(rightHoodRotation, m_rightServoAngle, 0.1_tr)){
         (std::signbit(m_rightServoAngle.value() - rightHoodRotation.value())) ? 
-        m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds + 200, 500, 2500)) 
-        : m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds - 200, 500, 2500));
+        m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds - 200, 500, 2500)) 
+        : m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds + 200, 500, 2500));
     }else if (!frc::IsNear(rightHoodRotation, m_rightServoAngle, 0.01_tr)){
         (std::signbit(m_rightServoAngle.value() - rightHoodRotation.value())) ? 
-        m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds + 25, 500, 2500))
-         : m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds - 25, 500, 2500));
+        m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds - 25, 500, 2500))
+         : m_rightServoChannel.SetPulseWidth(std::clamp(m_rightMicroseconds + 25, 500, 2500));
     }
 }
 

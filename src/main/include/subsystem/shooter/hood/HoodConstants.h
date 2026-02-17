@@ -13,10 +13,10 @@ namespace Constants::Hood {
     inline constexpr units::moment_of_inertia::kilogram_square_meter_t kMoi = 1.0_kg_sq_m;
     inline constexpr units::meter_t kArmLength = 1.0_m;
     
-    inline constexpr units::turn_t kLeftEncoderOffset = 0.365712890625_tr;
-    inline constexpr units::turn_t kRightEncoderOffset = 0.365712890625_tr;
+    inline constexpr units::turn_t kLeftEncoderOffset = -0.64724609375_tr;
+    inline constexpr units::turn_t kRightEncoderOffset = -0.85693359375_tr;
 
     inline constexpr units::turn_t kMinAngle = 0.0_tr;
-    inline constexpr units::turn_t kMaxAngle = 1.0_tr;
+    inline constexpr units::turn_t kMaxAngle = 0.6_tr;
 
 }

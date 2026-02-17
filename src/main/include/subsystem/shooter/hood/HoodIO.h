@@ -4,10 +4,10 @@
 
 struct HoodIOInputs{
     int leftMicroseconds = 0;
-    units::angle::turn_t leftHoodRotation{0_tr};
+    units::angle::turn_t leftHoodRotation{0.4_tr};
 
     int rightMicroseconds = 0;
-    units::angle::turn_t rightHoodRotation{0_tr};
+    units::angle::turn_t rightHoodRotation{0.4_tr};
 };
 
 class HoodIO {

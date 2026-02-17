@@ -44,8 +44,8 @@ RobotContainer::RobotContainer():
 m_shooterRPMLeft("shooterrpm","rpmleft", 1000),
 m_shooterRPMRight("shooterrpm","rpmright", 1000),
 
-m_hoodPositionLeft("hoodposition","hoodleft", 0.0),
-m_hoodPositionRight("hoodposition","hoodright", 0.0)
+m_hoodPositionLeft("hoodposition","hoodleft", 0.4),
+m_hoodPositionRight("hoodposition","hoodright", 0.1)
  {
   m_drive = CreateDrive();
   m_intakeSubsystem = CreateIntakeSubsystem();
@@ -117,9 +117,6 @@ std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
 
 std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
     return std::make_unique<IntakeSubsystem>(
-        std::make_unique<CTRELinearIntakeIO>(
-            HardwareMap::CAN::TalonFX::LinearIntake
-        ),
         std::make_unique<CTREIntakeRollerIO>(
             HardwareMap::CAN::TalonFX::LeftRollerMotor,
             HardwareMap::CAN::TalonFX::RightRollerMotor
