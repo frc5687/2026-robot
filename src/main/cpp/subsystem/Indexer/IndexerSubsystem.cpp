@@ -13,8 +13,12 @@ void IndexerSubsystem::UpdateInputs() {
 }
 
 
-void IndexerSubsystem::SetVoltage(units::volt_t voltage, units::angular_velocity::turns_per_second_t rpm) {
-    m_io->SetVoltage(voltage, rpm);
+void IndexerSubsystem::SetFeederRPM(units::angular_velocity::turns_per_second_t rpm) {
+    m_io->SetFeederRPM(rpm);
+}
+
+void IndexerSubsystem::SetKickerRPM(units::angular_velocity::turns_per_second_t rpm) {
+    m_io->SetKickerRPM(rpm);
 }
 
 void IndexerSubsystem::LogTelemetry() {

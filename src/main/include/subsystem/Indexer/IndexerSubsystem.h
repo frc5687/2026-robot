@@ -12,7 +12,8 @@ public:
     ~IndexerSubsystem() = default;
 
     // void SetAngle(units::radian_t desiredAngle);
-    void SetVoltage(units::volt_t voltage, units::angular_velocity::turns_per_second_t rpm);
+    void SetFeederRPM(units::angular_velocity::turns_per_second_t rpm);
+    void SetKickerRPM(units::angular_velocity::turns_per_second_t rpm);
 protected:
     void UpdateInputs() override;
     void LogTelemetry() override;

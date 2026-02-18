@@ -7,7 +7,7 @@
 
 namespace HardwareMap {
 namespace Bus {
-inline constexpr std::string_view kDriveTrain = "DriveTrain";
+inline constexpr std::string_view kDriveTrain = "test";
 inline constexpr std::string_view kRio = "rio";
 inline constexpr std::string_view kStructure = "SuperStructure";
 } // namespace Bus
@@ -29,17 +29,24 @@ inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 inline constexpr CANDevice LeftRollerMotor{8, Bus::kRio};
 inline constexpr CANDevice RightRollerMotor{9, Bus::kRio};
 
-inline constexpr CANDevice LeftIndexerMotor{10, Bus::kDriveTrain};
-inline constexpr CANDevice CenterIndexerMotor{11, Bus::kDriveTrain};
-inline constexpr CANDevice RightIndexerMotor{12, Bus::kDriveTrain};
+inline constexpr CANDevice LeftIndexerMotor{26, Bus::kDriveTrain};
+inline constexpr CANDevice RightIndexerMotor{27, Bus::kDriveTrain};
+
+inline constexpr CANDevice LeftFeederMotor{24, Bus::kDriveTrain};
+inline constexpr CANDevice RightFeederMotor{25, Bus::kDriveTrain};
+
 
 
 inline constexpr CANDevice LinearIntake{13, Bus::kDriveTrain};
 inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
 inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
 
-inline constexpr CANDevice LeftFlywheel{14, Bus::kDriveTrain};
-inline constexpr CANDevice RightFlywheel{15, Bus::kDriveTrain};
+inline constexpr CANDevice LeftFlywheel{20, Bus::kDriveTrain};
+inline constexpr CANDevice LeftFlywheel2{21, Bus::kDriveTrain};
+
+inline constexpr CANDevice RightFlywheel{22, Bus::kDriveTrain};
+inline constexpr CANDevice RightFlywheel2{23, Bus::kDriveTrain};
+
 
 } // namespace TalonFX
 

@@ -13,22 +13,27 @@
 
 class CTREIndexerIO : public IndexerIO {
     public:
-    CTREIndexerIO(const CANDevice &rightMotor, const CANDevice &leftMotor, const CANDevice &centerMotor);
+    CTREIndexerIO(const CANDevice &rightMotor, const CANDevice &leftMotor, const CANDevice &leftfeeder, const CANDevice &rightfeeder);
     void UpdateInputs(IndexerIOInputs& inputs) override;
-    void SetVoltage(units::volt_t voltage, units::angular_velocity::turns_per_second_t rpm) override;
+    void SetFeederRPM(units::angular_velocity::turns_per_second_t rpm) override;
+    void SetKickerRPM(units::angular_velocity::turns_per_second_t rpm) override;
 
     private:
-        ctre::phoenix6::hardware::TalonFX m_leftMotor;
-        ctre::phoenix6::hardware::TalonFX m_rightMotor;
-        ctre::phoenix6::hardware::TalonFX m_centerMotor;
+        ctre::phoenix6::hardware::TalonFX m_leftkickerMotor;
+        ctre::phoenix6::hardware::TalonFX m_rightkickerMotor;
+        ctre::phoenix6::hardware::TalonFX m_leftfeederMotor;
+        ctre::phoenix6::hardware::TalonFX m_rightfeederMotor;
 
-        ctre::phoenix6::controls::VoltageOut m_leftVoltage;
-        ctre::phoenix6::controls::VoltageOut m_rightVoltage;
-        ctre::phoenix6::controls::VoltageOut m_centerVoltage;
 
-        ctre::phoenix6::controls::VelocityTorqueCurrentFOC m_leftRequest;
-        ctre::phoenix6::controls::Follower m_rightRequest;
-        ctre::phoenix6::controls::VelocityTorqueCurrentFOC m_centerRequest;
+        // ctre::phoenix6::controls::VoltageOut m_leftVoltage;
+        // ctre::phoenix6::controls::VoltageOut m_rightVoltage;
+        // ctre::phoenix6::controls::VoltageOut m_centerVoltage;
+
+        ctre::phoenix6::controls::VelocityTorqueCurrentFOC m_leftkickerRequest;
+        ctre::phoenix6::controls::Follower m_rightkickerRequest;
+        ctre::phoenix6::controls::VelocityTorqueCurrentFOC m_leftfeederRequest;
+        ctre::phoenix6::controls::Follower m_rightfeederRequest;
+
 
 
         ctre::phoenix6::configs::TalonFXConfiguration m_leftConfigs{};

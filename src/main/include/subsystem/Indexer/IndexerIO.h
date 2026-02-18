@@ -19,5 +19,7 @@ class IndexerIO {
  public:
   virtual ~IndexerIO() = default;
   virtual void UpdateInputs(IndexerIOInputs& inputs) = 0;
-  virtual void SetVoltage(units::volt_t voltage, units::angular_velocity::turns_per_second_t rpm) = 0;
+  virtual void SetFeederRPM(units::angular_velocity::turns_per_second_t rpm) = 0;
+    virtual void SetKickerRPM(units::angular_velocity::turns_per_second_t rpm) = 0;
+
 };

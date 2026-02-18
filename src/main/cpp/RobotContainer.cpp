@@ -38,85 +38,87 @@
 #include "subsystem/Indexer/IndexerIO.h"
 #include "subsystem/Indexer/IndexerSubsystem.h"
 
-RobotContainer::RobotContainer() {
-  m_drive = CreateDrive();
-  m_intakeSubsystem = CreateIntakeSubsystem();
+RobotContainer::RobotContainer():
+m_shooterrpm("shooterrpm", "shooterrpm", 2000)
+{
+//   m_drive = CreateDrive();
+//   m_intakeSubsystem = CreateIntakeSubsystem();
   m_indexer = CreateIndexer();
-  m_hood = CreateHood();
+//   m_hood = CreateHood();
   //m_vision = CreateVision();
   ConfigureBindings();
 }
 
-std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
-  // Module encoder offsets (tune these per robot)
-  constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.3505859375_tr,               // FL
-      -0.05517578125_tr,    // FR
-      0.27099609375_tr - 0.5_tr, // BL
-      0.096923828125_tr  // BR
-      };
+// std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
+//   // Module encoder offsets (tune these per robot)
+//   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
+//       0.3505859375_tr,               // FL
+//       -0.05517578125_tr,    // FR
+//       0.27099609375_tr - 0.5_tr, // BL
+//       0.096923828125_tr  // BR
+//       };
     
-  if (frc::RobotBase::IsSimulation()) {
-    return std::make_unique<DriveSubsystem>(
-        std::make_unique<SimModuleIO>(
-            ModuleConfig{ModulePosition::FrontLeft, 0_tr}),
-        std::make_unique<SimModuleIO>(
-            ModuleConfig{ModulePosition::FrontRight, 0_tr}),
-        std::make_unique<SimModuleIO>(
-            ModuleConfig{ModulePosition::BackLeft, 0_tr}),
-        std::make_unique<SimModuleIO>(
-            ModuleConfig{ModulePosition::BackRight, 0_tr}),
-        std::make_unique<SimGyroIO>());
-  }
+//   if (frc::RobotBase::IsSimulation()) {
+//     return std::make_unique<DriveSubsystem>(
+//         std::make_unique<SimModuleIO>(
+//             ModuleConfig{ModulePosition::FrontLeft, 0_tr}),
+//         std::make_unique<SimModuleIO>(
+//             ModuleConfig{ModulePosition::FrontRight, 0_tr}),
+//         std::make_unique<SimModuleIO>(
+//             ModuleConfig{ModulePosition::BackLeft, 0_tr}),
+//         std::make_unique<SimModuleIO>(
+//             ModuleConfig{ModulePosition::BackRight, 0_tr}),
+//         std::make_unique<SimGyroIO>());
+//   }
 
-    // Real hardware
-    return std::make_unique<DriveSubsystem>(
-        std::make_unique<CTREModuleIO>(
-            CTREModuleIO::DeviceIDs{
-                HardwareMap::CAN::TalonFX::FrontLeftDrive,
-                HardwareMap::CAN::TalonFX::FrontLeftSteer,
-                HardwareMap::CAN::CANCoder::FrontLeftEncoder},
-            ModuleConfig{ModulePosition::FrontLeft, kEncoderOffsets[0]}),
+//     // Real hardware
+//     return std::make_unique<DriveSubsystem>(
+//         std::make_unique<CTREModuleIO>(
+//             CTREModuleIO::DeviceIDs{
+//                 HardwareMap::CAN::TalonFX::FrontLeftDrive,
+//                 HardwareMap::CAN::TalonFX::FrontLeftSteer,
+//                 HardwareMap::CAN::CANCoder::FrontLeftEncoder},
+//             ModuleConfig{ModulePosition::FrontLeft, kEncoderOffsets[0]}),
 
-        std::make_unique<CTREModuleIO>(
-            CTREModuleIO::DeviceIDs{
-                HardwareMap::CAN::TalonFX::FrontRightDrive,
-                HardwareMap::CAN::TalonFX::FrontRightSteer,
-                HardwareMap::CAN::CANCoder::FrontRightEncoder},
-            ModuleConfig{ModulePosition::FrontRight, kEncoderOffsets[1]}),
+//         std::make_unique<CTREModuleIO>(
+//             CTREModuleIO::DeviceIDs{
+//                 HardwareMap::CAN::TalonFX::FrontRightDrive,
+//                 HardwareMap::CAN::TalonFX::FrontRightSteer,
+//                 HardwareMap::CAN::CANCoder::FrontRightEncoder},
+//             ModuleConfig{ModulePosition::FrontRight, kEncoderOffsets[1]}),
 
-        std::make_unique<CTREModuleIO>(
-            CTREModuleIO::DeviceIDs{
-                HardwareMap::CAN::TalonFX::BackLeftDrive,
-                HardwareMap::CAN::TalonFX::BackLeftSteer,
-                HardwareMap::CAN::CANCoder::BackLeftEncoder},
-            ModuleConfig{ModulePosition::BackLeft, kEncoderOffsets[2]}),
+//         std::make_unique<CTREModuleIO>(
+//             CTREModuleIO::DeviceIDs{
+//                 HardwareMap::CAN::TalonFX::BackLeftDrive,
+//                 HardwareMap::CAN::TalonFX::BackLeftSteer,
+//                 HardwareMap::CAN::CANCoder::BackLeftEncoder},
+//             ModuleConfig{ModulePosition::BackLeft, kEncoderOffsets[2]}),
 
-        std::make_unique<CTREModuleIO>(
-            CTREModuleIO::DeviceIDs{
-                HardwareMap::CAN::TalonFX::BackRightDrive,
-                HardwareMap::CAN::TalonFX::BackRightSteer,
-                HardwareMap::CAN::CANCoder::BackRightEncoder},
-            ModuleConfig{ModulePosition::BackRight, kEncoderOffsets[3]}),
+//         std::make_unique<CTREModuleIO>(
+//             CTREModuleIO::DeviceIDs{
+//                 HardwareMap::CAN::TalonFX::BackRightDrive,
+//                 HardwareMap::CAN::TalonFX::BackRightSteer,
+//                 HardwareMap::CAN::CANCoder::BackRightEncoder},
+//             ModuleConfig{ModulePosition::BackRight, kEncoderOffsets[3]}),
 
-        std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
-    }
+//         std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
+//     }
 
 std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
-    return std::make_unique<IndexerSubsystem>(std::make_unique<CTREIndexerIO>(HardwareMap::CAN::TalonFX::RightIndexerMotor, HardwareMap::CAN::TalonFX::LeftIndexerMotor, HardwareMap::CAN::TalonFX::CenterIndexerMotor));
+    return std::make_unique<IndexerSubsystem>(std::make_unique<CTREIndexerIO>(HardwareMap::CAN::TalonFX::RightIndexerMotor, HardwareMap::CAN::TalonFX::LeftIndexerMotor, HardwareMap::CAN::TalonFX::LeftFeederMotor, HardwareMap::CAN::TalonFX::RightFeederMotor));
 }
 
-std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
-    return std::make_unique<IntakeSubsystem>(
-        std::make_unique<CTRELinearIntakeIO>(
-            HardwareMap::CAN::TalonFX::LinearIntake
-        ),
-        std::make_unique<CTREIntakeRollerIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor
-        )
-    );
-}
+// std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
+//     return std::make_unique<IntakeSubsystem>(
+//         std::make_unique<CTRELinearIntakeIO>(
+//             HardwareMap::CAN::TalonFX::LinearIntake
+//         ),
+//         std::make_unique<CTREIntakeRollerIO>(
+//             HardwareMap::CAN::TalonFX::LeftRollerMotor,
+//             HardwareMap::CAN::TalonFX::RightRollerMotor
+//         )
+//     );
+// }
 
 // std::unique_ptr<LinearIntake> RobotContainer::CreateLinearIntake(){
 //     if(frc::RobotBase::IsSimulation()){
@@ -147,17 +149,17 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
 //       std::make_unique<SimVisionIO>(),
 //       m_drive->GetOdometryThread());
 // }
-    std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
-    //    if (frc::RobotBase::IsSimulation()) {
-    //         return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
-    //     }
-        return std::make_unique<HoodSubsystem>(
-            std::make_unique<REVHoodIO>(
-                1,
-                HardwareMap::CAN::CANCoder::HoodEncoder
-            )
-        );
-    }
+    // std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood(){
+    // //    if (frc::RobotBase::IsSimulation()) {
+    // //         return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+    // //     }
+    //     return std::make_unique<HoodSubsystem>(
+    //         std::make_unique<REVHoodIO>(
+    //             1,
+    //             HardwareMap::CAN::CANCoder::HoodEncoder
+    //         )
+    //     );
+    // }
 
     // std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
     //   return std::make_unique<VisionSubsystem>(
@@ -173,19 +175,19 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
 
         return std::make_unique<FlywheelSubsystem>(
             std::make_unique<CTREFlywheelIO>(
-                HardwareMap::CAN::TalonFX::RightFlywheel, HardwareMap::CAN::TalonFX::LeftFlywheel));
+                HardwareMap::CAN::TalonFX::RightFlywheel, HardwareMap::CAN::TalonFX::RightFlywheel2, HardwareMap::CAN::TalonFX::LeftFlywheel, HardwareMap::CAN::TalonFX::LeftFlywheel2));
     }
 
 void RobotContainer::ConfigureBindings() {
     using frc2::cmd::Run;
 
   //Set default drive command
-  m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
-      m_drive.get(),
-      [this] { return -m_driver.GetLeftY(); },
-      [this] { return -m_driver.GetLeftX(); },
-      [this] { return -m_driver.GetRightX(); },
-      false)); //s lew limiter
+//   m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
+//       m_drive.get(),
+//       [this] { return -m_driver.GetLeftY(); },
+//       [this] { return -m_driver.GetLeftX(); },
+//       [this] { return -m_driver.GetRightX(); },
+//       false)); //s lew limiter
 
 //   m_driver.Square().WhileTrue(
 //       DriveWithNormalVectorAlignment(
@@ -194,21 +196,37 @@ void RobotContainer::ConfigureBindings() {
 //           false)
 //       .ToPtr());
 
-    m_driver.R1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeSubsystem.get()}));
+    // m_driver.R1().OnTrue(Run(
+    //   [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeSubsystem.get()}));
 
-    m_driver.L1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(12_V); }, {m_intakeSubsystem.get()}));
+    // m_driver.L1().OnTrue(Run(
+    //   [this] { m_intakeSubsystem->SetVoltage(12_V); }, {m_intakeSubsystem.get()}));
 
-    m_driver.Circle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(12.0_V, 80_tps);}, {m_indexer.get()})
-    );
-    m_driver.Triangle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(0.0_V, 0_tps);}, {m_indexer.get()})
-    );
+    // m_driver.Circle().OnTrue(
+    //     Run([this] {m_indexer->SetVoltage(12.0_V, 80_tps);}, {m_indexer.get()})
+    // );
+    // m_driver.Triangle().OnTrue(
+    //     Run([this] {m_indexer->SetVoltage(0.0_V, 0_tps);}, {m_indexer.get()})
+    // );
 
     m_driver.R2().OnTrue(
-        Run([this] {m_flywheel->SetRPM(1500_rpm);}, {m_flywheel.get()})
+        Run([this] {m_flywheel->SetRPM(units::revolutions_per_minute_t{m_shooterrpm.Get()});}, {m_flywheel.get()})
+    );
+
+    m_driver.L1().OnTrue(
+        Run([this] {m_indexer->SetFeederRPM(3500_rpm);}, {m_indexer.get()})
+    );
+
+    m_driver.L2().OnTrue(
+        Run([this] {m_indexer->SetKickerRPM(3500_rpm);}, {m_indexer.get()})
+    );
+
+    m_driver.Square().OnTrue(
+        Run([this] {m_indexer->SetKickerRPM(0_rpm);}, {m_indexer.get()})
+    );
+
+    m_driver.Circle().OnTrue(
+        Run([this] {m_indexer->SetFeederRPM(0_rpm);}, {m_indexer.get()})
     );
 }
 
