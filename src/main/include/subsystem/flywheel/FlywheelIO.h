@@ -13,8 +13,6 @@ struct FlywheelIOInputs {
   units::revolutions_per_minute_t rightFlywheelVelocity{0_rpm};
   units::revolutions_per_minute_t leftFlywheelVelocity{0_rpm};
 
-  units::turns_per_second_t motorVelocity{0_tps};
-
   units::second_t timestamp{0_s};
 };
 

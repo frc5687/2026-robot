@@ -6,9 +6,9 @@
 HoodSubsystem::HoodSubsystem(std::unique_ptr<HoodIO> io) :
     LoggedSubsystem("Hood"), m_io(std::move(io)) {}
 
-void HoodSubsystem::SetHoodPosition(units::turn_t desiredAngle) {
+void HoodSubsystem::SetHoodPosition(units::turn_t desiredAngle, units::turn_t righthoodangle) {
     m_desiredAngle = desiredAngle;
-    m_io->SetHoodPosition(m_desiredAngle);
+    m_io->SetHoodPosition(m_desiredAngle, righthoodangle);
 }
 
 HoodState HoodSubsystem::GetHoodState() const {

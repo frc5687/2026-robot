@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Constants.h"
 #include <memory>
 #include "subsystem/LoggedSubsystem.h"
 #include "FlywheelState.h"
 #include "FlywheelIO.h"
-#include "subsystem/flywheel/FlywheelConstants.h"
 #include "units/angular_velocity.h"
 #include <frc/filter/LinearFilter.h>
 

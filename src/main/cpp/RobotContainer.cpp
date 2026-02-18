@@ -35,13 +35,13 @@
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
 #include "subsystem/flywheel/CTREFlywheelIO.h"  
-#include "subsystem/shooter/hood/REVHoodIO.h"
+#include "subsystem/hood/HardwareHoodIO.h"
 #include "subsystem/intake/IntakeSubsystem.h"
 #include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
 #include "subsystem/intake/linearintake/SimLinearIntakeIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 // #include "subsystem/shooter/hood/SimHoodIO.h"
-#include "subsystem/shooter/hood/HoodIO.h"
+#include "subsystem/hood/HoodIO.h"
 #include "units/angular_velocity.h"
 #include "utils/TunableDouble.h"
 #include "subsystem/intake/linearintake/CTRELinearIntakeIO.h"
@@ -63,10 +63,9 @@ m_hoodPositionLeft("hoodposition","hoodleft", 0.4),
 m_hoodPositionRight("hoodposition","hoodright", 0.1)
  {
   m_drive = CreateDrive();
-  m_turret = CreateTurret();
   m_flywheel = CreateFlywheel();
   //   m_elevator = CreateElevator();
-  m_vision = CreateVision();
+ // m_vision = CreateVision();
   m_intakeSubsystem = CreateIntakeSubsystem();
   m_indexer = CreateIndexer();
   m_hood = CreateHood();
@@ -167,10 +166,10 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
 //           HardwareMap::CAN::TalonFX::RightElevator));
 // }
 
-std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
-  return std::make_unique<VisionSubsystem>(std::make_unique<SimVisionIO>(),
-                                           m_drive->GetOdometryThread());
-}
+// std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
+//   return std::make_unique<VisionSubsystem>(std::make_unique<SimVisionIO>(),
+//                                            m_drive->GetOdometryThread());
+// }
 
 void RobotContainer::Periodic() {
   // m_robotViz.Update();
@@ -187,7 +186,7 @@ void RobotContainer::Periodic() {
     //         return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
     //     }
         return std::make_unique<HoodSubsystem>(
-            std::make_unique<REVHoodIO>(
+            std::make_unique<HardwareHoodIO>(
                 1,
                 HardwareMap::CAN::CANCoder::leftHoodEncoder, HardwareMap::CAN::CANCoder::rightHoodEncoder
             )

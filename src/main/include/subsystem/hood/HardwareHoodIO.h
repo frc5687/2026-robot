@@ -10,9 +10,9 @@
 #include "utils/CANDevice.h"
 #include <rev/ServoHub.h>
 
-class REVHoodIO : public HoodIO {
+class HardwareHoodIO : public HoodIO {
 public:
-    REVHoodIO(
+    HardwareHoodIO(
         const int& servoHubId,
         const CANDevice& leftEncoder,
         const CANDevice& rightEncoder

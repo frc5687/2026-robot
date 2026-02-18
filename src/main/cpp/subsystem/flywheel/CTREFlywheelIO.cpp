@@ -7,8 +7,8 @@
 #include "subsystem/flywheel/FlywheelIO.h"
 #include "units/angular_velocity.h"
 #include "utils/CANDevice.h"
-#include "subsystem/flywheel/FlywheelConstants.h"
 #include "units/frequency.h"
+#include "Constants.h"
 
 using namespace ctre::phoenix6;
 

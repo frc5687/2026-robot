@@ -1,4 +1,7 @@
-#include "subsystem/shooter/hood/REVHoodIO.h"
+#include "subsystem/hood/HardwareHoodIO.h"
+#include "subsystem/hood/HoodIO.h"
+#include "Constants.h"
+
 #include "ctre/phoenix6/CANcoder.hpp"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "ctre/phoenix6/signals/SpnEnums.hpp"
@@ -6,16 +9,14 @@
 #include "rev/ServoHub.h"
 #include "rev/config/ServoChannelConfig.h"
 #include "rev/config/ServoHubConfig.h"
-#include "subsystem/shooter/hood/HoodIO.h"
 #include "frc/MathUtil.h"
 #include "utils/CANDevice.h"
 #include "utils/TunableDouble.h"
 #include <algorithm>
 #include <cmath>
-#include "subsystem/shooter/hood/HoodConstants.h"
 
 
-REVHoodIO::REVHoodIO(
+HardwareHoodIO::HardwareHoodIO(
     const int& servoHubId,
     const CANDevice &leftEncoder,
     const CANDevice &rightEncoder
@@ -57,7 +58,7 @@ REVHoodIO::REVHoodIO(
     m_rightEncoder.GetConfigurator().Apply(m_rightEncoderConfigs);
 }
 
-void REVHoodIO::UpdateInputs(HoodIOInputs &inputs){
+void HardwareHoodIO::UpdateInputs(HoodIOInputs &inputs){
     ctre::phoenix6::BaseStatusSignal::RefreshAll(m_batchSignals);
 
     inputs.leftHoodRotation = m_leftEncoderAngle.GetValue();
@@ -72,7 +73,7 @@ void REVHoodIO::UpdateInputs(HoodIOInputs &inputs){
 }
 
 
-void REVHoodIO::SetHoodPosition(units::turn_t leftHood, units::turn_t rightHood){
+void HardwareHoodIO::SetHoodPosition(units::turn_t leftHood, units::turn_t rightHood){
     auto leftHoodRotation = std::clamp(leftHood, Constants::Hood::kMinAngle, Constants::Hood::kMaxAngle);
     auto rightHoodRotation = std::clamp(rightHood, Constants::Hood::kMinAngle, Constants::Hood::kMaxAngle);
 

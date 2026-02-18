@@ -173,18 +173,47 @@ inline constexpr double kD = 0.0;
 }  // namespace Turret
 
 namespace Flywheel {
-inline constexpr double kGearRatio = 250.0 / 30.0;
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC();
-inline constexpr units::kilogram_t kMass = 0.15_kg;
-inline constexpr units::meter_t kRadius = 7.5_in;
-// Cylinder inertia 1/2 * m * r^2
-inline constexpr units::kilogram_square_meter_t kInertia =
-    0.5 * kMass * kRadius * kRadius;
+  // all lies rn btw
+  inline constexpr double kGearRatio = (18.0/24.0);
+  inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC();
 
-inline constexpr double kP = 0.1;
-inline constexpr double kI = 0.0;
-inline constexpr double kD = 0.0;
-}  // namespace Flywheel
+  inline constexpr units::inch_t kFlywheelRadius = 4_in;
+  inline constexpr units::pound_t kFlywheelMass = 1.5_lb;
+
+  inline constexpr units::kilogram_square_meter_t kInertia = 0.5 * kFlywheelMass * kFlywheelRadius * kFlywheelRadius;
+
+  inline constexpr bool kLeftMotorInverted = false;
+  inline constexpr bool kRightMotorInverted = false;
+
+  inline constexpr double rightkP = 9.0;//9.5
+  inline constexpr double rightkI = 0.0;
+  inline constexpr double rightkD = 0.0;//0.03
+
+  inline constexpr double rightkS = 2;
+  inline constexpr double rightkV = 0.0000;
+  inline constexpr double rightkA = 0.0;
+
+  inline constexpr double leftkP = 9.0;//10.0
+  inline constexpr double leftkI = 0.0;
+  inline constexpr double leftkD = 0.0;//0.03
+
+  inline constexpr double leftkS = 2;
+  inline constexpr double leftkV = 0.0000;
+  inline constexpr double leftkA = 0.0;
+
+  //For sim only was too lazy to change the value names
+  inline constexpr double kP = 9.0;
+  inline constexpr double kI = 0.0;
+  inline constexpr double kD = 0.0;
+
+  inline constexpr double kS = 0.0;
+  inline constexpr double kV = 0.0000;
+  inline constexpr double kA = 0.0;
+
+  inline constexpr double kFilterTime = 0.1;
+  inline constexpr units::time::second_t kFilterPeriod = 0.02_s;
+}
+ // namespace Flywheel
 
 namespace Hood {
 inline constexpr int kNumMotors = 1;
@@ -194,11 +223,11 @@ inline constexpr double kGearRatio = 10;
 inline constexpr units::moment_of_inertia::kilogram_square_meter_t kMoi = 1.0_kg_sq_m;
 inline constexpr units::meter_t kArmLength = 1.0_m;
 
-inline constexpr units::turn_t kLeftEncoderOffset = 0.365712890625_tr;
-inline constexpr units::turn_t kRightEncoderOffset = 0.365712890625_tr;
+inline constexpr units::turn_t kLeftEncoderOffset = -0.64724609375_tr;
+inline constexpr units::turn_t kRightEncoderOffset = -0.85693359375_tr;
 
 inline constexpr units::turn_t kMinAngle = 0.0_tr;
-inline constexpr units::turn_t kMaxAngle = 1.0_tr;
+inline constexpr units::turn_t kMaxAngle = 0.6_tr;
 
 namespace SimPID {
 inline constexpr double kP = 10;

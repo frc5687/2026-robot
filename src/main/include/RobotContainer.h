@@ -21,7 +21,7 @@
 #include "subsystem/intake/linearintake/LinearIntake.h"
 #include "subsystem/vision/VisionSubsystem.h"
 #include "subsystem/Indexer/IndexerSubsystem.h"
-#include "subsystem/shooter/hood/HoodSubsystem.h"
+#include "subsystem/hood/HoodSubsystem.h"
 #include "utils/TunableDouble.h"
 
 #include "subsystem/intake/IntakeRoller.h"
@@ -64,14 +64,9 @@ class RobotContainer {
   // std::unique_ptr<VisionSubsystem> m_vision;
 
   std::unique_ptr<IndexerSubsystem> m_indexer;
-  // std::unique_ptr<VisionSubsystem> m_vision;
 
   std::unique_ptr<HoodSubsystem> CreateHood();
   std::unique_ptr<HoodSubsystem> m_hood;
-  // std::unique_ptr<VisionSubsystem> m_vision;
-
-
-  frc2::CommandPS5Controller m_driver{0};
 
   TunableDouble m_shooterRPMLeft1;
   TunableDouble m_shooterRPMLeft2;
