@@ -22,6 +22,7 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
 #include "subsystem/hood/SimHoodIO.h"
+#include "subsystem/turret/CTRETurretIO.h"
 #include "subsystem/turret/SimTurretIO.h"
 #include "subsystem/turret/TurretSubsystem.h"
 #include "subsystem/vision/SimVisionIO.h"
@@ -31,19 +32,19 @@ RobotContainer::RobotContainer() {
   m_turret = CreateTurret();
   m_flywheel = CreateFlywheel();
   m_hood = CreateHood();
-  m_vision = CreateVision();
+  //m_vision = CreateVision();
   m_shooter = std::make_unique<ShooterSystem>(*m_turret, *m_flywheel, *m_hood);
   ConfigureBindings();
 }
 
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
-  constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.079569_tr,                // FL
-      0.43359375_tr - 0.5_tr,     // FR
-      0.35595703125_tr - 0.5_tr,  // BL
-      -0.2431540625_tr + 0.5_tr   // BR
-  };
+   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
+      0.3505859375_tr,               // FL
+      -0.05517578125_tr,    // FR
+      0.27099609375_tr - 0.5_tr, // BL
+      0.096923828125_tr  // BR
+      };
 
   if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<DriveSubsystem>(
@@ -89,7 +90,11 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
 }
 
 std::unique_ptr<TurretSubsystem> RobotContainer::CreateTurret() {
-  return std::make_unique<TurretSubsystem>(std::make_unique<SimTurretIO>());
+    if (frc::RobotBase::IsSimulation()) {
+        return std::make_unique<TurretSubsystem>(std::make_unique<SimTurretIO>());
+    }
+    return std::make_unique<TurretSubsystem>(std::make_unique<CTRETurretIO>(
+        HardwareMap::CAN::TalonFX::Turret));
 }
 
 std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
@@ -122,21 +127,23 @@ void RobotContainer::ConfigureBindings() {
       [this] { return -m_driver.GetRightX(); },
       false));  // s lew limiter
 
+ // m_driver.Square().WhileTrue(
+ //     DriveWithNormalVectorAlignment(
+ //         m_drive.get(),
+ //         []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
+ //         false)
+ //         .ToPtr());
   m_driver.Square().WhileTrue(
-      DriveWithNormalVectorAlignment(
-          m_drive.get(),
-          []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
-          false)
-          .ToPtr());
+      Run([this] { m_turret->SetAngle(300_deg); }, {m_turret.get()}));
 
   m_driver.Circle().WhileTrue(
       Run([this] { m_turret->SetAngle(180_deg); }, {m_turret.get()}));
 
-  //m_driver.Triangle().WhileTrue(
-  //    Run([this] { m_turret->SetAngle(0_deg); }, {m_turret.get()}));
-
   m_driver.Triangle().WhileTrue(
-      Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
+      Run([this] { m_turret->SetAngle(0_deg); }, {m_turret.get()}));
+
+  //m_driver.Triangle().WhileTrue(
+  //    Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

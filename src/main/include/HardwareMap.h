@@ -27,8 +27,7 @@ inline constexpr CANDevice BackLeftSteer{6, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightDrive{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 
-inline constexpr CANDevice LeftElevator{9, Bus::kDriveTrain};
-inline constexpr CANDevice RightElevator{8, Bus::kDriveTrain};
+inline constexpr CANDevice Turret{20, Bus::kDriveTrain};
 }  // namespace TalonFX
 
 namespace CANCoder {

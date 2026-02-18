@@ -25,10 +25,15 @@ void ShooterSystem::Update() {
             auto alliance = frc::DriverStation::GetAlliance();
             auto solution = m_shotCalculator.Calculate(frc::Timer::GetFPGATimestamp(),
                                        alliance == frc::DriverStation::kRed);
+            Log("Solution/turretFieldAngle", solution.turretFieldAngle.Radians().value());
+            Log("Solution/turretRobotAngle", solution.turretRobotAngle.value());
+            Log("Solution/hoodAngle", solution.hoodAngle.value());
+            Log("Goal", m_shotCalculator.GetConfig().targetXY);
             auto setpoint = ShooterSetpoint{
                 .turretAngle=solution.turretRobotAngle,
                 .hoodAngle=solution.hoodAngle,
             };
+
             SetSetpoint(setpoint);
         } break;
         case ShooterState::PASSING:
