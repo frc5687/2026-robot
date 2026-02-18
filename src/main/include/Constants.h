@@ -200,9 +200,19 @@ inline constexpr units::meter_t kRadius = 7.5_in;
 inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kMass * kRadius * kRadius;
 
-inline constexpr double kP = 0.1;
+inline constexpr bool kLeftMotorInverted = false;
+inline constexpr bool kRightMotorInverted = false;
+
+inline constexpr double kP = 9.0;//9.5
 inline constexpr double kI = 0.0;
-inline constexpr double kD = 0.0;
+inline constexpr double kD = 0.0;//0.03
+
+inline constexpr double kS = 2;
+inline constexpr double kV = 0.0000;
+inline constexpr double kA = 0.0;
+
+inline constexpr double kFilterTime = 0.1;
+inline constexpr units::time::second_t kFilterPeriod = 0.02_s;
 }  // namespace Flywheel
 
 namespace Hood {

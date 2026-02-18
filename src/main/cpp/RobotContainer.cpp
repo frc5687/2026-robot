@@ -25,6 +25,7 @@
 #include "subsystem/turret/CTRETurretIO.h"
 #include "subsystem/turret/SimTurretIO.h"
 #include "subsystem/turret/TurretSubsystem.h"
+#include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 
 RobotContainer::RobotContainer() {
@@ -32,7 +33,7 @@ RobotContainer::RobotContainer() {
   m_turret = CreateTurret();
   m_flywheel = CreateFlywheel();
   m_hood = CreateHood();
-  //m_vision = CreateVision();
+  m_vision = CreateVision();
   m_shooter = std::make_unique<ShooterSystem>(*m_turret, *m_flywheel, *m_hood);
   ConfigureBindings();
 }
@@ -107,7 +108,18 @@ std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood() {
 
 
 std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
-  return std::make_unique<VisionSubsystem>(std::make_unique<SimVisionIO>(),
+  if (frc::RobotBase::IsSimulation()) {
+      return std::make_unique<VisionSubsystem>(std::make_unique<SimVisionIO>(),
+                                               m_drive->GetOdometryThread());
+  }
+  std::vector<std::string> limelights{
+        "limelight-br",
+        "limelight-bl",
+        "limelight-fr",
+        "limelight-br",
+  };
+  return std::make_unique<VisionSubsystem>(std::make_unique<LimelightVisionIO>(
+        limelights, LimelightVisionIO::MegaTagMode::kMegaTag1),
                                            m_drive->GetOdometryThread());
 }
 

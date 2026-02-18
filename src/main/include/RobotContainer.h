@@ -38,7 +38,7 @@ class RobotContainer {
   std::unique_ptr<TurretSubsystem> m_turret;
   std::unique_ptr<FlywheelSubsystem> m_flywheel;
   std::unique_ptr<HoodSubsystem> m_hood;
-  //std::unique_ptr<VisionSubsystem> m_vision;
+  std::unique_ptr<VisionSubsystem> m_vision;
 
   std::unique_ptr<ShooterSystem> m_shooter;
 

@@ -18,4 +18,5 @@ class FlywheelIO {
  public:
   virtual ~FlywheelIO() = default;
   virtual void UpdateInputs(FlywheelIOInputs& inputs) = 0;
+  virtual void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) = 0;
 };

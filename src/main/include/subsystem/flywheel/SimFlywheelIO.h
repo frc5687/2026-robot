@@ -6,6 +6,7 @@
 
 #include "FlywheelIO.h"
 #include "frc/controller/PIDController.h"
+#include "units/angular_velocity.h"
 
 class SimFlywheelIO : public FlywheelIO {
  public:
@@ -13,6 +14,7 @@ class SimFlywheelIO : public FlywheelIO {
   ~SimFlywheelIO() = default;
 
   void UpdateInputs(FlywheelIOInputs& inputs) override;
+  void SetFlywheelRPM(units::revolutions_per_minute_t desiredRPM) override;
 
  private:
   frc::sim::FlywheelSim m_flywheelSim;
