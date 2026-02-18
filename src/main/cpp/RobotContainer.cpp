@@ -50,8 +50,17 @@
 #include "subsystem/Indexer/IndexerSubsystem.h"
 
 RobotContainer::RobotContainer():
-m_shooterRPMLeft("shooterrpm","rpm1", 1000),
-m_shooterRPMRight("shooterrpm","rpm1", 1000)
+m_shooterRPMLeft1("shooterrpm","rpmleft1", 1000),
+m_shooterRPMLeft2("shooterrpm","rpmleft2", 2000),
+m_shooterRPMLeft3("shooterrpm","rpmleft3", 3500),
+
+m_shooterRPMRight1("shooterrpm","rpmright1", 1000),
+m_shooterRPMRight2("shooterrpm","rpmright2", 2000),
+m_shooterRPMRight3("shooterrpm","rpmright3", 3500),
+
+
+m_hoodPositionLeft("hoodposition","hoodleft", 0.4),
+m_hoodPositionRight("hoodposition","hoodright", 0.1)
  {
   m_drive = CreateDrive();
   m_turret = CreateTurret();
@@ -127,9 +136,6 @@ std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
 
 std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntakeSubsystem(){
     return std::make_unique<IntakeSubsystem>(
-        std::make_unique<CTRELinearIntakeIO>(
-            HardwareMap::CAN::TalonFX::LinearIntake
-        ),
         std::make_unique<CTREIntakeRollerIO>(
             HardwareMap::CAN::TalonFX::LeftRollerMotor,
             HardwareMap::CAN::TalonFX::RightRollerMotor
@@ -235,30 +241,62 @@ void RobotContainer::ConfigureBindings() {
 //           false)
 //       .ToPtr());
 
-    m_driver.R1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeSubsystem.get()}));
+    // m_driver.R1().OnTrue(Run(
+    //   [this] { m_intakeSubsystem->SetVoltage(0.0_V); }, {m_intakeSubsystem.get()}));
 
-    m_driver.L1().OnTrue(Run(
-      [this] { m_intakeSubsystem->SetVoltage(12_V); }, {m_intakeSubsystem.get()}));
+    // m_driver.L1().OnTrue(Run(
+    //   [this] { m_intakeSubsystem->SetVoltage(12_V); }, {m_intakeSubsystem.get()}));
 
-    m_driver.Circle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(12.0_V, 80_tps);}, {m_indexer.get()})
-    );
-    m_driver.Triangle().OnTrue(
-        Run([this] {m_indexer->SetVoltage(0.0_V, 0_tps);}, {m_indexer.get()})
-    );
+    // m_driver.Circle().OnTrue(
+    //     Run([this] {m_indexer->SetVoltage(12.0_V, 80_tps);}, {m_indexer.get()})
+    // );
+    // m_driver.Triangle().OnTrue(
+    //     Run([this] {m_indexer->SetVoltage(0.0_V, 0_tps);}, {m_indexer.get()})
+    // );
 
 m_driver.R2().OnTrue(
     Run(
         [this] {
             m_flywheel->SetRPM(
-                units::revolutions_per_minute_t{m_shooterRPMLeft.Get()},
-                 units::revolutions_per_minute_t{m_shooterRPMRight.Get()}
+                units::revolutions_per_minute_t{m_shooterRPMLeft3.Get()},
+                 units::revolutions_per_minute_t{m_shooterRPMRight3.Get()}
             );
         },
         {m_flywheel.get()}
     )
 );
+
+m_driver.R1().OnTrue(
+    Run(
+        [this] {
+            m_flywheel->SetRPM(
+                units::revolutions_per_minute_t{m_shooterRPMLeft2.Get()},
+                 units::revolutions_per_minute_t{m_shooterRPMRight2.Get()}
+            );
+        },
+        {m_flywheel.get()}
+    )
+);
+
+m_driver.Triangle().OnTrue(
+    Run(
+        [this] {
+            m_flywheel->SetRPM(
+                units::revolutions_per_minute_t{m_shooterRPMLeft1.Get()},
+                 units::revolutions_per_minute_t{m_shooterRPMRight1.Get()}
+            );
+        },
+        {m_flywheel.get()}
+    )
+);
+
+// m_driver.L2().OnTrue(Run([this] {
+//             m_hood->SetHoodPosition(
+//                 units::turn_t{m_hoodPositionLeft.Get()},
+//                  units::turn_t{m_hoodPositionRight.Get()}
+//             );
+//         },
+//         {m_hood.get()}));
 
 }
 

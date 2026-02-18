@@ -1,10 +1,9 @@
 // Team 5687 2026
 
 #include "subsystem/flywheel/FlywheelSubsystem.h"
-
+#include "Constants.h"
 #include <utility>
 
-#include "Constants.h"
 #include "subsystem/LoggedSubsystem.h"
 
 FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io)
