@@ -15,6 +15,8 @@ SimFlywheelIO::SimFlywheelIO()
           kMotor),
       m_controller(kP, kI, kD) {}
 
+void SimFlywheelIO::SetFlywheelRPM (units::revolutions_per_minute_t desiredRPM) {}
+
 void SimFlywheelIO::UpdateInputs(FlywheelIOInputs& inputs) {
   constexpr auto kDt = 20_ms;
   m_flywheelSim.Update(kDt);
