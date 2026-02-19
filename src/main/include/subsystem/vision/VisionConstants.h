@@ -32,10 +32,10 @@ inline constexpr frc::Transform3d kRobotToBRCam{
     frc::Rotation3d{0_deg, -5_deg, -147_deg}};
 
 inline const std::unordered_map<std::string, frc::Transform3d> kTransformMap = {
-    {"limelightleft", kRobotToFLCam},
-    {"limelight-center", kRobotToBLCam},
-    {"limelightleft1", kRobotToFRCam},
-    {"limelight-center1", kRobotToBRCam},
+    {"limelight-fl", kRobotToFLCam},
+    {"limelight-bl", kRobotToBLCam},
+    {"limelight-fr", kRobotToFRCam},
+    {"limelight-br", kRobotToBRCam},
     // frc::Rotation3d{147_deg, 5_deg, 0_rad}
 };
 }  // namespace Constants::Vision

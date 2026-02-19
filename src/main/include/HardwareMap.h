@@ -10,7 +10,7 @@ namespace HardwareMap {
 namespace Bus {
 inline constexpr std::string_view kDriveTrain = "DriveTrain";
 inline constexpr std::string_view kRio = "rio";
-inline constexpr std::string_view kStructure = "SuperStructure";
+inline constexpr std::string_view kShooter = "Shooter";
 }  // namespace Bus
 
 namespace CAN {
@@ -28,6 +28,12 @@ inline constexpr CANDevice BackRightDrive{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 
 inline constexpr CANDevice Turret{20, Bus::kDriveTrain};
+
+inline constexpr CANDevice RightLeaderFlywheel{16, Bus::kShooter};
+inline constexpr CANDevice RightFollowerFlywheel{17, Bus::kShooter};
+
+inline constexpr CANDevice LeftLeaderFlywheel{14, Bus::kShooter};
+inline constexpr CANDevice LeftFollowerFlywheel{15, Bus::kShooter};
 }  // namespace TalonFX
 
 namespace CANCoder {

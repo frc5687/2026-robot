@@ -192,27 +192,47 @@ inline constexpr units::turns_per_second_cubed_t kJerk = 2500_tr_per_s_cu;
 }  // namespace Turret
 
 namespace Flywheel {
-inline constexpr double kGearRatio = 250.0 / 30.0;
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC();
-inline constexpr units::kilogram_t kMass = 0.15_kg;
-inline constexpr units::meter_t kRadius = 7.5_in;
+inline constexpr double kGearRatio = (18.0/24.0);
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(2);
+
+  // all lies rn btw
+
+  inline constexpr units::inch_t kFlywheelRadius = 4_in;
+  inline constexpr units::pound_t kFlywheelMass = 1.5_lb;
+
 // Cylinder inertia 1/2 * m * r^2
-inline constexpr units::kilogram_square_meter_t kInertia =
-    0.5 * kMass * kRadius * kRadius;
+  inline constexpr units::kilogram_square_meter_t kInertia = 0.5 * kFlywheelMass * kFlywheelRadius * kFlywheelRadius;
 
-inline constexpr bool kLeftMotorInverted = false;
-inline constexpr bool kRightMotorInverted = false;
+  inline constexpr bool kLeftMotorInverted = false;
+  inline constexpr bool kRightMotorInverted = false;
 
-inline constexpr double kP = 9.0;//9.5
-inline constexpr double kI = 0.0;
-inline constexpr double kD = 0.0;//0.03
+  inline constexpr double rightkP = 9.0;//9.5
+  inline constexpr double rightkI = 0.0;
+  inline constexpr double rightkD = 0.0;//0.03
 
-inline constexpr double kS = 2;
-inline constexpr double kV = 0.0000;
-inline constexpr double kA = 0.0;
+  inline constexpr double rightkS = 2;
+  inline constexpr double rightkV = 0.0000;
+  inline constexpr double rightkA = 0.0;
 
-inline constexpr double kFilterTime = 0.1;
-inline constexpr units::time::second_t kFilterPeriod = 0.02_s;
+  inline constexpr double leftkP = 9.0;//10.0
+  inline constexpr double leftkI = 0.0;
+  inline constexpr double leftkD = 0.0;//0.03
+
+  inline constexpr double leftkS = 2;
+  inline constexpr double leftkV = 0.0000;
+  inline constexpr double leftkA = 0.0;
+
+  //For sim only was too lazy to change the value names
+  inline constexpr double kP = 9.0;
+  inline constexpr double kI = 0.0;
+  inline constexpr double kD = 0.0;
+
+  inline constexpr double kS = 0.0;
+  inline constexpr double kV = 0.0000;
+  inline constexpr double kA = 0.0;
+
+  inline constexpr double kFilterTime = 0.1;
+  inline constexpr units::time::second_t kFilterPeriod = 0.02_s;
 }  // namespace Flywheel
 
 namespace Hood {

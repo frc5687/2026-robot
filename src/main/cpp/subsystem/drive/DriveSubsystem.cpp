@@ -14,6 +14,7 @@
 #include "Constants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
+#include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/ChassisSpeeds.h"
 #include "frc/kinematics/SwerveModuleState.h"

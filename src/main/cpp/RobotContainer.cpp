@@ -20,6 +20,7 @@
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/drive/module/ModuleConfig.h"
 #include "subsystem/drive/module/SimModuleIO.h"
+#include "subsystem/flywheel/CTREFlywheelIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
 #include "subsystem/hood/SimHoodIO.h"
 #include "subsystem/turret/CTRETurretIO.h"
@@ -99,7 +100,13 @@ std::unique_ptr<TurretSubsystem> RobotContainer::CreateTurret() {
 }
 
 std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
-  return std::make_unique<FlywheelSubsystem>(std::make_unique<SimFlywheelIO>());
+  if (frc::RobotBase::IsSimulation()) {
+      return std::make_unique<FlywheelSubsystem>(std::make_unique<SimFlywheelIO>());
+  }
+    return std::make_unique<FlywheelSubsystem>(std::make_unique<CTREFlywheelIO>(
+        HardwareMap::CAN::TalonFX::RightLeaderFlywheel,
+        HardwareMap::CAN::TalonFX::RightFollowerFlywheel
+    ));
 }
 
 std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood() {
@@ -116,7 +123,7 @@ std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
         "limelight-br",
         "limelight-bl",
         "limelight-fr",
-        "limelight-br",
+        "limelight-fl",
   };
   return std::make_unique<VisionSubsystem>(std::make_unique<LimelightVisionIO>(
         limelights, LimelightVisionIO::MegaTagMode::kMegaTag1),
@@ -137,7 +144,7 @@ void RobotContainer::ConfigureBindings() {
       m_drive.get(), [this] { return -m_driver.GetLeftY(); },
       [this] { return -m_driver.GetLeftX(); },
       [this] { return -m_driver.GetRightX(); },
-      false));  // s lew limiter
+      true));  // s lew limiter
 
  // m_driver.Square().WhileTrue(
  //     DriveWithNormalVectorAlignment(
@@ -145,14 +152,24 @@ void RobotContainer::ConfigureBindings() {
  //         []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
  //         false)
  //         .ToPtr());
-  m_driver.Square().WhileTrue(
-      Run([this] { m_turret->SetAngle(300_deg); }, {m_turret.get()}));
+//  m_driver.Square().WhileTrue(
+//      Run([this] { m_turret->SetAngle(300_deg); }, {m_turret.get()}));
+//
+//  m_driver.Circle().WhileTrue(
+//      Run([this] { m_turret->SetAngle(180_deg); }, {m_turret.get()}));
+//
+//  m_driver.Triangle().WhileTrue(
+//      Run([this] { m_turret->SetAngle(0_deg); }, {m_turret.get()}));
+//
+ // m_driver.Square().WhileTrue(
+ //     Run([this] { m_flywheel->SetFlywheelRPM(2000_rpm); }, {m_flywheel.get()}));
+ // m_driver.Circle().WhileTrue(
+ //     Run([this] { m_flywheel->SetFlywheelRPM(0_rpm); }, {m_flywheel.get()}));
+ // m_driver.Triangle().WhileTrue(
+ //     Run([this] { m_flywheel->SetFlywheelRPM(4000_rpm); }, {m_flywheel.get()}));
 
-  m_driver.Circle().WhileTrue(
-      Run([this] { m_turret->SetAngle(180_deg); }, {m_turret.get()}));
 
-  m_driver.Triangle().WhileTrue(
-      Run([this] { m_turret->SetAngle(0_deg); }, {m_turret.get()}));
+
 
   //m_driver.Triangle().WhileTrue(
   //    Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));

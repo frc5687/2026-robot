@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "utils/Logger.h"
+#include <iostream>
 
 PoseEstimator::PoseEstimator(const Config& config) : m_config(config) {
   Logger::Instance().Log("PoseEstimator/Initialized", true);
@@ -39,6 +40,7 @@ void PoseEstimator::UpdatePoseEstimate(const OdometryData& latestOdometry) {
 
   m_poseBuffer.AddSample(currentTime, latestOdometry.pose);
   ProcessPendingMeasurements(latestOdometry.pose);
+  Logger::Instance().Log("PoseEstimator/RejectedCount", m_rejectedCount);
 }
 
 void PoseEstimator::ResetPose(const frc::Pose2d& pose) {
@@ -120,7 +122,9 @@ void PoseEstimator::ProcessVisionMeasurement(
       frc::Rotation2d{measurementDelta.Rotation().Radians() * gain[2]}};
 
   m_estimatedPose = estimateAtTime + scaledCorrection + odometryTransform;
-
+  Logger::Instance().Log("PoseEstimator/EstimateAtTime", estimateAtTime);
+  Logger::Instance().Log("PoseEstimator/scaledCorrection", scaledCorrection);
+  Logger::Instance().Log("PoseEstimator/odometryTransform", odometryTransform);
   m_processedCount++;
   m_lastVisionTime = frc::Timer::GetFPGATimestamp();
 
@@ -145,20 +149,20 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement& measurement) {
 
   if (currentTime - measurement.timestamp >
       units::second_t{m_config.maxTimestampAge}) {
-    // std::cout << "Not valid due to timestamp diff: " << (currentTime -
-    // measurement.timestamp).value() << "\n";
+     std::cout << "Not valid due to timestamp diff: " << (currentTime -
+     measurement.timestamp).value() << "\n";
     return false;
   }
 
   if (measurement.confidence > 0 &&
       measurement.confidence < m_config.minConfidence) {
-    // std::cout << "Not valid due to confidence: " << measurement.confidence <<
-    // "\n";
+     std::cout << "Not valid due to confidence: " << measurement.confidence <<
+     "\n";
     return false;
   }
 
   if (!IsReasonablePose(measurement.pose)) {
-    // std::cout << "Not valid due to not a resonable pose.\n";
+     std::cout << "Not valid due to not a resonable pose.\n";
     return false;
   }
 

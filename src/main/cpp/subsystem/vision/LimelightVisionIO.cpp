@@ -15,6 +15,7 @@
 
 #include "networktables/NetworkTableInstance.h"
 #include "subsystem/vision/VisionIO.h"
+#include "utils/Logger.h"
 #include "utils/vision/AprilTagObservation.h"
 #include "utils/vision/VisionMeasurement.h"
 
@@ -130,6 +131,7 @@ VisionMeasurement LimelightVisionIO::MeasurementFromEstimate(
   m.confidence =
       std::clamp(quality / std::max(est.avgTagDist * est.avgTagDist, 0.01),
                  0.0, 1.0);
+  m.confidence = 1.0;
   return m;
 }
 
@@ -184,6 +186,7 @@ void LimelightVisionIO::ProcessCamera(const std::string& name,
   for (const auto& fid : fiducials) {
     observations.emplace_back(ObservationFromFiducial(fid, frameTimestamp));
   }
+  Logger::Instance().Log("Observation Count", observations.size());
   if (const AprilTagObservation* best = BestObservation(observations)) {
     inputs.cameraTagObservations.emplace(name, *best);
   }
