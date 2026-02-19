@@ -12,8 +12,8 @@
 #include "subsystem/drive/DriveSubsystem.h"
 
 class TeleopDrive : public frc2::CommandHelper<frc2::Command, TeleopDrive> {
- public:
-  TeleopDrive(DriveSubsystem* driveSubsystem, std::function<double()> xStrafe,
+public:
+  TeleopDrive(DriveSubsystem *driveSubsystem, std::function<double()> xStrafe,
               std::function<double()> yStrafe, std::function<double()> turn,
               bool enableSlewRate = true);
 
@@ -22,8 +22,8 @@ class TeleopDrive : public frc2::CommandHelper<frc2::Command, TeleopDrive> {
   void End(bool interrupted) override;
   bool IsFinished() override;
 
- private:
-  DriveSubsystem* m_driveSubsystem;
+private:
+  DriveSubsystem *m_driveSubsystem;
   std::function<double()> m_xStrafe;
   std::function<double()> m_yStrafe;
   std::function<double()> m_turn;

@@ -14,15 +14,15 @@
 #include "ModuleIO.h"
 
 class SimModuleIO : public ModuleIO {
- public:
-  explicit SimModuleIO(const ModuleConfig& config);
+public:
+  explicit SimModuleIO(const ModuleConfig &config);
 
-  void UpdateInputs(ModuleIOInputs& inputs, bool isBatched) override;
-  void SetDesiredState(const frc::SwerveModuleState& state) override;
+  void UpdateInputs(ModuleIOInputs &inputs, bool isBatched) override;
+  void SetDesiredState(const frc::SwerveModuleState &state) override;
   ModuleConfig GetModuleConfig() override;
   void Stop() override;
 
- private:
+private:
   ModuleConfig m_config;
 
   frc::sim::DCMotorSim m_driveSim;

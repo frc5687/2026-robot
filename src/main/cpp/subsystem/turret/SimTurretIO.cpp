@@ -15,10 +15,10 @@ using namespace Constants::Turret;
 SimTurretIO::SimTurretIO()
     : m_turretSim(
           frc::LinearSystemId::DCMotorSystem(kMotor, kInertia, kGearRatio),
-          kMotor, {0.001, 0.001}),  // Standard deviations for noise
+          kMotor, {0.001, 0.001}), // Standard deviations for noise
       m_controller(kP, kI, kD) {}
 
-void SimTurretIO::UpdateInputs(TurretIOInputs& inputs) {
+void SimTurretIO::UpdateInputs(TurretIOInputs &inputs) {
   constexpr auto kDt = 20_ms;
 
   m_turretSim.SetInputVoltage(units::volt_t{

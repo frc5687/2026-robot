@@ -15,6 +15,7 @@
 
 struct OdometryData {
   frc::Pose2d pose{};
+  frc::Pose2d estimatedPose{};
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
       modulePositions{};
   std::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
@@ -36,9 +37,10 @@ struct OdometryData {
         // chassisSpeeds.omega * dt,
     };
 
-    future.pose = pose.Exp(odometryDelta);
+    future.estimatedPose = estimatedPose.Exp(odometryDelta);
     future.gyroAngle = gyroAngle + frc::Rotation2d(gyroRate * dt);
-    future.pose = frc::Pose2d{{future.pose.Translation()}, {future.gyroAngle}};
+    future.estimatedPose =
+        frc::Pose2d{{future.estimatedPose.Translation()}, {future.gyroAngle}};
     for (size_t i = 0; i < 4; i++) {
       future.modulePositions[i].distance = moduleStates[i].speed * dt;
       future.modulePositions[i].angle = moduleStates[i].angle;
@@ -47,8 +49,8 @@ struct OdometryData {
     return future;
   }
 
-  static OdometryData Interpolate(const OdometryData& start,
-                                  const OdometryData& end, double t) {
+  static OdometryData Interpolate(const OdometryData &start,
+                                  const OdometryData &end, double t) {
     OdometryData interpolated;
 
     interpolated.timestamp = Lerp(start.timestamp, end.timestamp, t);

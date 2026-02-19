@@ -12,8 +12,7 @@
 
 VisionSubsystem::VisionSubsystem(std::unique_ptr<VisionIO> io,
                                  std::shared_ptr<OdometryThread> odometryThread)
-    : LoggedSubsystem("Vision"),
-      m_io(std::move(io)),
+    : LoggedSubsystem("Vision"), m_io(std::move(io)),
       m_odometryThread(odometryThread) {}
 
 void VisionSubsystem::UpdateInputs() {

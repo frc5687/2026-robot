@@ -15,25 +15,21 @@
 using namespace Constants::DriveWithNormalVectorAlignment;
 
 DriveWithNormalVectorAlignment::DriveWithNormalVectorAlignment(
-    DriveSubsystem* drive, std::function<frc::Pose2d()> finalPoseSupplier,
+    DriveSubsystem *drive, std::function<frc::Pose2d()> finalPoseSupplier,
     bool isAlgae)
-    : m_drive(drive),
-      m_finalPoseSupplier(std::move(finalPoseSupplier)),
+    : m_drive(drive), m_finalPoseSupplier(std::move(finalPoseSupplier)),
       m_xController(kDriveKp, kDriveKi, kDriveKd),
       m_yController(kDriveKp, kDriveKi, kDriveKd),
       m_rotationController(kRotKp, kRotKi, kRotKd),
       m_normalVectorOffset(kNormalVectorOffset),
       m_blendStartDistance(isAlgae ? kBlendStartAlgae : kBlendStart),
-      m_blendEndDistance(kBlendEnd),
-      m_maxVelocity(kMaxVelocity),
+      m_blendEndDistance(kBlendEnd), m_maxVelocity(kMaxVelocity),
       m_maxAcceleration(kMaxAcceleration),
       m_positionTolerance(kPositionTolerance),
-      m_velocityTolerance(kVelocityTolerance),
-      m_minOutput(kMinOutput),
+      m_velocityTolerance(kVelocityTolerance), m_minOutput(kMinOutput),
       m_counteractGain(kCounteractGain),
       m_aggressiveAccelMultiplier(kAggressiveAccelMultiplier),
-      m_smoothingFactor(kSmoothingFactor),
-      m_isAlgae(isAlgae) {
+      m_smoothingFactor(kSmoothingFactor), m_isAlgae(isAlgae) {
   // Enable continuous input for rotation controller (-180 to 180 degrees)
   m_rotationController.EnableContinuousInput(std::numbers::pi,
                                              std::numbers::pi);
@@ -78,7 +74,7 @@ frc::Pose2d DriveWithNormalVectorAlignment::GetCurrentTargetPose() {
   UpdateTargetPoses();
 
   if (!m_alignmentPose.has_value() || !m_finalPose.has_value()) {
-    return m_drive->GetPose();  // Return current pose if targets not set
+    return m_drive->GetPose(); // Return current pose if targets not set
   }
 
   frc::Pose2d robotPose = m_drive->GetPose();
@@ -94,7 +90,7 @@ frc::Pose2d DriveWithNormalVectorAlignment::GetCurrentTargetPose() {
   units::meter_t approachMagnitude = approachVector.Norm();
 
   if (approachMagnitude.value() < 0.001) {
-    return *m_finalPose;  // Already at final pose
+    return *m_finalPose; // Already at final pose
   }
 
   frc::Translation2d approachDirection =
@@ -222,7 +218,7 @@ void DriveWithNormalVectorAlignment::Execute() {
                            m_smoothingFactor);
 
   // Apply velocity smoothing with acceleration limiting
-  constexpr units::second_t dt = 20_ms;  // Assuming 50Hz update rate
+  constexpr units::second_t dt = 20_ms; // Assuming 50Hz update rate
 
   frc::Translation2d deltaV{
       units::meter_t{(vxDesired - m_fieldRelativeVelocity.vx.value()) *

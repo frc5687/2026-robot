@@ -9,7 +9,7 @@
 #include "utils/vision/VisionMeasurement.h"
 
 class Camera {
- public:
+public:
   struct VisionResult {
     std::vector<AprilTagObservation> tags;
     std::optional<VisionMeasurement> poseEstimate;

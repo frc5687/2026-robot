@@ -14,13 +14,12 @@ struct FlywheelState {
   FlywheelState Extrapolate(units::second_t dt) const {
     FlywheelState future = *this;
     future.timestamp = timestamp + dt;
-    future.velocity =
-        velocity + (acceleration * dt);  // make this torque based?
+    future.velocity = velocity + (acceleration * dt);
     return future;
   }
 
-  static FlywheelState Interpolate(const FlywheelState& start,
-                                   const FlywheelState& end, double t) {
+  static FlywheelState Interpolate(const FlywheelState &start,
+                                   const FlywheelState &end, double t) {
     FlywheelState interpolated;
     interpolated.timestamp =
         start.timestamp + (end.timestamp - start.timestamp) * t;

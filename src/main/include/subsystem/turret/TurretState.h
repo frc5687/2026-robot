@@ -26,8 +26,8 @@ struct TurretState {
     return future;
   }
 
-  static TurretState Interpolate(const TurretState& start,
-                                 const TurretState& end, double t) {
+  static TurretState Interpolate(const TurretState &start,
+                                 const TurretState &end, double t) {
     TurretState interpolated;
     interpolated.timestamp = Lerp(start.timestamp, end.timestamp, t);
     interpolated.angle = Lerp(start.angle, end.angle, t);

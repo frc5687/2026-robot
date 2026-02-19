@@ -6,16 +6,16 @@
 #include <frc/geometry/Transform2d.h>
 #include <wpi/array.h>
 
+#include <iostream>
 #include <vector>
 
 #include "utils/Logger.h"
-#include <iostream>
 
-PoseEstimator::PoseEstimator(const Config& config) : m_config(config) {
+PoseEstimator::PoseEstimator(const Config &config) : m_config(config) {
   Logger::Instance().Log("PoseEstimator/Initialized", true);
 }
 
-void PoseEstimator::UpdatePoseEstimate(const OdometryData& latestOdometry) {
+void PoseEstimator::UpdatePoseEstimate(const OdometryData &latestOdometry) {
   if (!latestOdometry.isValid) {
     return;
   }
@@ -40,10 +40,10 @@ void PoseEstimator::UpdatePoseEstimate(const OdometryData& latestOdometry) {
 
   m_poseBuffer.AddSample(currentTime, latestOdometry.pose);
   ProcessPendingMeasurements(latestOdometry.pose);
-  Logger::Instance().Log("PoseEstimator/RejectedCount", m_rejectedCount);
+  // Logger::Instance().Log("PoseEstimator/RejectedCount", m_rejectedCount);
 }
 
-void PoseEstimator::ResetPose(const frc::Pose2d& pose) {
+void PoseEstimator::ResetPose(const frc::Pose2d &pose) {
   m_estimatedPose = pose;
   m_lastOdometryPose = pose;
   m_currentVelocity = 0_mps;
@@ -53,14 +53,14 @@ void PoseEstimator::ResetPose(const frc::Pose2d& pose) {
   Logger::Instance().Log("PoseEstimator/PoseReset", pose);
 }
 
-void PoseEstimator::ResetPoseKeepRotation(const frc::Pose2d& pose) {
+void PoseEstimator::ResetPoseKeepRotation(const frc::Pose2d &pose) {
   frc::Rotation2d currentRotation;
   currentRotation = m_estimatedPose.Rotation();
   frc::Pose2d newPose{pose.Translation(), currentRotation};
   ResetPose(newPose);
 }
 
-void PoseEstimator::AddVisionMeasurement(const VisionMeasurement& measurement) {
+void PoseEstimator::AddVisionMeasurement(const VisionMeasurement &measurement) {
   if (!m_visionEnabled) {
     return;
   }
@@ -73,7 +73,7 @@ void PoseEstimator::AddVisionMeasurement(const VisionMeasurement& measurement) {
   }
 }
 
-void PoseEstimator::AddVisionMeasurement(const frc::Pose3d& pose3d,
+void PoseEstimator::AddVisionMeasurement(const frc::Pose3d &pose3d,
                                          units::second_t timestamp,
                                          int tagCount, double avgDistance,
                                          double confidence, double ambiguity) {
@@ -90,18 +90,18 @@ void PoseEstimator::AddVisionMeasurement(const frc::Pose3d& pose3d,
 }
 
 void PoseEstimator::ProcessPendingMeasurements(
-    const frc::Pose2d& currentOdometryPose) {
+    const frc::Pose2d &currentOdometryPose) {
   std::vector<VisionMeasurement> measurements;
   measurements.swap(m_pendingMeasurements);
 
-  for (const auto& measurement : measurements) {
+  for (const auto &measurement : measurements) {
     ProcessVisionMeasurement(currentOdometryPose, measurement);
   }
 }
 
 void PoseEstimator::ProcessVisionMeasurement(
-    const frc::Pose2d& currentOdometryPose,
-    const VisionMeasurement& measurement) {
+    const frc::Pose2d &currentOdometryPose,
+    const VisionMeasurement &measurement) {
   auto odometryAtTime = m_poseBuffer.Sample(measurement.timestamp);
   if (!odometryAtTime) {
     Logger::Instance().Log("PoseEstimator/NoInterpolation",
@@ -140,7 +140,7 @@ void PoseEstimator::ProcessVisionMeasurement(
   }
 }
 
-bool PoseEstimator::ValidateMeasurement(VisionMeasurement& measurement) {
+bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
   auto currentTime = frc::Timer::GetFPGATimestamp();
 
   if (measurement.tagCount <= 0) {
@@ -149,20 +149,20 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement& measurement) {
 
   if (currentTime - measurement.timestamp >
       units::second_t{m_config.maxTimestampAge}) {
-     std::cout << "Not valid due to timestamp diff: " << (currentTime -
-     measurement.timestamp).value() << "\n";
+    std::cout << "Not valid due to timestamp diff: "
+              << (currentTime - measurement.timestamp).value() << "\n";
     return false;
   }
 
   if (measurement.confidence > 0 &&
       measurement.confidence < m_config.minConfidence) {
-     std::cout << "Not valid due to confidence: " << measurement.confidence <<
-     "\n";
+    std::cout << "Not valid due to confidence: " << measurement.confidence
+              << "\n";
     return false;
   }
 
   if (!IsReasonablePose(measurement.pose)) {
-     std::cout << "Not valid due to not a resonable pose.\n";
+    std::cout << "Not valid due to not a resonable pose.\n";
     return false;
   }
 
@@ -184,7 +184,7 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement& measurement) {
 }
 
 void PoseEstimator::CalculateStandardDeviations(
-    VisionMeasurement& measurement) {
+    VisionMeasurement &measurement) {
   double xyStd = m_config.baseXYStdDev;
   double thetaStd = m_config.baseThetaStdDev;
 
@@ -219,17 +219,17 @@ void PoseEstimator::CalculateStandardDeviations(
   measurement.thetaStdDev = std::clamp(thetaStd, 0.01, 1.5);
 }
 
-std::array<double, 3> PoseEstimator::CalculateKalmanGain(
-    const VisionMeasurement& measurement) const {
+std::array<double, 3>
+PoseEstimator::CalculateKalmanGain(const VisionMeasurement &measurement) const {
   std::array<double, 3> gain;
   std::array<double, 3> qVar = {
       m_config.odometryXStdDev * m_config.odometryXStdDev,
       m_config.odometryYStdDev * m_config.odometryYStdDev,
       m_config.odometryThetaStdDev * m_config.odometryThetaStdDev};
-  std::array<double, 3> rVar = {
-      measurement.xyStdDev * measurement.xyStdDev,
-      measurement.xyStdDev * measurement.xyStdDev,
-      measurement.thetaStdDev * measurement.thetaStdDev};
+  std::array<double, 3> rVar = {measurement.xyStdDev * measurement.xyStdDev,
+                                measurement.xyStdDev * measurement.xyStdDev,
+                                measurement.thetaStdDev *
+                                    measurement.thetaStdDev};
 
   for (int i = 0; i < 3; i++) {
     if (qVar[i] == 0.0 && rVar[i] != 0.0) {
@@ -246,14 +246,14 @@ std::array<double, 3> PoseEstimator::CalculateKalmanGain(
   return gain;
 }
 
-bool PoseEstimator::IsReasonablePose(const frc::Pose2d& pose) const {
+bool PoseEstimator::IsReasonablePose(const frc::Pose2d &pose) const {
   auto translation = pose.Translation();
   return translation.X().value() >= kMinX && translation.X().value() <= kMaxX &&
          translation.Y().value() >= kMinY && translation.Y().value() <= kMaxY;
 }
 
-bool PoseEstimator::IsReasonableMovement(const frc::Pose2d& from,
-                                         const frc::Pose2d& to,
+bool PoseEstimator::IsReasonableMovement(const frc::Pose2d &from,
+                                         const frc::Pose2d &to,
                                          units::second_t deltaTime) const {
   if (deltaTime <= 0_s) {
     return true;
@@ -266,9 +266,7 @@ bool PoseEstimator::IsReasonableMovement(const frc::Pose2d& from,
   return speed < units::meters_per_second_t{m_config.maxMovementSpeed};
 }
 
-frc::Pose2d PoseEstimator::GetEstimatedPose() const {
-  return m_estimatedPose;
-}
+frc::Pose2d PoseEstimator::GetEstimatedPose() const { return m_estimatedPose; }
 
 units::meters_per_second_t PoseEstimator::GetCurrentVelocity() const {
   return m_currentVelocity;

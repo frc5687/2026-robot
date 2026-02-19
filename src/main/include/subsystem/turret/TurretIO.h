@@ -20,9 +20,9 @@ struct TurretIOInputs {
 };
 
 class TurretIO {
- public:
+public:
   virtual ~TurretIO() = default;
 
-  virtual void UpdateInputs(TurretIOInputs& inputs) = 0;
+  virtual void UpdateInputs(TurretIOInputs &inputs) = 0;
   virtual void SetTurretAngle(units::radian_t angle) = 0;
 };

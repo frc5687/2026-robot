@@ -16,11 +16,10 @@
 #include "utils/Logger.h"
 
 OdometryThread::OdometryThread(
-    std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>&
-        modules,
-    std::unique_ptr<GyroIO>& gyro, const PoseEstimator::Config& estimatorConfig)
-    : m_modules(modules),
-      m_gyro(gyro),
+    std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>
+        &modules,
+    std::unique_ptr<GyroIO> &gyro, const PoseEstimator::Config &estimatorConfig)
+    : m_modules(modules), m_gyro(gyro),
       m_odometry(m_kinematics, frc::Rotation2d{}, GetModulePositions(),
                  frc::Pose2d{}),
       m_estimator(std::make_unique<PoseEstimator>(estimatorConfig)) {
@@ -34,9 +33,7 @@ OdometryThread::OdometryThread(
   Logger::Instance().Log("OdometryThread/AllModulesCTRE", m_allModulesAreCTRE);
 }
 
-OdometryThread::~OdometryThread() {
-  Stop();
-}
+OdometryThread::~OdometryThread() { Stop(); }
 
 void OdometryThread::Start() {
   if (m_isRunning.exchange(true)) {
@@ -93,7 +90,7 @@ void OdometryThread::PeriodicUpdate() {
   if (m_allModulesAreCTRE) {
     inputsValid = UpdateBatchedInputs();
   } else {
-    for (auto& mod : m_modules) {
+    for (auto &mod : m_modules) {
       mod->Periodic();
     }
     m_gyro->UpdateInputs(m_gyroInputs, false);
@@ -127,14 +124,14 @@ void OdometryThread::PeriodicUpdate() {
 bool OdometryThread::SetupBatchedSignals() {
   size_t writeIdx = 0;
 
-  for (auto& mod : m_modules) {
+  for (auto &mod : m_modules) {
     if (!mod) {
       m_allModulesAreCTRE = false;
       return false;
     }
 
-    ModuleIO& io = mod->GetModuleIO();
-    auto* ctre = dynamic_cast<CTREModuleIO*>(&io);
+    ModuleIO &io = mod->GetModuleIO();
+    auto *ctre = dynamic_cast<CTREModuleIO *>(&io);
     if (!ctre) {
       m_allModulesAreCTRE = false;
       return false;
@@ -143,7 +140,7 @@ bool OdometryThread::SetupBatchedSignals() {
     auto signals = ctre->GetOdometrySignals();
     mod->SetIsBatchedSignals(true);
 
-    for (auto* signal : signals) {
+    for (auto *signal : signals) {
       if (writeIdx >= Constants::SwerveDrive::Odometry::kTotalSignals) {
         m_allModulesAreCTRE = false;
         return false;
@@ -152,9 +149,9 @@ bool OdometryThread::SetupBatchedSignals() {
     }
   }
 
-  auto* pigeon = dynamic_cast<PigeonIO*>(m_gyro.get());
+  auto *pigeon = dynamic_cast<PigeonIO *>(m_gyro.get());
   auto imuSignals = pigeon->GetBatchedSignals();
-  for (auto* signal : imuSignals) {
+  for (auto *signal : imuSignals) {
     if (writeIdx >= Constants::SwerveDrive::Odometry::kTotalSignals) {
       m_allModulesAreCTRE = false;
       return false;
@@ -185,7 +182,7 @@ bool OdometryThread::UpdateBatchedInputs() {
   if (status == ctre::phoenix::StatusCode::OK) {
     m_successfulBatches++;
 
-    for (auto& mod : m_modules) {
+    for (auto &mod : m_modules) {
       mod->Periodic();
     }
 
@@ -240,6 +237,7 @@ void OdometryThread::UpdateOdometry() {
     auto newPose = m_odometry.Update(m_gyroInputs.yaw, modulePositions);
 
     m_latestData.pose = newPose;
+    m_latestData.estimatedPose = m_estimator->GetEstimatedPose(); // mutex
     m_latestData.modulePositions = modulePositions;
     m_latestData.moduleStates = moduleStates;
     m_latestData.chassisSpeeds = chassisSpeeds;
@@ -263,7 +261,7 @@ void OdometryThread::UpdateStatistics(units::second_t loopTime) {
     m_loopTimeIndex = (m_loopTimeIndex + 1) % kStatisticsWindowSize;
 
     units::second_t total = 0_s;
-    for (const auto& time : m_loopTimes) {
+    for (const auto &time : m_loopTimes) {
       total += time;
     }
     m_averageLoopTime.store(total / kStatisticsWindowSize);
@@ -311,12 +309,12 @@ void OdometryThread::UpdateStatistics(units::second_t loopTime) {
   }
 }
 void OdometryThread::AddVisionMeasurement(
-    const VisionMeasurement& measurement) {
+    const VisionMeasurement &measurement) {
   std::scoped_lock lock(m_dataMutex);
   m_estimator->AddVisionMeasurement(measurement);
 }
 
-void OdometryThread::AddVisionMeasurement(const frc::Pose3d& pose3d,
+void OdometryThread::AddVisionMeasurement(const frc::Pose3d &pose3d,
                                           units::second_t timestamp,
                                           int tagCount, double avgDistance,
                                           double confidence, double ambiguity) {
@@ -367,7 +365,7 @@ frc::ChassisSpeeds OdometryThread::GetChassisSpeeds() const {
   return m_latestData.chassisSpeeds;
 }
 
-void OdometryThread::ResetPose(const frc::Pose2d& pose) {
+void OdometryThread::ResetPose(const frc::Pose2d &pose) {
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
       currentPositions;
   for (size_t i = 0; i < Constants::SwerveDrive::kModuleCount; i++) {
@@ -383,7 +381,7 @@ void OdometryThread::ResetPose(const frc::Pose2d& pose) {
   Logger::Instance().Log("OdometryThread/PoseReset", pose);
 }
 
-void OdometryThread::ResetPoseKeepRotation(const frc::Pose2d& pose) {
+void OdometryThread::ResetPoseKeepRotation(const frc::Pose2d &pose) {
   std::scoped_lock lock(m_dataMutex);
   frc::Rotation2d currentRotation;
   currentRotation = m_latestData.gyroAngle;

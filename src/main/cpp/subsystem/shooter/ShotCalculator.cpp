@@ -1,4 +1,5 @@
 // Team 5687 2026
+
 #include "subsystem/shooter/ShotCalculator.h"
 
 #include <cmath>
@@ -29,7 +30,7 @@ ShotCalculator::ShotCalculator() {
 }
 
 frc::Translation2d ShotCalculator::FlipAlliance(frc::Translation2d t,
-                                                 bool isRed) const {
+                                                bool isRed) const {
   if (isRed) {
     return {units::meter_t{Constants::Field::kFieldLength} - t.X(), t.Y()};
   }
@@ -39,12 +40,13 @@ frc::Translation2d ShotCalculator::FlipAlliance(frc::Translation2d t,
 units::radian_t ShotCalculator::NormalizeAngle(units::radian_t angle) {
   double a = angle.value();
   a = std::fmod(a + std::numbers::pi, 2.0 * std::numbers::pi);
-  if (a < 0.0) a += 2.0 * std::numbers::pi;
+  if (a < 0.0)
+    a += 2.0 * std::numbers::pi;
   return units::radian_t{a - std::numbers::pi};
 }
 
 ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
-  auto& rs = RobotState::Instance();
+  auto &rs = RobotState::Instance();
 
   units::second_t launchTime = now + m_cfg.totalLatency;
   OdometryData futureDrive = rs.GetDriveState(launchTime);
@@ -72,7 +74,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double offsetY_field = offsetX_robot * sin_h + offsetY_robot * cos_h;
 
   fieldVx += -omega * offsetY_field;
-  fieldVy +=  omega * offsetX_field;
+  fieldVy += omega * offsetX_field;
 
   double lx = launcherXY.X().value();
   double ly = launcherXY.Y().value();
@@ -108,7 +110,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
       units::radian_t{std::atan2(ty - lookaheadY, tx - lookaheadX)}};
 
   units::radian_t turretRobotAngle =
-    NormalizeAngle((turretFieldAngle - heading).Radians());
+      NormalizeAngle((turretFieldAngle - heading).Radians());
 
   TurretState turret = rs.GetTurretState(now);
   HoodState hood = rs.GetHoodState(now);
@@ -118,18 +120,16 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
       units::math::abs(NormalizeAngle(turret.angle - turretRobotAngle)) <
       m_cfg.turretTolerance;
 
-  bool hoodOK =
-      units::math::abs(hood.angle - units::degree_t{hoodAngleDeg}) <
-      m_cfg.hoodTolerance;
+  bool hoodOK = units::math::abs(hood.angle - units::degree_t{hoodAngleDeg}) <
+                m_cfg.hoodTolerance;
 
-  bool flywheelOK =
-      flywheelSpeed > 0.0 &&
-      std::abs(flywheel.velocity.value() - flywheelSpeed) /
-              std::max(flywheelSpeed, 0.1) <
-          m_cfg.flywheelToleranceFrac;
+  bool flywheelOK = flywheelSpeed > 0.0 &&
+                    std::abs(flywheel.velocity.value() - flywheelSpeed) /
+                            std::max(flywheelSpeed, 0.1) <
+                        m_cfg.flywheelToleranceFrac;
 
-  bool inRange = effDist >= m_cfg.minDistanceMeters &&
-                 effDist <= m_cfg.maxDistanceMeters;
+  bool inRange =
+      effDist >= m_cfg.minDistanceMeters && effDist <= m_cfg.maxDistanceMeters;
 
   return {
       .inRange = inRange,

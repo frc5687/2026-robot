@@ -7,7 +7,6 @@
 ///
 // V1.14 - Requires 2026.0
 
-// #include <curl/curl.h>
 #include <fcntl.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Pose3d.h>
@@ -27,7 +26,6 @@
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
-#include "networktables/NetworkTableValue.h"
 #include "wpi/json.h"
 
 /**
@@ -42,7 +40,7 @@ namespace LimelightHelpers {
  * @param name The Limelight name to sanitize
  * @return Sanitized name, defaults to "limelight" if empty
  */
-inline std::string sanitizeName(const std::string& name) {
+inline std::string sanitizeName(const std::string &name) {
   if (name == "") {
     return "limelight";
   }
@@ -55,7 +53,7 @@ inline std::string sanitizeName(const std::string& name) {
  * @param inData Array containing pose data [x, y, z, roll, pitch, yaw]
  * @return Pose3d object representing the pose, or empty Pose3d if invalid data
  */
-inline frc::Pose3d toPose3D(const std::vector<double>& inData) {
+inline frc::Pose3d toPose3D(const std::vector<double> &inData) {
   if (inData.size() < 6) {
     return frc::Pose3d();
   }
@@ -76,7 +74,7 @@ inline frc::Pose3d toPose3D(const std::vector<double>& inData) {
  * @param inData Array containing pose data [x, y, z, roll, pitch, yaw]
  * @return Pose2d object representing the pose, or empty Pose2d if invalid data
  */
-inline frc::Pose2d toPose2D(const std::vector<double>& inData) {
+inline frc::Pose2d toPose2D(const std::vector<double> &inData) {
   if (inData.size() < 6) {
     return frc::Pose2d();
   }
@@ -94,7 +92,7 @@ inline frc::Pose2d toPose2D(const std::vector<double>& inData) {
  * @param pose The Pose3d object to convert
  * @return A 6-element array containing [x, y, z, roll, pitch, yaw]
  */
-inline std::array<double, 6> pose3dToArray(const frc::Pose3d& pose) {
+inline std::array<double, 6> pose3dToArray(const frc::Pose3d &pose) {
   std::array<double, 6> result;
   result[0] = pose.Translation().X().value();
   result[1] = pose.Translation().Y().value();
@@ -114,7 +112,7 @@ inline std::array<double, 6> pose3dToArray(const frc::Pose3d& pose) {
  * @param pose The Pose2d object to convert
  * @return A 6-element array containing [x, y, 0, 0, 0, yaw]
  */
-inline std::array<double, 6> pose2dToArray(const frc::Pose2d& pose) {
+inline std::array<double, 6> pose2dToArray(const frc::Pose2d &pose) {
   std::array<double, 6> result;
   result[0] = pose.Translation().X().value();
   result[1] = pose.Translation().Y().value();
@@ -130,8 +128,8 @@ inline std::array<double, 6> pose2dToArray(const frc::Pose2d& pose) {
  * @param tableName Name of the Limelight camera
  * @return Shared pointer to the NetworkTable
  */
-inline std::shared_ptr<nt::NetworkTable> getLimelightNTTable(
-    const std::string& tableName) {
+inline std::shared_ptr<nt::NetworkTable>
+getLimelightNTTable(const std::string &tableName) {
   return nt::NetworkTableInstance::GetDefault().GetTable(
       sanitizeName(tableName));
 }
@@ -140,9 +138,7 @@ inline std::shared_ptr<nt::NetworkTable> getLimelightNTTable(
  * Flushes NetworkTables to ensure data is sent immediately.
  * Call after setting values that need to be sent to the Limelight immediately.
  */
-inline void Flush() {
-  nt::NetworkTableInstance::GetDefault().Flush();
-}
+inline void Flush() { nt::NetworkTableInstance::GetDefault().Flush(); }
 
 /**
  * Gets a NetworkTable entry for a Limelight camera.
@@ -150,8 +146,9 @@ inline void Flush() {
  * @param entryName Name of the entry to retrieve
  * @return NetworkTableEntry for the specified entry
  */
-inline nt::NetworkTableEntry getLimelightNTTableEntry(
-    const std::string& tableName, const std::string& entryName) {
+inline nt::NetworkTableEntry
+getLimelightNTTableEntry(const std::string &tableName,
+                         const std::string &entryName) {
   return getLimelightNTTable(tableName)->GetEntry(entryName);
 }
 
@@ -165,8 +162,9 @@ inline std::unordered_map<std::string, nt::DoubleArrayEntry> doubleArrayEntries;
  * @param entryName Name of the entry to retrieve
  * @return Reference to the DoubleArrayEntry
  */
-inline nt::DoubleArrayEntry& getLimelightDoubleArrayEntry(
-    const std::string& tableName, const std::string& entryName) {
+inline nt::DoubleArrayEntry &
+getLimelightDoubleArrayEntry(const std::string &tableName,
+                             const std::string &entryName) {
   const std::string key = tableName + "/" + entryName;
   auto it = doubleArrayEntries.find(key);
   if (it == doubleArrayEntries.end()) {
@@ -185,8 +183,8 @@ inline nt::DoubleArrayEntry& getLimelightDoubleArrayEntry(
  * @param entryName Name of the entry to retrieve
  * @return The double value, or 0.0 if not found
  */
-inline double getLimelightNTDouble(const std::string& tableName,
-                                   const std::string& entryName) {
+inline double getLimelightNTDouble(const std::string &tableName,
+                                   const std::string &entryName) {
   return getLimelightNTTableEntry(tableName, entryName).GetDouble(0.0);
 }
 
@@ -196,8 +194,9 @@ inline double getLimelightNTDouble(const std::string& tableName,
  * @param entryName Name of the entry to retrieve
  * @return Vector of doubles, or empty vector if not found
  */
-inline std::vector<double> getLimelightNTDoubleArray(
-    const std::string& tableName, const std::string& entryName) {
+inline std::vector<double>
+getLimelightNTDoubleArray(const std::string &tableName,
+                          const std::string &entryName) {
   return getLimelightNTTableEntry(tableName, entryName)
       .GetDoubleArray(std::span<double>{});
 }
@@ -208,8 +207,8 @@ inline std::vector<double> getLimelightNTDoubleArray(
  * @param entryName Name of the entry to retrieve
  * @return The string value, or empty string if not found
  */
-inline std::string getLimelightNTString(const std::string& tableName,
-                                        const std::string& entryName) {
+inline std::string getLimelightNTString(const std::string &tableName,
+                                        const std::string &entryName) {
   return getLimelightNTTableEntry(tableName, entryName).GetString("");
 }
 
@@ -219,8 +218,9 @@ inline std::string getLimelightNTString(const std::string& tableName,
  * @param entryName Name of the entry to retrieve
  * @return Vector of strings, or empty vector if not found
  */
-inline std::vector<std::string> getLimelightNTStringArray(
-    const std::string& tableName, const std::string& entryName) {
+inline std::vector<std::string>
+getLimelightNTStringArray(const std::string &tableName,
+                          const std::string &entryName) {
   return getLimelightNTTableEntry(tableName, entryName)
       .GetStringArray(std::span<std::string>{});
 }
@@ -231,8 +231,8 @@ inline std::vector<std::string> getLimelightNTStringArray(
  * @param entryName Name of the entry to set
  * @param val The value to set
  */
-inline void setLimelightNTDouble(const std::string& tableName,
-                                 const std::string& entryName, double val) {
+inline void setLimelightNTDouble(const std::string &tableName,
+                                 const std::string &entryName, double val) {
   getLimelightNTTableEntry(tableName, entryName).SetDouble(val);
 }
 
@@ -242,9 +242,9 @@ inline void setLimelightNTDouble(const std::string& tableName,
  * @param entryName Name of the entry to set
  * @param vals The values to set
  */
-inline void setLimelightNTDoubleArray(const std::string& tableName,
-                                      const std::string& entryName,
-                                      const std::span<const double>& vals) {
+inline void setLimelightNTDoubleArray(const std::string &tableName,
+                                      const std::string &entryName,
+                                      const std::span<const double> &vals) {
   getLimelightNTTableEntry(tableName, entryName).SetDoubleArray(vals);
 }
 
@@ -253,7 +253,7 @@ inline void setLimelightNTDoubleArray(const std::string& tableName,
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return True if a valid target is present, false otherwise
  */
-inline bool getTV(const std::string& limelightName = "") {
+inline bool getTV(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "tv") == 1.0;
 }
 
@@ -262,7 +262,7 @@ inline bool getTV(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Horizontal offset angle in degrees
  */
-inline double getTX(const std::string& limelightName = "") {
+inline double getTX(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "tx");
 }
 
@@ -271,7 +271,7 @@ inline double getTX(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Vertical offset angle in degrees
  */
-inline double getTY(const std::string& limelightName = "") {
+inline double getTY(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "ty");
 }
 
@@ -282,7 +282,7 @@ inline double getTY(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Horizontal offset angle in degrees
  */
-inline double getTXNC(const std::string& limelightName = "") {
+inline double getTXNC(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "txnc");
 }
 
@@ -293,7 +293,7 @@ inline double getTXNC(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Vertical offset angle in degrees
  */
-inline double getTYNC(const std::string& limelightName = "") {
+inline double getTYNC(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "tync");
 }
 
@@ -303,7 +303,7 @@ inline double getTYNC(const std::string& limelightName = "") {
  * @return Target area percentage (0-100)
  */
 
-inline double getTA(const std::string& limelightName = "") {
+inline double getTA(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "ta");
 }
 
@@ -317,7 +317,7 @@ inline double getTA(const std::string& limelightName = "") {
  * 14:targetHorizontalExtentPixels, 15:targetVerticalExtentPixels,
  * 16:targetSkewDegrees]
  */
-inline std::vector<double> getT2DArray(const std::string& limelightName) {
+inline std::vector<double> getT2DArray(const std::string &limelightName) {
   return getLimelightNTDoubleArray(limelightName, "t2d");
 }
 
@@ -326,7 +326,7 @@ inline std::vector<double> getT2DArray(const std::string& limelightName) {
  * @param limelightName Name of the Limelight camera
  * @return Number of detected targets
  */
-inline int getTargetCount(const std::string& limelightName) {
+inline int getTargetCount(const std::string &limelightName) {
   std::vector<double> t2d = getT2DArray(limelightName);
   if (t2d.size() == 17) {
     return (int)t2d[1];
@@ -340,7 +340,7 @@ inline int getTargetCount(const std::string& limelightName) {
  * @param limelightName Name of the Limelight camera
  * @return Class index from classifier pipeline
  */
-inline int getClassifierClassIndex(const std::string& limelightName) {
+inline int getClassifierClassIndex(const std::string &limelightName) {
   std::vector<double> t2d = getT2DArray(limelightName);
   if (t2d.size() == 17) {
     return (int)t2d[11];
@@ -354,7 +354,7 @@ inline int getClassifierClassIndex(const std::string& limelightName) {
  * @param limelightName Name of the Limelight camera
  * @return Class index from detector pipeline
  */
-inline int getDetectorClassIndex(const std::string& limelightName) {
+inline int getDetectorClassIndex(const std::string &limelightName) {
   std::vector<double> t2d = getT2DArray(limelightName);
   if (t2d.size() == 17) {
     return (int)t2d[10];
@@ -367,7 +367,7 @@ inline int getDetectorClassIndex(const std::string& limelightName) {
  * @param limelightName Name of the Limelight camera
  * @return Class name string from classifier pipeline
  */
-inline const std::string getClassifierClass(const std::string& limelightName) {
+inline const std::string getClassifierClass(const std::string &limelightName) {
   return getLimelightNTString(limelightName, "tcclass");
 }
 
@@ -376,7 +376,7 @@ inline const std::string getClassifierClass(const std::string& limelightName) {
  * @param limelightName Name of the Limelight camera
  * @return Class name string from detector pipeline
  */
-inline const std::string getDetectorClass(const std::string& limelightName) {
+inline const std::string getDetectorClass(const std::string &limelightName) {
   return getLimelightNTString(limelightName, "tdclass");
 }
 
@@ -386,7 +386,7 @@ inline const std::string getDetectorClass(const std::string& limelightName) {
  * @return Pipeline latency in milliseconds
  */
 
-inline double getLatency_Pipeline(const std::string& limelightName = "") {
+inline double getLatency_Pipeline(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "tl");
 }
 
@@ -395,7 +395,7 @@ inline double getLatency_Pipeline(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera
  * @return Capture latency in milliseconds
  */
-inline double getLatency_Capture(const std::string& limelightName = "") {
+inline double getLatency_Capture(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "cl");
 }
 /**
@@ -403,7 +403,7 @@ inline double getLatency_Capture(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera
  * @return Current pipeline index (0-9)
  */
-inline double getCurrentPipelineIndex(const std::string& limelightName) {
+inline double getCurrentPipelineIndex(const std::string &limelightName) {
   return getLimelightNTDouble(limelightName, "getpipe");
 }
 
@@ -412,8 +412,8 @@ inline double getCurrentPipelineIndex(const std::string& limelightName) {
  * @param limelightName Name of the Limelight camera
  * @return Pipeline type string (e.g. "retro", "apriltag", etc)
  */
-inline const std::string getCurrentPipelineType(
-    const std::string& limelightName) {
+inline const std::string
+getCurrentPipelineType(const std::string &limelightName) {
   return getLimelightNTString(limelightName, "getpipetype");
 }
 
@@ -422,7 +422,7 @@ inline const std::string getCurrentPipelineType(
  * @param limelightName Name of the Limelight camera
  * @return JSON string containing all current results
  */
-inline std::string getJSONDump(const std::string& limelightName = "") {
+inline std::string getJSONDump(const std::string &limelightName = "") {
   return getLimelightNTString(limelightName, "json");
 }
 
@@ -431,7 +431,7 @@ inline std::string getJSONDump(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getBotpose(const std::string& limelightName = "") {
+inline std::vector<double> getBotpose(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "botpose");
 }
 
@@ -440,8 +440,8 @@ inline std::vector<double> getBotpose(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getBotpose_wpiRed(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getBotpose_wpiRed(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "botpose_wpired");
 }
 
@@ -450,8 +450,8 @@ inline std::vector<double> getBotpose_wpiRed(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getBotpose_wpiBlue(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getBotpose_wpiBlue(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "botpose_wpiblue");
 }
 
@@ -460,8 +460,8 @@ inline std::vector<double> getBotpose_wpiBlue(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getBotpose_TargetSpace(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getBotpose_TargetSpace(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "botpose_targetspace");
 }
 
@@ -470,8 +470,8 @@ inline std::vector<double> getBotpose_TargetSpace(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getCameraPose_TargetSpace(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getCameraPose_TargetSpace(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "camerapose_targetspace");
 }
 
@@ -480,8 +480,8 @@ inline std::vector<double> getCameraPose_TargetSpace(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getCameraPose_RobotSpace(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getCameraPose_RobotSpace(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "camerapose_robotspace");
 }
 
@@ -490,8 +490,8 @@ inline std::vector<double> getCameraPose_RobotSpace(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getTargetPose_CameraSpace(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getTargetPose_CameraSpace(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "targetpose_cameraspace");
 }
 
@@ -500,8 +500,8 @@ inline std::vector<double> getTargetPose_CameraSpace(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array [x, y, z, roll, pitch, yaw] in meters and degrees
  */
-inline std::vector<double> getTargetPose_RobotSpace(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getTargetPose_RobotSpace(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "targetpose_robotspace");
 }
 
@@ -510,8 +510,8 @@ inline std::vector<double> getTargetPose_RobotSpace(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Array containing RGB color values
  */
-inline std::vector<double> getTargetColor(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getTargetColor(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "tc");
 }
 
@@ -520,7 +520,7 @@ inline std::vector<double> getTargetColor(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Fiducial/AprilTag ID, or 0 if none detected
  */
-inline double getFiducialID(const std::string& limelightName = "") {
+inline double getFiducialID(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "tid");
 }
 
@@ -533,7 +533,7 @@ inline double getFiducialID(const std::string& limelightName = "") {
  * @param limelightName Name/identifier of the Limelight
  * @return Pose3d object representing the robot's position and orientation
  */
-inline frc::Pose3d getBotPose3d(const std::string& limelightName = "") {
+inline frc::Pose3d getBotPose3d(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "botpose");
   return toPose3D(poseArray);
@@ -546,7 +546,7 @@ inline frc::Pose3d getBotPose3d(const std::string& limelightName = "") {
  * @return Pose3d object representing the robot's position and orientation in
  * Red Alliance field space
  */
-inline frc::Pose3d getBotPose3d_wpiRed(const std::string& limelightName = "") {
+inline frc::Pose3d getBotPose3d_wpiRed(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "botpose_wpired");
   return toPose3D(poseArray);
@@ -559,7 +559,7 @@ inline frc::Pose3d getBotPose3d_wpiRed(const std::string& limelightName = "") {
  * @return Pose3d object representing the robot's position and orientation in
  * Blue Alliance field space
  */
-inline frc::Pose3d getBotPose3d_wpiBlue(const std::string& limelightName = "") {
+inline frc::Pose3d getBotPose3d_wpiBlue(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "botpose_wpiblue");
   return toPose3D(poseArray);
@@ -572,8 +572,8 @@ inline frc::Pose3d getBotPose3d_wpiBlue(const std::string& limelightName = "") {
  * @return Pose3d object representing the robot's position and orientation
  * relative to the target
  */
-inline frc::Pose3d getBotPose3d_TargetSpace(
-    const std::string& limelightName = "") {
+inline frc::Pose3d
+getBotPose3d_TargetSpace(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "botpose_targetspace");
   return toPose3D(poseArray);
@@ -586,8 +586,8 @@ inline frc::Pose3d getBotPose3d_TargetSpace(
  * @return Pose3d object representing the camera's position and orientation
  * relative to the target
  */
-inline frc::Pose3d getCameraPose3d_TargetSpace(
-    const std::string& limelightName = "") {
+inline frc::Pose3d
+getCameraPose3d_TargetSpace(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "camerapose_targetspace");
   return toPose3D(poseArray);
@@ -599,8 +599,8 @@ inline frc::Pose3d getCameraPose3d_TargetSpace(
  * @return Pose3d object representing the target's position and orientation
  * relative to the camera
  */
-inline frc::Pose3d getTargetPose3d_CameraSpace(
-    const std::string& limelightName = "") {
+inline frc::Pose3d
+getTargetPose3d_CameraSpace(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "targetpose_cameraspace");
   return toPose3D(poseArray);
@@ -612,8 +612,8 @@ inline frc::Pose3d getTargetPose3d_CameraSpace(
  * @return Pose3d object representing the target's position and orientation
  * relative to the robot
  */
-inline frc::Pose3d getTargetPose3d_RobotSpace(
-    const std::string& limelightName = "") {
+inline frc::Pose3d
+getTargetPose3d_RobotSpace(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "targetpose_robotspace");
   return toPose3D(poseArray);
@@ -625,8 +625,8 @@ inline frc::Pose3d getTargetPose3d_RobotSpace(
  * @return Pose3d object representing the camera's position and orientation
  * relative to the robot
  */
-inline frc::Pose3d getCameraPose3d_RobotSpace(
-    const std::string& limelightName = "") {
+inline frc::Pose3d
+getCameraPose3d_RobotSpace(const std::string &limelightName = "") {
   std::vector<double> poseArray =
       getLimelightNTDoubleArray(limelightName, "camerapose_robotspace");
   return toPose3D(poseArray);
@@ -639,7 +639,7 @@ inline frc::Pose3d getCameraPose3d_RobotSpace(
  * @return Pose2d object representing the robot's position in Blue Alliance
  * field space
  */
-inline frc::Pose2d getBotPose2d_wpiBlue(const std::string& limelightName = "") {
+inline frc::Pose2d getBotPose2d_wpiBlue(const std::string &limelightName = "") {
   std::vector<double> result =
       getLimelightNTDoubleArray(limelightName, "botpose_wpiblue");
   return toPose2D(result);
@@ -652,7 +652,7 @@ inline frc::Pose2d getBotPose2d_wpiBlue(const std::string& limelightName = "") {
  * @return Pose2d object representing the robot's position in Red Alliance field
  * space
  */
-inline frc::Pose2d getBotPose2d_wpiRed(const std::string& limelightName = "") {
+inline frc::Pose2d getBotPose2d_wpiRed(const std::string &limelightName = "") {
   std::vector<double> result =
       getLimelightNTDoubleArray(limelightName, "botpose_wpired");
   return toPose2D(result);
@@ -664,7 +664,7 @@ inline frc::Pose2d getBotPose2d_wpiRed(const std::string& limelightName = "") {
  * @param limelightName Name/identifier of the Limelight
  * @return Pose2d object representing the robot's position
  */
-inline frc::Pose2d getBotPose2d(const std::string& limelightName = "") {
+inline frc::Pose2d getBotPose2d(const std::string &limelightName = "") {
   std::vector<double> result =
       getLimelightNTDoubleArray(limelightName, "botpose");
   return toPose2D(result);
@@ -675,7 +675,7 @@ inline frc::Pose2d getBotPose2d(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Class name string from neural network pipeline
  */
-inline std::string getNeuralClassID(const std::string& limelightName = "") {
+inline std::string getNeuralClassID(const std::string &limelightName = "") {
   return getLimelightNTString(limelightName, "tclass");
 }
 
@@ -684,8 +684,8 @@ inline std::string getNeuralClassID(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Vector of decoded barcode strings
  */
-inline std::vector<std::string> getRawBarcodeData(
-    const std::string& limelightName = "") {
+inline std::vector<std::string>
+getRawBarcodeData(const std::string &limelightName = "") {
   return getLimelightNTStringArray(limelightName, "rawbarcodes");
 }
 
@@ -695,7 +695,7 @@ inline std::vector<std::string> getRawBarcodeData(
  * @param limelightName Name of the Limelight camera
  * @return Heartbeat value that increments each frame
  */
-inline double getHeartbeat(const std::string& limelightName = "") {
+inline double getHeartbeat(const std::string &limelightName = "") {
   return getLimelightNTDouble(limelightName, "hb");
 }
 
@@ -706,8 +706,8 @@ inline double getHeartbeat(const std::string& limelightName = "") {
  * @param limelightName Name/identifier of the Limelight
  * @return Array of doubles containing corner coordinates [x0, y0, x1, y1, ...]
  */
-inline std::vector<double> getCornerCoordinates(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getCornerCoordinates(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "tcornxy");
 }
 
@@ -716,7 +716,7 @@ inline std::vector<double> getCornerCoordinates(
  * @param limelightName Name of the Limelight camera
  * @param index Pipeline index (0-9)
  */
-inline void setPipelineIndex(const std::string& limelightName, int index) {
+inline void setPipelineIndex(const std::string &limelightName, int index) {
   setLimelightNTDouble(limelightName, "pipeline", index);
 }
 
@@ -725,7 +725,7 @@ inline void setPipelineIndex(const std::string& limelightName, int index) {
  * @param limelightName Name of the Limelight camera
  * @param ID The AprilTag ID to prioritize
  */
-inline void setPriorityTagID(const std::string& limelightName, int ID) {
+inline void setPriorityTagID(const std::string &limelightName, int ID) {
   setLimelightNTDouble(limelightName, "priorityid", ID);
 }
 
@@ -733,7 +733,7 @@ inline void setPriorityTagID(const std::string& limelightName, int ID) {
  * Sets LED mode to be controlled by the current pipeline.
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setLEDMode_PipelineControl(const std::string& limelightName = "") {
+inline void setLEDMode_PipelineControl(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "ledMode", 0);
 }
 
@@ -741,7 +741,7 @@ inline void setLEDMode_PipelineControl(const std::string& limelightName = "") {
  * Forces the LEDs off.
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setLEDMode_ForceOff(const std::string& limelightName = "") {
+inline void setLEDMode_ForceOff(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "ledMode", 1);
 }
 
@@ -749,7 +749,7 @@ inline void setLEDMode_ForceOff(const std::string& limelightName = "") {
  * Forces the LEDs to blink.
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setLEDMode_ForceBlink(const std::string& limelightName = "") {
+inline void setLEDMode_ForceBlink(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "ledMode", 2);
 }
 
@@ -757,7 +757,7 @@ inline void setLEDMode_ForceBlink(const std::string& limelightName = "") {
  * Forces the LEDs on.
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setLEDMode_ForceOn(const std::string& limelightName = "") {
+inline void setLEDMode_ForceOn(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "ledMode", 3);
 }
 
@@ -765,7 +765,7 @@ inline void setLEDMode_ForceOn(const std::string& limelightName = "") {
  * Sets the stream mode to standard (side-by-side).
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setStreamMode_Standard(const std::string& limelightName = "") {
+inline void setStreamMode_Standard(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "stream", 0);
 }
 
@@ -774,7 +774,7 @@ inline void setStreamMode_Standard(const std::string& limelightName = "") {
  * corner.
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setStreamMode_PiPMain(const std::string& limelightName = "") {
+inline void setStreamMode_PiPMain(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "stream", 1);
 }
 
@@ -783,7 +783,7 @@ inline void setStreamMode_PiPMain(const std::string& limelightName = "") {
  * corner.
  * @param limelightName Name of the Limelight camera ("" for default)
  */
-inline void setStreamMode_PiPSecondary(const std::string& limelightName = "") {
+inline void setStreamMode_PiPSecondary(const std::string &limelightName = "") {
   setLimelightNTDouble(limelightName, "stream", 2);
 }
 
@@ -796,14 +796,14 @@ inline void setStreamMode_PiPSecondary(const std::string& limelightName = "") {
  * @param cropYMin Minimum Y value (-1 to 1)
  * @param cropYMax Maximum Y value (-1 to 1)
  */
-inline void setCropWindow(const std::string& limelightName, double cropXMin,
+inline void setCropWindow(const std::string &limelightName, double cropXMin,
                           double cropXMax, double cropYMin, double cropYMax) {
   double cropWindow[4]{cropXMin, cropXMax, cropYMin, cropYMax};
   setLimelightNTDoubleArray(limelightName, "crop", cropWindow);
 }
 
 /// @cond INTERNAL
-inline void SetRobotOrientation_INTERNAL(const std::string& limelightName,
+inline void SetRobotOrientation_INTERNAL(const std::string &limelightName,
                                          double yaw, double yawRate,
                                          double pitch, double pitchRate,
                                          double roll, double rollRate,
@@ -834,7 +834,7 @@ inline void SetRobotOrientation_INTERNAL(const std::string& limelightName,
  * @param roll Robot roll in degrees
  * @param rollRate Robot roll rate in degrees per second
  */
-inline void SetRobotOrientation(const std::string& limelightName, double yaw,
+inline void SetRobotOrientation(const std::string &limelightName, double yaw,
                                 double yawRate, double pitch, double pitchRate,
                                 double roll, double rollRate) {
   SetRobotOrientation_INTERNAL(limelightName, yaw, yawRate, pitch, pitchRate,
@@ -852,7 +852,7 @@ inline void SetRobotOrientation(const std::string& limelightName, double yaw,
  * @param roll Robot roll in degrees
  * @param rollRate Robot roll rate in degrees per second
  */
-inline void SetRobotOrientation_NoFlush(const std::string& limelightName,
+inline void SetRobotOrientation_NoFlush(const std::string &limelightName,
                                         double yaw, double yawRate,
                                         double pitch, double pitchRate,
                                         double roll, double rollRate) {
@@ -866,7 +866,7 @@ inline void SetRobotOrientation_NoFlush(const std::string& limelightName,
  * @param horizontal Horizontal keystone value (-0.95 to 0.95)
  * @param vertical Vertical keystone value (-0.95 to 0.95)
  */
-inline void setKeystone(const std::string& limelightName, double horizontal,
+inline void setKeystone(const std::string &limelightName, double horizontal,
                         double vertical) {
   std::array<double, 2> entries;
   entries[0] = horizontal;
@@ -880,7 +880,7 @@ inline void setKeystone(const std::string& limelightName, double horizontal,
  * @param limelightName Name/identifier of the Limelight
  * @param mode IMU mode.
  */
-inline void SetIMUMode(const std::string& limelightName, int mode) {
+inline void SetIMUMode(const std::string &limelightName, int mode) {
   setLimelightNTDouble(limelightName, "imumode_set", mode);
 }
 
@@ -892,7 +892,7 @@ inline void SetIMUMode(const std::string& limelightName, int mode) {
  * @param alpha Defaults to .001. Higher values will cause the internal IMU to
  * converge onto the assist source more rapidly.
  */
-inline void SetIMUAssistAlpha(const std::string& limelightName, double alpha) {
+inline void SetIMUAssistAlpha(const std::string &limelightName, double alpha) {
   setLimelightNTDouble(limelightName, "imuassistalpha_set", alpha);
 }
 
@@ -903,7 +903,7 @@ inline void SetIMUAssistAlpha(const std::string& limelightName, double alpha) {
  * @param throttle Defaults to 0. Your Limelight will process one frame after
  * skipping <throttle> frames.
  */
-inline void SetThrottle(const std::string& limelightName, int throttle) {
+inline void SetThrottle(const std::string &limelightName, int throttle) {
   setLimelightNTDouble(limelightName, "throttle_set", throttle);
 }
 
@@ -916,7 +916,7 @@ inline void SetThrottle(const std::string& limelightName, int throttle) {
  * @param y Y offset in meters
  * @param z Z offset in meters
  */
-inline void SetFiducial3DOffset(const std::string& limelightName, double x,
+inline void SetFiducial3DOffset(const std::string &limelightName, double x,
                                 double y, double z) {
   std::array<double, 3> entries;
   entries[0] = x;
@@ -931,8 +931,8 @@ inline void SetFiducial3DOffset(const std::string& limelightName, double x,
  * @param limelightName Name of the Limelight camera
  * @param validIDs Vector of valid AprilTag IDs to track
  */
-inline void SetFiducialIDFiltersOverride(const std::string& limelightName,
-                                         const std::vector<int>& validIDs) {
+inline void SetFiducialIDFiltersOverride(const std::string &limelightName,
+                                         const std::vector<int> &validIDs) {
   std::vector<double> validIDsDouble(validIDs.begin(), validIDs.end());
   setLimelightNTDoubleArray(limelightName, "fiducial_id_filters_set",
                             validIDsDouble);
@@ -947,9 +947,9 @@ inline void SetFiducialIDFiltersOverride(const std::string& limelightName,
  * @param downscale Downscale factor. Valid values: 1.0 (no
  * downscale), 1.5, 2.0, 3.0, 4.0. Set to 0 for pipeline control.
  */
-inline void SetFiducialDownscalingOverride(const std::string& limelightName,
+inline void SetFiducialDownscalingOverride(const std::string &limelightName,
                                            float downscale) {
-  int d = 0;  // pipeline
+  int d = 0; // pipeline
   if (downscale == 1.0f) {
     d = 1;
   }
@@ -979,7 +979,7 @@ inline void SetFiducialDownscalingOverride(const std::string& limelightName,
  * @param pitch Pitch angle in degrees
  * @param yaw Yaw angle in degrees
  */
-inline void setCameraPose_RobotSpace(const std::string& limelightName,
+inline void setCameraPose_RobotSpace(const std::string &limelightName,
                                      double forward, double side, double up,
                                      double roll, double pitch, double yaw) {
   double entries[6] = {forward, side, up, roll, pitch, yaw};
@@ -992,8 +992,8 @@ inline void setCameraPose_RobotSpace(const std::string& limelightName,
  * @param limelightName Name of the Limelight camera
  * @param outgoingPythonData Vector of doubles to send to the Python script
  */
-inline void setPythonScriptData(const std::string& limelightName,
-                                const std::vector<double>& outgoingPythonData) {
+inline void setPythonScriptData(const std::string &limelightName,
+                                const std::vector<double> &outgoingPythonData) {
   setLimelightNTDoubleArray(
       limelightName, "llrobot",
       std::span{outgoingPythonData.begin(), outgoingPythonData.size()});
@@ -1004,8 +1004,8 @@ inline void setPythonScriptData(const std::string& limelightName,
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return Vector of doubles from the Python script
  */
-inline std::vector<double> getPythonScriptData(
-    const std::string& limelightName = "") {
+inline std::vector<double>
+getPythonScriptData(const std::string &limelightName = "") {
   return getLimelightNTDoubleArray(limelightName, "llpython");
 }
 
@@ -1018,7 +1018,7 @@ inline std::vector<double> getPythonScriptData(
  * counter. Rate-limited to once per 10 frames on the Limelight.
  * @param limelightName Name of the Limelight camera
  */
-inline void triggerSnapshot(const std::string& limelightName = "") {
+inline void triggerSnapshot(const std::string &limelightName = "") {
   double current = getLimelightNTDouble(limelightName, "snapshot");
   setLimelightNTDouble(limelightName, "snapshot", current + 1);
 }
@@ -1028,7 +1028,7 @@ inline void triggerSnapshot(const std::string& limelightName = "") {
  * @param limelightName Name of the Limelight camera
  * @param enabled True to enable recording, false to pause
  */
-inline void setRewindEnabled(const std::string& limelightName, bool enabled) {
+inline void setRewindEnabled(const std::string &limelightName, bool enabled) {
   setLimelightNTDouble(limelightName, "rewind_enable_set", enabled ? 1 : 0);
 }
 
@@ -1038,7 +1038,7 @@ inline void setRewindEnabled(const std::string& limelightName, bool enabled) {
  * @param limelightName Name of the Limelight camera
  * @param durationSeconds Duration of rewind capture in seconds (max 165)
  */
-inline void triggerRewindCapture(const std::string& limelightName,
+inline void triggerRewindCapture(const std::string &limelightName,
                                  double durationSeconds) {
   std::vector<double> currentArray =
       getLimelightNTDoubleArray(limelightName, "capture_rewind");
@@ -1052,7 +1052,7 @@ inline void triggerRewindCapture(const std::string& limelightName,
 /////
 
 /// @cond INTERNAL
-inline double extractEntry(const std::vector<double>& inData, int position) {
+inline double extractEntry(const std::vector<double> &inData, int position) {
   if (inData.size() < static_cast<size_t>(position + 1)) {
     return 0.0;
   }
@@ -1065,7 +1065,7 @@ inline double extractEntry(const std::vector<double>& inData, int position) {
  * output.
  */
 class RawFiducial {
- public:
+public:
   int id{0};
   double txnc{0.0};
   double tync{0.0};
@@ -1078,13 +1078,8 @@ class RawFiducial {
 
   RawFiducial(int id, double txnc, double tync, double ta, double distToCamera,
               double distToRobot, double ambiguity)
-      : id(id),
-        txnc(txnc),
-        tync(tync),
-        ta(ta),
-        distToCamera(distToCamera),
-        distToRobot(distToRobot),
-        ambiguity(ambiguity) {}
+      : id(id), txnc(txnc), tync(tync), ta(ta), distToCamera(distToCamera),
+        distToRobot(distToRobot), ambiguity(ambiguity) {}
 };
 
 /**
@@ -1092,7 +1087,7 @@ class RawFiducial {
  * NetworkTables output.
  */
 class RawTarget {
- public:
+public:
   double txnc{0.0};
   double tync{0.0};
   double ta{0.0};
@@ -1108,7 +1103,7 @@ class RawTarget {
  * NetworkTables output.
  */
 class RawDetection {
- public:
+public:
   int classId{0};
   double txnc{0.0};
   double tync{0.0};
@@ -1128,17 +1123,9 @@ class RawDetection {
                double corner0_X, double corner0_Y, double corner1_X,
                double corner1_Y, double corner2_X, double corner2_Y,
                double corner3_X, double corner3_Y)
-      : classId(classId),
-        txnc(txnc),
-        tync(tync),
-        ta(ta),
-        corner0_X(corner0_X),
-        corner0_Y(corner0_Y),
-        corner1_X(corner1_X),
-        corner1_Y(corner1_Y),
-        corner2_X(corner2_X),
-        corner2_Y(corner2_Y),
-        corner3_X(corner3_X),
+      : classId(classId), txnc(txnc), tync(tync), ta(ta), corner0_X(corner0_X),
+        corner0_Y(corner0_Y), corner1_X(corner1_X), corner1_Y(corner1_Y),
+        corner2_X(corner2_X), corner2_Y(corner2_Y), corner3_X(corner3_X),
         corner3_Y(corner3_Y) {}
 };
 
@@ -1146,7 +1133,7 @@ class RawDetection {
  * Represents a 3D Pose Estimate.
  */
 class PoseEstimate {
- public:
+public:
   frc::Pose2d pose;
   units::time::second_t timestampSeconds{0.0};
   double latency{0.0};
@@ -1159,18 +1146,13 @@ class PoseEstimate {
 
   PoseEstimate() = default;
 
-  PoseEstimate(const frc::Pose2d& pose, units::time::second_t timestampSeconds,
+  PoseEstimate(const frc::Pose2d &pose, units::time::second_t timestampSeconds,
                double latency, int tagCount, double tagSpan, double avgTagDist,
-               double avgTagArea, const std::vector<RawFiducial>& rawFiducials,
+               double avgTagArea, const std::vector<RawFiducial> &rawFiducials,
                bool isMegaTag2)
-      : pose(pose),
-        timestampSeconds(timestampSeconds),
-        latency(latency),
-        tagCount(tagCount),
-        tagSpan(tagSpan),
-        avgTagDist(avgTagDist),
-        avgTagArea(avgTagArea),
-        rawFiducials(rawFiducials),
+      : pose(pose), timestampSeconds(timestampSeconds), latency(latency),
+        tagCount(tagCount), tagSpan(tagSpan), avgTagDist(avgTagDist),
+        avgTagArea(avgTagArea), rawFiducials(rawFiducials),
         isMegaTag2(isMegaTag2) {}
 };
 
@@ -1180,7 +1162,7 @@ class PoseEstimate {
  * @param pose The PoseEstimate to validate
  * @return True if the pose estimate is valid, false otherwise
  */
-inline bool validPoseEstimate(const PoseEstimate& pose) {
+inline bool validPoseEstimate(const PoseEstimate &pose) {
   return !pose.rawFiducials.empty();
 }
 
@@ -1188,7 +1170,7 @@ inline bool validPoseEstimate(const PoseEstimate& pose) {
  * Prints detailed information about a PoseEstimate to stdout.
  * @param pose The PoseEstimate to print
  */
-inline void PrintPoseEstimate(const PoseEstimate& pose) {
+inline void PrintPoseEstimate(const PoseEstimate &pose) {
   wpi::print("Pose Estimate Information:\n");
   wpi::print("Timestamp (Seconds): {:.3f}\n", pose.timestampSeconds.value());
   wpi::print("Latency: {:.3f} ms\n", pose.latency);
@@ -1206,7 +1188,7 @@ inline void PrintPoseEstimate(const PoseEstimate& pose) {
 
   wpi::print("Raw Fiducials Details:\n");
   for (size_t i = 0; i < pose.rawFiducials.size(); i++) {
-    const auto& fiducial = pose.rawFiducials[i];
+    const auto &fiducial = pose.rawFiducials[i];
     wpi::print(" Fiducial #{}:\n", i + 1);
     wpi::print("  ID: {}\n", fiducial.id);
     wpi::print("  TXNC: {:.2f}\n", fiducial.txnc);
@@ -1223,7 +1205,7 @@ inline void PrintPoseEstimate(const PoseEstimate& pose) {
  * Encapsulates the state of an internal Limelight IMU.
  */
 class IMUData {
- public:
+public:
   double robotYaw{0.0};
   double roll{0.0};
   double pitch{0.0};
@@ -1254,10 +1236,10 @@ class IMUData {
 };
 
 /// @cond INTERNAL
-inline PoseEstimate getBotPoseEstimate(const std::string& limelightName,
-                                       const std::string& entryName,
+inline PoseEstimate getBotPoseEstimate(const std::string &limelightName,
+                                       const std::string &entryName,
                                        bool isMegaTag2) {
-  nt::DoubleArrayEntry& poseEntry =
+  nt::DoubleArrayEntry &poseEntry =
       getLimelightDoubleArrayEntry(limelightName, entryName);
   auto tsValue = poseEntry.GetAtomic();
 
@@ -1310,8 +1292,8 @@ inline PoseEstimate getBotPoseEstimate(const std::string& limelightName,
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return PoseEstimate containing pose, timestamp, and tag information
  */
-inline PoseEstimate getBotPoseEstimate_wpiBlue(
-    const std::string& limelightName = "") {
+inline PoseEstimate
+getBotPoseEstimate_wpiBlue(const std::string &limelightName = "") {
   return getBotPoseEstimate(limelightName, "botpose_wpiblue", false);
 }
 
@@ -1320,8 +1302,8 @@ inline PoseEstimate getBotPoseEstimate_wpiBlue(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return PoseEstimate containing pose, timestamp, and tag information
  */
-inline PoseEstimate getBotPoseEstimate_wpiRed(
-    const std::string& limelightName = "") {
+inline PoseEstimate
+getBotPoseEstimate_wpiRed(const std::string &limelightName = "") {
   return getBotPoseEstimate(limelightName, "botpose_wpired", false);
 }
 
@@ -1332,8 +1314,8 @@ inline PoseEstimate getBotPoseEstimate_wpiRed(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return PoseEstimate containing pose, timestamp, and tag information
  */
-inline PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(
-    const std::string& limelightName = "") {
+inline PoseEstimate
+getBotPoseEstimate_wpiBlue_MegaTag2(const std::string &limelightName = "") {
   return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue", true);
 }
 
@@ -1344,8 +1326,8 @@ inline PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(
  * @param limelightName Name of the Limelight camera ("" for default)
  * @return PoseEstimate containing pose, timestamp, and tag information
  */
-inline PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(
-    const std::string& limelightName = "") {
+inline PoseEstimate
+getBotPoseEstimate_wpiRed_MegaTag2(const std::string &limelightName = "") {
   return getBotPoseEstimate(limelightName, "botpose_orb_wpired", true);
 }
 
@@ -1355,8 +1337,8 @@ inline PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(
  * @param limelightName Name/identifier of the Limelight
  * @return Vector of RawFiducial objects containing detection details
  */
-inline std::vector<RawFiducial> getRawFiducials(
-    const std::string& limelightName = "") {
+inline std::vector<RawFiducial>
+getRawFiducials(const std::string &limelightName = "") {
   std::vector<double> rawFiducialArray =
       getLimelightNTDoubleArray(limelightName, "rawfiducials");
   int valsPerEntry = 7;
@@ -1390,8 +1372,8 @@ inline std::vector<RawFiducial> getRawFiducials(
  * @param limelightName Name/identifier of the Limelight
  * @return Vector of RawDetection objects containing detection details
  */
-inline std::vector<RawDetection> getRawDetections(
-    const std::string& limelightName = "") {
+inline std::vector<RawDetection>
+getRawDetections(const std::string &limelightName = "") {
   std::vector<double> rawDetectionArray =
       getLimelightNTDoubleArray(limelightName, "rawdetections");
   int valsPerEntry = 12;
@@ -1432,8 +1414,8 @@ inline std::vector<RawDetection> getRawDetections(
  * @param limelightName Name/identifier of the Limelight
  * @return Vector of RawTarget objects containing up to 3 contours
  */
-inline std::vector<RawTarget> getRawTargets(
-    const std::string& limelightName = "") {
+inline std::vector<RawTarget>
+getRawTargets(const std::string &limelightName = "") {
   std::vector<double> rawTargetArray =
       getLimelightNTDoubleArray(limelightName, "rawtargets");
   int valsPerEntry = 3;
@@ -1464,10 +1446,10 @@ inline std::vector<RawTarget> getRawTargets(
  * @param limelightName Name/identifier of the Limelight
  * @return IMUData object containing all current IMU data
  */
-inline IMUData getIMUData(const std::string& limelightName) {
+inline IMUData getIMUData(const std::string &limelightName) {
   std::vector<double> imuData = getLimelightNTDoubleArray(limelightName, "imu");
   if (imuData.empty() || imuData.size() < 10) {
-    return IMUData();  // Returns object with all zeros
+    return IMUData(); // Returns object with all zeros
   }
   return IMUData(imuData.data());
 }
@@ -1480,7 +1462,7 @@ inline const double INVALID_TARGET = 0.0;
  * Contains common targeting metrics shared by all pipeline types.
  */
 class SingleTargetingResultClass {
- public:
+public:
   double m_TargetXPixels{INVALID_TARGET};
   double m_TargetYPixels{INVALID_TARGET};
 
@@ -1520,7 +1502,7 @@ class RetroreflectiveResultClass : public SingleTargetingResultClass {};
  * Represents an AprilTag/fiducial target result from JSON output.
  */
 class FiducialResultClass : public SingleTargetingResultClass {
- public:
+public:
   int m_fiducialID{0};
   std::string m_family{""};
 };
@@ -1529,39 +1511,39 @@ class FiducialResultClass : public SingleTargetingResultClass {
  * Represents a barcode target result from JSON output.
  */
 class BarcodeResultClass : public SingleTargetingResultClass {
- public:
-  std::string m_family{""};  ///< Barcode family type (e.g., "QR", "DataMatrix")
-  std::string m_data{""};    ///< Decoded barcode data
+public:
+  std::string m_family{""}; ///< Barcode family type (e.g., "QR", "DataMatrix")
+  std::string m_data{""};   ///< Decoded barcode data
 
   double m_TargetXDegreesNoCrosshairAdjusted{
-      INVALID_TARGET};  ///< Horizontal offset from principal point
+      INVALID_TARGET}; ///< Horizontal offset from principal point
   double m_TargetYDegreesNoCrosshairAdjusted{
-      INVALID_TARGET};  ///< Vertical offset from principal point
+      INVALID_TARGET}; ///< Vertical offset from principal point
 };
 
 /**
  * Represents a neural network detector result from JSON output.
  */
 class DetectionResultClass : public SingleTargetingResultClass {
- public:
-  int m_classID{-1};            ///< Class ID from the neural network
-  std::string m_className{""};  ///< Class name from the neural network
-  double m_confidence{0};       ///< Detection confidence (0-1)
+public:
+  int m_classID{-1};           ///< Class ID from the neural network
+  std::string m_className{""}; ///< Class name from the neural network
+  double m_confidence{0};      ///< Detection confidence (0-1)
 
   double m_TargetXDegreesNoCrosshairAdjusted{
-      INVALID_TARGET};  ///< Horizontal offset from principal point
+      INVALID_TARGET}; ///< Horizontal offset from principal point
   double m_TargetYDegreesNoCrosshairAdjusted{
-      INVALID_TARGET};  ///< Vertical offset from principal point
+      INVALID_TARGET}; ///< Vertical offset from principal point
 };
 
 /**
  * Represents a neural network classifier result from JSON output.
  */
 class ClassificationResultClass : public SingleTargetingResultClass {
- public:
-  int m_classID{-1};            ///< Class ID from the neural network
-  std::string m_className{""};  ///< Class name from the neural network
-  double m_confidence{0};       ///< Classification confidence (0-1)
+public:
+  int m_classID{-1};           ///< Class ID from the neural network
+  std::string m_className{""}; ///< Class name from the neural network
+  double m_confidence{0};      ///< Classification confidence (0-1)
 };
 
 /**
@@ -1628,7 +1610,7 @@ struct RewindStats {
  * Contains all vision processing results from a single frame.
  */
 class VisionResultsClass {
- public:
+public:
   std::vector<RetroreflectiveResultClass> RetroResults;
   std::vector<FiducialResultClass> FiducialResults;
   std::vector<DetectionResultClass> DetectionResults;
@@ -1707,9 +1689,9 @@ class VisionResultsClass {
  * Top-level container for all Limelight results parsed from JSON.
  */
 class LimelightResultsClass {
- public:
+public:
   VisionResultsClass
-      targetingResults;  ///< All targeting results from the current frame
+      targetingResults; ///< All targeting results from the current frame
 };
 
 /// @cond INTERNAL
@@ -1778,7 +1760,7 @@ inline const std::string _key_pythonOutput{"PythonOut"};
 inline const std::string _key_hw{"hw"};
 inline const std::string _key_imu{"imu"};
 inline const std::string _key_rewind{"rewind"};
-}  // namespace internal
+} // namespace internal
 /// @endcond
 
 /**
@@ -1787,8 +1769,8 @@ inline const std::string _key_rewind{"rewind"};
  * Call once during robot initialization.
  * @param limelightName Name/hostname of the Limelight camera
  */
-inline void SetupPortForwarding(const std::string& limelightName) {
-  auto& portForwarder = wpi::PortForwarder::GetInstance();
+inline void SetupPortForwarding(const std::string &limelightName) {
+  auto &portForwarder = wpi::PortForwarder::GetInstance();
   portForwarder.Add(5800, sanitizeName(limelightName), 5800);
   portForwarder.Add(5801, sanitizeName(limelightName), 5801);
   portForwarder.Add(5802, sanitizeName(limelightName), 5802);
@@ -1820,7 +1802,7 @@ inline void SetupPortForwardingUSB(int usbIndex) {
   std::string ip = "172.29." + std::to_string(usbIndex) + ".1";
   int basePort = 5800 + (usbIndex * 10);
 
-  auto& portForwarder = wpi::PortForwarder::GetInstance();
+  auto &portForwarder = wpi::PortForwarder::GetInstance();
   for (int i = 0; i < 10; i++) {
     portForwarder.Add(basePort + i, ip, 5800 + i);
   }
@@ -1828,18 +1810,18 @@ inline void SetupPortForwardingUSB(int usbIndex) {
 
 /// @cond INTERNAL
 template <typename T, typename KeyType>
-T SafeJSONAccess(const wpi::json& jsonData, const KeyType& key,
-                 const T& defaultValue) {
+T SafeJSONAccess(const wpi::json &jsonData, const KeyType &key,
+                 const T &defaultValue) {
   try {
     return jsonData.at(key).template get<T>();
-  } catch (wpi::json::exception& e) {
+  } catch (wpi::json::exception &e) {
     return defaultValue;
   } catch (...) {
     return defaultValue;
   }
 }
 
-inline void from_json(const wpi::json& j, HardwareReport& t) {
+inline void from_json(const wpi::json &j, HardwareReport &t) {
   t.cameraId = SafeJSONAccess<std::string>(j, "cid", "");
   t.cpuUsage = SafeJSONAccess<double>(j, "cpu", 0.0);
   t.diskFree = SafeJSONAccess<double>(j, "dfree", 0.0);
@@ -1848,7 +1830,7 @@ inline void from_json(const wpi::json& j, HardwareReport& t) {
   t.temperature = SafeJSONAccess<double>(j, "temp", 0.0);
 }
 
-inline void from_json(const wpi::json& j, IMUResults& t) {
+inline void from_json(const wpi::json &j, IMUResults &t) {
   t.data =
       SafeJSONAccess<std::vector<double>>(j, "data", std::vector<double>{});
   t.quaternion = SafeJSONAccess<std::vector<double>>(
@@ -1857,7 +1839,7 @@ inline void from_json(const wpi::json& j, IMUResults& t) {
   t.parseDataArray();
 }
 
-inline void from_json(const wpi::json& j, RewindStats& t) {
+inline void from_json(const wpi::json &j, RewindStats &t) {
   t.bufferUsage = SafeJSONAccess<double>(j, "bufferUsage", 0.0);
   t.enabled = static_cast<int>(SafeJSONAccess<double>(j, "enabled", 0.0));
   t.flushing = static_cast<int>(SafeJSONAccess<double>(j, "flushing", 0.0));
@@ -1870,7 +1852,7 @@ inline void from_json(const wpi::json& j, RewindStats& t) {
 /**
  * Represents a Color/Retroreflective Target Result extracted from JSON Output
  */
-inline void from_json(const wpi::json& j, RetroreflectiveResultClass& t) {
+inline void from_json(const wpi::json &j, RetroreflectiveResultClass &t) {
   std::vector<double> defaultValueVector(6, 0.0);
   t.m_CAMERATransform6DTARGETSPACE = SafeJSONAccess<std::vector<double>>(
       j, internal::_key_transformCAMERAPOSE_TARGETSPACE, defaultValueVector);
@@ -1903,7 +1885,7 @@ inline void from_json(const wpi::json& j, RetroreflectiveResultClass& t) {
 /**
  * Represents an AprilTag/Fiducial Target Result extracted from JSON Output
  */
-inline void from_json(const wpi::json& j, FiducialResultClass& t) {
+inline void from_json(const wpi::json &j, FiducialResultClass &t) {
   std::vector<double> defaultValueVector(6, 0.0);
   t.m_family = SafeJSONAccess<std::string>(j, internal::_key_ffamily, "");
   t.m_fiducialID = static_cast<int>(
@@ -1938,7 +1920,7 @@ inline void from_json(const wpi::json& j, FiducialResultClass& t) {
 /**
  * Represents a Neural Detector Pipeline Result extracted from JSON Output
  */
-inline void from_json(const wpi::json& j, DetectionResultClass& t) {
+inline void from_json(const wpi::json &j, DetectionResultClass &t) {
   t.m_confidence = SafeJSONAccess<double>(j, internal::_key_confidence, 0.0);
   t.m_classID =
       static_cast<int>(SafeJSONAccess<double>(j, internal::_key_classID, 0.0));
@@ -1964,7 +1946,7 @@ inline void from_json(const wpi::json& j, DetectionResultClass& t) {
 /**
  * Represents a Barcode Target Result extracted from JSON Output
  */
-inline void from_json(const wpi::json& j, BarcodeResultClass& t) {
+inline void from_json(const wpi::json &j, BarcodeResultClass &t) {
   /**
    * Barcode family type (e.g. "QR", "DataMatrix", etc.)
    */
@@ -1997,7 +1979,7 @@ inline void from_json(const wpi::json& j, BarcodeResultClass& t) {
 /**
  * Represents a Neural Classifier Pipeline Result extracted from JSON Output
  */
-inline void from_json(const wpi::json& j, ClassificationResultClass& t) {
+inline void from_json(const wpi::json &j, ClassificationResultClass &t) {
   t.m_confidence = SafeJSONAccess<double>(j, internal::_key_confidence, 0.0);
   t.m_classID =
       static_cast<int>(SafeJSONAccess<double>(j, internal::_key_classID, 0.0));
@@ -2017,7 +1999,7 @@ inline void from_json(const wpi::json& j, ClassificationResultClass& t) {
 }
 
 /// @cond INTERNAL
-inline void from_json(const wpi::json& j, VisionResultsClass& t) {
+inline void from_json(const wpi::json &j, VisionResultsClass &t) {
   t.m_timeStamp = SafeJSONAccess<double>(j, internal::_key_timestamp, 0.0);
   t.m_latencyPipeline =
       SafeJSONAccess<double>(j, internal::_key_latency_pipeline, 0.0);
@@ -2090,7 +2072,7 @@ inline void from_json(const wpi::json& j, VisionResultsClass& t) {
 /**
  * Limelight Results object, parsed from a Limelight's JSON results output.
  */
-inline void from_json(const wpi::json& j, LimelightResultsClass& t) {
+inline void from_json(const wpi::json &j, LimelightResultsClass &t) {
   try {
     if (j.is_null() || !j.is_object()) {
       t.targetingResults = VisionResultsClass{};
@@ -2111,8 +2093,8 @@ inline void from_json(const wpi::json& j, LimelightResultsClass& t) {
  * @param profile If true, prints JSON parsing time to stdout
  * @return LimelightResultsClass containing all parsed results
  */
-inline LimelightResultsClass getLatestResults(
-    const std::string& limelightName = "", bool profile = false) {
+inline LimelightResultsClass
+getLatestResults(const std::string &limelightName = "", bool profile = false) {
   auto start = std::chrono::high_resolution_clock::now();
   std::string jsonString = getJSONDump(limelightName);
 
@@ -2124,7 +2106,7 @@ inline LimelightResultsClass getLatestResults(
   wpi::json data;
   try {
     data = wpi::json::parse(jsonString);
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     return LimelightResultsClass();
   } catch (...) {
     return LimelightResultsClass();
@@ -2150,4 +2132,4 @@ inline LimelightResultsClass getLatestResults(
     return LimelightResultsClass();
   }
 }
-}  // namespace LimelightHelpers
+} // namespace LimelightHelpers

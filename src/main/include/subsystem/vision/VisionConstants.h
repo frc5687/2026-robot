@@ -15,12 +15,12 @@ using units::radian_t;
 
 inline constexpr frc::Transform3d kRobotToFLCam{
     frc::Translation3d{-0.150868_m, 0.341916_m, 0.293059_m},
-    frc::Rotation3d{0_deg, -5_deg, 71_deg}  // roll/pitch/yaw
+    frc::Rotation3d{0_deg, -5_deg, 71_deg} // roll/pitch/yaw
 };
 
 inline constexpr frc::Transform3d kRobotToFRCam{
     frc::Translation3d{-0.150868_m, -0.341916_m, 0.293059_m},
-    frc::Rotation3d{0_deg, -5_deg, -71_deg}  // roll/pitch/yaw
+    frc::Rotation3d{0_deg, -5_deg, -71_deg} // roll/pitch/yaw
 };
 
 inline constexpr frc::Transform3d kRobotToBLCam{
@@ -38,4 +38,4 @@ inline const std::unordered_map<std::string, frc::Transform3d> kTransformMap = {
     {"limelight-br", kRobotToBRCam},
     // frc::Rotation3d{147_deg, 5_deg, 0_rad}
 };
-}  // namespace Constants::Vision
+} // namespace Constants::Vision

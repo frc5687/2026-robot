@@ -1,7 +1,6 @@
 // Team 5687 2026
 
 #include "Robot.h"
-#include "subsystem/CoordinatedSystemManager.h"
 
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
@@ -11,9 +10,13 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
+#include <ctre/phoenix6/SignalLogger.hpp>
+
+#include "subsystem/CoordinatedSystemManager.h"
 
 Robot::Robot() {
-  frc::DriverStation::SilenceJoystickConnectionWarning(true);
+    ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
+    frc::DriverStation::SilenceJoystickConnectionWarning(true);
 }
 
 void Robot::RobotPeriodic() {
@@ -52,15 +55,11 @@ void Robot::TeleopPeriodic() {}
 
 void Robot::TeleopExit() {}
 
-void Robot::TestInit() {
-  frc2::CommandScheduler::GetInstance().CancelAll();
-}
+void Robot::TestInit() { frc2::CommandScheduler::GetInstance().CancelAll(); }
 
 void Robot::TestPeriodic() {}
 void Robot::TestExit() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main() {
-  return frc::StartRobot<Robot>();
-}
+int main() { return frc::StartRobot<Robot>(); }
 #endif

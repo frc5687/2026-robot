@@ -12,22 +12,21 @@
 // This will handle visualize the robot and other parameters like predicted
 // shots.
 class RobotViz {
- public:
+public:
   RobotViz() : m_robotState(RobotState::Instance()) {}
   void Update();
-  frc::Pose3d CalculateTurretPoseLeftRobotFrame(const frc::Pose2d& drivePose,
-                                  const TurretState& turretState);
-  frc::Pose3d CalculateHoodPoseLeftRobotFrame(const HoodState& hoodStaet);
-  frc::Pose3d CalculateTurretPoseRight(const frc::Pose2d& drivePose,
-                                  const TurretState& turretState);
+  frc::Pose3d CalculateTurretPoseLeftRobotFrame(const frc::Pose2d &drivePose,
+                                                const TurretState &turretState);
+  frc::Pose3d CalculateHoodPoseLeftRobotFrame(const HoodState &hoodStaet);
+  frc::Pose3d CalculateTurretPoseRight(const frc::Pose2d &drivePose,
+                                       const TurretState &turretState);
 
   void FutureViz(units::second_t futureDt);
 
- private:
-  RobotState& m_robotState;
+private:
+  RobotState &m_robotState;
 
-  template <typename T>
-  void Log(const std::string& key, const T& value) {
+  template <typename T> void Log(const std::string &key, const T &value) {
     Logger::Instance().Log("Vizualization/" + key, value);
   }
 };

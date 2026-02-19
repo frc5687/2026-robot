@@ -9,14 +9,14 @@
 #include "subsystem/turret/TurretIO.h"
 
 class SimTurretIO : public TurretIO {
- public:
+public:
   SimTurretIO();
   ~SimTurretIO() = default;
 
-  void UpdateInputs(TurretIOInputs& inputs) override;
+  void UpdateInputs(TurretIOInputs &inputs) override;
   void SetTurretAngle(units::radian_t angle) override;
 
- private:
+private:
   frc::sim::DCMotorSim m_turretSim;
   frc::PIDController m_controller;
 };
