@@ -112,13 +112,13 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   units::radian_t turretRobotAngle =
       NormalizeAngle((turretFieldAngle - heading).Radians());
 
-  TurretState turret = rs.GetTurretState(now);
+  //TurretState turret = rs.GetTurretState(now);
   HoodState hood = rs.GetHoodState(now);
   FlywheelState flywheel = rs.GetFlywheelState(now);
 
-  bool turretOK =
-      units::math::abs(NormalizeAngle(turret.angle - turretRobotAngle)) <
-      m_cfg.turretTolerance;
+  //bool turretOK =
+  //    units::math::abs(NormalizeAngle(turret.angle - turretRobotAngle)) <
+  //    m_cfg.turretTolerance;
 
   bool hoodOK = units::math::abs(hood.angle - units::degree_t{hoodAngleDeg}) <
                 m_cfg.hoodTolerance;
@@ -133,7 +133,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
 
   return {
       .inRange = inRange,
-      .ready = inRange && turretOK && hoodOK && flywheelOK,
+      .ready = inRange && hoodOK && flywheelOK,
       .turretFieldAngle = turretFieldAngle,
       .turretRobotAngle = turretRobotAngle,
       .hoodAngle = units::degree_t{hoodAngleDeg},

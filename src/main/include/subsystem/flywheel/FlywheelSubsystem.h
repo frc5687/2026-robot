@@ -77,5 +77,5 @@ private:
   units::revolutions_per_minute_t m_filteredLeft{0_rpm};
   units::revolutions_per_minute_t m_filteredRight{0_rpm};
 
-  // frc2::sysid::SysIdRoutine m_sysIdRoutine;
+  frc2::sysid::SysIdRoutine m_sysIdRoutine;
 };

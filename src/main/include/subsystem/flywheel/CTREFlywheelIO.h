@@ -22,7 +22,7 @@
 class CTREFlywheelIO : public FlywheelIO {
 public:
   CTREFlywheelIO(const CANDevice &leftLeader, const CANDevice &leftFollower,
-                 const CANDevice &rightLeader, const CANDevice &rightFollower);
+                 const CANDevice &rightFollower, const CANDevice &rightFollowerBottom);
   ~CTREFlywheelIO() override = default;
 
   void UpdateInputs(FlywheelIOInputs &inputs) override;
@@ -33,8 +33,8 @@ public:
 private:
   ctre::phoenix6::hardware::TalonFX m_leftLeader;
   ctre::phoenix6::hardware::TalonFX m_leftFollower;
-  ctre::phoenix6::hardware::TalonFX m_rightLeader;
   ctre::phoenix6::hardware::TalonFX m_rightFollower;
+  ctre::phoenix6::hardware::TalonFX m_rightFollowerBottom;
 
   ctre::phoenix6::StatusSignal<units::turns_per_second_t> &m_leftVelocitySignal;
   ctre::phoenix6::StatusSignal<units::turn_t> &m_leftPositionSignal;
@@ -62,7 +62,6 @@ private:
   ctre::phoenix6::controls::NeutralOut m_neutralRequest{};
 
   ctre::phoenix6::configs::TalonFXConfiguration m_leftLeaderConfig{};
-  ctre::phoenix6::configs::TalonFXConfiguration m_rightLeaderConfig{};
   ctre::phoenix6::configs::TalonFXConfiguration m_followerConfig{};
 
   bool m_characterizing{false};

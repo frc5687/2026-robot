@@ -11,7 +11,6 @@
 #include "subsystem/drive/OdometryData.h"
 #include "subsystem/flywheel/FlywheelState.h"
 #include "subsystem/hood/HoodState.h"
-#include "subsystem/turret/TurretState.h"
 #include "utils/Logger.h"
 
 // This will store the entire state of subsystems we care about, this includes
@@ -28,13 +27,11 @@ public:
     return inst;
   }
   void AddDriveObservation(const OdometryData &state);
-  void AddTurretObservation(const TurretState &state);
   void AddFlywheelObservation(const FlywheelState &state);
   void AddHoodObservation(const HoodState &state);
 
   // Interpolated or exterpolated based on time, limit to BUFFER_TIME
   OdometryData GetDriveState(units::second_t timestamp);
-  TurretState GetTurretState(units::second_t timestamp);
   FlywheelState GetFlywheelState(units::second_t timestamp);
   HoodState GetHoodState(units::second_t timestamp);
 
@@ -47,7 +44,6 @@ public:
 private:
   RobotState();
   frc::TimeInterpolatableBuffer<OdometryData> m_driveBuffer;
-  frc::TimeInterpolatableBuffer<TurretState> m_turretBuffer;
   frc::TimeInterpolatableBuffer<FlywheelState> m_flywheelBuffer;
   frc::TimeInterpolatableBuffer<HoodState> m_hoodBuffer;
 

@@ -11,10 +11,13 @@ using namespace ctre::phoenix6;
 
 CTREIndexerIO::CTREIndexerIO(const CANDevice &leftMotor,
                              const CANDevice &rightMotor,
-                             const CANDevice &centerMotor)
+                             const CANDevice &centerMotor,
+                             const CANDevice &centerMotorFollower
+                             )
     : m_leftMotor(leftMotor.id, leftMotor.bus),
       m_rightMotor(rightMotor.id, rightMotor.bus),
       m_centerMotor(centerMotor.id, centerMotor.bus),
+      m_centerMotorFollower(centerMotorFollower.id, centerMotorFollower.bus),
       m_positionSignal(m_leftMotor.GetPosition()),
       m_velocitySignal(m_leftMotor.GetVelocity()),
       m_voltageSignal(m_leftMotor.GetMotorVoltage()),
@@ -31,9 +34,6 @@ CTREIndexerIO::CTREIndexerIO(const CANDevice &leftMotor,
   ConfigureSignalFrequencies();
 }
 
-// ════════════════════════════════════════════════════════════════════════
-// Configuration
-// ════════════════════════════════════════════════════════════════════════
 
 void CTREIndexerIO::ConfigureDevices() {
   // ── Leader (left) ────────────────────────────────────────────────────
@@ -51,8 +51,6 @@ void CTREIndexerIO::ConfigureDevices() {
 
   m_leftMotor.GetConfigurator().Apply(m_leftConfig);
 
-  // ── Follower (right) ────────────────────────────────────────────────
-  // Minimal config — current limits only.  Control mirrors leader.
   configs::TalonFXConfiguration followerConfig{};
   followerConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
   followerConfig.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
@@ -62,7 +60,6 @@ void CTREIndexerIO::ConfigureDevices() {
   m_rightMotor.SetControl(
       controls::Follower{m_leftMotor.GetDeviceID(), kRightOpposed});
 
-  // ── Center roller ───────────────────────────────────────────────────
   m_centerConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
   m_centerConfig.MotorOutput.Inverted =
       kCenterInverted ? signals::InvertedValue::Clockwise_Positive
@@ -72,6 +69,9 @@ void CTREIndexerIO::ConfigureDevices() {
   m_centerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
   m_centerMotor.GetConfigurator().Apply(m_centerConfig);
+
+  m_centerMotorFollower.SetControl(
+      controls::Follower{m_centerMotor.GetDeviceID(), kRightOpposed});
 }
 
 void CTREIndexerIO::ConfigureClosedLoop() {
@@ -84,14 +84,12 @@ void CTREIndexerIO::ConfigureClosedLoop() {
 }
 
 void CTREIndexerIO::ConfigureSignalFrequencies() {
-  // Leader: velocity and current at high rate for ball detection
-  m_velocitySignal.SetUpdateFrequency(250_Hz);
+  m_velocitySignal.SetUpdateFrequency(100_Hz);
   m_positionSignal.SetUpdateFrequency(100_Hz);
   m_voltageSignal.SetUpdateFrequency(100_Hz);
-  m_statorSignal.SetUpdateFrequency(250_Hz); // Critical for ball detection
+  m_statorSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
 
-  // Center roller
   m_centerVelocitySignal.SetUpdateFrequency(100_Hz);
   m_centerPositionSignal.SetUpdateFrequency(50_Hz);
   m_centerStatorSignal.SetUpdateFrequency(50_Hz);
@@ -99,11 +97,8 @@ void CTREIndexerIO::ConfigureSignalFrequencies() {
   m_leftMotor.OptimizeBusUtilization();
   m_rightMotor.OptimizeBusUtilization();
   m_centerMotor.OptimizeBusUtilization();
+  m_centerMotorFollower.OptimizeBusUtilization();
 }
-
-// ════════════════════════════════════════════════════════════════════════
-// Input Reading
-// ════════════════════════════════════════════════════════════════════════
 
 void CTREIndexerIO::UpdateInputs(IndexerIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_criticalSignals);
@@ -122,9 +117,6 @@ void CTREIndexerIO::UpdateInputs(IndexerIOInputs &inputs) {
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 
-// ════════════════════════════════════════════════════════════════════════
-// Control
-// ════════════════════════════════════════════════════════════════════════
 
 void CTREIndexerIO::SetVoltage(units::volt_t voltage) {
   m_leftMotor.SetControl(m_voltageRequest.WithOutput(voltage));

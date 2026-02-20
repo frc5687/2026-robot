@@ -158,40 +158,6 @@ inline constexpr size_t kTotalSignals =
 
 } // namespace SwerveDrive
 
-namespace Turret {
-inline constexpr double kGearRatio = (130.0 / 24.0) * (42.0 / 12.0);
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC();
-inline constexpr units::kilogram_t kMass = 0.15_kg;
-inline constexpr units::meter_t kRadius = 7.5_in;
-// Cylinder inertia 1/2 * m * r^2
-inline constexpr units::kilogram_square_meter_t kInertia =
-    0.5 * kMass * kRadius * kRadius;
-
-inline constexpr double kP = 2.0;
-inline constexpr double kI = 0.0;
-inline constexpr double kD = 0.0;
-
-namespace PID {
-inline constexpr double kP = 2.5;
-inline constexpr double kI = 0.0;
-inline constexpr double kD = 0.0;
-inline constexpr double kS = 0.0;
-inline constexpr double kV = 0.0;
-inline constexpr double kA = 0.0;
-} // namespace PID
-
-inline constexpr bool kMotorInverted = false;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
-inline constexpr units::ampere_t kStatorCurrentLimit = 80_A;
-
-inline constexpr units::radian_t kMinAngle = 0_deg;
-inline constexpr units::radian_t kMaxAngle = 300_deg;
-inline constexpr units::turns_per_second_t kCruiseVelocity = 100_tps;
-inline constexpr units::turns_per_second_squared_t kAcceleration =
-    500_tr_per_s_sq;
-inline constexpr units::turns_per_second_cubed_t kJerk = 2500_tr_per_s_cu;
-} // namespace Turret
-
 namespace Flywheel {
 inline constexpr double kGearRatio = (24.0 / 18.0);
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(2);
@@ -209,6 +175,7 @@ inline constexpr bool kRightInverted = false;
 
 inline constexpr bool kLeftFollowerOpposed = true;
 inline constexpr bool kRightFollowerOpposed = true;
+inline constexpr bool kRightBottomFollowerOpposed = true;
 
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 80_A;

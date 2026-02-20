@@ -6,7 +6,6 @@
 #include <units/velocity.h>
 
 #include "ShotCalculator.h"
-#include "subsystem/Turret/TurretSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/shooter/CoordinatedSystem.h"
@@ -43,7 +42,7 @@ struct ShooterSetpoint {
 // Turret is a bit strange since both are coupled together.
 class ShooterSystem : public CoordinatedSystem {
 public:
-  ShooterSystem(TurretSubsystem &turret, FlywheelSubsystem &flywheel,
+  ShooterSystem(FlywheelSubsystem &flywheel,
                 HoodSubsystem &hood);
   void Update() override;
   void SetSetpoint(const ShooterSetpoint &setpoint);
@@ -53,7 +52,6 @@ protected:
   void LogTelemetry() override;
 
 private:
-  TurretSubsystem &m_turret;
   FlywheelSubsystem &m_flywheel;
   HoodSubsystem &m_hood;
 

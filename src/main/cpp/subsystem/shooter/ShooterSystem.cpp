@@ -6,9 +6,9 @@
 
 #include "frc/DriverStation.h"
 
-ShooterSystem::ShooterSystem(TurretSubsystem &turret,
+ShooterSystem::ShooterSystem(
                              FlywheelSubsystem &flywheel, HoodSubsystem &hood)
-    : CoordinatedSystem("Shooter"), m_turret(turret), m_flywheel(flywheel),
+    : CoordinatedSystem("Shooter"), m_flywheel(flywheel),
       m_hood(hood) {}
 
 void ShooterSystem::SetState(const ShooterState &state) {
@@ -18,7 +18,6 @@ void ShooterSystem::SetState(const ShooterState &state) {
 
 void ShooterSystem::SetSetpoint(const ShooterSetpoint &setpoint) {
   m_desiredSetpoint = setpoint;
-  m_turret.SetAngle(m_desiredSetpoint.turretAngle);
 }
 
 void ShooterSystem::Update() {
@@ -29,11 +28,6 @@ void ShooterSystem::Update() {
     auto alliance = frc::DriverStation::GetAlliance();
     auto solution = m_shotCalculator.Calculate(
         frc::Timer::GetFPGATimestamp(), alliance == frc::DriverStation::kRed);
-    Log("Solution/turretFieldAngle",
-        solution.turretFieldAngle.Radians().value());
-    Log("Solution/turretRobotAngle", solution.turretRobotAngle.value());
-    Log("Solution/hoodAngle", solution.hoodAngle.value());
-    Log("Goal", m_shotCalculator.GetConfig().targetXY);
     auto setpoint = ShooterSetpoint{
         .turretAngle = solution.turretRobotAngle,
         .hoodAngle = solution.hoodAngle,
@@ -51,6 +45,4 @@ void ShooterSystem::Update() {
 }
 
 void ShooterSystem::LogTelemetry() {
-  Log("Current State", ShooterStateToString(m_currentState));
-  Log("Previous State", ShooterStateToString(m_previousState));
 }

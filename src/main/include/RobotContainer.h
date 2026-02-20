@@ -15,7 +15,6 @@
 #include "subsystem/indexer/IndexerSubsystem.h"
 #include "subsystem/intake/IntakeSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
-#include "subsystem/turret/TurretSubsystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
 #include "viz/RobotViz.h"
 
@@ -29,7 +28,6 @@ private:
   void ConfigureBindings();
 
   std::unique_ptr<DriveSubsystem> CreateDrive();
-  std::unique_ptr<TurretSubsystem> CreateTurret();
   std::unique_ptr<FlywheelSubsystem> CreateFlywheel();
   std::unique_ptr<HoodSubsystem> CreateHood();
   std::unique_ptr<VisionSubsystem> CreateVision();
@@ -37,7 +35,6 @@ private:
   std::unique_ptr<IntakeSubsystem> CreateIntake();
 
   std::unique_ptr<DriveSubsystem> m_drive;
-  std::unique_ptr<TurretSubsystem> m_turret;
   std::unique_ptr<FlywheelSubsystem> m_flywheel;
   std::unique_ptr<HoodSubsystem> m_hood;
   std::unique_ptr<IndexerSubsystem> m_indexer;

@@ -18,7 +18,7 @@
 class CTREIndexerIO : public IndexerIO {
 public:
   CTREIndexerIO(const CANDevice &leftMotor, const CANDevice &rightMotor,
-                const CANDevice &centerMotor);
+                const CANDevice &centerMotor, const CANDevice& centerMotorFollower);
 
   void UpdateInputs(IndexerIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
@@ -30,6 +30,7 @@ private:
   ctre::phoenix6::hardware::TalonFX m_leftMotor;
   ctre::phoenix6::hardware::TalonFX m_rightMotor;
   ctre::phoenix6::hardware::TalonFX m_centerMotor;
+  ctre::phoenix6::hardware::TalonFX m_centerMotorFollower;
 
   // ── Status signals (leader + center) ─────────────────────────────────
   ctre::phoenix6::StatusSignal<units::turn_t> &m_positionSignal;

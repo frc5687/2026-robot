@@ -29,15 +29,17 @@ inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
 
 inline constexpr CANDevice Turret{20, Bus::kDriveTrain};
 
-inline constexpr CANDevice RightLeaderFlywheel{16, Bus::kShooter};
 inline constexpr CANDevice RightFollowerFlywheel{17, Bus::kShooter};
+inline constexpr CANDevice RightBottomFollowerFlywheel{16, Bus::kShooter};
 
 inline constexpr CANDevice LeftLeaderFlywheel{14, Bus::kShooter};
 inline constexpr CANDevice LeftFollowerFlywheel{15, Bus::kShooter};
 
 inline constexpr CANDevice LeftIndexer{10, Bus::kDriveTrain};
-inline constexpr CANDevice CenterIndexer{11, Bus::kDriveTrain};
 inline constexpr CANDevice RightIndexer{12, Bus::kDriveTrain};
+
+inline constexpr CANDevice CenterIndexer{11, Bus::kDriveTrain};
+inline constexpr CANDevice CenterIndexerFollower{18, Bus::kDriveTrain};
 
 
 

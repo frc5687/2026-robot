@@ -12,18 +12,14 @@
 using namespace frc2::sysid;
 
 FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io)
-    : LoggedSubsystem("Flywheel"), m_io(std::move(io))
-//      m_sysIdRoutine{
-//          frc2::sysid::Config{
-//              Constants::Flywheel::kSysIdRampRate,
-//              Constants::Flywheel::kSysIdStepVoltage,
-//              Constants::Flywheel::kSysIdTimeout,
-//              nullptr},
-//          Mechanism{
-//              [this](units::volt_t v) { SysIdDrive(v); },
-//              [this](frc::sysid::SysIdRoutineLog* log) { SysIdLog(log); },
-//              this,
-//              "Flywheel"}}
+    : LoggedSubsystem("Flywheel"), m_io(std::move(io)),
+      m_sysIdRoutine{
+          frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
+          Mechanism{
+              [this](units::volt_t v) { SysIdDrive(v); },
+              [this](frc::sysid::SysIdRoutineLog* log) { SysIdLog(log); },
+              this,
+              "Flywheel"}}
 {}
 
 void FlywheelSubsystem::SetRPM(
@@ -41,15 +37,15 @@ bool FlywheelSubsystem::AtSetpoint() const {
          units::math::abs(m_filteredRight - m_desiredRPMRight) < tolerance;
 }
 
-// frc2::CommandPtr FlywheelSubsystem::SysIdQuasistatic(
-//     Direction direction) {
-//   return m_sysIdRoutine.Quasistatic(direction);
-// }
-//
-// frc2::CommandPtr FlywheelSubsystem::SysIdDynamic(
-//     Direction direction) {
-//   return m_sysIdRoutine.Dynamic(direction);
-// }
+ frc2::CommandPtr FlywheelSubsystem::SysIdQuasistatic(
+     Direction direction) {
+   return m_sysIdRoutine.Quasistatic(direction);
+ }
+
+ frc2::CommandPtr FlywheelSubsystem::SysIdDynamic(
+     Direction direction) {
+   return m_sysIdRoutine.Dynamic(direction);
+ }
 
 void FlywheelSubsystem::SysIdDrive(units::volt_t voltage) {
   m_io->SetVoltage(voltage);

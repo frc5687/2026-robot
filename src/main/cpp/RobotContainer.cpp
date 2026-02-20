@@ -27,21 +27,17 @@
 #include "subsystem/intake/CTREIntakeIO.h"
 #include "subsystem/intake/IntakeSubsystem.h"
 #include "subsystem/intake/SimIntakeIO.h"
-#include "subsystem/turret/CTRETurretIO.h"
-#include "subsystem/turret/SimTurretIO.h"
-#include "subsystem/turret/TurretSubsystem.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
-  m_turret = CreateTurret();
   m_flywheel = CreateFlywheel();
   m_hood = CreateHood();
   m_vision = CreateVision();
   m_indexer = CreateIndexer();
   m_intake = CreateIntake();
-  m_shooter = std::make_unique<ShooterSystem>(*m_turret, *m_flywheel, *m_hood);
+  m_shooter = std::make_unique<ShooterSystem>(*m_flywheel, *m_hood);
   ConfigureBindings();
 }
 
@@ -97,14 +93,6 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
       std::make_unique<PigeonIO>(HardwareMap::CAN::Pidgeon2::IMU));
 }
 
-std::unique_ptr<TurretSubsystem> RobotContainer::CreateTurret() {
-  if (frc::RobotBase::IsSimulation()) {
-    return std::make_unique<TurretSubsystem>(std::make_unique<SimTurretIO>());
-  }
-  return std::make_unique<TurretSubsystem>(
-      std::make_unique<CTRETurretIO>(HardwareMap::CAN::TalonFX::Turret));
-}
-
 std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
   if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<FlywheelSubsystem>(
@@ -113,8 +101,8 @@ std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
   return std::make_unique<FlywheelSubsystem>(std::make_unique<CTREFlywheelIO>(
       HardwareMap::CAN::TalonFX::LeftLeaderFlywheel,
       HardwareMap::CAN::TalonFX::LeftFollowerFlywheel,
-      HardwareMap::CAN::TalonFX::RightLeaderFlywheel,
-      HardwareMap::CAN::TalonFX::RightFollowerFlywheel));
+      HardwareMap::CAN::TalonFX::RightFollowerFlywheel,
+      HardwareMap::CAN::TalonFX::RightBottomFollowerFlywheel));
 }
 
 std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
@@ -124,7 +112,9 @@ std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
   return std::make_unique<IndexerSubsystem>(std::make_unique<CTREIndexerIO>(
       HardwareMap::CAN::TalonFX::LeftIndexer,
       HardwareMap::CAN::TalonFX::RightIndexer,
-      HardwareMap::CAN::TalonFX::CenterIndexer));
+      HardwareMap::CAN::TalonFX::CenterIndexer,
+      HardwareMap::CAN::TalonFX::CenterIndexerFollower
+    ));
 }
 
 std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntake() {
@@ -161,7 +151,7 @@ std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
 void RobotContainer::Periodic() {
   // m_robotViz.Update();
   m_robotViz.Update();
-  m_robotViz.FutureViz(1_s);
+  //m_robotViz.FutureViz(1_s);
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -198,14 +188,14 @@ void RobotContainer::ConfigureBindings() {
   // m_driver.Square().WhileTrue(
   //     Run([this] { m_flywheel->SetRPM(2000_rpm, 2000_rpm); },
   //     {m_flywheel.get()}));
-  m_driver.Circle().WhileTrue(
-      Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
-  m_driver.Triangle().WhileTrue(Run(
-      [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); }, {m_flywheel.get()}));
-  // m_driver.Cross().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kForward));
-  // m_driver.Circle().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kReverse));
-  // m_driver.Triangle().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kForward));
-  // m_driver.Square().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+ // m_driver.Circle().WhileTrue(
+ //     Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
+ // m_driver.Triangle().WhileTrue(Run(
+ //     [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); }, {m_flywheel.get()}));
+  m_driver.Cross().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kForward));
+  m_driver.Circle().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kReverse));
+  m_driver.Triangle().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kForward));
+  m_driver.Square().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 
   // m_driver.Triangle().WhileTrue(
   //     Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
