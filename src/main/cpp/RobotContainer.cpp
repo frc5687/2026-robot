@@ -42,7 +42,9 @@ RobotContainer::RobotContainer() {
   m_indexer = CreateIndexer();
   m_intake = CreateIntake();
   m_shooter = std::make_unique<ShooterSystem>(*m_turret, *m_flywheel, *m_hood);
-  ConfigureBindings();
+  m_oi = std::make_unique<OI>(*m_drive, *m_flywheel, *m_indexer,
+                               *m_intake, *m_shooter);
+  //ConfigureBindings();
 }
 
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
@@ -162,51 +164,51 @@ void RobotContainer::Periodic() {
   m_robotViz.FutureViz(1_s);
 }
 
-void RobotContainer::ConfigureBindings() {
-  using frc2::cmd::Run;
+// void RobotContainer::ConfigureBindings() {
+//   using frc2::cmd::Run;
 
-  // Set default drive command
-  m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
-      m_drive.get(), [this] { return -m_driver.GetLeftY(); },
-      [this] { return -m_driver.GetLeftX(); },
-      [this] { return -m_driver.GetRightX(); },
-      true)); // slew limiter
+//   // Set default drive command
+//   m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
+//       m_drive.get(), [this] { return -m_driver.GetLeftY(); },
+//       [this] { return -m_driver.GetLeftX(); },
+//       [this] { return -m_driver.GetRightX(); },
+//       true)); // slew limiter
 
-  // m_driver.Square().WhileTrue(
-  //     DriveWithNormalVectorAlignment(
-  //         m_drive.get(),
-  //         []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
-  //         false)
-  //         .ToPtr());
-  // m_driver.Square().WhileTrue(
-  //     Run([this] { m_turret->SetAngle(330_deg); }, {m_turret.get()}));
+//   // m_driver.Square().WhileTrue(
+//   //     DriveWithNormalVectorAlignment(
+//   //         m_drive.get(),
+//   //         []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
+//   //         false)
+//   //         .ToPtr());
+//   // m_driver.Square().WhileTrue(
+//   //     Run([this] { m_turret->SetAngle(330_deg); }, {m_turret.get()}));
 
-  // m_driver.Circle().WhileTrue(
-  //     Run([this] { m_turret->SetAngle(180_deg); }, {m_turret.get()}));
+//   // m_driver.Circle().WhileTrue(
+//   //     Run([this] { m_turret->SetAngle(180_deg); }, {m_turret.get()}));
 
-  //  m_driver.Triangle().WhileTrue(
-  //      Run([this] { m_turret->SetAngle(30_deg); }, {m_turret.get()}));
-  //
-  m_driver.L2().WhileTrue(
-      Run([this] { m_intake->SetVoltage(10_V); }, {m_intake.get()}));
+//   //  m_driver.Triangle().WhileTrue(
+//   //      Run([this] { m_turret->SetAngle(30_deg); }, {m_turret.get()}));
+//   //
+//   m_driver.L2().WhileTrue(
+//       Run([this] { m_intake->SetVoltage(10_V); }, {m_intake.get()}));
 
-  m_driver.Circle().WhileTrue(
-      Run([this] { m_indexer->SetVoltage(10_V); }, {m_indexer.get()}));
-  m_driver.Square().WhileTrue(Run(
-      [this] { m_flywheel->SetRPM(2000_rpm, 2000_rpm); }, {m_flywheel.get()}));
-  // m_driver.Circle().WhileTrue(
-  //     Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
-  // m_driver.Triangle().WhileTrue(Run(
-  //    [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); },
-  //    {m_flywheel.get()}));
-  // m_driver.Cross().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kForward));
-  // m_driver.Circle().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kReverse));
-  // m_driver.Triangle().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kForward));
-  // m_driver.Square().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+//   m_driver.Circle().WhileTrue(
+//       Run([this] { m_indexer->SetVoltage(10_V); }, {m_indexer.get()}));
+//   m_driver.Square().WhileTrue(Run(
+//       [this] { m_flywheel->SetRPM(2000_rpm, 2000_rpm); }, {m_flywheel.get()}));
+//   // m_driver.Circle().WhileTrue(
+//   //     Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
+//   // m_driver.Triangle().WhileTrue(Run(
+//   //    [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); },
+//   //    {m_flywheel.get()}));
+//   // m_driver.Cross().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kForward));
+//   // m_driver.Circle().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kReverse));
+//   // m_driver.Triangle().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kForward));
+//   // m_driver.Square().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 
-  m_driver.Triangle().WhileTrue(
-      Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
-}
+//   m_driver.Triangle().WhileTrue(
+//       Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
+// }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   return frc2::cmd::Print("No autonomous command configured");

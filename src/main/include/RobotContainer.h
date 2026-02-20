@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "OI.h"
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
@@ -47,5 +48,5 @@ private:
   std::unique_ptr<ShooterSystem> m_shooter;
 
   RobotViz m_robotViz{};
-  frc2::CommandPS5Controller m_driver{0};
+  std::unique_ptr<OI> m_oi;
 };
