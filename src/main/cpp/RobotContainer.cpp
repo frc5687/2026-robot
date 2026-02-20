@@ -101,8 +101,8 @@ std::unique_ptr<TurretSubsystem> RobotContainer::CreateTurret() {
   if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<TurretSubsystem>(std::make_unique<SimTurretIO>());
   }
-  return std::make_unique<TurretSubsystem>(
-      std::make_unique<CTRETurretIO>(HardwareMap::CAN::TalonFX::Turret));
+  return std::make_unique<TurretSubsystem>(std::make_unique<CTRETurretIO>(
+      HardwareMap::CAN::TalonFX::Turret, HardwareMap::DIO::TurretHallEffect));
 }
 
 std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
@@ -131,11 +131,9 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntake() {
   if (frc::RobotBase::IsSimulation()) {
     return std::make_unique<IntakeSubsystem>(std::make_unique<SimIntakeIO>());
   }
-  return std::make_unique<IntakeSubsystem>(
-      std::make_unique<CTREIntakeIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor
-        ));
+  return std::make_unique<IntakeSubsystem>(std::make_unique<CTREIntakeIO>(
+      HardwareMap::CAN::TalonFX::LeftRollerMotor,
+      HardwareMap::CAN::TalonFX::RightRollerMotor));
 }
 
 std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood() {
@@ -180,7 +178,7 @@ void RobotContainer::ConfigureBindings() {
   //         []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
   //         false)
   //         .ToPtr());
-  //m_driver.Square().WhileTrue(
+  // m_driver.Square().WhileTrue(
   //     Run([this] { m_turret->SetAngle(330_deg); }, {m_turret.get()}));
 
   // m_driver.Circle().WhileTrue(
@@ -192,23 +190,22 @@ void RobotContainer::ConfigureBindings() {
   m_driver.L2().WhileTrue(
       Run([this] { m_intake->SetVoltage(10_V); }, {m_intake.get()}));
 
-//  m_driver.Square().WhileTrue(
-//      Run([this] { m_indexer->SetVoltage(10_V); }, {m_indexer.get()}));
-//
-  // m_driver.Square().WhileTrue(
-  //     Run([this] { m_flywheel->SetRPM(2000_rpm, 2000_rpm); },
-  //     {m_flywheel.get()}));
   m_driver.Circle().WhileTrue(
-      Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
-  //m_driver.Triangle().WhileTrue(Run(
-  //    [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); }, {m_flywheel.get()}));
+      Run([this] { m_indexer->SetVoltage(10_V); }, {m_indexer.get()}));
+  m_driver.Square().WhileTrue(Run(
+      [this] { m_flywheel->SetRPM(2000_rpm, 2000_rpm); }, {m_flywheel.get()}));
+  // m_driver.Circle().WhileTrue(
+  //     Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
+  // m_driver.Triangle().WhileTrue(Run(
+  //    [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); },
+  //    {m_flywheel.get()}));
   // m_driver.Cross().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kForward));
   // m_driver.Circle().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kReverse));
   // m_driver.Triangle().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kForward));
   // m_driver.Square().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 
   m_driver.Triangle().WhileTrue(
-       Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
+      Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

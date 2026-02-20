@@ -107,7 +107,8 @@ VisionMeasurement LimelightVisionIO::MeasurementFromEstimate(
     const double countFactor = est.tagCount > 1 ? 0.5 : 1.0;
     m.xyStdDev = kFallbackXyStdDev * dist * dist * countFactor;
     m.thetaStdDev = kLargeVariance;
-    m.confidence = std::clamp(1.0 / (dist * dist), 0.0, 1.0);
+    //m.confidence = std::clamp(1.0 / (dist * dist), 0.0, 1.0);
+    m.confidence = 1;
     return m;
   }
 

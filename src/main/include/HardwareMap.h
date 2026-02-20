@@ -39,8 +39,6 @@ inline constexpr CANDevice LeftIndexer{10, Bus::kDriveTrain};
 inline constexpr CANDevice CenterIndexer{11, Bus::kDriveTrain};
 inline constexpr CANDevice RightIndexer{12, Bus::kDriveTrain};
 
-
-
 inline constexpr CANDevice LeftRollerMotor{8, Bus::kRio};
 inline constexpr CANDevice RightRollerMotor{9, Bus::kRio};
 
@@ -58,5 +56,9 @@ inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
 } // namespace Pidgeon2
 
 } // namespace CAN
+//
+namespace DIO {
+inline constexpr int TurretHallEffect{0};
+}
 
 } // namespace HardwareMap

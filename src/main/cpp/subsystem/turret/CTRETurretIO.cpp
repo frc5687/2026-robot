@@ -10,8 +10,9 @@
 using namespace Constants::Turret;
 using namespace ctre::phoenix6;
 
-CTRETurretIO::CTRETurretIO(const CANDevice &ids)
-    : m_motor(ids.id, ids.bus), m_positionSignal(m_motor.GetPosition()),
+CTRETurretIO::CTRETurretIO(const CANDevice &ids, int hallEffectId)
+    : m_motor(ids.id, ids.bus), m_hallEffect(hallEffectId),
+      m_positionSignal(m_motor.GetPosition()),
       m_velocitySignal(m_motor.GetVelocity()),
       m_accelerationSignal(m_motor.GetAcceleration()),
       m_currentSignal(m_motor.GetSupplyCurrent()),
@@ -89,6 +90,7 @@ void CTRETurretIO::UpdateInputs(TurretIOInputs &inputs) {
   inputs.motorCurrent = m_currentSignal.GetValue();
   inputs.motorTorque = kMotor.Kt * m_torqueCurrentSignal.GetValue();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
+  inputs.hallEffectTriggered = m_hallEffect.Get();
 }
 
 void CTRETurretIO::SetTurretAngle(units::radian_t angle) {

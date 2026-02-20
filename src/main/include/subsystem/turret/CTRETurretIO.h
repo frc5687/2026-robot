@@ -9,10 +9,11 @@
 #include "ctre/phoenix6/controls/PositionVoltage.hpp"
 #include "subsystem/turret/TurretIO.h"
 #include "utils/CANDevice.h"
+#include "utils/HallEffect.h"
 
 class CTRETurretIO : public TurretIO {
 public:
-  explicit CTRETurretIO(const CANDevice &id);
+  explicit CTRETurretIO(const CANDevice &id, int hallEffectId);
   void UpdateInputs(TurretIOInputs &inputs) override;
   void SetTurretAngle(units::radian_t angle) override;
   void ResetEncoderAngle(units::radian_t angle) override;
@@ -22,6 +23,7 @@ public:
 
 private:
   ctre::phoenix6::hardware::TalonFX m_motor;
+  HallEffect m_hallEffect;
 
   ctre::phoenix6::configs::TalonFXConfiguration m_motorConfig{};
 

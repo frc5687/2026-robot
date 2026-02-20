@@ -17,6 +17,8 @@ struct TurretIOInputs {
   units::newton_meter_t motorTorque{0_Nm};
 
   units::second_t timestamp{0_s};
+
+  bool hallEffectTriggered{false};
 };
 
 class TurretIO {

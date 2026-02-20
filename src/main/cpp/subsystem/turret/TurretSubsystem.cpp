@@ -16,6 +16,9 @@ TurretSubsystem::TurretSubsystem(std::unique_ptr<TurretIO> io)
 
 void TurretSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
+  if (m_inputs.hallEffectTriggered) {
+    m_io->ResetEncoderAngle(Constants::Turret::kMinAngle);
+  }
   RobotState::Instance().AddTurretObservation(GetTurretState());
 }
 

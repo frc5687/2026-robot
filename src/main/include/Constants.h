@@ -167,7 +167,7 @@ inline constexpr units::meter_t kRadius = 7.5_in;
 inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kMass * kRadius * kRadius;
 
-inline constexpr double kP = 2.0;
+inline constexpr double kP = 7.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 
@@ -184,7 +184,7 @@ inline constexpr bool kMotorInverted = true;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
 inline constexpr units::ampere_t kStatorCurrentLimit = 80_A;
 
-inline constexpr units::radian_t kMinAngle = 17_deg;
+inline constexpr units::radian_t kMinAngle = 22.73_deg;
 inline constexpr units::radian_t kMaxAngle = 330_deg;
 inline constexpr units::turns_per_second_t kCruiseVelocity = 100_tps;
 inline constexpr units::turns_per_second_squared_t kAcceleration =
