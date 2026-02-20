@@ -7,6 +7,7 @@
 #include <numbers>
 
 #include "Constants.h"
+#include "RobotState.h"
 #include "frc2/command/sysid/SysIdRoutine.h"
 
 using namespace frc2::sysid;
@@ -80,6 +81,7 @@ void FlywheelSubsystem::UpdateInputs() {
                       m_inputs.timestamp);
   UpdateFlywheelState(m_rightState, m_inputs.rightMotorVelocity,
                       m_inputs.timestamp);
+  RobotState::Instance().AddFlywheelObservation(m_leftState);
 }
 
 void FlywheelSubsystem::LogTelemetry() {

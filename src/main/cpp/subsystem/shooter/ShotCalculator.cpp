@@ -9,6 +9,18 @@
 #include "RobotState.h"
 #include "utils/Logger.h"
 
+namespace {
+
+// Normalize angle to [0, 2π)
+units::radian_t Normalize0To2Pi(units::radian_t angle) {
+  double a = std::fmod(angle.value(), 2.0 * std::numbers::pi);
+  if (a < 0.0)
+    a += 2.0 * std::numbers::pi;
+  return units::radian_t{a};
+}
+
+}  // namespace
+
 ShotCalculator::ShotCalculator() {
   // distance (m) → hood angle (deg)
   std::vector<std::pair<double, double>> hoodMap{
@@ -37,14 +49,6 @@ frc::Translation2d ShotCalculator::FlipAlliance(frc::Translation2d t,
   return t;
 }
 
-units::radian_t ShotCalculator::NormalizeAngle(units::radian_t angle) {
-  double a = angle.value();
-  a = std::fmod(a + std::numbers::pi, 2.0 * std::numbers::pi);
-  if (a < 0.0)
-    a += 2.0 * std::numbers::pi;
-  return units::radian_t{a - std::numbers::pi};
-}
-
 ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   auto &rs = RobotState::Instance();
 
@@ -52,12 +56,15 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   OdometryData futureDrive = rs.GetDriveState(launchTime);
 
   frc::Pose2d launcherPose =
-      futureDrive.pose.TransformBy(m_cfg.robotToLauncher);
+      futureDrive.estimatedPose.TransformBy(m_cfg.robotToLauncher);
+
   Logger::Instance().Log("ShotCalculator/launcherPose", launcherPose);
+
   frc::Translation2d launcherXY = launcherPose.Translation();
   frc::Translation2d target = FlipAlliance(m_cfg.targetXY, isRed);
 
-  frc::Rotation2d heading = futureDrive.pose.Rotation();
+  frc::Rotation2d heading = futureDrive.estimatedPose.Rotation();
+
   double cos_h = heading.Cos();
   double sin_h = heading.Sin();
 
@@ -65,11 +72,14 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double rvy = futureDrive.chassisSpeeds.vy.value();
   double omega = futureDrive.chassisSpeeds.omega.value();
 
+  // Convert robot velocity to field-relative
   double fieldVx = rvx * cos_h - rvy * sin_h;
   double fieldVy = rvx * sin_h + rvy * cos_h;
 
+  // Add rotational velocity component at launcher offset
   double offsetX_robot = m_cfg.robotToLauncher.X().value();
   double offsetY_robot = m_cfg.robotToLauncher.Y().value();
+
   double offsetX_field = offsetX_robot * cos_h - offsetY_robot * sin_h;
   double offsetY_field = offsetX_robot * sin_h + offsetY_robot * cos_h;
 
@@ -81,14 +91,17 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double tx = target.X().value();
   double ty = target.Y().value();
 
+  // Iterative lookahead for motion compensation
   double lookaheadX = lx;
   double lookaheadY = ly;
+
   double effDist = std::hypot(tx - lookaheadX, ty - lookaheadY);
   double tof = m_tofMap.GetValue(effDist);
 
   for (int i = 0; i < m_cfg.maxAimIterations; ++i) {
     double newLookaheadX = lx + fieldVx * tof;
     double newLookaheadY = ly + fieldVy * tof;
+
     double newDist = std::hypot(tx - newLookaheadX, ty - newLookaheadY);
 
     lookaheadX = newLookaheadX;
@@ -98,6 +111,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
       effDist = newDist;
       break;
     }
+
     effDist = newDist;
     tof = m_tofMap.GetValue(effDist);
   }
@@ -106,30 +120,44 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double flywheelSpeed = m_flywheelMap.GetValue(effDist);
   tof = m_tofMap.GetValue(effDist);
 
+  // Compute field-relative turret angle
   frc::Rotation2d turretFieldAngle{
       units::radian_t{std::atan2(ty - lookaheadY, tx - lookaheadX)}};
 
+  // Convert to robot-relative
   units::radian_t turretRobotAngle =
-      NormalizeAngle((turretFieldAngle - heading).Radians());
+      (turretFieldAngle - heading).Radians();
+
+  // Normalize to [0, 2π)
+  turretRobotAngle = Normalize0To2Pi(turretRobotAngle);
+
+  // Clamp to mechanical limits (must also be in [0, 2π))
+  turretRobotAngle = std::clamp(
+      turretRobotAngle,
+      Constants::Turret::kMinAngle,
+      Constants::Turret::kMaxAngle);
 
   TurretState turret = rs.GetTurretState(now);
   HoodState hood = rs.GetHoodState(now);
   FlywheelState flywheel = rs.GetFlywheelState(now);
 
   bool turretOK =
-      units::math::abs(NormalizeAngle(turret.angle - turretRobotAngle)) <
+      units::math::abs(turret.angle - turretRobotAngle) <
       m_cfg.turretTolerance;
 
-  bool hoodOK = units::math::abs(hood.angle - units::degree_t{hoodAngleDeg}) <
-                m_cfg.hoodTolerance;
+  bool hoodOK =
+      units::math::abs(hood.angle - units::degree_t{hoodAngleDeg}) <
+      m_cfg.hoodTolerance;
 
-  bool flywheelOK = flywheelSpeed > 0.0 &&
-                    std::abs(flywheel.velocity.value() - flywheelSpeed) /
-                            std::max(flywheelSpeed, 0.1) <
-                        m_cfg.flywheelToleranceFrac;
+  bool flywheelOK =
+      flywheelSpeed > 0.0 &&
+      std::abs(flywheel.velocity.value() - flywheelSpeed) /
+              std::max(flywheelSpeed, 0.1) <
+          m_cfg.flywheelToleranceFrac;
 
   bool inRange =
-      effDist >= m_cfg.minDistanceMeters && effDist <= m_cfg.maxDistanceMeters;
+      effDist >= m_cfg.minDistanceMeters &&
+      effDist <= m_cfg.maxDistanceMeters;
 
   return {
       .inRange = inRange,

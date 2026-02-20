@@ -15,6 +15,8 @@ public:
 
   void UpdateInputs(TurretIOInputs &inputs) override;
   void SetTurretAngle(units::radian_t angle) override;
+  void ResetEncoderAngle(units::radian_t angle) override;
+
 
 private:
   frc::sim::DCMotorSim m_turretSim;

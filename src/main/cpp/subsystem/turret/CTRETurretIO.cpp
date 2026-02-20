@@ -114,3 +114,13 @@ void CTRETurretIO::SetBrakeMode(bool brake) {
 }
 
 void CTRETurretIO::ZeroPosition() { m_motor.SetPosition(0_tr); }
+
+void CTRETurretIO::ResetEncoderAngle(units::radian_t angle) {
+  // Subsystem passes the desired mechanism angle.
+  // Convert: mechanism radians → mechanism turns → rotor turns
+  const units::turn_t mechanismTurns{angle / (2.0 * std::numbers::pi * 1_rad) *
+                                     1_tr};
+  const units::turn_t rotorTurns = mechanismTurns * kGearRatio;
+
+  m_motor.SetPosition(rotorTurns);
+}

@@ -25,4 +25,5 @@ public:
 
   virtual void UpdateInputs(TurretIOInputs &inputs) = 0;
   virtual void SetTurretAngle(units::radian_t angle) = 0;
+  virtual void ResetEncoderAngle(units::radian_t angle) = 0;
 };

@@ -9,7 +9,10 @@
 #include "RobotState.h"
 
 TurretSubsystem::TurretSubsystem(std::unique_ptr<TurretIO> io)
-    : LoggedSubsystem("Turret"), m_io(std::move(io)) {}
+    : LoggedSubsystem("Turret"), m_io(std::move(io)) {
+    m_io->SetTurretAngle(Constants::Turret::kMinAngle);
+    m_io->ResetEncoderAngle(Constants::Turret::kMinAngle);
+}
 
 void TurretSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
@@ -17,6 +20,7 @@ void TurretSubsystem::UpdateInputs() {
 }
 
 void TurretSubsystem::SetAngle(units::radian_t desiredAngle) {
+  desiredAngle = std::clamp(desiredAngle, Constants::Turret::kMinAngle, Constants::Turret::kMaxAngle);
   m_desiredAngle = desiredAngle;
   m_io->SetTurretAngle(m_desiredAngle);
 }

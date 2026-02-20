@@ -6,6 +6,7 @@
 #include <ctre/phoenix6/controls/MotionMagicVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
+#include "ctre/phoenix6/controls/PositionVoltage.hpp"
 #include "subsystem/turret/TurretIO.h"
 #include "utils/CANDevice.h"
 
@@ -14,6 +15,7 @@ public:
   explicit CTRETurretIO(const CANDevice &id);
   void UpdateInputs(TurretIOInputs &inputs) override;
   void SetTurretAngle(units::radian_t angle) override;
+  void ResetEncoderAngle(units::radian_t angle) override;
   void Stop();
   void SetBrakeMode(bool brake);
   void ZeroPosition();
@@ -24,7 +26,8 @@ private:
   ctre::phoenix6::configs::TalonFXConfiguration m_motorConfig{};
 
   // Control requests
-  ctre::phoenix6::controls::MotionMagicVoltage m_positionRequest{0_tr};
+  //ctre::phoenix6::controls::MotionMagicVoltage m_positionRequest{0_tr};
+  ctre::phoenix6::controls::PositionVoltage m_positionRequest{0_tr};
   ctre::phoenix6::controls::VoltageOut m_voltageRequest{0_V};
 
   // Status signals

@@ -48,3 +48,9 @@ void SimTurretIO::UpdateInputs(TurretIOInputs &inputs) {
 void SimTurretIO::SetTurretAngle(units::radian_t angle) {
   m_controller.SetSetpoint(angle.value());
 }
+
+void SimTurretIO::ResetEncoderAngle(units::radian_t angle) {
+  // Subsystem passes the desired mechanism angle.
+  // Convert: mechanism radians → mechanism turns → rotor turns
+  m_turretSim.SetAngle(angle);
+}
