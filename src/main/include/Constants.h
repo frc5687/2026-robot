@@ -252,11 +252,14 @@ inline constexpr units::moment_of_inertia::kilogram_square_meter_t kMoi =
     1.0_kg_sq_m;
 inline constexpr units::meter_t kArmLength = 1.0_m;
 
-inline constexpr units::turn_t kLeftEncoderOffset = 0.365712890625_tr;
-inline constexpr units::turn_t kRightEncoderOffset = 0.365712890625_tr;
+inline constexpr units::turn_t kLeftEncoderOffset = -0.660875_tr;
+inline constexpr units::turn_t kRightEncoderOffset = -0.480431640625_tr;
 
 inline constexpr units::turn_t kMinAngle = 0.0_tr;
-inline constexpr units::turn_t kMaxAngle = 1.0_tr;
+inline constexpr units::turn_t kMaxAngle = 0.6_tr;
+
+inline constexpr double bigstep = 400;
+inline constexpr double littestep = 10;
 
 namespace SimPID {
 inline constexpr double kP = 10;

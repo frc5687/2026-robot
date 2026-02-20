@@ -4,15 +4,17 @@
 
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
+#include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/indexer/IndexerSubsystem.h"
 #include "subsystem/intake/IntakeSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
+#include "utils/TunableDouble.h"
 
 class OI {
  public:
   OI(DriveSubsystem& drive, FlywheelSubsystem& flywheel,
      IndexerSubsystem& indexer, IntakeSubsystem& intake,
-     ShooterSystem& shooter);
+     ShooterSystem& shooter, HoodSubsystem& hood);
 
  private:
   frc2::CommandPS5Controller m_driver{0};
@@ -21,5 +23,8 @@ class OI {
                                 FlywheelSubsystem& flywheel,
                                 IndexerSubsystem& indexer,
                                 IntakeSubsystem& intake,
-                                ShooterSystem& shooter);
+                                ShooterSystem& shooter,
+                                HoodSubsystem& hood);
+
+    TunableDouble m_microseconds;
 };

@@ -15,6 +15,7 @@ public:
 
   void UpdateInputs(HoodIOInputs &inputs) override;
   void SetHoodPosition(units::angle::turn_t hoodPosition) override;
+  void SetMicroseconds(double microseconds) override;
   void SetHoodPosition(units::turn_t leftHoodPosition,
                        units::turn_t rightHoodPosition) override;
 

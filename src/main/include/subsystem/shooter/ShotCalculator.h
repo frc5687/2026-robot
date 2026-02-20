@@ -40,7 +40,7 @@ struct LauncherSolution {
   frc::Translation2d fieldPosition;
   double effectiveDistance = 0.0;
   frc::Rotation2d idealFieldAngle;
-  units::degree_t hoodAngle{0};
+  units::turn_t hoodAngle{0};
   double flywheelSpeed = 0.0;
   units::second_t timeOfFlight{0};
 };
@@ -53,11 +53,11 @@ struct ShotSolution {
   frc::Rotation2d turretFieldAngle{};
   units::radian_t turretRobotAngle{0};
 
-  units::degree_t leftHoodAngle{0};
+  units::turn_t leftHoodAngle{0};
   double leftFlywheelSpeed = 0.0;
   units::meter_t leftDistance{0};
 
-  units::degree_t rightHoodAngle{0};
+  units::turn_t rightHoodAngle{0};
   double rightFlywheelSpeed = 0.0;
   units::meter_t rightDistance{0};
 
@@ -93,7 +93,7 @@ class ShotCalculator {
       double fieldVx, double fieldVy,
       frc::Translation2d target) const;
 
-  static units::radian_t Normalize0To2Pi(units::radian_t angle);
+  static units::radian_t Normalize0To2Pi(units::turn_t angle);
   static units::radian_t AngleDifference(frc::Rotation2d a,
                                          frc::Rotation2d b);
   static frc::Rotation2d AngularBisector(frc::Rotation2d a,

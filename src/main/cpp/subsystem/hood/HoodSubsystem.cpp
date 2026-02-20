@@ -16,6 +16,13 @@ void HoodSubsystem::SetHoodPosition(units::turn_t desiredAngle) {
   m_io->SetHoodPosition(m_desiredAngle);
 }
 
+void HoodSubsystem::SetHoodPosition(units::turn_t leftAngle, units::turn_t rightAngle) {
+  m_io->SetHoodPosition(leftAngle, rightAngle);
+}
+
+void HoodSubsystem::SetMicroseconds(double microseconds){
+  m_io->SetMicroseconds(microseconds);
+}
 HoodState HoodSubsystem::GetHoodState() const {
   HoodState state;
   state.timestamp = m_inputs.timestamp;

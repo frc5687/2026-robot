@@ -21,6 +21,7 @@ void ShooterSystem::SetState(const ShooterState &state) {
 
 void ShooterSystem::SetSetpoint(const ShooterSetpoint &setpoint) {
   m_desiredSetpoint = setpoint;
+  m_hood.SetHoodPosition(units::turn_t{setpoint.hoodAngle}, units::turn_t{setpoint.hoodAngle});
   m_turret.SetAngle(m_desiredSetpoint.turretAngle);
 }
 

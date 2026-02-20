@@ -10,27 +10,28 @@
 #include "utils/Logger.h"
 
 ShotCalculator::ShotCalculator() {
-  // distance (m) → hood angle (deg)
+  // distance (m) → hood angle (turns)
   m_hoodAngleMap.InsertValues({
-      {1.34, 19.0}, {1.78, 19.0}, {2.17, 24.0}, {2.81, 27.0}, {3.82, 29.0},
-      {4.09, 30.0}, {4.40, 31.0}, {4.77, 32.0}, {5.57, 32.0}, {5.60, 35.0},
+      {1.4224, 0.12}, {1.7525, 0.25}, {2.5908, 0.29}, {3.2766, 0.3},
+      {3.7084, 0.33}, {4.2672, 0.36}, {4.8768, 0.37}, {5.1816, 0.4},
   });
 
   // distance (m) → flywheel speed (units TBD)
   m_flywheelMap.InsertValues({
-      {1.34, 210.0}, {1.78, 220.0}, {2.17, 220.0}, {2.81, 230.0},
-      {3.82, 250.0}, {4.09, 255.0}, {4.40, 260.0}, {4.77, 265.0},
-      {5.57, 275.0}, {5.60, 290.0},
+      {1.4224, 3777}, {1.7525, 3733}, {2.5908, 4133}, {3.2766, 4711},
+      {3.7084, 4800}, {4.2672, 5066}, {4.8768, 5244}, {5.1816, 5333},
   });
 
   // distance (m) → time of flight (s)
   m_tofMap.InsertValues({
-      {1.38, 0.90}, {1.88, 1.09}, {3.15, 1.11}, {4.55, 1.12}, {5.68, 1.16},
+      {1.4224, 0.88}, {1.7525, 0.85}, {2.5908, 1.09}, {3.2766, 1.16},
+      {3.7084, 1.2}, {4.2672, 1.31}, {4.8768, 1.35}, {5.1816, 1.37},
   });
 }
 
-units::radian_t ShotCalculator::Normalize0To2Pi(units::radian_t angle) {
-  double a = std::fmod(angle.value(), 2.0 * std::numbers::pi);
+units::radian_t ShotCalculator::Normalize0To2Pi(units::turn_t angle) {
+  units::radian_t radian = units::radian_t{angle};
+  double a = std::fmod(radian.value(), 2.0 * std::numbers::pi);
   if (a < 0.0) {
     a += 2.0 * std::numbers::pi;
   }
@@ -99,7 +100,7 @@ LauncherSolution ShotCalculator::SolveSingleLauncher(
       .fieldPosition    = launcherXY,
       .effectiveDistance = effDist,
       .idealFieldAngle  = idealAngle,
-      .hoodAngle        = units::degree_t{m_hoodAngleMap.GetValue(effDist)},
+      .hoodAngle        = units::turn_t{m_hoodAngleMap.GetValue(effDist)},
       .flywheelSpeed    = m_flywheelMap.GetValue(effDist),
       .timeOfFlight     = units::second_t{m_tofMap.GetValue(effDist)},
   };

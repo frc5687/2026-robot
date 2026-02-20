@@ -13,6 +13,8 @@ public:
   explicit HoodSubsystem(std::unique_ptr<HoodIO> io);
   ~HoodSubsystem() = default;
   void SetHoodPosition(units::turn_t desiredAngle);
+  void SetHoodPosition(units::turn_t leftAngle, units::turn_t rightAngle);
+  void SetMicroseconds(double microseconds);
   HoodState GetHoodState() const;
 
 protected:

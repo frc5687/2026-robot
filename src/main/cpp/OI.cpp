@@ -7,19 +7,24 @@
 #include <units/voltage.h>
 
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
+#include "units/angle.h"
 
 OI::OI(DriveSubsystem& drive, FlywheelSubsystem& flywheel,
        IndexerSubsystem& indexer, IntakeSubsystem& intake,
-       ShooterSystem& shooter) {
-  ConfigureDriverBindings(drive, flywheel, indexer, intake, shooter);
+       ShooterSystem& shooter, HoodSubsystem& hood):
+         m_microseconds("microseconds", "microseconds", 1500)
+ {
+  ConfigureDriverBindings(drive, flywheel, indexer, intake, shooter, hood);
 }
 
 void OI::ConfigureDriverBindings(DriveSubsystem& drive,
                                   FlywheelSubsystem& flywheel,
                                   IndexerSubsystem& indexer,
                                   IntakeSubsystem& intake,
-                                  ShooterSystem& shooter) {
+                                  ShooterSystem& shooter,
+                                  HoodSubsystem& hood) {
   using frc2::cmd::Run;
   using frc2::cmd::RunEnd;
 
@@ -44,4 +49,7 @@ void OI::ConfigureDriverBindings(DriveSubsystem& drive,
 
   m_driver.Triangle().WhileTrue(
       Run([&shooter] { shooter.SetState(ShooterState::TRACKING); }));
+
+        m_driver.R2().WhileTrue(
+      Run([&hood, this] { hood.SetHoodPosition(units::turn_t{m_microseconds.Get()}, units::turn_t{0}); }, {&hood}));
 }

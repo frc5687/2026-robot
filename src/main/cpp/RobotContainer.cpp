@@ -20,6 +20,7 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "subsystem/flywheel/CTREFlywheelIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
+#include "subsystem/hood/HardwareHoodIO.h"
 #include "subsystem/hood/SimHoodIO.h"
 #include "subsystem/indexer/CTREIndexerIO.h"
 #include "subsystem/indexer/IndexerSubsystem.h"
@@ -43,7 +44,7 @@ RobotContainer::RobotContainer() {
   m_intake = CreateIntake();
   m_shooter = std::make_unique<ShooterSystem>(*m_turret, *m_flywheel, *m_hood);
   m_oi = std::make_unique<OI>(*m_drive, *m_flywheel, *m_indexer,
-                               *m_intake, *m_shooter);
+                               *m_intake, *m_shooter, *m_hood);
   //ConfigureBindings();
 }
 
@@ -139,7 +140,10 @@ std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntake() {
 }
 
 std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood() {
-  return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+  if(frc::RobotBase::IsSimulation()){
+      return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+  }
+  return std::make_unique<HoodSubsystem>(std::make_unique<HardwareHoodIO>(1, HardwareMap::CAN::CANCoder::LeftHoodEncoder, HardwareMap::CAN::CANCoder::RightHoodEncoder));
 }
 
 std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {

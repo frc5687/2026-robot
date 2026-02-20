@@ -21,6 +21,7 @@ class HoodIO {
 public:
   virtual ~HoodIO() = default;
   virtual void UpdateInputs(HoodIOInputs &inputs) = 0;
+  virtual void SetMicroseconds(double microseconds) = 0;
   virtual void SetHoodPosition(units::turn_t hoodPosition) = 0;
   virtual void SetHoodPosition(units::turn_t leftHoodPosition,
                                units::turn_t rightHoodPosition) = 0;

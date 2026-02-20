@@ -49,6 +49,9 @@ inline constexpr CANDevice FrontLeftEncoder{2, Bus::kDriveTrain};
 inline constexpr CANDevice FrontRightEncoder{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackLeftEncoder{3, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightEncoder{0, Bus::kDriveTrain};
+inline constexpr CANDevice LeftHoodEncoder{5, Bus::kShooter};
+inline constexpr CANDevice RightHoodEncoder{6, Bus::kShooter};
+
 } // namespace CANCoder
 
 namespace Pidgeon2 {

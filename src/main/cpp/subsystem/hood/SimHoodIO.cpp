@@ -43,6 +43,10 @@ void SimHoodIO::SetHoodPosition(units::angle::turn_t hoodRotation) {
   m_desiredRotation = hoodRotation;
 }
 
+void SimHoodIO::SetMicroseconds(double microseconds) {
+
+}
+
 void SimHoodIO::SetHoodPosition(units::turn_t leftHoodPosition,
                                 units::turn_t rightHoodPosition) {
   SetHoodPosition(leftHoodPosition);

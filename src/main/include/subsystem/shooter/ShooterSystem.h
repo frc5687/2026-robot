@@ -35,7 +35,7 @@ inline constexpr std::string ShooterStateToString(ShooterState state) {
 
 struct ShooterSetpoint {
   units::radian_t turretAngle;
-  units::radian_t hoodAngle;
+  units::turn_t hoodAngle;
   units::rpm flywheelSpeed;
 };
 
