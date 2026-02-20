@@ -9,11 +9,6 @@
 
 using namespace Constants::Flywheel;
 using namespace ctre::phoenix6;
-
-// ════════════════════════════════════════════════════════════════════════
-// Construction
-// ════════════════════════════════════════════════════════════════════════
-
 CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leftLeader,
                                const CANDevice &leftFollower,
                                const CANDevice &rightLeader,
@@ -22,7 +17,7 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leftLeader,
       m_leftFollower(leftFollower.id, leftFollower.bus),
       m_rightLeader(rightLeader.id, rightLeader.bus),
       m_rightFollower(rightFollower.id, rightFollower.bus),
-      // Leader signals
+
       m_leftVelocitySignal(m_leftLeader.GetVelocity()),
       m_leftPositionSignal(m_leftLeader.GetPosition()),
       m_leftVoltageSignal(m_leftLeader.GetMotorVoltage()),
@@ -33,10 +28,8 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leftLeader,
       m_rightVoltageSignal(m_rightLeader.GetMotorVoltage()),
       m_rightStatorCurrentSignal(m_rightLeader.GetStatorCurrent()),
       m_rightSupplyCurrentSignal(m_rightLeader.GetSupplyCurrent()),
-      // Follower signals (current only, for diagnostics)
       m_leftFollowerStatorCurrentSignal(m_leftFollower.GetStatorCurrent()),
       m_rightFollowerStatorCurrentSignal(m_rightFollower.GetStatorCurrent()),
-      // Signal batching
       m_criticalSignals{&m_leftVelocitySignal,  &m_leftPositionSignal,
                         &m_leftVoltageSignal,   &m_rightVelocitySignal,
                         &m_rightPositionSignal, &m_rightVoltageSignal},

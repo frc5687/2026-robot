@@ -223,19 +223,8 @@ constexpr double kI = 0.0;       ///< Integral
 constexpr double kD = 0.0;       ///< Derivative
 } // namespace PID
 
-// ── SysId Configuration ──────────────────────────────────────────────
-
-constexpr auto kSysIdRampRate = 1_V / 1_s;
-constexpr units::volt_t kSysIdStepVoltage{7_V};
-constexpr units::second_t kSysIdTimeout{10_s};
-
-// ── Tolerances ───────────────────────────────────────────────────────
 
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
-
-// ── Simulation ───────────────────────────────────────────────────────
-// WPILib uses rad/s.  Phoenix uses RPS.
-//   kV_wpilib = kV_phoenix / (2π)
 
 constexpr double kSimKs = PID::kS;
 constexpr double kSimKv = PID::kV / (2.0 * std::numbers::pi);
@@ -245,13 +234,8 @@ constexpr double kSimD = PID::kD / (2.0 * std::numbers::pi);
 
 constexpr units::radians_per_second_t kSimToleranceRPS{5.0 * 2.0 *
                                                        std::numbers::pi / 60.0};
-
-// ── Filtering ────────────────────────────────────────────────────────
-
 constexpr units::second_t kFilterTime{0.02_s};
 constexpr units::second_t kFilterPeriod{0.02_s};
-
-// ── Defaults ─────────────────────────────────────────────────────────
 
 constexpr units::revolutions_per_minute_t kDefaultRPM{4000_rpm};
 constexpr units::second_t kAnticipationDuration = 200_ms; // todo figure out
