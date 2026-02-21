@@ -107,6 +107,10 @@ void ShooterSystem::Update() {
     case ShooterState::SHOOTING:
       break;
 
+    case ShooterState::TRENCH: {
+      auto setpoint = ShooterSetpoint{.hoodAngle = 0_tr, .flywheelSpeed = 0_rpm};
+      SetSetpoint(setpoint);
+    }
     default:
       break;
   }

@@ -17,6 +17,7 @@ enum class ShooterState {
   TRACKING,
   PASSING,
   SHOOTING,
+  TRENCH,
 };
 
 inline constexpr std::string ShooterStateToString(ShooterState state) {
@@ -29,6 +30,8 @@ inline constexpr std::string ShooterStateToString(ShooterState state) {
     return "PASSING";
   case ShooterState::SHOOTING:
     return "SHOOTING";
+  case ShooterState::TRENCH:
+    return "TRENCH";
   default:
     return "UNKNOWN";
   }

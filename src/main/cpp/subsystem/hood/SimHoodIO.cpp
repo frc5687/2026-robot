@@ -37,6 +37,7 @@ void SimHoodIO::UpdateInputs(HoodIOInputs &inputs) {
 
   inputs.rightHoodVelocity =
       (hoodVelocity * kGearRatio) / (2.0 * std::numbers::pi * 1_rad) * 1_tr;
+    
 }
 
 void SimHoodIO::SetHoodPosition(units::angle::turn_t hoodRotation) {

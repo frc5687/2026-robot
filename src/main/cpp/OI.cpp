@@ -55,7 +55,7 @@ void OI::ConfigureDriverBindings(DriveSubsystem& drive,
       Run([&shooter] { shooter.SetState(ShooterState::TRACKING); }));
 //   m_driver.Create().OnTrue(Run([&drive] {drive.ResetHeading(0_deg);}));
   m_driver.R1().OnTrue(
-      Run([&shooter] { shooter.SetState(ShooterState::SHOOTING); }).AndThen(Run([&hood] {hood.SetHoodPosition(0.0_tr,0.0_tr);})));
+      Run([&shooter] { shooter.SetState(ShooterState::PASSING); }));
   //       m_driver.R2().WhileTrue(
   //     Run([&shooter] { shooter.SetState(ShooterState::SHOOTING); }));
       //   m_driver.R2().WhileTrue(
