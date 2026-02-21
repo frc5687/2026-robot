@@ -149,8 +149,8 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
 
   if (currentTime - measurement.timestamp >
       units::second_t{m_config.maxTimestampAge}) {
-    std::cout << "Not valid due to timestamp diff: "
-              << (currentTime - measurement.timestamp).value() << "\n";
+    // std::cout << "Not valid due to timestamp diff: "
+    //           << (currentTime - measurement.timestamp).value() << "\n";
     return false;
   }
 

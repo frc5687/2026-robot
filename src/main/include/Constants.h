@@ -58,9 +58,9 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
     ((kDriveMotor.freeSpeed / kDriveGearRatio) * kWheelRadius) / 1_rad;
 
 inline constexpr units::ampere_t kDriveSlipCurrent =
-    120_A; // TODO: Tune, this is the max stator current to prevent sliping of
+    80_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 60_A;
+inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 20_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
 
 inline constexpr bool kDriveInverted =
@@ -252,8 +252,8 @@ inline constexpr units::moment_of_inertia::kilogram_square_meter_t kMoi =
     1.0_kg_sq_m;
 inline constexpr units::meter_t kArmLength = 1.0_m;
 
-inline constexpr units::turn_t kLeftEncoderOffset = -0.660875_tr;
-inline constexpr units::turn_t kRightEncoderOffset = -0.480431640625_tr;
+inline constexpr units::turn_t kLeftEncoderOffset = -0.740314453125_tr;
+inline constexpr units::turn_t kRightEncoderOffset = -0.880859375_tr;
 
 inline constexpr units::turn_t kMinAngle = 0.0_tr;
 inline constexpr units::turn_t kMaxAngle = 0.6_tr;
@@ -375,9 +375,10 @@ inline const frc::Translation3d kTopCenterPoint{
     kHeight};
 
 inline const frc::Translation3d kInnerCenterPoint{
-    kFieldTagLayout.GetTagPose(26)->X() + kWidth / 2.0, kFieldWidth / 2.0,
+    kFieldTagLayout.GetTagPose(26)->X() + kWidth / 2.0, (kFieldWidth / 2.0),
     kInnerHeight};
 } // namespace Hub
 } // namespace Field
 
 } // namespace Constants
+

@@ -16,7 +16,7 @@ struct ShotConfig {
   frc::Transform2d robotToLeftLauncher{
       {-0.114_m, 0.191_m}, frc::Rotation2d{0_rad}};
   frc::Transform2d robotToRightLauncher{
-      {0.114_m, 0.191_m}, frc::Rotation2d{0_rad}};
+      {-0.114_m, -0.191_m}, frc::Rotation2d{0_rad}};
 
   frc::Translation2d targetXY{
       Constants::Field::Hub::kInnerCenterPoint.ToTranslation2d()};

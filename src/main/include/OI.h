@@ -27,4 +27,5 @@ class OI {
                                 HoodSubsystem& hood);
 
     TunableDouble m_microseconds;
+    TunableDouble m_hoodangle;
 };

@@ -10,6 +10,7 @@
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/shooter/CoordinatedSystem.h"
+#include "units/angular_velocity.h"
 
 enum class ShooterState {
   IDLE,
@@ -36,7 +37,7 @@ inline constexpr std::string ShooterStateToString(ShooterState state) {
 struct ShooterSetpoint {
   units::radian_t turretAngle;
   units::turn_t hoodAngle;
-  units::rpm flywheelSpeed;
+  units::revolutions_per_minute_t flywheelSpeed;
 };
 
 // Combination of Turret, Shooter, Hood.

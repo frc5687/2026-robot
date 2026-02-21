@@ -6,6 +6,7 @@
 
 #include "RobotState.h"
 #include "frc/DriverStation.h"
+#include "units/angular_velocity.h"
 
 ShooterSystem::ShooterSystem(TurretSubsystem &turret,
                              FlywheelSubsystem &flywheel, HoodSubsystem &hood)
@@ -22,6 +23,7 @@ void ShooterSystem::SetState(const ShooterState &state) {
 void ShooterSystem::SetSetpoint(const ShooterSetpoint &setpoint) {
   m_desiredSetpoint = setpoint;
   m_hood.SetHoodPosition(units::turn_t{setpoint.hoodAngle}, units::turn_t{setpoint.hoodAngle});
+  m_flywheel.SetRPM(setpoint.flywheelSpeed, setpoint.flywheelSpeed);
   m_turret.SetAngle(m_desiredSetpoint.turretAngle);
 }
 
@@ -94,6 +96,7 @@ void ShooterSystem::Update() {
       auto setpoint = ShooterSetpoint{
           .turretAngle = solution.turretRobotAngle,
           .hoodAngle = solution.leftHoodAngle,
+          .flywheelSpeed = units::revolutions_per_minute_t{solution.leftFlywheelSpeed},
       };
       SetSetpoint(setpoint);
     } break;

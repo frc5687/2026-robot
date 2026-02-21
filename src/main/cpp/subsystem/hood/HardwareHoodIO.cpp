@@ -44,7 +44,7 @@ HardwareHoodIO::HardwareHoodIO(
 
 {
     m_leftMicrosecondMap.InsertValues({{0.0068, 2200}, {0.0678, 2000},{0.1467, 1800},{0.2241, 1600},{0.2975, 1400}, {0.3728, 1200}, {0.4443, 1000}, {0.5175, 800}, {0.5573, 700}});
-    m_rightMicrosecondMap.InsertValues({{0.0068, 2200},{0.0678, 2000},{0.1467, 1800},{0.2241, 1600},{0.2975, 1400}, {0.3728, 1200}, {0.4443, 1000}, {0.5175, 800}, {0.5573, 700}});
+    m_rightMicrosecondMap.InsertValues({{0.009, 2125},{0.050, 2000},{0.131, 1800},{0.203, 1600},{0.2702, 1400}, {0.338, 1200}, {0.4138, 1000}, {0.4953, 800}, {0.5576, 650}});
 
     m_leftServoChannel.SetEnabled(true);
     m_leftServoChannel.SetPowered(true);
@@ -83,7 +83,7 @@ void HardwareHoodIO::UpdateInputs(HoodIOInputs &inputs){
 void HardwareHoodIO::SetMicroseconds(double microsecond){
     int m_microsecond = static_cast<int>(microsecond);
     m_leftServoChannel.SetPulseWidth(m_microsecond);
-    m_leftServoChannel.SetPulseWidth(m_microsecond);
+    m_rightServoChannel.SetPulseWidth(m_microsecond);
 }
 
 void HardwareHoodIO::SetHoodPosition(units::turn_t hoodposition){
@@ -92,10 +92,11 @@ void HardwareHoodIO::SetHoodPosition(units::turn_t hoodposition){
 
 void HardwareHoodIO::SetHoodPosition(units::turn_t leftHood, units::turn_t rightHood){
 
-    int targetmicroseconds = m_leftMicrosecondMap.GetValue(std::clamp(leftHood.value(), 0.01, 0.55));
-    std::cout<<targetmicroseconds;
-    m_leftServoChannel.SetPulseWidth(targetmicroseconds);
-    m_rightServoChannel.SetPulseWidth(targetmicroseconds);
+    int leftTargetmicroseconds = m_leftMicrosecondMap.GetValue(std::clamp(leftHood.value(), 0.01, 0.55));
+    int rightTargetmicroseconds = m_rightMicrosecondMap.GetValue(std::clamp(rightHood.value(), 0.01, 0.55));
+
+    m_leftServoChannel.SetPulseWidth(leftTargetmicroseconds);
+    m_rightServoChannel.SetPulseWidth(rightTargetmicroseconds);
     // auto leftHoodRotation = std::clamp(leftHood, Constants::Hood::kMinAngle, Constants::Hood::kMaxAngle);
     // auto rightHoodRotation = std::clamp(rightHood, Constants::Hood::kMinAngle, Constants::Hood::kMaxAngle);
     // int bigstep = static_cast<int>(m_bigStep.Get());
