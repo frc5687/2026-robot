@@ -35,5 +35,4 @@ HoodState RobotState::GetHoodState(units::second_t timestamp) {
   return GetState<HoodState>(m_hoodBuffer, timestamp);
 }
 
-void RobotState::LogState(units::second_t timestamp) {
-}
+void RobotState::LogState(units::second_t timestamp) {}

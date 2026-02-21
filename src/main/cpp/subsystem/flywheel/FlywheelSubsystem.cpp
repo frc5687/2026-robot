@@ -7,6 +7,7 @@
 #include <numbers>
 
 #include "Constants.h"
+#include "RobotState.h"
 #include "frc2/command/sysid/SysIdRoutine.h"
 
 using namespace frc2::sysid;
@@ -14,91 +15,69 @@ using namespace frc2::sysid;
 FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io)
     : LoggedSubsystem("Flywheel"), m_io(std::move(io)),
       m_sysIdRoutine{
-          frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt, nullptr},
-          Mechanism{
-              [this](units::volt_t v) { SysIdDrive(v); },
-              [this](frc::sysid::SysIdRoutineLog* log) { SysIdLog(log); },
-              this,
-              "Flywheel"}}
-{}
+          frc2::sysid::Config{std::nullopt, std::nullopt, std::nullopt,
+                              nullptr},
+          Mechanism{[this](units::volt_t v) { SysIdDrive(v); },
+                    [this](frc::sysid::SysIdRoutineLog *log) { SysIdLog(log); },
+                    this, "Flywheel"}} {}
 
-void FlywheelSubsystem::SetRPM(
-    units::revolutions_per_minute_t desiredRPMLeft,
-    units::revolutions_per_minute_t desiredRPMRight) {
-  m_desiredRPMLeft = desiredRPMLeft;
-  m_desiredRPMRight = desiredRPMRight;
-  m_io->SetMotorVelocity(MechanismRPMToMotorRPS(desiredRPMLeft),
-                         MechanismRPMToMotorRPS(desiredRPMRight));
+void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {
+  m_desiredRPM = desiredRPM;
+  m_io->SetMotorVelocity(MechanismRPMToMotorRPS(desiredRPM));
 }
 
 bool FlywheelSubsystem::AtSetpoint() const {
-  constexpr auto tolerance = Constants::Flywheel::kAtSetpointTolerance;
-  return units::math::abs(m_filteredLeft - m_desiredRPMLeft) < tolerance &&
-         units::math::abs(m_filteredRight - m_desiredRPMRight) < tolerance;
+  return units::math::abs(m_filteredRPM - m_desiredRPM) <
+         Constants::Flywheel::kAtSetpointTolerance;
 }
 
- frc2::CommandPtr FlywheelSubsystem::SysIdQuasistatic(
-     Direction direction) {
-   return m_sysIdRoutine.Quasistatic(direction);
- }
+frc2::CommandPtr FlywheelSubsystem::SysIdQuasistatic(Direction direction) {
+  return m_sysIdRoutine.Quasistatic(direction);
+}
 
- frc2::CommandPtr FlywheelSubsystem::SysIdDynamic(
-     Direction direction) {
-   return m_sysIdRoutine.Dynamic(direction);
- }
+frc2::CommandPtr FlywheelSubsystem::SysIdDynamic(Direction direction) {
+  return m_sysIdRoutine.Dynamic(direction);
+}
 
 void FlywheelSubsystem::SysIdDrive(units::volt_t voltage) {
   m_io->SetVoltage(voltage);
 }
 
 void FlywheelSubsystem::SysIdLog(frc::sysid::SysIdRoutineLog *log) {
-  log->Motor("flywheel-left")
-      .voltage(m_inputs.leftAppliedVolts)
-      .position(m_inputs.leftMotorPosition)
-      .velocity(m_inputs.leftMotorVelocity);
-
-  log->Motor("flywheel-right")
-      .voltage(m_inputs.rightAppliedVolts)
-      .position(m_inputs.rightMotorPosition)
-      .velocity(m_inputs.rightMotorVelocity);
+  // log->Motor("flywheel-leader")
+  //     .voltage(m_inputs.leaderAppliedVolts)
+  //     .position(m_inputs.leaderMotorPosition)
+  //     .velocity(m_inputs.leaderMotorVelocity);
 }
 
 void FlywheelSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
 
-  auto leftMechRPM = MotorRPSToMechanismRPM(m_inputs.leftMotorVelocity);
-  auto rightMechRPM = MotorRPSToMechanismRPM(m_inputs.rightMotorVelocity);
+  auto mechRPM = MotorRPSToMechanismRPM(m_inputs.leaderMotorVelocity);
+  m_filteredRPM = m_filter.Calculate(mechRPM);
 
-  m_filteredLeft = m_filterLeft.Calculate(leftMechRPM);
-  m_filteredRight = m_filterRight.Calculate(rightMechRPM);
-
-  UpdateFlywheelState(m_leftState, m_inputs.leftMotorVelocity,
+  UpdateFlywheelState(m_state, m_inputs.leaderMotorVelocity,
                       m_inputs.timestamp);
-  UpdateFlywheelState(m_rightState, m_inputs.rightMotorVelocity,
-                      m_inputs.timestamp);
+  RobotState::Instance().AddFlywheelObservation(m_state);
 }
 
 void FlywheelSubsystem::LogTelemetry() {
-  Log("Left/FilteredRPM", m_filteredLeft.value());
-  Log("Right/FilteredRPM", m_filteredRight.value());
-  Log("Left/RawRPM",
-      MotorRPSToMechanismRPM(m_inputs.leftMotorVelocity).value());
-  Log("Right/RawRPM",
-      MotorRPSToMechanismRPM(m_inputs.rightMotorVelocity).value());
-  Log("Left/SetpointRPM", m_desiredRPMLeft.value());
-  Log("Right/SetpointRPM", m_desiredRPMRight.value());
-  Log("Left/ErrorRPM", (m_desiredRPMLeft - m_filteredLeft).value());
-  Log("Right/ErrorRPM", (m_desiredRPMRight - m_filteredRight).value());
+  Log("Leader/FilteredRPM", m_filteredRPM.value());
+  Log("Leader/RawRPM",
+      MotorRPSToMechanismRPM(m_inputs.leaderMotorVelocity).value());
+  Log("Leader/SetpointRPM", m_desiredRPM.value());
+  Log("Leader/ErrorRPM", (m_desiredRPM - m_filteredRPM).value());
 
-  Log("Left/VelocityRadPerSec", m_leftState.velocity.value());
-  Log("Right/VelocityRadPerSec", m_rightState.velocity.value());
-  Log("Left/AccelRadPerSecSq", m_leftState.acceleration.value());
-  Log("Right/AccelRadPerSecSq", m_rightState.acceleration.value());
+  Log("Leader/VelocityRadPerSec", m_state.velocity.value());
+  Log("Leader/AccelRadPerSecSq", m_state.acceleration.value());
 
-  Log("Left/AppliedVolts", m_inputs.leftAppliedVolts.value());
-  Log("Right/AppliedVolts", m_inputs.rightAppliedVolts.value());
-  Log("Left/StatorCurrent", m_inputs.leftStatorCurrent.value());
-  Log("Right/StatorCurrent", m_inputs.rightStatorCurrent.value());
+  Log("Leader/AppliedVolts", m_inputs.leaderAppliedVolts.value());
+  Log("Leader/StatorCurrent", m_inputs.leaderStatorCurrent.value());
+  Log("Leader/SupplyCurrent", m_inputs.leaderSupplyCurrent.value());
+
+  Log("Follower1/StatorCurrent", m_inputs.follower1StatorCurrent.value());
+  Log("Follower2/StatorCurrent", m_inputs.follower2StatorCurrent.value());
+  Log("Follower3/StatorCurrent", m_inputs.follower3StatorCurrent.value());
 
   Log("AtSetpoint", AtSetpoint());
 }
@@ -106,15 +85,15 @@ void FlywheelSubsystem::LogTelemetry() {
 void FlywheelSubsystem::UpdateFlywheelState(
     FlywheelState &state, units::turns_per_second_t motorVelocity,
     units::second_t timestamp) {
-  auto mechanismVelocity = MotorRPSToMechanismRadPerSec(motorVelocity);
-
+  auto mechVelocity = MotorRPSToMechanismRadPerSec(motorVelocity);
   auto dt = timestamp - state.timestamp;
+
   if (dt.value() > 0.0 && dt.value() < 0.5) {
     state.acceleration = units::radians_per_second_squared_t{
-        (mechanismVelocity - state.velocity).value() / dt.value()};
+        (mechVelocity - state.velocity).value() / dt.value()};
   }
 
-  state.velocity = mechanismVelocity;
+  state.velocity = mechVelocity;
   state.timestamp = timestamp;
 }
 

@@ -21,23 +21,18 @@ public:
   ~SimFlywheelIO() override = default;
 
   void UpdateInputs(FlywheelIOInputs &inputs) override;
-  void SetMotorVelocity(units::turns_per_second_t leftRPS,
-                        units::turns_per_second_t rightRPS) override;
+  void SetMotorVelocity(units::turns_per_second_t rps) override;
   void SetVoltage(units::volt_t voltage) override;
 
 private:
   struct SimMotor {
     frc::sim::FlywheelSim sim;
-
     frc::PIDController pid;
     frc::SimpleMotorFeedforward<units::radians> feedforward;
 
     units::turns_per_second_t setpoint{0_tps};
-
     units::turn_t motorPosition{0_tr};
-
     units::volt_t lastAppliedVoltage{0_V};
-
     double gearing;
 
     SimMotor(const frc::LinearSystem<1, 1, 1> &plant, const frc::DCMotor &motor,
@@ -46,18 +41,13 @@ private:
              decltype(1_V / 1_rad_per_s_sq) kAff);
 
     units::volt_t CalculateClosedLoop();
-
     void Update(units::second_t dt, units::volt_t voltage);
-
     units::radians_per_second_t GetMechanismVelocity() const;
-
     units::turns_per_second_t GetMotorVelocity() const;
-
     units::ampere_t GetCurrentDraw() const;
   };
 
-  SimMotor m_left;
-  SimMotor m_right;
+  SimMotor m_flywheel; // single mechanism
 
   bool m_characterizing{false};
   units::volt_t m_characterizationVoltage{0_V};

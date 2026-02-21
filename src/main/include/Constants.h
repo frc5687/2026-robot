@@ -58,7 +58,7 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
     ((kDriveMotor.freeSpeed / kDriveGearRatio) * kWheelRadius) / 1_rad;
 
 inline constexpr units::ampere_t kDriveSlipCurrent =
-    120_A; // TODO: Tune, this is the max stator current to prevent sliping of
+    80_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
 inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 80_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
@@ -159,50 +159,42 @@ inline constexpr size_t kTotalSignals =
 } // namespace SwerveDrive
 
 namespace Flywheel {
-inline constexpr double kGearRatio = (24.0 / 18.0);
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(2);
+
+inline constexpr double kGearRatio = (45.0 / 15.0);
+
+// 4 motors total: 1 leader + 3 followers
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(4);
 
 // all lies rn btw
-inline constexpr units::inch_t kFlywheelRadius = 4_in;
-inline constexpr units::pound_t kFlywheelMass = 1.5_lb;
+inline constexpr units::inch_t kFlywheelRadius = 3.125_in;
+inline constexpr units::pound_t kFlywheelMass = 11_lb;
 
-// Cylinder inertia 1/2 * m * r^2
+// Cylinder inertia: 1/2 * m * r^2
 inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kFlywheelMass * kFlywheelRadius * kFlywheelRadius;
 
-inline constexpr bool kLeftInverted = false;
-inline constexpr bool kRightInverted = false;
+inline constexpr bool kLeaderInverted = false;
 
-inline constexpr bool kLeftFollowerOpposed = true;
-inline constexpr bool kRightFollowerOpposed = true;
-inline constexpr bool kRightBottomFollowerOpposed = true;
+inline constexpr bool kFollower1Opposed = false;
+inline constexpr bool kFollower2Opposed = true;
+inline constexpr bool kFollower3Opposed = true;
 
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 80_A;
 inline constexpr bool kEnableStatorCurrent = true;
 inline constexpr bool kEnableSupplyCurrent = true;
+
 namespace PID {
-constexpr double kS = 0.20223;   ///< Static friction (V)
-constexpr double kV = 0.12044;   ///< Velocity FF (V / motor-RPS)
-constexpr double kA = 0.0073372; ///< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.2;       ///< Proportional (V / motor-RPS error)
-constexpr double kI = 0.0;       ///< Integral
-constexpr double kD = 0.0;       ///< Derivative
+constexpr double kS = 0.28059;  //< Static friction (V)
+constexpr double kV = 0.12273;  //< Velocity FF (V / motor-RPS)
+constexpr double kA = 0.008801; //< Acceleration FF (V / motor-RPS²)
+constexpr double kP = 0.2;      //< Proportional (V / motor-RPS error)
+constexpr double kI = 0.0;      //< Integral
+constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
-// ── SysId Configuration ──────────────────────────────────────────────
-
-constexpr auto kSysIdRampRate = 1_V / 1_s;
-constexpr units::volt_t kSysIdStepVoltage{7_V};
-constexpr units::second_t kSysIdTimeout{10_s};
-
-// ── Tolerances ───────────────────────────────────────────────────────
-
+inline constexpr units::second_t kClosedLoopRampPeriod = 0.5_s;
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
-
-// ── Simulation ───────────────────────────────────────────────────────
-// WPILib uses rad/s.  Phoenix uses RPS.
-//   kV_wpilib = kV_phoenix / (2π)
 
 constexpr double kSimKs = PID::kS;
 constexpr double kSimKv = PID::kV / (2.0 * std::numbers::pi);
@@ -213,12 +205,8 @@ constexpr double kSimD = PID::kD / (2.0 * std::numbers::pi);
 constexpr units::radians_per_second_t kSimToleranceRPS{5.0 * 2.0 *
                                                        std::numbers::pi / 60.0};
 
-// ── Filtering ────────────────────────────────────────────────────────
-
 constexpr units::second_t kFilterTime{0.02_s};
 constexpr units::second_t kFilterPeriod{0.02_s};
-
-// ── Defaults ─────────────────────────────────────────────────────────
 
 constexpr units::revolutions_per_minute_t kDefaultRPM{4000_rpm};
 constexpr units::second_t kAnticipationDuration = 200_ms; // todo figure out
@@ -227,64 +215,72 @@ constexpr units::revolutions_per_minute_t kAnticipationBoostRPM{200_rpm};
 } // namespace Flywheel
 
 namespace Hood {
-inline constexpr int kNumMotors = 1;
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44(kNumMotors);
-inline constexpr double kGearRatio = 10;
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44(1);
+inline constexpr double kGearRatio = (48.0 / 14.0) * (200.0 / 10.0);
 
-inline constexpr units::moment_of_inertia::kilogram_square_meter_t kMoi =
-    1.0_kg_sq_m;
+inline constexpr units::kilogram_square_meter_t kMoi = 1.0_kg_sq_m;
 inline constexpr units::meter_t kArmLength = 1.0_m;
 
-inline constexpr units::turn_t kLeftEncoderOffset = 0.365712890625_tr;
-inline constexpr units::turn_t kRightEncoderOffset = 0.365712890625_tr;
+inline constexpr units::radian_t kMinAngle = 0.0_rad;
+inline constexpr units::radian_t kMaxAngle =
+    units::radian_t{2.0 * std::numbers::pi};
 
-inline constexpr units::turn_t kMinAngle = 0.0_tr;
-inline constexpr units::turn_t kMaxAngle = 1.0_tr;
+inline constexpr bool kInverted = false;
+inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
+
+inline constexpr bool kEncoderInverted = false;
+inline constexpr units::turn_t kEncoderMagnetOffset =
+    -0.080078125_tr; // TODO: tune
+
+inline constexpr units::radian_t kRetractedAngle = 0_rad;
+inline constexpr units::radian_t kDeployedAngle = 1.0_rad;    // TODO: DO this
+inline constexpr units::radian_t kAngleTolerance = 0.035_rad; // ~2 deg
+
+inline constexpr units::turn_t kForwardSoftLimit = 10.5_tr;
+inline constexpr units::turn_t kReverseSoftLimit = -0.5_tr;
 
 namespace SimPID {
-inline constexpr double kP = 10;
-inline constexpr double kI = 0;
-inline constexpr double kD = 0;
+inline constexpr double kP = 10.0;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
 } // namespace SimPID
 
 namespace PID {
-// TODO: Tune
-inline constexpr double kP = 0;
-inline constexpr double kI = 0;
-inline constexpr double kD = 0;
+inline constexpr double kP = 50.0;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+inline constexpr double kS = 0.0;
+inline constexpr double kV = 0.0;
+inline constexpr double kA = 0.0;
+inline constexpr double kCruiseVelocity = 40.0; // rps
+inline constexpr double kAcceleration = 80.0;   // rps/s
 } // namespace PID
-
 } // namespace Hood
 
-namespace Indexer {
+namespace FloorRoller {
 
 namespace Detection {
-constexpr units::ampere_t kCurrentDeltaThreshold{
-    5_A}; // dI per cycle to trigger
-constexpr units::turns_per_second_t kVelocityDipThreshold{
-    2_tps};                                           // decel per cycle
-constexpr units::ampere_t kSeatedCurrentCeiling{8_A}; // idle current level
-constexpr units::second_t kDebounceTime{0.06_s};      // hold detection
+constexpr units::ampere_t kCurrentDeltaThreshold{5_A};
+constexpr units::turns_per_second_t kVelocityDipThreshold{2_tps};
+constexpr units::ampere_t kSeatedCurrentCeiling{8_A};
+constexpr units::second_t kDebounceTime{0.06_s};
 } // namespace Detection
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(2);
+
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(2);
 inline constexpr units::inch_t kRadius = 2_in;
 inline constexpr units::pound_t kMass = 1.5_lb;
 inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kMass * kRadius * kRadius;
 
-inline constexpr bool kLeftInverted = false;
-inline constexpr bool kRightInverted = false;
-inline constexpr bool kCenterInverted = false;
-
-inline constexpr bool kRightOpposed = false;
+inline constexpr bool kLeaderInverted = false;
+inline constexpr bool kFollowerOpposed = true;
 
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
-inline constexpr bool kEnableStatorCurrent = true;
-inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
-inline constexpr double kP = 7.0;
+inline constexpr double kP = 1.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 inline constexpr double kV = 0.0;
@@ -292,32 +288,114 @@ inline constexpr double kS = 0.0;
 inline constexpr double kA = 0.0;
 } // namespace PID
 
-inline constexpr double centerkP = 0.0;
-inline constexpr double centerkI = 0.0;
-inline constexpr double centerkD = 0.0;
-
 inline constexpr double kGearRatio = (42.0 / 9.0);
-inline constexpr double kCenterGearRatio = 4;
-
-inline constexpr units::second_t kBallContactDuration = 0.2_s;
-inline constexpr double kBallLoadFactor = 0.95;
-} // namespace Indexer
-
-namespace Intake {
-// Motor config
-constexpr bool kInverted = false;
-constexpr bool kFollowerOpposed = true;
-constexpr units::ampere_t kStatorCurrentLimit = 60.0_A;
-constexpr units::ampere_t kSupplyCurrentLimit = 40.0_A;
-
-// Ball detection
-constexpr units::ampere_t kBallCurrentThreshold{15_A};
 
 // Sim
-inline const frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(1);
-constexpr units::kilogram_square_meter_t kInertia{0.001};
-constexpr double kGearRatio = 1.0;
-} // namespace Intake
+inline constexpr units::second_t kBallContactDuration = 0.2_s;
+inline constexpr double kBallLoadFactor = 0.95;
+} // namespace FloorRoller
+
+namespace Kicker {
+
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(2);
+inline constexpr units::inch_t kRadius = 2_in;
+inline constexpr units::pound_t kMass = 1.5_lb;
+inline constexpr units::kilogram_square_meter_t kInertia =
+    0.5 * kMass * kRadius * kRadius;
+
+inline constexpr bool kLeaderInverted = true;
+inline constexpr bool kFollowerOpposed = true;
+
+inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
+
+namespace PID {
+inline constexpr double kP = 0.6;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+inline constexpr double kV = 0.0;
+inline constexpr double kS = 0.0;
+inline constexpr double kA = 0.0;
+} // namespace PID
+
+inline constexpr double kGearRatio = 24.0 / 22.0;
+} // namespace Kicker
+
+// All bogus, TODO: TUNE
+namespace IntakeDeployer {
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44(1);
+inline constexpr double kGearRatio = (30.0 / 11.0) * (190.0 / 10.0);
+inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
+
+inline constexpr bool kInverted = false;
+inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
+
+inline constexpr units::meter_t kRotationToMeter = 1_m;
+
+inline constexpr units::meter_t kRetractedExtension = 0_m;
+inline constexpr units::meter_t kDeployedExtension = 0.15_m;
+inline constexpr units::meter_t kExtensionTolerance = 0.005_m;
+
+inline constexpr units::turn_t kForwardSoftLimit = 10.5_tr;
+inline constexpr units::turn_t kReverseSoftLimit = -0.5_tr;
+
+namespace PID {
+inline constexpr double kP = 0.0;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+inline constexpr double kS = 0.0;
+inline constexpr double kV = 0.0;
+inline constexpr double kA = 0.0;
+inline constexpr double kCruiseVelocity = 50.0;
+inline constexpr double kAcceleration = 100.0;
+} // namespace PID
+
+namespace SimPID {
+inline constexpr double kP = 2.0;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+} // namespace SimPID
+} // namespace IntakeDeployer
+
+namespace IntakeTopRoller {
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(2);
+inline constexpr double kGearRatio = 2.0 / 1.0;
+inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
+
+inline constexpr bool kLeaderInverted = true;
+inline constexpr bool kFollowerOpposed = true;
+inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
+
+namespace PID {
+inline constexpr double kP = 0.5;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+inline constexpr double kS = 0.0;
+inline constexpr double kV = 0.0;
+inline constexpr double kA = 0.0;
+} // namespace PID
+} // namespace IntakeTopRoller
+
+namespace IntakeBottomRoller {
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(1);
+inline constexpr double kGearRatio = 3.0 / 1.0;
+inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
+
+inline constexpr bool kInverted = false;
+inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
+
+namespace PID {
+inline constexpr double kP = 0.5;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+inline constexpr double kS = 0.0;
+inline constexpr double kV = 0.0;
+inline constexpr double kA = 0.0;
+} // namespace PID
+} // namespace IntakeBottomRoller
 
 namespace Geometry {
 inline constexpr frc::Transform3d kRobotToTurretLeft{

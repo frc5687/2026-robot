@@ -5,64 +5,47 @@
 #include <frc/Timer.h>
 
 #include "Constants.h"
-#include "subsystem/flywheel/FlywheelSubsystem.h"
 
 using namespace Constants::Flywheel;
 using namespace ctre::phoenix6;
 
-// ════════════════════════════════════════════════════════════════════════
-// Construction
-// ════════════════════════════════════════════════════════════════════════
+CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leader,
+                               const CANDevice &follower1,
+                               const CANDevice &follower2,
+                               const CANDevice &follower3)
+    : m_leader(leader.id, leader.bus), m_follower1(follower1.id, follower1.bus),
+      m_follower2(follower2.id, follower2.bus),
+      m_follower3(follower3.id, follower3.bus),
 
-CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leftLeader,
-                               const CANDevice &leftFollower,
-                               const CANDevice &rightFollower,
-                               const CANDevice &rightFollowerBottom)
-    : m_leftLeader(leftLeader.id, leftLeader.bus),
-      m_leftFollower(leftFollower.id, leftFollower.bus),
-      m_rightFollower(rightFollower.id, rightFollower.bus),
-      m_rightFollowerBottom(rightFollowerBottom.id, rightFollowerBottom.bus),
-      // Leader signals
-      m_leftVelocitySignal(m_leftLeader.GetVelocity()),
-      m_leftPositionSignal(m_leftLeader.GetPosition()),
-      m_leftVoltageSignal(m_leftLeader.GetMotorVoltage()),
-      m_leftStatorCurrentSignal(m_leftFollower.GetStatorCurrent()),
-      m_leftSupplyCurrentSignal(m_leftFollower.GetSupplyCurrent()),
-      m_rightVelocitySignal(m_rightFollower.GetVelocity()),
-      m_rightPositionSignal(m_rightFollower.GetPosition()),
-      m_rightVoltageSignal(m_rightFollower.GetMotorVoltage()),
-      m_rightStatorCurrentSignal(m_rightFollower.GetStatorCurrent()),
-      m_rightSupplyCurrentSignal(m_rightFollower.GetSupplyCurrent()),
-      // Follower signals (current only, for diagnostics)
-      m_leftFollowerStatorCurrentSignal(m_leftFollower.GetStatorCurrent()),
-      m_rightFollowerStatorCurrentSignal(m_rightFollowerBottom.GetStatorCurrent()),
-      // Signal batching
-      m_criticalSignals{&m_leftVelocitySignal,  &m_leftPositionSignal,
-                        &m_leftVoltageSignal,   &m_rightVelocitySignal,
-                        &m_rightPositionSignal, &m_rightVoltageSignal},
-      m_batchedSignals{&m_leftStatorCurrentSignal,
-                       &m_leftSupplyCurrentSignal,
-                       &m_rightStatorCurrentSignal,
-                       &m_rightSupplyCurrentSignal,
-                       &m_leftFollowerStatorCurrentSignal,
-                       &m_rightFollowerStatorCurrentSignal} {
+      m_leaderVelocitySignal(m_leader.GetVelocity()),
+      m_leaderPositionSignal(m_leader.GetPosition()),
+      m_leaderVoltageSignal(m_leader.GetMotorVoltage()),
+      m_leaderStatorCurrentSignal(m_leader.GetStatorCurrent()),
+      m_leaderSupplyCurrentSignal(m_leader.GetSupplyCurrent()),
+
+      m_follower1StatorCurrentSignal(m_follower1.GetStatorCurrent()),
+      m_follower2StatorCurrentSignal(m_follower2.GetStatorCurrent()),
+      m_follower3StatorCurrentSignal(m_follower3.GetStatorCurrent()),
+
+      m_criticalSignals{&m_leaderVelocitySignal, &m_leaderPositionSignal,
+                        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
+                        &m_leaderSupplyCurrentSignal},
+      m_diagnosticSignals{&m_follower1StatorCurrentSignal,
+                          &m_follower2StatorCurrentSignal,
+                          &m_follower3StatorCurrentSignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
 
 void CTREFlywheelIO::ConfigureDevices() {
-  ConfigureLeader(m_leftLeaderConfig, kLeftInverted);
+  ConfigureLeader(m_leaderConfig, kLeaderInverted);
   ConfigureClosedLoop();
+  m_leader.GetConfigurator().Apply(m_leaderConfig);
 
-  m_leftLeader.GetConfigurator().Apply(m_leftLeaderConfig);
-  //m_rightLeader.GetConfigurator().Apply(m_rightLeaderConfig);
-
-  ConfigureFollower(m_leftFollower, m_leftLeader.GetDeviceID(),
-                    kLeftFollowerOpposed);
-  ConfigureFollower(m_rightFollower, m_leftLeader.GetDeviceID(),
-                    kRightFollowerOpposed);
-  ConfigureFollower(m_rightFollowerBottom, m_leftLeader.GetDeviceID(),
-                    kRightBottomFollowerOpposed);
+  int leaderId = m_leader.GetDeviceID();
+  ConfigureFollower(m_follower1, leaderId, kFollower1Opposed);
+  ConfigureFollower(m_follower2, leaderId, kFollower2Opposed);
+  ConfigureFollower(m_follower3, leaderId, kFollower3Opposed);
 }
 
 void CTREFlywheelIO::ConfigureLeader(configs::TalonFXConfiguration &config,
@@ -77,7 +60,6 @@ void CTREFlywheelIO::ConfigureLeader(configs::TalonFXConfiguration &config,
 
   config.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
   config.CurrentLimits.StatorCurrentLimitEnable = kEnableStatorCurrent;
-
   config.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
   config.CurrentLimits.SupplyCurrentLimitEnable = kEnableSupplyCurrent;
 }
@@ -88,85 +70,70 @@ void CTREFlywheelIO::ConfigureFollower(hardware::TalonFX &follower,
 
   m_followerConfig.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
   m_followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-
   m_followerConfig.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
   m_followerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
   follower.GetConfigurator().Apply(m_followerConfig);
-
   follower.SetControl(controls::Follower{leaderDeviceId, opposeLeader});
 }
 
 void CTREFlywheelIO::ConfigureClosedLoop() {
-  m_leftLeaderConfig.Slot0.kS = PID::kS;
-  m_leftLeaderConfig.Slot0.kV = PID::kV;
-  m_leftLeaderConfig.Slot0.kA = PID::kA;
-  m_leftLeaderConfig.Slot0.kP = PID::kP;
-  m_leftLeaderConfig.Slot0.kI = PID::kI;
-  m_leftLeaderConfig.Slot0.kD = PID::kD;
+  m_leaderConfig.Slot0.kS = PID::kS;
+  m_leaderConfig.Slot0.kV = PID::kV;
+  m_leaderConfig.Slot0.kA = PID::kA;
+  m_leaderConfig.Slot0.kP = PID::kP;
+  m_leaderConfig.Slot0.kI = PID::kI;
+  m_leaderConfig.Slot0.kD = PID::kD;
+  m_leaderConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod =
+      kClosedLoopRampPeriod;
+  m_velocityRequest.UpdateFreqHz = 1000_Hz;
 }
 
 void CTREFlywheelIO::ConfigureSignalFrequencies() {
-  m_leftVelocitySignal.SetUpdateFrequency(100_Hz);
-  m_leftPositionSignal.SetUpdateFrequency(100_Hz);
-  m_leftVoltageSignal.SetUpdateFrequency(100_Hz);
-  m_leftStatorCurrentSignal.SetUpdateFrequency(50_Hz);
-  m_leftSupplyCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_leaderVelocitySignal.SetUpdateFrequency(100_Hz);
+  m_leaderPositionSignal.SetUpdateFrequency(100_Hz);
+  m_leaderVoltageSignal.SetUpdateFrequency(100_Hz);
+  m_leaderStatorCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_leaderSupplyCurrentSignal.SetUpdateFrequency(50_Hz);
 
-  m_rightVelocitySignal.SetUpdateFrequency(100_Hz);
-  m_rightPositionSignal.SetUpdateFrequency(100_Hz);
-  m_rightVoltageSignal.SetUpdateFrequency(100_Hz);
-  m_rightStatorCurrentSignal.SetUpdateFrequency(50_Hz);
-  m_rightSupplyCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower1StatorCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower2StatorCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower3StatorCurrentSignal.SetUpdateFrequency(50_Hz);
 
-  m_leftFollowerStatorCurrentSignal.SetUpdateFrequency(50_Hz);
-  m_rightFollowerStatorCurrentSignal.SetUpdateFrequency(50_Hz);
-
-  m_leftLeader.OptimizeBusUtilization();
-  m_leftFollower.OptimizeBusUtilization();
-  m_rightFollower.OptimizeBusUtilization();
-  m_rightFollowerBottom.OptimizeBusUtilization();
+  m_leader.OptimizeBusUtilization();
+  m_follower1.OptimizeBusUtilization();
+  m_follower2.OptimizeBusUtilization();
+  m_follower3.OptimizeBusUtilization();
 }
 
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_criticalSignals);
-  BaseStatusSignal::RefreshAll(m_batchedSignals);
+  BaseStatusSignal::RefreshAll(m_diagnosticSignals);
 
-  inputs.leftMotorPosition = m_leftPositionSignal.GetValue();
-  inputs.rightMotorPosition = m_rightPositionSignal.GetValue();
+  inputs.leaderMotorPosition = m_leaderPositionSignal.GetValue();
+  inputs.leaderMotorVelocity = m_leaderVelocitySignal.GetValue();
+  inputs.leaderAppliedVolts = m_leaderVoltageSignal.GetValue();
+  inputs.leaderStatorCurrent = m_leaderStatorCurrentSignal.GetValue();
+  inputs.leaderSupplyCurrent = m_leaderSupplyCurrentSignal.GetValue();
 
-  inputs.leftMotorVelocity = m_leftVelocitySignal.GetValue();
-  inputs.rightMotorVelocity = m_rightVelocitySignal.GetValue();
-
-  inputs.leftAppliedVolts = m_leftVoltageSignal.GetValue();
-  inputs.rightAppliedVolts = m_rightVoltageSignal.GetValue();
-
-  inputs.leftStatorCurrent = m_leftStatorCurrentSignal.GetValue() +
-                             m_leftFollowerStatorCurrentSignal.GetValue();
-  inputs.rightStatorCurrent = m_rightStatorCurrentSignal.GetValue() +
-                              m_rightFollowerStatorCurrentSignal.GetValue();
-
-  inputs.leftSupplyCurrent = m_leftSupplyCurrentSignal.GetValue();
-  inputs.rightSupplyCurrent = m_rightSupplyCurrentSignal.GetValue();
+  inputs.follower1StatorCurrent = m_follower1StatorCurrentSignal.GetValue();
+  inputs.follower2StatorCurrent = m_follower2StatorCurrentSignal.GetValue();
+  inputs.follower3StatorCurrent = m_follower3StatorCurrentSignal.GetValue();
 
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 
   if (m_characterizing) {
-    m_leftLeader.SetControl(
-        m_voltageRequest.WithOutput(m_characterizationVoltage));
-  } else if (m_leftSetpoint.value() <= 0 && m_rightSetpoint.value() <= 0) {
-    m_leftLeader.SetControl(m_neutralRequest);
+    m_leader.SetControl(m_voltageRequest.WithOutput(m_characterizationVoltage));
+  } else if (m_setpoint.value() <= 0) {
+    m_leader.SetControl(m_neutralRequest);
   } else {
-    m_leftLeader.SetControl(
-        m_velocityRequest.WithVelocity(m_leftSetpoint).WithSlot(0));
+    m_leader.SetControl(m_velocityRequest.WithVelocity(m_setpoint).WithSlot(0));
   }
 }
 
-void CTREFlywheelIO::SetMotorVelocity(units::turns_per_second_t leftRPS,
-                                      units::turns_per_second_t rightRPS) {
+void CTREFlywheelIO::SetMotorVelocity(units::turns_per_second_t rps) {
   m_characterizing = false;
-  m_leftSetpoint = leftRPS;
-  m_rightSetpoint = rightRPS;
+  m_setpoint = rps;
 }
 
 void CTREFlywheelIO::SetVoltage(units::volt_t voltage) {

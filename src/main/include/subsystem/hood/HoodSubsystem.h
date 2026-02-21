@@ -2,17 +2,27 @@
 
 #pragma once
 
-#include "HoodIO.h"
-#include "HoodState.h"
+#include <units/angle.h>
+#include <units/voltage.h>
+
+#include <memory>
+
 #include "subsystem/LoggedSubsystem.h"
-#include "units/angle.h"
+#include "subsystem/hood/HoodIO.h"
+#include "subsystem/hood/HoodState.h"
 
 class HoodSubsystem : public LoggedSubsystem {
-
 public:
   explicit HoodSubsystem(std::unique_ptr<HoodIO> io);
-  ~HoodSubsystem() = default;
-  void SetHoodPosition(units::turn_t desiredAngle);
+
+  void SetPosition(units::radian_t mechanismAngle);
+  void SetVoltage(units::volt_t voltage);
+  void ZeroPosition();
+  void Stop();
+
+  units::radian_t GetPosition() const;
+  bool IsAtPosition(units::radian_t target) const;
+
   HoodState GetHoodState() const;
 
 protected:
@@ -22,6 +32,4 @@ protected:
 private:
   std::unique_ptr<HoodIO> m_io;
   HoodIOInputs m_inputs{};
-  units::angle::turn_t m_hoodRotation{0_tr};
-  units::turn_t m_desiredAngle{0_tr};
 };

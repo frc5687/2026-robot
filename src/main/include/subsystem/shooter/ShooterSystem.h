@@ -33,7 +33,7 @@ inline constexpr std::string ShooterStateToString(ShooterState state) {
 }
 
 struct ShooterSetpoint {
-  units::radian_t turretAngle;
+  frc::Rotation2d driveAngle;
   units::radian_t hoodAngle;
   units::rpm flywheelSpeed;
 };
@@ -42,8 +42,7 @@ struct ShooterSetpoint {
 // Turret is a bit strange since both are coupled together.
 class ShooterSystem : public CoordinatedSystem {
 public:
-  ShooterSystem(FlywheelSubsystem &flywheel,
-                HoodSubsystem &hood);
+  ShooterSystem(FlywheelSubsystem &flywheel, HoodSubsystem &hood);
   void Update() override;
   void SetSetpoint(const ShooterSetpoint &setpoint);
   void SetState(const ShooterState &state);

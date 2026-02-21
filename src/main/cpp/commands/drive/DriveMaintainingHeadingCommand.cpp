@@ -9,6 +9,8 @@
 #include <numbers>
 
 #include "Constants.h"
+#include "Eigen/src/Core/util/Macros.h"
+#include "frc/DriverStation.h"
 
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
     DriveSubsystem *driveSubsystem, std::function<double()> throttle,
@@ -38,6 +40,15 @@ void DriveMaintainingHeadingCommand::Initialize() {
 }
 
 void DriveMaintainingHeadingCommand::Execute() {
+
+  std::optional<frc::DriverStation::Alliance> alliance =
+      frc::DriverStation::GetAlliance();
+  frc::Rotation2d relativeHeading = m_driveSubsystem->GetHeading();
+
+  if (alliance.has_value() &&
+      alliance.value() == frc::DriverStation::Alliance::kRed) {
+    relativeHeading = m_driveSubsystem->GetHeading().RotateBy({180_deg});
+  }
   double throttle = m_throttleSupplier();
   double strafe = m_strafeSupplier();
   double turnInput = m_turnSupplier();
@@ -84,7 +95,6 @@ void DriveMaintainingHeadingCommand::Execute() {
     rotVelocity = CalculateHeadingCorrection(m_driveSubsystem->GetHeading(),
                                              m_headingSetpoint.value());
   }
-
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});
 }

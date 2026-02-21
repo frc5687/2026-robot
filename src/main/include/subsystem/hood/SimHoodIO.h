@@ -2,24 +2,34 @@
 
 #pragma once
 
+#include <frc/controller/PIDController.h>
+#include <frc/simulation/SingleJointedArmSim.h>
+#include <frc/system/plant/DCMotor.h>
+
+#include "Constants.h"
 #include "HoodIO.h"
-#include "frc/controller/PIDController.h"
-#include "frc/simulation/SingleJointedArmSim.h"
-#include "units/angle.h"
 
 class SimHoodIO : public HoodIO {
-
 public:
   SimHoodIO();
-  ~SimHoodIO() = default;
+  ~SimHoodIO() override = default;
 
   void UpdateInputs(HoodIOInputs &inputs) override;
-  void SetHoodPosition(units::angle::turn_t hoodPosition) override;
-  void SetHoodPosition(units::turn_t leftHoodPosition,
-                       units::turn_t rightHoodPosition) override;
+  void SetPosition(units::turn_t position) override;
+  void SetVoltage(units::volt_t voltage) override;
+  void ZeroPosition() override;
+  void Stop() override;
 
 private:
-  frc::sim::SingleJointedArmSim m_simHood;
-  frc::PIDController m_pidController;
-  units::turn_t m_desiredRotation{0_tr};
+  units::volt_t CalculateClosedLoop();
+
+  frc::sim::SingleJointedArmSim m_armSim;
+  frc::PIDController m_pid;
+
+  units::turn_t m_motorPosition{0_tr};
+
+  enum class Mode { kPosition, kVoltage, kStopped };
+  Mode m_mode{Mode::kStopped};
+  units::volt_t m_voltageCommand{0_V};
+  units::turn_t m_positionSetpoint{0_tr};
 };

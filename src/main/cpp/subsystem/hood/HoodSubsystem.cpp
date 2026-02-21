@@ -2,29 +2,48 @@
 
 #include "subsystem/hood/HoodSubsystem.h"
 
+#include <units/math.h>
+
 #include <numbers>
 
 #include "Constants.h"
 #include "RobotState.h"
-#include "subsystem/LoggedSubsystem.h"
+
+using namespace Constants::Hood;
 
 HoodSubsystem::HoodSubsystem(std::unique_ptr<HoodIO> io)
     : LoggedSubsystem("Hood"), m_io(std::move(io)) {}
 
-void HoodSubsystem::SetHoodPosition(units::turn_t desiredAngle) {
-  m_desiredAngle = desiredAngle;
-  m_io->SetHoodPosition(m_desiredAngle);
+void HoodSubsystem::SetPosition(units::radian_t mechanismAngle) {
+  units::turn_t motorTurns{mechanismAngle.value() / (2.0 * std::numbers::pi) *
+                           kGearRatio};
+  m_io->SetPosition(motorTurns);
+}
+
+void HoodSubsystem::SetVoltage(units::volt_t voltage) {
+  m_io->SetVoltage(voltage);
+}
+
+void HoodSubsystem::ZeroPosition() { m_io->ZeroPosition(); }
+
+void HoodSubsystem::Stop() { m_io->Stop(); }
+
+units::radian_t HoodSubsystem::GetPosition() const {
+  return units::radian_t{(m_inputs.motorPosition / kGearRatio).value() * 2.0 *
+                         std::numbers::pi};
+}
+
+bool HoodSubsystem::IsAtPosition(units::radian_t target) const {
+  return units::math::abs(GetPosition() - target) < kAngleTolerance;
 }
 
 HoodState HoodSubsystem::GetHoodState() const {
   HoodState state;
   state.timestamp = m_inputs.timestamp;
-  auto leftAngle = (m_inputs.leftHoodRotation / Constants::Hood::kGearRatio) *
-                   (2.0 * std::numbers::pi * 1_rad) / 1_tr;
-  auto rightAngle = (m_inputs.rightHoodRotation / Constants::Hood::kGearRatio) *
-                    (2.0 * std::numbers::pi * 1_rad) / 1_tr;
-  state.angle = (leftAngle + rightAngle) / 2.0;
-  // state.angle = (m_inputs.leftHoodRotation
+  state.angle = units::radian_t{(m_inputs.motorPosition / kGearRatio).value() *
+                                2.0 * std::numbers::pi};
+  state.velocity = units::radians_per_second_t{
+      (m_inputs.motorVelocity / kGearRatio).value() * 2.0 * std::numbers::pi};
   return state;
 }
 
@@ -34,9 +53,10 @@ void HoodSubsystem::UpdateInputs() {
 }
 
 void HoodSubsystem::LogTelemetry() {
-  Log("Left Servo Rotations", m_inputs.leftHoodRotation.value());
-  Log("Left Servo usec", m_inputs.leftMicroseconds);
-
-  Log("Right Servo Rotations", m_inputs.rightHoodRotation.value());
-  Log("Right Servo usec", m_inputs.rightMicroseconds);
+  Log("MotorPosition", m_inputs.motorPosition.value());
+  Log("MotorVelocity", m_inputs.motorVelocity.value());
+  Log("AppliedVolts", m_inputs.appliedVolts.value());
+  Log("StatorCurrent", m_inputs.statorCurrent.value());
+  Log("SupplyCurrent", m_inputs.supplyCurrent.value());
+  Log("MechanismAngleRad", GetPosition().value());
 }

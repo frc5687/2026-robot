@@ -51,11 +51,8 @@ void VisionSubsystem::LogTelemetry() {
   }
 
   Log("Tag Poses", tags);
-  constexpr std::array<frc::Transform3d, 4> camTransforms{
-      Constants::Vision::kRobotToBLCam,
-      Constants::Vision::kRobotToFLCam,
-      Constants::Vision::kRobotToBRCam,
-      Constants::Vision::kRobotToFRCam,
+  constexpr std::array<frc::Transform3d, 1> camTransforms{
+      Constants::Vision::kRobotToCam,
   };
 
   Log("Transforms", camTransforms);

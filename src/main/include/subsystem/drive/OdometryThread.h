@@ -11,7 +11,7 @@
 #include <array>
 #include <atomic>
 #include <memory>
-#include <mutex>
+#include <shared_mutex>
 
 #include <ctre/phoenix6/StatusSignal.hpp>
 
@@ -63,11 +63,12 @@ private:
   void PeriodicUpdate();
   bool SetupBatchedSignals();
   bool UpdateBatchedInputs();
-  void UpdateOdometry();
-  void UpdatePoseEstimator();
+  void UpdateOdometryAndEstimator();
+  // void UpdateOdometry();
+  // void UpdatePoseEstimator();
   void UpdateStatistics(units::second_t loopTime);
 
-  mutable std::mutex m_dataMutex;
+  mutable std::shared_mutex m_dataMutex;
   OdometryData m_latestData;
   std::unique_ptr<frc::Notifier> m_notifier;
   std::atomic<bool> m_isRunning{false};

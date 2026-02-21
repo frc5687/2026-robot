@@ -6,27 +6,43 @@
 #include <frc/RobotBase.h>
 #include <frc2/command/Commands.h>
 #include <units/angle.h>
+#include <units/angular_velocity.h>
 #include <units/length.h>
+#include <units/voltage.h>
 
 #include <array>
 #include <memory>
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "commands/intake/IntakeCommand.h"
+#include "commands/shooter/ShootCommand.h"
+#include "frc2/command/sysid/SysIdRoutine.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/drive/module/ModuleConfig.h"
 #include "subsystem/drive/module/SimModuleIO.h"
+#include "subsystem/floorroller/CTREFloorRollerIO.h"
+#include "subsystem/floorroller/FloorRollerSubsystem.h"
+#include "subsystem/floorroller/SimFloorRollerIO.h"
 #include "subsystem/flywheel/CTREFlywheelIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
+#include "subsystem/hood/CTREHoodIO.h"
 #include "subsystem/hood/SimHoodIO.h"
-#include "subsystem/indexer/CTREIndexerIO.h"
-#include "subsystem/indexer/IndexerSubsystem.h"
-#include "subsystem/indexer/SimIndexerIO.h"
-#include "subsystem/intake/CTREIntakeIO.h"
-#include "subsystem/intake/IntakeSubsystem.h"
-#include "subsystem/intake/SimIntakeIO.h"
+#include "subsystem/intake/IntakeSystem.h"
+#include "subsystem/intake/bottomroller/CTREIntakeBottomRollerIO.h"
+#include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
+#include "subsystem/intake/bottomroller/SimIntakeBottomRollerIO.h"
+#include "subsystem/intake/deployer/CTREIntakeDeployerIO.h"
+#include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
+#include "subsystem/intake/deployer/SimIntakeDeployerIO.h"
+#include "subsystem/intake/toproller/CTREIntakeTopRollerIO.h"
+#include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
+#include "subsystem/intake/toproller/SimIntakeTopRollerIO.h"
+#include "subsystem/kicker/CTREKickerIO.h"
+#include "subsystem/kicker/KickerSubsystem.h"
+#include "subsystem/kicker/SimKickerIO.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 
@@ -35,8 +51,13 @@ RobotContainer::RobotContainer() {
   m_flywheel = CreateFlywheel();
   m_hood = CreateHood();
   m_vision = CreateVision();
-  m_indexer = CreateIndexer();
-  m_intake = CreateIntake();
+  m_floorRoller = CreateFloorRoller();
+  m_kicker = CreateKicker();
+  m_intakeDeployer = CreateIntakeDeployer();
+  m_intakeTopRoller = CreateIntakeTopRoller();
+  m_intakeBottomRoller = CreateIntakeBottomRoller();
+  m_intake = std::make_unique<IntakeSystem>(
+      *m_intakeDeployer, *m_intakeTopRoller, *m_intakeBottomRoller);
   m_shooter = std::make_unique<ShooterSystem>(*m_flywheel, *m_hood);
   ConfigureBindings();
 }
@@ -44,10 +65,10 @@ RobotContainer::RobotContainer() {
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.3505859375_tr,           // FL
-      -0.05517578125_tr,         // FR
-      0.27099609375_tr - 0.5_tr, // BL
-      0.096923828125_tr          // BR
+      0.405517578125_tr, // FL
+      -0.2236328125_tr,  // FR
+      0.33642578125_tr,  // BL
+      -0.0517578125_tr   // BR
   };
 
   if (frc::RobotBase::IsSimulation()) {
@@ -105,31 +126,67 @@ std::unique_ptr<FlywheelSubsystem> RobotContainer::CreateFlywheel() {
       HardwareMap::CAN::TalonFX::RightBottomFollowerFlywheel));
 }
 
-std::unique_ptr<IndexerSubsystem> RobotContainer::CreateIndexer() {
+std::unique_ptr<FloorRollerSubsystem> RobotContainer::CreateFloorRoller() {
   if (frc::RobotBase::IsSimulation()) {
-    return std::make_unique<IndexerSubsystem>(std::make_unique<SimIndexerIO>());
+    return std::make_unique<FloorRollerSubsystem>(
+        std::make_unique<SimFloorRollerIO>());
   }
-  return std::make_unique<IndexerSubsystem>(std::make_unique<CTREIndexerIO>(
-      HardwareMap::CAN::TalonFX::LeftIndexer,
-      HardwareMap::CAN::TalonFX::RightIndexer,
-      HardwareMap::CAN::TalonFX::CenterIndexer,
-      HardwareMap::CAN::TalonFX::CenterIndexerFollower
-    ));
+  return std::make_unique<FloorRollerSubsystem>(
+      std::make_unique<CTREFloorRollerIO>(
+          HardwareMap::CAN::TalonFX::FloorRollerLeader,
+          HardwareMap::CAN::TalonFX::FloorRollerFollower));
 }
 
-std::unique_ptr<IntakeSubsystem> RobotContainer::CreateIntake() {
+std::unique_ptr<KickerSubsystem> RobotContainer::CreateKicker() {
   if (frc::RobotBase::IsSimulation()) {
-    return std::make_unique<IntakeSubsystem>(std::make_unique<SimIntakeIO>());
+    return std::make_unique<KickerSubsystem>(std::make_unique<SimKickerIO>());
   }
-  return std::make_unique<IntakeSubsystem>(
-      std::make_unique<CTREIntakeIO>(
-            HardwareMap::CAN::TalonFX::LeftRollerMotor,
-            HardwareMap::CAN::TalonFX::RightRollerMotor
-        ));
+  return std::make_unique<KickerSubsystem>(std::make_unique<CTREKickerIO>(
+      HardwareMap::CAN::TalonFX::KickerLeader,
+      HardwareMap::CAN::TalonFX::KickerFollower));
+}
+
+std::unique_ptr<IntakeDeployerSubsystem>
+RobotContainer::CreateIntakeDeployer() {
+  if (frc::RobotBase::IsSimulation()) {
+    return std::make_unique<IntakeDeployerSubsystem>(
+        std::make_unique<SimIntakeDeployerIO>());
+  }
+  return std::make_unique<IntakeDeployerSubsystem>(
+      std::make_unique<CTREIntakeDeployerIO>(
+          HardwareMap::CAN::TalonFX::IntakeDeployer));
+}
+
+std::unique_ptr<IntakeTopRollerSubsystem>
+RobotContainer::CreateIntakeTopRoller() {
+  if (frc::RobotBase::IsSimulation()) {
+    return std::make_unique<IntakeTopRollerSubsystem>(
+        std::make_unique<SimIntakeTopRollerIO>());
+  }
+  return std::make_unique<IntakeTopRollerSubsystem>(
+      std::make_unique<CTREIntakeTopRollerIO>(
+          HardwareMap::CAN::TalonFX::IntakeTopRollerLeader,
+          HardwareMap::CAN::TalonFX::IntakeTopRollerFollower));
+}
+
+std::unique_ptr<IntakeBottomRollerSubsystem>
+RobotContainer::CreateIntakeBottomRoller() {
+  if (frc::RobotBase::IsSimulation()) {
+    return std::make_unique<IntakeBottomRollerSubsystem>(
+        std::make_unique<SimIntakeBottomRollerIO>());
+  }
+  return std::make_unique<IntakeBottomRollerSubsystem>(
+      std::make_unique<CTREIntakeBottomRollerIO>(
+          HardwareMap::CAN::TalonFX::IntakeBottomRoller));
 }
 
 std::unique_ptr<HoodSubsystem> RobotContainer::CreateHood() {
-  return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+  if (frc::RobotBase::IsSimulation()) {
+    return std::make_unique<HoodSubsystem>(std::make_unique<SimHoodIO>());
+  }
+  return std::make_unique<HoodSubsystem>(
+      std::make_unique<CTREHoodIO>(HardwareMap::CAN::TalonFX::HoodMotor,
+                                   HardwareMap::CAN::CANCoder::HoodEncoder));
 }
 
 std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
@@ -137,12 +194,7 @@ std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
     return std::make_unique<VisionSubsystem>(std::make_unique<SimVisionIO>(),
                                              m_drive->GetOdometryThread());
   }
-  std::vector<std::string> limelights{
-      "limelight-br",
-      "limelight-bl",
-      "limelight-fr",
-      "limelight-fl",
-  };
+  std::vector<std::string> limelights{"limelight"};
   return std::make_unique<VisionSubsystem>(
       std::make_unique<LimelightVisionIO>(
           limelights, LimelightVisionIO::MegaTagMode::kMegaTag1),
@@ -151,54 +203,53 @@ std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
 void RobotContainer::Periodic() {
   // m_robotViz.Update();
   m_robotViz.Update();
-  //m_robotViz.FutureViz(1_s);
+  // m_robotViz.FutureViz(1_s);
 }
 
 void RobotContainer::ConfigureBindings() {
+  // Set default drive command
   using frc2::cmd::Run;
 
-  // Set default drive command
   m_drive->SetDefaultCommand(DriveMaintainingHeadingCommand(
       m_drive.get(), [this] { return -m_driver.GetLeftY(); },
       [this] { return -m_driver.GetLeftX(); },
       [this] { return -m_driver.GetRightX(); },
       true)); // slew limiter
 
-  // m_driver.Square().WhileTrue(
-  //     DriveWithNormalVectorAlignment(
-  //         m_drive.get(),
-  //         []() { return frc::Pose2d{5_m, 3_m, frc::Rotation2d{45_deg}}; },
-  //         false)
-  //         .ToPtr());
-  //  m_driver.Square().WhileTrue(
-  //      Run([this] { m_turret->SetAngle(300_deg); }, {m_turret.get()}));
-  //
-  //  m_driver.Circle().WhileTrue(
-  //      Run([this] { m_turret->SetAngle(180_deg); }, {m_turret.get()}));
-  //
-  //  m_driver.Triangle().WhileTrue(
-  //      Run([this] { m_turret->SetAngle(0_deg); }, {m_turret.get()}));
-  //
-  m_driver.L2().WhileTrue(
-      Run([this] { m_intake->SetVoltage(10_V); }, {m_intake.get()}));
+  m_driver.Circle().WhileTrue(
+      Run([this] { m_flywheel->SetRPM(600_rpm); }, {m_flywheel.get()}));
+  m_driver.Triangle().WhileTrue(
+      Run([this] { m_kicker->SetVelocity(60_tps); }, {m_kicker.get()}));
+  m_driver.Cross().WhileTrue(
+      Run([this] { m_hood->SetPosition(10_deg); }, {m_hood.get()}));
 
-  m_driver.Square().WhileTrue(
-      Run([this] { m_indexer->SetVoltage(10_V); }, {m_indexer.get()}));
+  m_driver.L2().WhileTrue(IntakeCommand(m_intakeDeployer.get(),
+                                        m_intakeTopRoller.get(),
+                                        m_intakeBottomRoller.get())
+                              .ToPtr());
 
-  // m_driver.Square().WhileTrue(
-  //     Run([this] { m_flywheel->SetRPM(2000_rpm, 2000_rpm); },
-  //     {m_flywheel.get()}));
- // m_driver.Circle().WhileTrue(
- //     Run([this] { m_flywheel->SetRPM(0_rpm, 0_rpm); }, {m_flywheel.get()}));
- // m_driver.Triangle().WhileTrue(Run(
- //     [this] { m_flywheel->SetRPM(1000_rpm, 1000_rpm); }, {m_flywheel.get()}));
-  m_driver.Cross().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kForward));
-  m_driver.Circle().OnTrue(m_flywheel->SysIdDynamic(frc2::sysid::Direction::kReverse));
-  m_driver.Triangle().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kForward));
-  m_driver.Square().OnTrue(m_flywheel->SysIdQuasistatic(frc2::sysid::Direction::kReverse));
-
-  // m_driver.Triangle().WhileTrue(
-  //     Run([this] { m_shooter->SetState(ShooterState::TRACKING); }));
+  m_driver.R2().WhileTrue(ShootCommand(
+                              m_drive.get(), m_flywheel.get(), m_hood.get(),
+                              m_intakeBottomRoller.get(), m_floorRoller.get(),
+                              m_kicker.get(),
+                              [this] { return -m_driver.GetLeftY(); },
+                              [this] { return -m_driver.GetLeftX(); })
+                              .ToPtr());
+  // m_driver.R2().WhileTrue(Run(
+  //     [this] {
+  //       m_flywheel->SetRPM(
+  //           units::revolutions_per_minute_t{m_simpleShootFlywheelRPM.Get()});
+  //       m_kicker->SetVelocity(
+  //           units::turns_per_second_t{m_simpleShootKickerRPS.Get()});
+  //       m_hood->SetPosition(units::degree_t{m_simpleShootAngle.Get()});
+  //       if (m_flywheel->AtSetpoint()) {
+  //         m_floorRoller->SetVoltage(10_V);
+  //       } else {
+  //         m_floorRoller->Stop();
+  //       }
+  //     },
+  //     {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(),
+  //     m_hood.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -10,13 +10,14 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
+
 #include <ctre/phoenix6/SignalLogger.hpp>
 
 #include "subsystem/CoordinatedSystemManager.h"
 
 Robot::Robot() {
-    ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
-    frc::DriverStation::SilenceJoystickConnectionWarning(true);
+  ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
+  frc::DriverStation::SilenceJoystickConnectionWarning(true);
 }
 
 void Robot::RobotPeriodic() {

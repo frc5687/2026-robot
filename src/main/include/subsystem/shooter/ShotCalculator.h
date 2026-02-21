@@ -21,9 +21,9 @@ struct ShotConfig {
   int maxAimIterations = 5;
   double convergenceThresholdMeters = 0.003;
 
-  units::radian_t turretTolerance{0.035_rad}; // ~2 deg
-  units::radian_t hoodTolerance{0.017_rad};   // ~1 deg
-  double flywheelToleranceFrac = 0.03;        // 3 %
+  units::radian_t driveAngleTolerance{0.035_rad}; // ~2 deg
+  units::radian_t hoodTolerance{0.017_rad};       // ~1 deg
+  double flywheelToleranceFrac = 0.05;            // 3 %
 
   double minDistanceMeters = 1.34;
   double maxDistanceMeters = 5.60;
@@ -33,8 +33,7 @@ struct ShotSolution {
   bool inRange = false;
   bool ready = false;
 
-  frc::Rotation2d turretFieldAngle{};
-  units::radian_t turretRobotAngle{0};
+  frc::Rotation2d driveAngle{};
 
   units::degree_t hoodAngle{0};
   double flywheelSpeed = 0;

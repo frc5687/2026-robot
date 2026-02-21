@@ -6,10 +6,8 @@
 
 #include "frc/DriverStation.h"
 
-ShooterSystem::ShooterSystem(
-                             FlywheelSubsystem &flywheel, HoodSubsystem &hood)
-    : CoordinatedSystem("Shooter"), m_flywheel(flywheel),
-      m_hood(hood) {}
+ShooterSystem::ShooterSystem(FlywheelSubsystem &flywheel, HoodSubsystem &hood)
+    : CoordinatedSystem("Shooter"), m_flywheel(flywheel), m_hood(hood) {}
 
 void ShooterSystem::SetState(const ShooterState &state) {
   m_previousState = m_currentState;
@@ -29,7 +27,7 @@ void ShooterSystem::Update() {
     auto solution = m_shotCalculator.Calculate(
         frc::Timer::GetFPGATimestamp(), alliance == frc::DriverStation::kRed);
     auto setpoint = ShooterSetpoint{
-        .turretAngle = solution.turretRobotAngle,
+        .driveAngle = solution.driveAngle,
         .hoodAngle = solution.hoodAngle,
     };
 
@@ -44,5 +42,4 @@ void ShooterSystem::Update() {
   }
 }
 
-void ShooterSystem::LogTelemetry() {
-}
+void ShooterSystem::LogTelemetry() {}

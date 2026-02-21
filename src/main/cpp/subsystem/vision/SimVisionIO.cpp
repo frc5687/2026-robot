@@ -36,22 +36,9 @@ SimVisionIO::SimVisionIO()
     : m_visionSim(std::make_shared<photon::VisionSystemSim>("MainVision")) {
   m_visionSim->AddAprilTags(Constants::Field::kFieldTagLayout);
 
-  m_cams.emplace(
-      "limelight-fl",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelight-fl", Constants::Vision::kRobotToFLCam, m_visionSim));
-  m_cams.emplace(
-      "limelight-bl",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelight-bl", Constants::Vision::kRobotToBLCam, m_visionSim));
-  m_cams.emplace(
-      "limelight-fr",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelight-fr", Constants::Vision::kRobotToFRCam, m_visionSim));
-  m_cams.emplace(
-      "limelight-br",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelight-br", Constants::Vision::kRobotToBRCam, m_visionSim));
+  m_cams.emplace("limelight",
+                 std::make_unique<SimulatedPhotonVisionCamera>(
+                     "limelight", Constants::Vision::kRobotToCam, m_visionSim));
 }
 
 void SimVisionIO::UpdateInputs(VisionIOInputs &inputs) {
