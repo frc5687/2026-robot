@@ -75,7 +75,9 @@ void ShootCommand::Execute() {
 
 void ShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
-  m_hood->Stop();
+  //m_hood->Stop();
+  m_hood->SetPosition(0_rad);
+  m_bottomRoller->Stop();
   m_floorRoller->Stop();
   m_kicker->Stop();
   m_drive->Stop();

@@ -36,6 +36,7 @@ void SimpleShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
   m_kicker->Stop();
   m_floorRoller->Stop();
+  m_hood->SetPosition(0_deg);
 }
 
 bool SimpleShootCommand::IsFinished() { return false; }

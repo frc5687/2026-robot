@@ -15,6 +15,7 @@
 
 #include "HardwareMap.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "frc2/command/sysid/SysIdRoutine.h"
@@ -216,12 +217,12 @@ void RobotContainer::ConfigureBindings() {
       [this] { return -m_driver.GetRightX(); },
       true)); // slew limiter
 
-  m_driver.Circle().WhileTrue(
-      Run([this] { m_flywheel->SetRPM(600_rpm); }, {m_flywheel.get()}));
-  m_driver.Triangle().WhileTrue(
-      Run([this] { m_kicker->SetVelocity(60_tps); }, {m_kicker.get()}));
+  //m_driver.Circle().WhileTrue(
+  //    Run([this] { m_flywheel->SetRPM(600_rpm); }, {m_flywheel.get()}));
+  //m_driver.Triangle().WhileTrue(
+  //    Run([this] { m_kicker->SetVelocity(60_tps); }, {m_kicker.get()}));
   m_driver.Cross().WhileTrue(
-      Run([this] { m_hood->SetPosition(10_deg); }, {m_hood.get()}));
+    Run([this] { m_hood->SetPosition(0_deg); }, {m_hood.get()}));
 
   m_driver.L2().WhileTrue(IntakeCommand(m_intakeDeployer.get(),
                                         m_intakeTopRoller.get(),
@@ -234,22 +235,34 @@ void RobotContainer::ConfigureBindings() {
                               m_kicker.get(),
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
+                             .ToPtr());
+
+  m_driver.Square().WhileTrue(EjectIntakeCommand(m_intakeDeployer.get(),
+                                        m_intakeTopRoller.get(),
+                                        m_intakeBottomRoller.get())
                               .ToPtr());
-  // m_driver.R2().WhileTrue(Run(
-  //     [this] {
-  //       m_flywheel->SetRPM(
-  //           units::revolutions_per_minute_t{m_simpleShootFlywheelRPM.Get()});
-  //       m_kicker->SetVelocity(
-  //           units::turns_per_second_t{m_simpleShootKickerRPS.Get()});
-  //       m_hood->SetPosition(units::degree_t{m_simpleShootAngle.Get()});
-  //       if (m_flywheel->AtSetpoint()) {
-  //         m_floorRoller->SetVoltage(10_V);
-  //       } else {
-  //         m_floorRoller->Stop();
-  //       }
-  //     },
-  //     {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(),
-  //     m_hood.get()}));
+
+
+    m_driver.R1().OnFalse(
+        Run( [this] {
+        m_flywheel->SetRPM(0_rpm);
+        m_kicker->Stop();
+        m_hood->SetPosition(0_deg);
+        m_floorRoller->Stop();
+      },
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get()}));
+
+  m_driver.R1().WhileTrue(Run( [this] {
+        m_flywheel->SetRPM(1000_rpm);
+        m_kicker->SetVelocity(60_tps);
+        m_hood->SetPosition(10_deg);
+        if (m_flywheel->AtSetpoint()) {
+          m_floorRoller->SetVoltage(10_V);
+        } else {
+          m_floorRoller->Stop();
+        }
+      },
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
