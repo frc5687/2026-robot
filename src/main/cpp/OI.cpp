@@ -36,6 +36,7 @@ void OI::ConfigureDriverBindings(DriveSubsystem& drive,
       [this] { return -m_driver.GetRightX(); },
       /*slewLimiter=*/true));
 
+
   m_driver.L2().WhileTrue(
       RunEnd(
           [&intake] { intake.SetVoltage(10_V); },
@@ -43,21 +44,31 @@ void OI::ConfigureDriverBindings(DriveSubsystem& drive,
           {&intake}));
 
   m_driver.R2().WhileTrue(
-      RunEnd([&indexer] { indexer.SetVoltage(10_V); }, [&indexer] {indexer.SetVoltage(0_V);},{&indexer}));
+      RunEnd([&indexer] { indexer.SetVoltage(10_V); }, [&indexer] {indexer.SetVoltage(0_V);},{&indexer}).AlongWith(RunEnd(
+          [&intake] { intake.SetVoltage(10_V); },
+          [&intake] { intake.SetVoltage(0_V); },
+          {&intake})));
 
-//   m_driver.Square().WhileTrue(
-//       Run([&flywheel, this] { flywheel.SetRPM(units::revolutions_per_minute_t{m_microseconds.Get()}, units::revolutions_per_minute_t{m_microseconds.Get()}); }, {&flywheel}));
+  m_driver.R2().WhileTrue(
+    DriveMaintainingHeadingCommand(
+      &drive,
+      [this] { return -m_driver.GetLeftY() * 0.4; },
+      [this] { return -m_driver.GetLeftX() * 0.4; },
+      [this] { return -m_driver.GetRightX(); },
+      /*slewLimiter=*/true).ToPtr()
+  );
 
-// m_driver.Cross().WhileTrue(
-//       Run([&hood, this] { hood.SetHoodPosition(units::turn_t{m_hoodangle.Get()}, units::turn_t{m_hoodangle.Get()}); }, {&hood}));
+  m_driver.Options().OnTrue(Run([&drive] {drive.ResetHeading(0_deg);}));
+  m_driver.L1().WhileTrue(
+      Run([&shooter] { shooter.SetState(ShooterState::TRENCH); }));
 
-  m_driver.Triangle().WhileTrue(
+    m_driver.R1().WhileTrue(
       Run([&shooter] { shooter.SetState(ShooterState::TRACKING); }));
-//   m_driver.Create().OnTrue(Run([&drive] {drive.ResetHeading(0_deg);}));
-  m_driver.R1().OnTrue(
+ 
+    m_driver.Triangle().WhileTrue(
       Run([&shooter] { shooter.SetState(ShooterState::PASSING); }));
-  //       m_driver.R2().WhileTrue(
-  //     Run([&shooter] { shooter.SetState(ShooterState::SHOOTING); }));
-      //   m_driver.R2().WhileTrue(
-      // Run([&hood, this] { hood.SetHoodPosition(units::turn_t{m_microseconds.Get()}, units::turn_t{m_microseconds.Get()}); }, {&hood}));
+ 
+    
+    //     m_driver.Cross().OnTrue(
+    //   Run([&hood, this] { hood.SetHoodPosition(units::turn_t{m_hoodangle.Get()}, units::turn_t{m_hoodangle.Get()}); }, {&hood}));
 }

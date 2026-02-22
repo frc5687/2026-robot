@@ -9,6 +9,8 @@
 #include <numbers>
 
 #include "Constants.h"
+#include "Eigen/src/Core/util/Macros.h"
+#include "frc/DriverStation.h"
 
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
     DriveSubsystem *driveSubsystem, std::function<double()> throttle,
@@ -84,7 +86,6 @@ void DriveMaintainingHeadingCommand::Execute() {
     rotVelocity = CalculateHeadingCorrection(m_driveSubsystem->GetHeading(),
                                              m_headingSetpoint.value());
   }
-
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});
 }

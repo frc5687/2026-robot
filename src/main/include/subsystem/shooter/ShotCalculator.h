@@ -98,4 +98,4 @@ class ShotCalculator {
                                          frc::Rotation2d b);
   static frc::Rotation2d AngularBisector(frc::Rotation2d a,
                                          frc::Rotation2d b);
-};
+  };

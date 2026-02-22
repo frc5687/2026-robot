@@ -127,8 +127,17 @@ void DriveSubsystem::Drive(const frc::ChassisSpeeds &speeds) {
 
 void DriveSubsystem::DriveFieldRelative(const frc::ChassisSpeeds &speeds) {
   // Get the current heading from threaded odometry
+  
+  std::optional<frc::DriverStation::Alliance> alliance =
+      frc::DriverStation::GetAlliance();
+  frc::Rotation2d relativeHeading = GetHeading();
+
+  if (alliance.has_value() &&
+      alliance.value() == frc::DriverStation::Alliance::kRed) {
+    relativeHeading =GetHeading().RotateBy({180_deg});
+  }
   auto robotRelative =
-      frc::ChassisSpeeds::FromFieldRelativeSpeeds(speeds, GetHeading());
+      frc::ChassisSpeeds::FromFieldRelativeSpeeds(speeds, relativeHeading);
   Drive(robotRelative);
 }
 

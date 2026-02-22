@@ -184,7 +184,7 @@ inline constexpr bool kMotorInverted = true;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
 inline constexpr units::ampere_t kStatorCurrentLimit = 80_A;
 
-inline constexpr units::radian_t kMinAngle = 22.73_deg;
+inline constexpr units::radian_t kMinAngle = 26.5_deg;
 inline constexpr units::radian_t kMaxAngle = 330_deg;
 inline constexpr units::turns_per_second_t kCruiseVelocity = 100_tps;
 inline constexpr units::turns_per_second_squared_t kAcceleration =

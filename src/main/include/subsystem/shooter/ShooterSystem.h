@@ -11,6 +11,8 @@
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/shooter/CoordinatedSystem.h"
 #include "units/angular_velocity.h"
+#include "utils/TunableDouble.h"
+
 
 enum class ShooterState {
   IDLE,
@@ -65,8 +67,10 @@ private:
   ShooterState m_previousState{ShooterState::IDLE};
 
   ShooterSetpoint m_desiredSetpoint;
-  // LaunchConfig m_config{
-  //     .robotToLauncher{Constants::Geometry::kRobotToTurretLeft.Translation().ToTranslation2d()},
-  // };
+  ShotConfig m_shotConfig{};
   ShotCalculator m_shotCalculator;
+
+  TunableDouble m_offset;
+  TunableDouble m_passoffset;
+  
 };
