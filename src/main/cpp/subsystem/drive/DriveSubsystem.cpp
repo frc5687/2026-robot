@@ -34,20 +34,8 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                 std::make_unique<Module>(std::move(frontRight)),
                 std::make_unique<Module>(std::move(backLeft)),
                 std::make_unique<Module>(std::move(backRight))},
-      m_gyro(std::move(gyro)) {
-  pathplanner::ModuleConfig moduleConfig(
-      Constants::SwerveDrive::Module::kWheelRadius,
-      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed,
-      Constants::SwerveDrive::Module::kFrictionCoefficient,
-      Constants::SwerveDrive::Module::kDriveMotor,
-      Constants::SwerveDrive::Module::kDriveGearRatio,
-      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimit, 1.0);
-  m_robotConfig = pathplanner::RobotConfig(
-      Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
-      moduleConfig,
-      std::vector<frc::Translation2d>(
-          Constants::SwerveDrive::kModuleTranslations.begin(),
-          Constants::SwerveDrive::kModuleTranslations.end()));
+      m_gyro(std::move(gyro)),
+      m_robotConfig(BuildRobotConfig()) {
   m_gyro->Reset();
   PoseEstimator::Config config{};
   config.odometryXStdDev = 0.08;       // Trust odometry more on smooth field
@@ -331,4 +319,20 @@ void DriveSubsystem::LogTelemetry() {
       std::all_of(connectionStatus.begin(), connectionStatus.end(),
                   [](bool connected) { return connected; });
   Log("AllModulesConnected", allConnected);
+}
+
+pathplanner::RobotConfig DriveSubsystem::BuildRobotConfig() {
+  pathplanner::ModuleConfig moduleConfig(
+      Constants::SwerveDrive::Module::kWheelRadius,
+      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed,
+      Constants::SwerveDrive::Module::kFrictionCoefficient,
+      Constants::SwerveDrive::Module::kDriveMotor,
+      Constants::SwerveDrive::Module::kDriveGearRatio,
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimit, 1.0);
+  return pathplanner::RobotConfig(
+      Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
+      moduleConfig,
+      std::vector<frc::Translation2d>(
+          Constants::SwerveDrive::kModuleTranslations.begin(),
+          Constants::SwerveDrive::kModuleTranslations.end()));
 }

@@ -106,5 +106,7 @@ private:
       Constants::SwerveDrive::kMaxLinearSpeed;
   units::radians_per_second_t m_maxAngularSpeed =
       Constants::SwerveDrive::kMaxAngularSpeed;
-  pathplanner::RobotConfig m_robotConfig{};
+  pathplanner::RobotConfig m_robotConfig;
+
+  static pathplanner::RobotConfig BuildRobotConfig();
 };

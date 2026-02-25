@@ -42,4 +42,8 @@ void ShooterSystem::Update() {
   }
 }
 
-void ShooterSystem::LogTelemetry() {}
+void ShooterSystem::LogTelemetry() {
+    // THese are to avoid warning for not used atm
+    Log("Flywheel At Setpoint", m_flywheel.AtSetpoint());
+    Log("Hood Angle", m_hood.GetPosition().value());
+}

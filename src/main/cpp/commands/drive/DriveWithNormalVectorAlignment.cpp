@@ -29,7 +29,7 @@ DriveWithNormalVectorAlignment::DriveWithNormalVectorAlignment(
       m_velocityTolerance(kVelocityTolerance), m_minOutput(kMinOutput),
       m_counteractGain(kCounteractGain),
       m_aggressiveAccelMultiplier(kAggressiveAccelMultiplier),
-      m_smoothingFactor(kSmoothingFactor), m_isAlgae(isAlgae) {
+      m_smoothingFactor(kSmoothingFactor) {
   // Enable continuous input for rotation controller (-180 to 180 degrees)
   m_rotationController.EnableContinuousInput(std::numbers::pi,
                                              std::numbers::pi);

@@ -13,6 +13,7 @@
 class CoordinatedSystem {
 public:
   explicit CoordinatedSystem(const std::string &name);
+  virtual ~CoordinatedSystem() = default;
   virtual void Periodic() final;
   virtual void Update() {}
 

@@ -23,7 +23,8 @@ void IntakeDeployerSubsystem::Deploy() {
 }
 
 void IntakeDeployerSubsystem::Retract() {
-  m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
+  Log("Retract", true);
+  //m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
 }
 
 void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {

@@ -22,7 +22,7 @@ void EjectIntakeCommand::Execute() {
 }
 
 void EjectIntakeCommand::End(bool interrupted) {
-  // m_deployer->Retract();
+  m_deployer->Retract();
   m_topRoller->Stop();
   m_bottomRoller->Stop();
 }
