@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "subsystem/vision/SimVisionIO.h"
 
@@ -35,18 +36,9 @@ SimVisionIO::SimVisionIO()
     : m_visionSim(std::make_shared<photon::VisionSystemSim>("MainVision")) {
   m_visionSim->AddAprilTags(Constants::Field::kFieldTagLayout);
 
-  m_cams.emplace(
-      "limelightleft",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelightleft", Constants::Vision::kRobotToNWCam, m_visionSim));
-  m_cams.emplace(
-      "limelight-center",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "limelightcenter", Constants::Vision::kRobotToNECam, m_visionSim));
-  m_cams.emplace(
-      "South_Camera",
-      std::make_unique<SimulatedPhotonVisionCamera>(
-          "SouthCamera", Constants::Vision::kRobotToSouthCam, m_visionSim));
+  m_cams.emplace("limelight",
+                 std::make_unique<SimulatedPhotonVisionCamera>(
+                     "limelight", Constants::Vision::kRobotToCam, m_visionSim));
 }
 
 void SimVisionIO::UpdateInputs(VisionIOInputs &inputs) {

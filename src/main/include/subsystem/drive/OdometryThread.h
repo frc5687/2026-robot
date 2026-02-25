@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -10,14 +11,14 @@
 #include <array>
 #include <atomic>
 #include <memory>
-#include <mutex>
+#include <shared_mutex>
 
 #include <ctre/phoenix6/StatusSignal.hpp>
 
+#include "Constants.h"
 #include "GyroIO.h"
 #include "OdometryData.h"
 #include "PoseEstimator.h"
-#include "SwerveConstants.h"
 #include "module/Module.h"
 
 class OdometryThread {
@@ -62,11 +63,12 @@ private:
   void PeriodicUpdate();
   bool SetupBatchedSignals();
   bool UpdateBatchedInputs();
-  void UpdateOdometry();
-  void UpdatePoseEstimator();
+  void UpdateOdometryAndEstimator();
+  // void UpdateOdometry();
+  // void UpdatePoseEstimator();
   void UpdateStatistics(units::second_t loopTime);
 
-  mutable std::mutex m_dataMutex;
+  mutable std::shared_mutex m_dataMutex;
   OdometryData m_latestData;
   std::unique_ptr<frc::Notifier> m_notifier;
   std::atomic<bool> m_isRunning{false};
@@ -98,6 +100,7 @@ private:
   static constexpr size_t kStatisticsWindowSize = 50;
   std::array<units::second_t, kStatisticsWindowSize> m_loopTimes{};
   size_t m_loopTimeIndex{0};
+  units::second_t m_loopTimeSum{0_s}; 
   std::mutex m_statisticsMutex;
 
   std::atomic<units::second_t> m_lastValidTimestamp{0_s};

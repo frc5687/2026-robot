@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -6,6 +7,7 @@
 #include <units/length.h>
 #include <units/velocity.h>
 
+#include <concepts>
 #include <numbers>
 
 constexpr double kPi = std::numbers::pi_v<double>;
@@ -26,4 +28,15 @@ inline units::meters_per_second_t
 WheelOmegaToMps(units::radians_per_second_t wheel_omega,
                 units::meter_t wheel_radius) {
   return (wheel_omega / 1_rad) * wheel_radius; // (rad/s)/rad * m = m/s
+}
+
+template <typename T>
+concept LerpSupported = requires(T a, T b) {
+  { a + b } -> std::same_as<T>;
+  { a - b } -> std::same_as<T>;
+};
+
+template <typename T> // LerpSupported later
+T Lerp(const T &start, const T &end, double t) {
+  return start + (end - start) * t;
 }

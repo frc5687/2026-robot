@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "Robot.h"
 
@@ -6,16 +7,27 @@
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/RunCommand.h>
+#include <frc/livewindow/LiveWindow.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
-Robot::Robot() { frc::DriverStation::SilenceJoystickConnectionWarning(true); }
+#include <ctre/phoenix6/SignalLogger.hpp>
+
+#include "subsystem/CoordinatedSystemManager.h"
+
+Robot::Robot() {
+  frc::LiveWindow::DisableAllTelemetry();
+  ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
+  frc::DriverStation::SilenceJoystickConnectionWarning(true);
+}
 
 void Robot::RobotPeriodic() {
   auto startTime = frc::Timer::GetFPGATimestamp();
 
   frc2::CommandScheduler::GetInstance().Run();
+  m_container.Periodic();
+  CoordinatedSystemManager::Instance().UpdateAll();
 
   auto endTime = frc::Timer::GetFPGATimestamp();
   auto updateTime = (endTime - startTime);
@@ -29,7 +41,7 @@ void Robot::DisabledExit() {}
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
   if (m_autonomousCommand) {
-    m_autonomousCommand->Schedule();
+    frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand->get());
   }
 }
 

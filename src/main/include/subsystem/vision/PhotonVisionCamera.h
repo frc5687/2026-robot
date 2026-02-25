@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 // subsystem/vision/PhotonVisionCamera.h
 #pragma once
@@ -11,6 +12,7 @@
 #include <units/time.h>
 
 #include <algorithm>
+#include <array>
 #include <optional>
 #include <string>
 #include <vector>
@@ -24,8 +26,7 @@ public:
   PhotonVisionCamera(const std::string &name,
                      const frc::Transform3d &robotToCamera)
       : m_name{name}, m_camera{name},
-        m_estimator{Constants::Field::kFieldTagLayout,
-                    robotToCamera},
+        m_estimator{Constants::Field::kFieldTagLayout, robotToCamera},
         m_robotToCamera{robotToCamera} {}
 
   VisionResult GetLatestResult() override {

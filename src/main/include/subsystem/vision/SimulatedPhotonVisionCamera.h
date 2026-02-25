@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -31,15 +32,15 @@ public:
     m_cameraSim.EnableDrawWireframe(false);
     m_cameraSim.EnabledProcessedStream(false);
     m_cameraSim.EnableRawStream(false);
-    m_cameraSim.SetMaxSightRange(3.0_m);
+    m_cameraSim.SetMaxSightRange(5.0_m);
   }
 
 private:
   static photon::SimCameraProperties MakeProps() {
     photon::SimCameraProperties props;
-    props.SetCalibration(1280, 720, frc::Rotation2d{88_deg}); // diagonal FOV
+    props.SetCalibration(1280, 720, frc::Rotation2d{89.8_deg}); // diagonal FOV
     props.SetCalibError(1.35, 0.10);
-    props.SetFPS(60_Hz);
+    props.SetFPS(40_Hz);
     props.SetAvgLatency(20_ms);
     props.SetLatencyStdDev(5_ms);
     return props;

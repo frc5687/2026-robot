@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -13,20 +14,18 @@ public:
   TunableDouble(const std::string &table, const std::string &topic,
                 double defaultValue = 0.0);
 
-  // Full NT path (e.g., "/SmartDashboard/kP" or "/datatable/kP")
   explicit TunableDouble(const std::string &fullTopicPath,
                          double defaultValue = 0.0);
 
   bool HasChanged();
-  double Get() const noexcept { return m_cached; }
+  double Get() const noexcept { return m_entry.Get(m_defaultValue); }
 
   int64_t LastChangeUsec() const noexcept { return m_lastChange; }
 
 private:
   void Init(nt::DoubleTopic topic, double defaultValue);
 
-  std::shared_ptr<nt::NetworkTable>
-      m_table; // optional (unused when full path ctor is used)
+  std::shared_ptr<nt::NetworkTable> m_table;
   nt::DoubleTopic m_topic;
   nt::DoubleEntry m_entry;
 

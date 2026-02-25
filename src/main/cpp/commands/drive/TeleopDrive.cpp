@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "commands/drive/TeleopDrive.h"
 
@@ -6,7 +7,6 @@
 #include <cmath>
 
 #include "Constants.h"
-#include "subsystem/drive/SwerveConstants.h"
 
 TeleopDrive::TeleopDrive(DriveSubsystem *driveSubsystem,
                          std::function<double()> xStrafe,

@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -30,7 +31,7 @@ public:
     double confidencePenaltyRate{3.0};
 
     double maxVisionDistance{6.0};
-    double maxTimestampAge{0.25};
+    double maxTimestampAge{0.5};
     double minConfidence{0.4};
     double maxMovementSpeed{8.0};
   };

@@ -1,3 +1,5 @@
+// Team 5687 2026
+
 // DriveWithNormalVectorAlignment.h
 #pragma once
 
@@ -14,6 +16,7 @@
 
 #include <functional>
 #include <optional>
+
 #include "subsystem/drive/DriveSubsystem.h"
 
 namespace Constants {
@@ -39,30 +42,30 @@ constexpr double kMinOutput = 0.1;
 constexpr double kCounteractGain = 1.5;
 constexpr double kAggressiveAccelMultiplier = 2.0;
 constexpr double kSmoothingFactor = 0.5;
-}  // namespace DriveWithNormalVectorAlignment
-}  // namespace Constants
+} // namespace DriveWithNormalVectorAlignment
+} // namespace Constants
 
 class DriveWithNormalVectorAlignment
-    : public frc2::CommandHelper<frc2::Command, DriveWithNormalVectorAlignment> {
- public:
-  DriveWithNormalVectorAlignment(
-      DriveSubsystem* drive,
-      std::function<frc::Pose2d()> finalPoseSupplier,
-      bool isAlgae = false);
+    : public frc2::CommandHelper<frc2::Command,
+                                 DriveWithNormalVectorAlignment> {
+public:
+  DriveWithNormalVectorAlignment(DriveSubsystem *drive,
+                                 std::function<frc::Pose2d()> finalPoseSupplier,
+                                 bool isAlgae = false);
 
   void Initialize() override;
   void Execute() override;
   void End(bool interrupted) override;
   bool IsFinished() override;
 
- private:
+private:
   void UpdateTargetPoses();
   frc::Pose2d GetCurrentTargetPose();
   void UpdatePIDGains();
   void UpdatePIDTolerances();
 
   // Subsystem
-  DriveSubsystem* m_drive;
+  DriveSubsystem *m_drive;
 
   // Pose suppliers
   std::function<frc::Pose2d()> m_finalPoseSupplier;
@@ -91,6 +94,6 @@ class DriveWithNormalVectorAlignment
   double m_counteractGain;
   double m_aggressiveAccelMultiplier;
   double m_smoothingFactor;
-  
+
   bool m_isAlgae;
 };

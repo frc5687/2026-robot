@@ -1,11 +1,12 @@
+// Team 5687 2026
 
 #pragma once
 
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
 
+#include "Constants.h"
 #include "GyroIO.h"
-#include "SwerveConstants.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "units/angle.h"
 #include "units/angular_velocity.h"

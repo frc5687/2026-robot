@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #pragma once
 
@@ -12,10 +13,10 @@
 #include <ctre/phoenix6/sim/CANcoderSimState.hpp>
 #include <ctre/phoenix6/sim/TalonFXSimState.hpp>
 
+#include "Constants.h"
 #include "ModuleConfig.h"
 #include "ModuleIO.h"
 #include "ctre/phoenix6/core/CoreTalonFX.hpp"
-#include "subsystem/drive/SwerveConstants.h"
 #include "utils/CANDevice.h"
 
 class CTREModuleIO : public ModuleIO {

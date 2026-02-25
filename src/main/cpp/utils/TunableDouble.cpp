@@ -1,3 +1,4 @@
+// Team 5687 2026
 
 #include "utils/TunableDouble.h"
 
@@ -27,12 +28,11 @@ TunableDouble::TunableDouble(const std::string &fullTopicPath,
 }
 
 bool TunableDouble::HasChanged() {
-  auto updates = m_entry.ReadQueue();
-  if (updates.empty())
+  double current = m_entry.Get(m_defaultValue);
+  if (current == m_cached)
     return false;
 
-  const auto &last = updates.back();
-  m_cached = last.value;
-  m_lastChange = last.time;
+  m_cached = current;
+  m_lastChange = m_entry.GetLastChange();
   return true;
 }
