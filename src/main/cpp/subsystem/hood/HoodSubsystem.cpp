@@ -23,6 +23,10 @@ void HoodSubsystem::SetHoodPosition(units::turn_t leftAngle, units::turn_t right
 void HoodSubsystem::SetMicroseconds(double microseconds){
   m_io->SetMicroseconds(microseconds);
 }
+
+ void HoodSubsystem::SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap){
+  // m_io->SetMicrosecondMap(leftMap, rightMap);
+}
 HoodState HoodSubsystem::GetHoodState() const {
   HoodState state;
   state.timestamp = m_inputs.timestamp;

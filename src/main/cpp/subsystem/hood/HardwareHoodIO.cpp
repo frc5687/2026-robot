@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <utility>
+#include <vector>
 #include "Constants.h"
 
 HardwareHoodIO::HardwareHoodIO(
@@ -85,6 +87,14 @@ void HardwareHoodIO::SetMicroseconds(double microsecond){
     m_leftServoChannel.SetPulseWidth(m_microsecond);
     m_rightServoChannel.SetPulseWidth(m_microsecond);
 }
+
+ void HardwareHoodIO::SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap){
+    m_leftMicrosecondMap = {};
+    m_rightMicrosecondMap = {};
+
+    m_leftMicrosecondMap.InsertValues(leftMap);
+    m_rightMicrosecondMap.InsertValues(rightMap);
+ }
 
 void HardwareHoodIO::SetHoodPosition(units::turn_t hoodposition){
 

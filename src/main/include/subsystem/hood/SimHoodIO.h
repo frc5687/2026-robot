@@ -6,6 +6,8 @@
 #include "frc/controller/PIDController.h"
 #include "frc/simulation/SingleJointedArmSim.h"
 #include "units/angle.h"
+#include <vector>
+#include <utility>
 
 class SimHoodIO : public HoodIO {
 
@@ -18,6 +20,8 @@ public:
   void SetMicroseconds(double microseconds) override;
   void SetHoodPosition(units::turn_t leftHoodPosition,
                        units::turn_t rightHoodPosition) override;
+  void SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap) override;
+
 
 private:
   frc::sim::SingleJointedArmSim m_simHood;

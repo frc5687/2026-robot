@@ -5,6 +5,8 @@
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/time.h>
+#include <vector>
+#include <utility>
 
 struct HoodIOInputs {
   units::second_t timestamp{0_s};
@@ -22,6 +24,7 @@ public:
   virtual ~HoodIO() = default;
   virtual void UpdateInputs(HoodIOInputs &inputs) = 0;
   virtual void SetMicroseconds(double microseconds) = 0;
+  virtual void SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap) = 0;
   virtual void SetHoodPosition(units::turn_t hoodPosition) = 0;
   virtual void SetHoodPosition(units::turn_t leftHoodPosition,
                                units::turn_t rightHoodPosition) = 0;

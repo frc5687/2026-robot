@@ -52,3 +52,7 @@ void SimHoodIO::SetHoodPosition(units::turn_t leftHoodPosition,
                                 units::turn_t rightHoodPosition) {
   SetHoodPosition(leftHoodPosition);
 }
+
+void SimHoodIO::SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap){
+
+}

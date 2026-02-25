@@ -21,6 +21,7 @@ public:
 
   void UpdateInputs(HoodIOInputs &inputs);
   void SetMicroseconds(double microseconds);
+  void SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap);
   void SetHoodPosition(units::angle::turn_t leftHoodPosition,
                        units::angle::turn_t rightHoodPosition);
   void SetHoodPosition(units::angle::turn_t hoodPosition);

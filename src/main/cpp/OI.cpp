@@ -67,7 +67,11 @@ void OI::ConfigureDriverBindings(DriveSubsystem& drive,
  
     m_driver.Triangle().WhileTrue(
       Run([&shooter] { shooter.SetState(ShooterState::PASSING); }));
- 
+
+    m_driver.POVUp().WhileTrue(
+      Run([&hood] { hood.SetMicroseconds(700); }));
+     m_driver.POVDown().WhileTrue(
+      Run([&hood] { hood.SetMicroseconds(2100); }));
     
     //     m_driver.Cross().OnTrue(
     //   Run([&hood, this] { hood.SetHoodPosition(units::turn_t{m_hoodangle.Get()}, units::turn_t{m_hoodangle.Get()}); }, {&hood}));

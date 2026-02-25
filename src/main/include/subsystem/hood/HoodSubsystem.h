@@ -6,6 +6,7 @@
 #include "HoodState.h"
 #include "subsystem/LoggedSubsystem.h"
 #include "units/angle.h"
+#include <unordered_map>
 
 class HoodSubsystem : public LoggedSubsystem {
 
@@ -16,7 +17,7 @@ public:
   void SetHoodPosition(units::turn_t leftAngle, units::turn_t rightAngle);
   void SetMicroseconds(double microseconds);
   HoodState GetHoodState() const;
-
+  void SetMicrosecondMap(std::vector<std::pair<double, int>>leftMap, std::vector<std::pair<double, int>>rightMap);
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;
