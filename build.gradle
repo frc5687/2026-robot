@@ -50,6 +50,54 @@ wpi.sim.addGui().defaultEnabled = true
 // Enable DS but not by default
 wpi.sim.addDriverstation()
 
+nativeUtils.platformConfigs.named("linuxathena").configure {
+    it.cppCompiler.args.add('-Wall')
+    it.cppCompiler.args.add('-Wextra')
+    it.cppCompiler.args.add('-pedantic')
+    it.cppCompiler.args.add('-Werror')
+    it.cppCompiler.args.add('-Wno-unused-parameter')
+}
+
+if (OperatingSystem.current().isWindows()) {
+    nativeUtils.platformConfigs.named(wpi.platforms.desktop).configure {
+        it.cppCompiler.args.add('/W3')
+        it.cppCompiler.args.add('/WX')
+    }
+} else {
+    nativeUtils.platformConfigs.named(wpi.platforms.desktop).configure {
+        it.cppCompiler.args.add('-Wall')
+        it.cppCompiler.args.add('-Wextra')
+        it.cppCompiler.args.add('-pedantic')
+        it.cppCompiler.args.add('-Werror')
+        it.cppCompiler.args.add('-Wno-unused-parameter')
+    }
+}
+
+if (project.hasProperty("asan")) {
+    nativeUtils.platformConfigs.named("linuxx86-64").configure {
+        it.cppCompiler.args.add('-g3')
+        it.cppCompiler.args.add('-fsanitize=address')
+        it.linker.args.add('-fsanitize=address')
+    }
+}
+
+if (project.hasProperty("tsan")) {
+    nativeUtils.platformConfigs.named("linuxx86-64").configure {
+        it.cppCompiler.args.add('-g3')
+        it.cppCompiler.args.add('-fsanitize=thread')
+        it.linker.args.add('-fsanitize=thread')
+    }
+}
+
+if (project.hasProperty("ubsan")) {
+    nativeUtils.platformConfigs.named("linuxx86-64").configure {
+        it.cppCompiler.args.add('-g3')
+        it.cppCompiler.args.add('-fsanitize=undefined')
+        it.linker.args.add('-fsanitize=undefined')
+    }
+}
+
+
 model {
     components {
         frcUserProgram(NativeExecutableSpec) {
@@ -102,6 +150,12 @@ model {
     }
 }
 
+tasks.register("buildRio") {
+    description = 'Build release for RoboRIO only'
+    group = 'build'
+    dependsOn 'frcUserProgramLinuxathenaReleaseExecutable'
+}
+
 tasks.register("setupCompileCommands") {
     description = 'Generate and copy compile_commands.json to project root'
     group = 'ide'
@@ -123,8 +177,4 @@ tasks.register("setupCompileCommands") {
             into projectDir
         }
     }
-}
-
-tasks.named("build") {
-    finalizedBy("setupCompileCommands")
 }

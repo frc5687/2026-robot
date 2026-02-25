@@ -11,6 +11,8 @@
 #include "Constants.h"
 #include "Eigen/src/Core/util/Macros.h"
 #include "frc/DriverStation.h"
+#include "units/angular_velocity.h"
+#include "units/velocity.h"
 
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
     DriveSubsystem *driveSubsystem, std::function<double()> throttle,
@@ -40,14 +42,16 @@ void DriveMaintainingHeadingCommand::Initialize() {
 }
 
 void DriveMaintainingHeadingCommand::Execute() {
+  frc::Rotation2d heading = m_driveSubsystem->GetHeading();
+  auto currentSpeeds = m_driveSubsystem->GetChassisSpeeds();
 
   std::optional<frc::DriverStation::Alliance> alliance =
       frc::DriverStation::GetAlliance();
-  frc::Rotation2d relativeHeading = m_driveSubsystem->GetHeading();
+  frc::Rotation2d relativeHeading = heading;
 
   if (alliance.has_value() &&
       alliance.value() == frc::DriverStation::Alliance::kRed) {
-    relativeHeading = m_driveSubsystem->GetHeading().RotateBy({180_deg});
+    relativeHeading = heading.RotateBy({180_deg});
   }
   double throttle = m_throttleSupplier();
   double strafe = m_strafeSupplier();
@@ -63,15 +67,18 @@ void DriveMaintainingHeadingCommand::Execute() {
     turnInput = m_rotLimiter.Calculate(turnInput);
   }
 
-  auto xVelocity = throttle * Constants::SwerveDrive::kMaxLinearSpeed;
-  auto yVelocity = strafe * Constants::SwerveDrive::kMaxLinearSpeed;
+  auto maxSpeeds = m_driveSubsystem->GetMaxSpeeds();
+  units::meters_per_second_t maxLinearSpeed = maxSpeeds.first;
+  units::radians_per_second_t maxAngularSpeed = maxSpeeds.second;
+
+  auto xVelocity = throttle * maxLinearSpeed;
+  auto yVelocity = strafe * maxLinearSpeed;
 
   if (IsTurnInputActive(turnInput, Constants::kSteerJoystickDeadband)) {
     m_joystickLastTouched = frc::Timer::GetFPGATimestamp().value();
   }
 
   bool useManualRotation = false;
-  auto currentSpeeds = m_driveSubsystem->GetChassisSpeeds();
   auto currentAngularVel = currentSpeeds.omega;
 
   if (IsTurnInputActive(turnInput, Constants::kSteerJoystickDeadband) ||
@@ -83,17 +90,16 @@ void DriveMaintainingHeadingCommand::Execute() {
   units::radians_per_second_t rotVelocity;
 
   if (useManualRotation) {
-    rotVelocity = turnInput * Constants::SwerveDrive::kMaxAngularSpeed;
+    rotVelocity = turnInput * maxAngularSpeed;
     m_headingSetpoint = std::nullopt; // Clear heading setpoint
     m_headingController.Reset();      // Reset PID controller
   } else {
     if (!m_headingSetpoint.has_value()) {
-      m_headingSetpoint = m_driveSubsystem->GetHeading();
+      m_headingSetpoint = heading;
       m_headingController.Reset();
     }
 
-    rotVelocity = CalculateHeadingCorrection(m_driveSubsystem->GetHeading(),
-                                             m_headingSetpoint.value());
+    rotVelocity = CalculateHeadingCorrection(heading, m_headingSetpoint.value());
   }
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});

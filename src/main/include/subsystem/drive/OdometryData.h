@@ -14,8 +14,8 @@
 #include "utils/Utils.h"
 
 struct OdometryData {
-  frc::Pose2d pose{};
-  frc::Pose2d estimatedPose{};
+  frc::Pose2d odometryPose{}; // Raw odometry pose
+  frc::Pose2d estimatedPose{}; // This is the pose from estimator
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
       modulePositions{};
   std::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
@@ -54,7 +54,9 @@ struct OdometryData {
     OdometryData interpolated;
 
     interpolated.timestamp = Lerp(start.timestamp, end.timestamp, t);
-    interpolated.pose = Lerp(start.pose, end.pose, t);
+    interpolated.odometryPose = Lerp(start.odometryPose, end.odometryPose, t);
+    interpolated.estimatedPose =
+        Lerp(start.estimatedPose, end.estimatedPose, t);
     interpolated.gyroAngle = Lerp(start.gyroAngle, end.gyroAngle, t);
     interpolated.gyroRate = Lerp(start.gyroRate, end.gyroRate, t);
 

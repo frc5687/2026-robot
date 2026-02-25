@@ -3,7 +3,7 @@
 #pragma once
 
 #include <units/angle.h>
-#include <units/velocity.h>
+#include <units/angular_velocity.h>
 
 #include "ShotCalculator.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
@@ -35,7 +35,7 @@ inline constexpr std::string ShooterStateToString(ShooterState state) {
 struct ShooterSetpoint {
   frc::Rotation2d driveAngle;
   units::radian_t hoodAngle;
-  units::rpm flywheelSpeed;
+  units::revolutions_per_minute_t flywheelSpeed{0_rpm};
 };
 
 // Combination of Turret, Shooter, Hood.

@@ -18,12 +18,20 @@
 #include <wpi/struct/Struct.h>
 
 #include <shared_mutex>
+#include <span>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
-class Logger;
+
+struct StringHash {
+  using is_transparent = void;
+  size_t operator()(std::string_view sv) const noexcept {
+    return std::hash<std::string_view>{}(sv);
+  }
+};
 
 class Logger {
 public:
@@ -33,7 +41,7 @@ public:
   }
 
   template <typename T>
-  void Log(const std::string &name, const T &value, int64_t ts = 0) {
+  void Log(std::string_view name, const T &value, int64_t ts = 0) {
     if constexpr (std::is_same_v<T, bool>) {
       auto &pub = GetOrCreate(name, m_boolPubs, [&] {
         return m_instance.GetBooleanTopic(name).Publish();
@@ -76,7 +84,7 @@ public:
   }
 
   template <typename T>
-  void Log(const std::string &name, const std::vector<T> &values,
+  void Log(std::string_view name, const std::vector<T> &values,
            int64_t ts = 0) {
     if constexpr (std::is_same_v<T, bool>) {
       std::vector<int> tmp;
@@ -125,54 +133,87 @@ public:
   }
 
   template <typename T, size_t N>
-  void Log(const std::string &name, const std::array<T, N> &arr,
+  void Log(std::string_view name, const std::array<T, N> &arr,
            int64_t ts = 0) {
-    std::vector<T> tmp(arr.begin(), arr.end());
-    Log(name, tmp, ts);
+    if constexpr (wpi::StructSerializable<T>) {
+      auto &pub = GetOrCreate(name, GetStructArrMap<T>(), [&] {
+        return m_instance.GetStructArrayTopic<T>(name).Publish();
+      });
+      pub.Set(arr, ts);
+    } else if constexpr (std::is_same_v<T, double>) {
+      auto &pub = GetOrCreate(name, m_doubleArrPubs, [&] {
+        return m_instance.GetDoubleArrayTopic(name).Publish();
+      });
+      pub.Set(std::span<const double>{arr.data(), N}, ts);
+    } else if constexpr (std::is_same_v<T, float>) {
+      auto &pub = GetOrCreate(name, m_floatArrPubs, [&] {
+        return m_instance.GetFloatArrayTopic(name).Publish();
+      });
+      pub.Set(std::span<const float>{arr.data(), N}, ts);
+    } else {
+      // Fallback for types needing conversion (bool→int, int→int64_t)
+      std::vector<T> tmp(arr.begin(), arr.end());
+      Log(name, tmp, ts);
+    }
   }
 
 private:
   Logger() : m_instance(nt::NetworkTableInstance::GetDefault()) {}
 
-  // Fast path shared (read) lock to find existing publisher
-  // Slow path exclusive (write) lock only on first creation
+  // Hot path: shared (read) lock finds existing publisher — no allocation.
+  // Cold path: exclusive (write) lock creates publisher once per key.
   template <class Map, class Factory>
-  typename Map::mapped_type &GetOrCreate(const std::string &name, Map &map,
+  typename Map::mapped_type &GetOrCreate(std::string_view name, Map &map,
                                          Factory &&make) {
     {
       std::shared_lock rl(m_lock);
       if (auto it = map.find(name); it != map.end())
         return it->second;
     }
-    // Miss — take exclusive lock and check again
     std::unique_lock wl(m_lock);
     if (auto it = map.find(name); it != map.end())
       return it->second;
-    auto [it, _] = map.emplace(name, std::forward<Factory>(make)());
+    auto [it, _] =
+        map.emplace(std::string{name}, std::forward<Factory>(make)());
     return it->second;
   }
 
   template <typename T> static auto &GetStructMap() {
-    static std::unordered_map<std::string, nt::StructPublisher<T>> m;
+    static std::unordered_map<std::string, nt::StructPublisher<T>, StringHash,
+                              std::equal_to<>>
+        m;
     return m;
   }
   template <typename T> static auto &GetStructArrMap() {
-    static std::unordered_map<std::string, nt::StructArrayPublisher<T>> m;
+    static std::unordered_map<std::string, nt::StructArrayPublisher<T>,
+                              StringHash, std::equal_to<>>
+        m;
     return m;
   }
 
   nt::NetworkTableInstance m_instance;
   std::shared_mutex m_lock;
 
-  std::unordered_map<std::string, nt::BooleanPublisher> m_boolPubs;
-  std::unordered_map<std::string, nt::IntegerPublisher> m_intPubs;
-  std::unordered_map<std::string, nt::FloatPublisher> m_floatPubs;
-  std::unordered_map<std::string, nt::DoublePublisher> m_doublePubs;
-  std::unordered_map<std::string, nt::StringPublisher> m_stringPubs;
+  using SMap = std::equal_to<>;
+  std::unordered_map<std::string, nt::BooleanPublisher, StringHash, SMap>
+      m_boolPubs;
+  std::unordered_map<std::string, nt::IntegerPublisher, StringHash, SMap>
+      m_intPubs;
+  std::unordered_map<std::string, nt::FloatPublisher, StringHash, SMap>
+      m_floatPubs;
+  std::unordered_map<std::string, nt::DoublePublisher, StringHash, SMap>
+      m_doublePubs;
+  std::unordered_map<std::string, nt::StringPublisher, StringHash, SMap>
+      m_stringPubs;
 
-  std::unordered_map<std::string, nt::BooleanArrayPublisher> m_boolArrPubs;
-  std::unordered_map<std::string, nt::IntegerArrayPublisher> m_intArrPubs;
-  std::unordered_map<std::string, nt::FloatArrayPublisher> m_floatArrPubs;
-  std::unordered_map<std::string, nt::DoubleArrayPublisher> m_doubleArrPubs;
-  std::unordered_map<std::string, nt::StringArrayPublisher> m_stringArrPubs;
+  std::unordered_map<std::string, nt::BooleanArrayPublisher, StringHash, SMap>
+      m_boolArrPubs;
+  std::unordered_map<std::string, nt::IntegerArrayPublisher, StringHash, SMap>
+      m_intArrPubs;
+  std::unordered_map<std::string, nt::FloatArrayPublisher, StringHash, SMap>
+      m_floatArrPubs;
+  std::unordered_map<std::string, nt::DoubleArrayPublisher, StringHash, SMap>
+      m_doubleArrPubs;
+  std::unordered_map<std::string, nt::StringArrayPublisher, StringHash, SMap>
+      m_stringArrPubs;
 };

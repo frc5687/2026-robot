@@ -237,7 +237,7 @@ void OdometryThread::UpdateOdometryAndEstimator() {
     std::unique_lock lock(m_dataMutex); // one lock for both operations
     auto newPose = m_odometry.Update(m_gyroInputs.yaw, modulePositions);
 
-    m_latestData.pose = newPose;
+    m_latestData.odometryPose= newPose;
     m_latestData.modulePositions = modulePositions;
     m_latestData.moduleStates = moduleStates;
     m_latestData.chassisSpeeds = chassisSpeeds;
@@ -302,14 +302,12 @@ void OdometryThread::UpdateStatistics(units::second_t loopTime) {
   {
     std::scoped_lock lock(m_statisticsMutex);
 
+    m_loopTimeSum -= m_loopTimes[m_loopTimeIndex]; // subtract old value
     m_loopTimes[m_loopTimeIndex] = loopTime;
+    m_loopTimeSum += loopTime; // add new value
     m_loopTimeIndex = (m_loopTimeIndex + 1) % kStatisticsWindowSize;
 
-    units::second_t total = 0_s;
-    for (const auto &time : m_loopTimes) {
-      total += time;
-    }
-    m_averageLoopTime.store(total / kStatisticsWindowSize);
+    m_averageLoopTime.store(m_loopTimeSum / kStatisticsWindowSize);
 
     auto currentMax = m_maxLoopTime.load();
     while (loopTime > currentMax &&
@@ -385,7 +383,7 @@ OdometryData OdometryThread::GetLatestData() const {
 
 frc::Pose2d OdometryThread::GetOdometryPose() const {
   std::shared_lock lock(m_dataMutex);
-  return m_latestData.pose;
+  return m_latestData.odometryPose;
 }
 
 frc::Pose2d OdometryThread::GetEstimatedPose() const {
@@ -419,7 +417,7 @@ void OdometryThread::ResetPose(const frc::Pose2d &pose) {
 
   std::unique_lock lock(m_dataMutex);
   m_odometry.ResetPosition(m_gyroInputs.yaw, currentPositions, pose);
-  m_latestData.pose = pose;
+  m_latestData.odometryPose = pose;
   m_latestData.modulePositions = currentPositions;
   m_estimator->ResetPose(pose);
 }
@@ -436,7 +434,7 @@ void OdometryThread::ResetPoseKeepRotation(const frc::Pose2d &pose) {
   }
 
   m_odometry.ResetPosition(m_gyroInputs.yaw, currentPositions, newPose);
-  m_latestData.pose = newPose;
+  m_latestData.odometryPose = newPose;
   m_latestData.modulePositions = currentPositions;
   m_estimator->ResetPose(newPose);
 }

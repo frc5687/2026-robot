@@ -1814,8 +1814,6 @@ T SafeJSONAccess(const wpi::json &jsonData, const KeyType &key,
                  const T &defaultValue) {
   try {
     return jsonData.at(key).template get<T>();
-  } catch (wpi::json::exception &e) {
-    return defaultValue;
   } catch (...) {
     return defaultValue;
   }
@@ -2106,8 +2104,6 @@ getLatestResults(const std::string &limelightName = "", bool profile = false) {
   wpi::json data;
   try {
     data = wpi::json::parse(jsonString);
-  } catch (const std::exception &e) {
-    return LimelightResultsClass();
   } catch (...) {
     return LimelightResultsClass();
   }

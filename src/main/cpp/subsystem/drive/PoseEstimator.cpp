@@ -6,13 +6,12 @@
 #include <frc/geometry/Transform2d.h>
 #include <wpi/array.h>
 
-#include <iostream>
 #include <vector>
 
 #include "utils/Logger.h"
 
 PoseEstimator::PoseEstimator(const Config &config) : m_config(config) {
-  Logger::Instance().Log("PoseEstimator/Initialized", true);
+  // Logger::Instance().Log("PoseEstimator/Initialized", true);
 }
 
 void PoseEstimator::UpdatePoseEstimate(const OdometryData &latestOdometry) {
@@ -26,20 +25,20 @@ void PoseEstimator::UpdatePoseEstimate(const OdometryData &latestOdometry) {
     auto deltaTime = currentTime - m_lastUpdateTime;
     if (deltaTime > 0_s) {
       auto deltaTransform =
-          frc::Transform2d{m_lastOdometryPose, latestOdometry.pose};
+          frc::Transform2d{m_lastOdometryPose, latestOdometry.odometryPose};
       auto distance = units::meter_t{
           std::sqrt(deltaTransform.X().value() * deltaTransform.X().value() +
                     deltaTransform.Y().value() * deltaTransform.Y().value())};
       m_currentVelocity = distance / deltaTime;
     }
   }
-  frc::Transform2d odometryDelta{m_lastOdometryPose, latestOdometry.pose};
+  frc::Transform2d odometryDelta{m_lastOdometryPose, latestOdometry.odometryPose};
   m_estimatedPose = m_estimatedPose + odometryDelta;
-  m_lastOdometryPose = latestOdometry.pose;
+  m_lastOdometryPose = latestOdometry.odometryPose;
   m_lastUpdateTime = currentTime;
 
-  m_poseBuffer.AddSample(currentTime, latestOdometry.pose);
-  ProcessPendingMeasurements(latestOdometry.pose);
+  m_poseBuffer.AddSample(currentTime, latestOdometry.odometryPose);
+  ProcessPendingMeasurements(latestOdometry.odometryPose);
   // Logger::Instance().Log("PoseEstimator/RejectedCount", m_rejectedCount);
 }
 
@@ -104,8 +103,8 @@ void PoseEstimator::ProcessVisionMeasurement(
     const VisionMeasurement &measurement) {
   auto odometryAtTime = m_poseBuffer.Sample(measurement.timestamp);
   if (!odometryAtTime) {
-    Logger::Instance().Log("PoseEstimator/NoInterpolation",
-                           measurement.timestamp.value());
+    // Logger::Instance().Log("PoseEstimator/NoInterpolation",
+    //                       measurement.timestamp.value());
     m_rejectedCount++;
     return;
   }
@@ -122,22 +121,22 @@ void PoseEstimator::ProcessVisionMeasurement(
       frc::Rotation2d{measurementDelta.Rotation().Radians() * gain[2]}};
 
   m_estimatedPose = estimateAtTime + scaledCorrection + odometryTransform;
-  Logger::Instance().Log("PoseEstimator/EstimateAtTime", estimateAtTime);
-  Logger::Instance().Log("PoseEstimator/scaledCorrection", scaledCorrection);
-  Logger::Instance().Log("PoseEstimator/odometryTransform", odometryTransform);
+  // Logger::Instance().Log("PoseEstimator/EstimateAtTime", estimateAtTime);
+  // Logger::Instance().Log("PoseEstimator/scaledCorrection", scaledCorrection);
+  // Logger::Instance().Log("PoseEstimator/odometryTransform", odometryTransform);
   m_processedCount++;
   m_lastVisionTime = frc::Timer::GetFPGATimestamp();
 
-  static auto lastLog = 0_s;
-  auto now = frc::Timer::GetFPGATimestamp();
-  if (now - lastLog > 0.2_s) {
-    Logger::Instance().Log("PoseEstimator/MeasurementXYStd",
-                           measurement.xyStdDev);
-    Logger::Instance().Log("PoseEstimator/MeasurementThetaStd",
-                           measurement.thetaStdDev);
-    Logger::Instance().Log("PoseEstimator/KalmanGain", gain);
-    lastLog = now;
-  }
+  // static auto lastLog = 0_s;
+  // auto now = frc::Timer::GetFPGATimestamp();
+  // if (now - lastLog > 0.2_s) {
+  //   Logger::Instance().Log("PoseEstimator/MeasurementXYStd",
+  //                          measurement.xyStdDev);
+  //   Logger::Instance().Log("PoseEstimator/MeasurementThetaStd",
+  //                          measurement.thetaStdDev);
+  //   Logger::Instance().Log("PoseEstimator/KalmanGain", gain);
+  //   lastLog = now;
+  // }
 }
 
 bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
@@ -149,20 +148,15 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
 
   if (currentTime - measurement.timestamp >
       units::second_t{m_config.maxTimestampAge}) {
-    std::cout << "Not valid due to timestamp diff: "
-              << (currentTime - measurement.timestamp).value() << "\n";
     return false;
   }
 
   if (measurement.confidence > 0 &&
       measurement.confidence < m_config.minConfidence) {
-    std::cout << "Not valid due to confidence: " << measurement.confidence
-              << "\n";
     return false;
   }
 
   if (!IsReasonablePose(measurement.pose)) {
-    std::cout << "Not valid due to not a resonable pose.\n";
     return false;
   }
 

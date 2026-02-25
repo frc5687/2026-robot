@@ -100,6 +100,7 @@ private:
   static constexpr size_t kStatisticsWindowSize = 50;
   std::array<units::second_t, kStatisticsWindowSize> m_loopTimes{};
   size_t m_loopTimeIndex{0};
+  units::second_t m_loopTimeSum{0_s}; 
   std::mutex m_statisticsMutex;
 
   std::atomic<units::second_t> m_lastValidTimestamp{0_s};

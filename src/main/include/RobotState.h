@@ -36,18 +36,12 @@ public:
   HoodState GetHoodState(units::second_t timestamp);
 
   void LogState(units::second_t timestamp);
-  bool IsBallIndexing() const { return m_indexerBallDetected; }
-  void SetBallIndexingEvent(bool isIndexing) {
-    m_indexerBallDetected = isIndexing;
-  }
 
 private:
   RobotState();
   frc::TimeInterpolatableBuffer<OdometryData> m_driveBuffer;
   frc::TimeInterpolatableBuffer<FlywheelState> m_flywheelBuffer;
   frc::TimeInterpolatableBuffer<HoodState> m_hoodBuffer;
-
-  bool m_indexerBallDetected;
 
   template <typename T> void Log(const std::string &key, T val) {
     Logger::Instance().Log("RobotState/" + key, val);

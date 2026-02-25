@@ -8,6 +8,8 @@
 #include <networktables/NetworkTableInstance.h>
 #include <units/time.h>
 
+#include <array>
+#include <cstring>
 #include <memory>
 #include <string>
 
@@ -60,10 +62,24 @@ protected:
    * @param value The value to log
    */
   template <typename T> void Log(const std::string &key, const T &value) {
-    Logger::Instance().Log(m_name + "/" + key, value);
+    std::array<char, 128> buf;
+    std::size_t prefixLen = m_prefix.size();
+    std::size_t totalLen = prefixLen + key.size();
+    char *ptr = buf.data();
+    std::string overflow;
+    if (totalLen >= buf.size()) [[unlikely]] {
+      overflow = m_prefix + key;
+      ptr = overflow.data();
+      totalLen = overflow.size();
+    } else {
+      std::memcpy(ptr, m_prefix.data(), prefixLen);
+      std::memcpy(ptr + prefixLen, key.data(), key.size());
+    }
+    Logger::Instance().Log(std::string_view{ptr, totalLen}, value);
   }
 
   std::string m_name;
+  std::string m_prefix; // "m_name/" — built once in constructor
 
 private:
   std::shared_ptr<nt::NetworkTable> m_table;

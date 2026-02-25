@@ -115,11 +115,9 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double flywheelSpeed = m_flywheelMap.GetValue(effDist);
   tof = m_tofMap.GetValue(effDist);
 
-  // Field-relative heading the drivetrain must face so the launcher points at
-  // the TOF-corrected target position. Accounts for launcher orientation
-  // relative to robot chassis (robotHeading = aimDir - launcherRotation).
-  frc::Rotation2d aimToTarget{
-      units::radian_t{std::atan2(ty - lookaheadY, tx - lookaheadX)}};
+  double aimX = tx - lx - fieldVx * tof;
+  double aimY = ty - ly - fieldVy * tof;
+  frc::Rotation2d aimToTarget{units::radian_t{std::atan2(aimY, aimX)}};
   frc::Rotation2d driveAngle = aimToTarget - m_cfg.robotToLauncher.Rotation();
 
   // Compare current robot heading against required drive angle.

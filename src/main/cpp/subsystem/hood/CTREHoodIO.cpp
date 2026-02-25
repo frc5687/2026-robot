@@ -27,7 +27,7 @@ CTREHoodIO::CTREHoodIO(const CANDevice &motor, const CANDevice &encoder)
 
   m_encoderAbsPositionSignal.WaitForUpdate(0.1_s);
   // ABS encoder is not 1:1 and can fall out of zones so not using
-  units::turn_t absPos = m_encoderAbsPositionSignal.GetValue();
+  // units::turn_t absPos = m_encoderAbsPositionSignal.GetValue();
   m_motor.SetPosition(0_tr);
 }
 

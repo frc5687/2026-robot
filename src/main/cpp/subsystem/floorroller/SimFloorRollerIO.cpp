@@ -17,11 +17,6 @@ SimFloorRollerIO::SimFloorRollerIO()
           kMotor),
       m_pid(PID::kP, 0.0, PID::kD) {}
 
-void SimFloorRollerIO::InjectBall() {
-  m_ballPresent = true;
-  m_ballTimer = 0_s;
-}
-
 units::volt_t SimFloorRollerIO::CalculateClosedLoop() {
   if (m_velocitySetpoint.value() <= 0)
     return 0_V;
@@ -52,16 +47,6 @@ void SimFloorRollerIO::UpdateInputs(FloorRollerIOInputs &inputs) {
 
   m_motorSim.SetInputVoltage(voltage);
   m_motorSim.Update(dt);
-
-  if (m_ballPresent) {
-    m_ballTimer += dt;
-    if (m_ballTimer < kBallContactDuration) {
-      m_motorSim.SetState(m_motorSim.GetAngularPosition(),
-                          m_motorSim.GetAngularVelocity() * kBallLoadFactor);
-    } else {
-      m_ballPresent = false;
-    }
-  }
 
   inputs.motorPosition = units::turn_t{m_motorSim.GetAngularPosition().value() *
                                        kGearRatio / (2.0 * std::numbers::pi)};

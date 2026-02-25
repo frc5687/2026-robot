@@ -9,7 +9,7 @@
 #include <string>
 
 LoggedSubsystem::LoggedSubsystem(const std::string &name)
-    : m_name(name),
+    : m_name(name), m_prefix(name + "/"),
       m_table(nt::NetworkTableInstance::GetDefault().GetTable(name)) {}
 
 void LoggedSubsystem::Periodic() {

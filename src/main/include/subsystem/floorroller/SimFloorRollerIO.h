@@ -20,8 +20,6 @@ public:
   void SetVelocity(units::turns_per_second_t rps) override;
   void Stop() override;
 
-  void InjectBall();
-
 private:
   units::volt_t CalculateClosedLoop();
 
@@ -32,7 +30,4 @@ private:
   Mode m_mode{Mode::kStopped};
   units::volt_t m_voltageCommand{0_V};
   units::turns_per_second_t m_velocitySetpoint{0_tps};
-
-  bool m_ballPresent{false};
-  units::second_t m_ballTimer{0_s};
 };

@@ -20,10 +20,6 @@ public:
   void SetVelocity(units::turns_per_second_t rps);
   void Stop();
 
-  bool BallDetected() const { return m_state.ballDetected; }
-  bool BallSeated() const { return m_state.ballSeated; }
-  bool BallFed() const { return m_state.ballFed; }
-
   const FloorRollerState &GetState() const { return m_state; }
 
 protected:

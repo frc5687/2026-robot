@@ -44,6 +44,7 @@
 #include "subsystem/kicker/CTREKickerIO.h"
 #include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/kicker/SimKickerIO.h"
+#include "subsystem/vision/LimelightCamera.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 
@@ -195,10 +196,10 @@ std::unique_ptr<VisionSubsystem> RobotContainer::CreateVision() {
     return std::make_unique<VisionSubsystem>(std::make_unique<SimVisionIO>(),
                                              m_drive->GetOdometryThread());
   }
-  std::vector<std::string> limelights{"limelight"};
+  std::vector<LimelightCamera::Config> limelights{
+      {"limelight", LimelightCamera::MegaTagMode::kMegaTag1}};
   return std::make_unique<VisionSubsystem>(
-      std::make_unique<LimelightVisionIO>(
-          limelights, LimelightVisionIO::MegaTagMode::kMegaTag1),
+      std::make_unique<LimelightVisionIO>(std::move(limelights)),
       m_drive->GetOdometryThread());
 }
 void RobotContainer::Periodic() {

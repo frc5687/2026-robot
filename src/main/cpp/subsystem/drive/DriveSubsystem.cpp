@@ -21,6 +21,8 @@
 #include "pathplanner/lib/config/ModuleConfig.h"
 #include "pathplanner/lib/config/RobotConfig.h"
 #include "subsystem/drive/PoseEstimator.h"
+#include "units/velocity.h"
+
 
 DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                                std::unique_ptr<ModuleIO> frontRight,
@@ -145,7 +147,9 @@ void DriveSubsystem::SetModuleStates(
   wpi::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
       desaturatedStates = states;
   frc::SwerveDriveKinematics<Constants::SwerveDrive::kModuleCount>::
-      DesaturateWheelSpeeds(&desaturatedStates, m_maxLinearSpeed);
+      DesaturateWheelSpeeds(&desaturatedStates, 
+      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed
+      );
 
   for (size_t i = 0; i < Constants::SwerveDrive::kModuleCount; i++) {
     m_modules[i]->SetDesiredState(desaturatedStates[i]);
@@ -167,6 +171,10 @@ void DriveSubsystem::LockWheels() {
                  frc::SwerveModuleState{0_mps, frc::Rotation2d{-45_deg}},
                  frc::SwerveModuleState{0_mps, frc::Rotation2d{45_deg}}};
   SetModuleStates(lockStates);
+}
+
+std::pair<units::meters_per_second_t, units::radians_per_second_t> DriveSubsystem::GetMaxSpeeds() const {
+  return {m_maxLinearSpeed, m_maxAngularSpeed};
 }
 
 frc::Pose2d DriveSubsystem::GetPose() const {
@@ -259,7 +267,6 @@ void DriveSubsystem::ResetPose(const frc::Pose2d &pose) {
   }
 }
 
-// Configuration methods
 void DriveSubsystem::SetMaxSpeeds(units::meters_per_second_t linear,
                                   units::radians_per_second_t angular) {
   m_maxLinearSpeed = std::min(linear, Constants::SwerveDrive::kMaxLinearSpeed);
@@ -298,24 +305,21 @@ bool DriveSubsystem::IsAtPose(const frc::Pose2d &pose,
 // This is handled by the odometry thread
 void DriveSubsystem::UpdateInputs() {
   if (m_odometryThread) {
-
-    RobotState::Instance().AddDriveObservation(
-        m_odometryThread->GetLatestData());
+    m_cachedOdometry = m_odometryThread->GetLatestData(); // single lock
+    RobotState::Instance().AddDriveObservation(m_cachedOdometry);
   }
 }
 
 void DriveSubsystem::LogTelemetry() {
-  if (m_odometryThread) {
-    auto data = m_odometryThread->GetLatestData();
-    if (data.isValid) {
-      Log("Pose", data.pose);
-      Log("Odometry Pose", data.pose);
-      Log("EsimatedPose", m_odometryThread->GetEstimatedPose());
-      Log("ModuleStates", data.moduleStates);
-      Log("Speeds", data.chassisSpeeds);
-      Log("FieldSpeeds", GetFieldRelativeSpeeds());
-      Log("Gyro/Yaw", data.gyroAngle);
-    }
+  if (m_cachedOdometry.isValid) {
+    Log("Odometry Pose", m_cachedOdometry.odometryPose);
+    Log("Estimated Pose", m_cachedOdometry.estimatedPose);
+    Log("ModuleStates", m_cachedOdometry.moduleStates);
+    Log("Speeds", m_cachedOdometry.chassisSpeeds);
+    auto fieldSpeeds = frc::ChassisSpeeds::FromRobotRelativeSpeeds(
+        m_cachedOdometry.chassisSpeeds, m_cachedOdometry.gyroAngle);
+    Log("FieldSpeeds", fieldSpeeds);
+    Log("Gyro/Yaw", m_cachedOdometry.gyroAngle);
   }
 
   Log("DesiredModuleStates", m_desiredStates);

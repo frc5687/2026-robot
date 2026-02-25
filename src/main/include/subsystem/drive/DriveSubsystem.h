@@ -21,6 +21,8 @@
 #include "OdometryThread.h"
 #include "module/Module.h"
 #include "subsystem/LoggedSubsystem.h"
+#include "units/angular_velocity.h"
+#include "units/velocity.h"
 
 class DriveSubsystem : public LoggedSubsystem {
 public:
@@ -52,6 +54,7 @@ public:
   GetModuleStates() const;
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
   GetModulePositions() const;
+  std::pair<units::meters_per_second_t, units::radians_per_second_t> GetMaxSpeeds() const;
 
   // Threaded odometry control
   void StartOdometryThread();
@@ -63,9 +66,8 @@ public:
   units::second_t GetOdometryLoopTime() const;
   size_t GetOdometrySuccessRate() const;
 
-public:
-  void SetMaxSpeeds(units::meters_per_second_t linear,
-                    units::radians_per_second_t angular);
+  void SetMaxSpeeds(units::meters_per_second_t linear = Constants::SwerveDrive::kMaxLinearSpeed,
+                    units::radians_per_second_t angular = Constants::SwerveDrive::kMaxAngularSpeed);
   void SetBrakeMode(bool brake);
   void ConfigureClosedLoop();
   bool IsAtPose(const frc::Pose2d &pose,
@@ -97,6 +99,7 @@ private:
   frc::SwerveDriveKinematics<Constants::SwerveDrive::kModuleCount> m_kinematics{
       Constants::SwerveDrive::kModuleTranslations};
 
+  OdometryData m_cachedOdometry; // Cached once in UpdateInputs, reused in LogTelemetry
   std::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
       m_desiredStates;
   units::meters_per_second_t m_maxLinearSpeed =

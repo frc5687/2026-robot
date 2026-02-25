@@ -30,7 +30,10 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
   m_headingController.SetTolerance(0.035); // ~2 deg
 }
 
-void ShootCommand::Initialize() { m_headingController.Reset(); }
+void ShootCommand::Initialize() { 
+  m_headingController.Reset(); 
+  m_drive->SetMaxSpeeds(Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
+}
 
 void ShootCommand::Execute() {
   auto now = frc::Timer::GetFPGATimestamp();
@@ -46,8 +49,10 @@ void ShootCommand::Execute() {
   double throttle = ApplyDeadband(m_throttle(), kDeadband);
   double strafe = ApplyDeadband(m_strafe(), kDeadband);
 
-  auto xVel = throttle * Constants::SwerveDrive::kMaxLinearSpeed;
-  auto yVel = strafe * Constants::SwerveDrive::kMaxLinearSpeed;
+  auto maxSpeeds = m_drive->GetMaxSpeeds();
+  units::meters_per_second_t maxLinearSpeed = maxSpeeds.first;
+  auto xVel = throttle * maxLinearSpeed;
+  auto yVel = strafe * maxLinearSpeed;
 
   double rotOutput =
       m_headingController.Calculate(m_drive->GetOdometryThread()
@@ -80,6 +85,7 @@ void ShootCommand::End(bool interrupted) {
   m_bottomRoller->Stop();
   m_floorRoller->Stop();
   m_kicker->Stop();
+  m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }
 

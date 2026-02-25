@@ -26,10 +26,10 @@ void ShooterSystem::Update() {
     auto alliance = frc::DriverStation::GetAlliance();
     auto solution = m_shotCalculator.Calculate(
         frc::Timer::GetFPGATimestamp(), alliance == frc::DriverStation::kRed);
-    auto setpoint = ShooterSetpoint{
-        .driveAngle = solution.driveAngle,
-        .hoodAngle = solution.hoodAngle,
-    };
+    ShooterSetpoint setpoint;
+    setpoint.driveAngle = solution.driveAngle;
+    setpoint.hoodAngle = solution.hoodAngle;
+    setpoint.flywheelSpeed = units::revolutions_per_minute_t{solution.flywheelSpeed};
 
     SetSetpoint(setpoint);
   } break;

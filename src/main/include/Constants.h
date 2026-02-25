@@ -156,6 +156,10 @@ inline constexpr size_t kTotalSignals =
     kModuleCount * kSignalsPerModule + kIMUSignals;
 } // namespace Odometry
 
+namespace Shooting {
+inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting = 1.5_mps;
+} // namespace Shooting
+
 } // namespace SwerveDrive
 
 namespace Flywheel {
@@ -260,13 +264,6 @@ inline constexpr double kAcceleration = 80.0;   // rps/s
 
 namespace FloorRoller {
 
-namespace Detection {
-constexpr units::ampere_t kCurrentDeltaThreshold{5_A};
-constexpr units::turns_per_second_t kVelocityDipThreshold{2_tps};
-constexpr units::ampere_t kSeatedCurrentCeiling{8_A};
-constexpr units::second_t kDebounceTime{0.06_s};
-} // namespace Detection
-
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(2);
 inline constexpr units::inch_t kRadius = 2_in;
 inline constexpr units::pound_t kMass = 1.5_lb;
@@ -290,9 +287,6 @@ inline constexpr double kA = 0.0;
 
 inline constexpr double kGearRatio = (42.0 / 9.0);
 
-// Sim
-inline constexpr units::second_t kBallContactDuration = 0.2_s;
-inline constexpr double kBallLoadFactor = 0.95;
 } // namespace FloorRoller
 
 namespace Kicker {
