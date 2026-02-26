@@ -10,11 +10,12 @@
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
-class EjectIntakeCommand : public frc2::CommandHelper<frc2::Command, EjectIntakeCommand> {
+class EjectIntakeCommand
+    : public frc2::CommandHelper<frc2::Command, EjectIntakeCommand> {
 public:
   EjectIntakeCommand(IntakeDeployerSubsystem *deployer,
-                IntakeTopRollerSubsystem *topRoller,
-                IntakeBottomRollerSubsystem *bottomRoller);
+                     IntakeTopRollerSubsystem *topRoller,
+                     IntakeBottomRollerSubsystem *bottomRoller);
 
   void Initialize() override;
   void Execute() override;

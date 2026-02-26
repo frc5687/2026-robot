@@ -10,9 +10,7 @@
 
 #include "utils/Logger.h"
 
-PoseEstimator::PoseEstimator(const Config &config) : m_config(config) {
-  // Logger::Instance().Log("PoseEstimator/Initialized", true);
-}
+PoseEstimator::PoseEstimator(const Config &config) : m_config(config) {}
 
 void PoseEstimator::UpdatePoseEstimate(const OdometryData &latestOdometry) {
   if (!latestOdometry.isValid) {
@@ -32,14 +30,30 @@ void PoseEstimator::UpdatePoseEstimate(const OdometryData &latestOdometry) {
       m_currentVelocity = distance / deltaTime;
     }
   }
-  frc::Transform2d odometryDelta{m_lastOdometryPose, latestOdometry.odometryPose};
+  frc::Transform2d odometryDelta{m_lastOdometryPose,
+                                 latestOdometry.odometryPose};
   m_estimatedPose = m_estimatedPose + odometryDelta;
   m_lastOdometryPose = latestOdometry.odometryPose;
   m_lastUpdateTime = currentTime;
 
   m_poseBuffer.AddSample(currentTime, latestOdometry.odometryPose);
   ProcessPendingMeasurements(latestOdometry.odometryPose);
-  // Logger::Instance().Log("PoseEstimator/RejectedCount", m_rejectedCount);
+
+  static auto lastSummaryLog = 0_s;
+  if (currentTime - lastSummaryLog > 0.25_s) {
+    Logger::Instance().Log("PoseEstimator/ProcessedCount", m_processedCount);
+    Logger::Instance().Log("PoseEstimator/RejectedCount", m_rejectedCount);
+    Logger::Instance().Log("PoseEstimator/TotalReceived", m_totalReceived);
+    Logger::Instance().Log("PoseEstimator/RejectNoTags", m_rejectNoTags);
+    Logger::Instance().Log("PoseEstimator/RejectTimestamp", m_rejectTimestamp);
+    Logger::Instance().Log("PoseEstimator/RejectConfidence",
+                           m_rejectConfidence);
+    Logger::Instance().Log("PoseEstimator/RejectOutOfField",
+                           m_rejectOutOfField);
+    Logger::Instance().Log("PoseEstimator/RejectNoInterpolation",
+                           m_rejectNoInterpolation);
+    lastSummaryLog = currentTime;
+  }
 }
 
 void PoseEstimator::ResetPose(const frc::Pose2d &pose) {
@@ -64,11 +78,10 @@ void PoseEstimator::AddVisionMeasurement(const VisionMeasurement &measurement) {
     return;
   }
 
+  m_totalReceived++;
   VisionMeasurement validatedMeasurement = measurement;
   if (ValidateMeasurement(validatedMeasurement)) {
     m_pendingMeasurements.push_back(validatedMeasurement);
-  } else {
-    m_rejectedCount++;
   }
 }
 
@@ -103,8 +116,7 @@ void PoseEstimator::ProcessVisionMeasurement(
     const VisionMeasurement &measurement) {
   auto odometryAtTime = m_poseBuffer.Sample(measurement.timestamp);
   if (!odometryAtTime) {
-    // Logger::Instance().Log("PoseEstimator/NoInterpolation",
-    //                       measurement.timestamp.value());
+    m_rejectNoInterpolation++;
     m_rejectedCount++;
     return;
   }
@@ -121,9 +133,6 @@ void PoseEstimator::ProcessVisionMeasurement(
       frc::Rotation2d{measurementDelta.Rotation().Radians() * gain[2]}};
 
   m_estimatedPose = estimateAtTime + scaledCorrection + odometryTransform;
-  // Logger::Instance().Log("PoseEstimator/EstimateAtTime", estimateAtTime);
-  // Logger::Instance().Log("PoseEstimator/scaledCorrection", scaledCorrection);
-  // Logger::Instance().Log("PoseEstimator/odometryTransform", odometryTransform);
   m_processedCount++;
   m_lastVisionTime = frc::Timer::GetFPGATimestamp();
 
@@ -136,10 +145,15 @@ void PoseEstimator::ProcessVisionMeasurement(
                            measurement.thetaStdDev);
     Logger::Instance().Log("PoseEstimator/KalmanGainX", gain[0]);
     Logger::Instance().Log("PoseEstimator/KalmanGainY", gain[1]);
-    Logger::Instance().Log("PoseEstimator/ProcessedCount",
-                           static_cast<double>(m_processedCount));
-    Logger::Instance().Log("PoseEstimator/RejectedCount",
-                           static_cast<double>(m_rejectedCount));
+    Logger::Instance().Log("PoseEstimator/KalmanGainTheta", gain[2]);
+    Logger::Instance().Log("PoseEstimator/LastTagCount", measurement.tagCount);
+    Logger::Instance().Log("PoseEstimator/LastAvgTagDist",
+                           measurement.avgTagDistance);
+    Logger::Instance().Log("PoseEstimator/LastConfidence",
+                           measurement.confidence);
+    Logger::Instance().Log("PoseEstimator/LastAmbiguity",
+                           measurement.ambiguity);
+    Logger::Instance().Log("PoseEstimator/VisionPose", measurement.pose);
     lastLog = now;
   }
 }
@@ -148,35 +162,31 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
   auto currentTime = frc::Timer::GetFPGATimestamp();
 
   if (measurement.tagCount <= 0) {
+    m_rejectNoTags++;
+    m_rejectedCount++;
     return false;
   }
 
   if (currentTime - measurement.timestamp >
       units::second_t{m_config.maxTimestampAge}) {
+    m_rejectTimestamp++;
+    m_rejectedCount++;
     return false;
   }
 
   if (measurement.confidence > 0 &&
       measurement.confidence < m_config.minConfidence &&
       measurement.tagCount <= 1) {
+    m_rejectConfidence++;
+    m_rejectedCount++;
     return false;
   }
 
   if (!IsReasonablePose(measurement.pose)) {
+    m_rejectOutOfField++;
+    m_rejectedCount++;
     return false;
   }
-
-  // NOTE: this works if our pose doesn't drift significantly, otherwise wont
-  // converge since filtered out units::second_t deltaTime = 0_s; if
-  // (m_lastUpdateTime > 0_s) {
-  //   deltaTime = currentTime - measurement.timestamp;
-  // }
-  // if (deltaTime > 0.01_s &&
-  //     !IsReasonableMovement(GetEstimatedPose(), measurement.pose, deltaTime))
-  //     {
-  //   std::cout << "Not valid due to not a resonable movement.\n";
-  //   return false;
-  // }
 
   CalculateStandardDeviations(measurement);
 
@@ -185,29 +195,36 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
 
 void PoseEstimator::CalculateStandardDeviations(
     VisionMeasurement &measurement) {
-  double xyStd = (measurement.xyStdDev > 0.0) ? measurement.xyStdDev
-                                               : m_config.baseXYStdDev;
-  double thetaStd = (measurement.thetaStdDev > 0.0) ? measurement.thetaStdDev
-                                                     : m_config.baseThetaStdDev;
+  // If the camera already computed std devs (e.g. LimelightCamera accounts for
+  // distance, tag count, and ambiguity), use them directly. Only apply our own
+  // penalties when the camera did not provide values.
+  bool cameraProvidedStdDevs = measurement.xyStdDev > 0.0;
 
-  if (measurement.tagCount <= 1) {
-    xyStd *= m_config.singleTagPenalty;
-    thetaStd *= m_config.singleTagPenalty * m_config.singleTagThetaScale;
-  }
+  double xyStd =
+      cameraProvidedStdDevs ? measurement.xyStdDev : m_config.baseXYStdDev;
+  double thetaStd = cameraProvidedStdDevs ? measurement.thetaStdDev
+                                          : m_config.baseThetaStdDev;
 
-  if (measurement.avgTagDistance > m_config.distancePenaltyThreshold) {
-    double distanceFactor =
-        1.0 + (measurement.avgTagDistance - m_config.distancePenaltyThreshold) *
-                   m_config.distancePenaltyRate;
-    xyStd *= distanceFactor;
-    thetaStd *= distanceFactor * m_config.distanceThetaScale;
-  }
+  if (!cameraProvidedStdDevs) {
+    if (measurement.tagCount <= 1) {
+      xyStd *= m_config.singleTagPenalty;
+      thetaStd *= m_config.singleTagPenalty * m_config.singleTagThetaScale;
+    }
 
-  if (measurement.ambiguity > m_config.ambiguityThreshold) {
-    double ambiguityFactor =
-        1.0 + measurement.ambiguity * m_config.ambiguityPenaltyRate;
-    xyStd *= ambiguityFactor;
-    thetaStd *= ambiguityFactor;
+    if (measurement.avgTagDistance > m_config.distancePenaltyThreshold) {
+      double distanceFactor = 1.0 + (measurement.avgTagDistance -
+                                     m_config.distancePenaltyThreshold) *
+                                        m_config.distancePenaltyRate;
+      xyStd *= distanceFactor;
+      thetaStd *= distanceFactor * m_config.distanceThetaScale;
+    }
+
+    if (measurement.ambiguity > m_config.ambiguityThreshold) {
+      double ambiguityFactor =
+          1.0 + measurement.ambiguity * m_config.ambiguityPenaltyRate;
+      xyStd *= ambiguityFactor;
+      thetaStd *= ambiguityFactor;
+    }
   }
 
   measurement.xyStdDev =

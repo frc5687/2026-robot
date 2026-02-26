@@ -21,10 +21,10 @@
 #include <span>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-
 
 struct StringHash {
   using is_transparent = void;
@@ -48,7 +48,7 @@ public:
       });
       pub.Set(value, ts);
 
-    } else if constexpr (std::is_same_v<T, int>) {
+    } else if constexpr (std::is_integral_v<T>) {
       auto &pub = GetOrCreate(name, m_intPubs, [&] {
         return m_instance.GetIntegerTopic(name).Publish();
       });
@@ -96,7 +96,7 @@ public:
       });
       pub.Set(tmp, ts);
 
-    } else if constexpr (std::is_same_v<T, int>) {
+    } else if constexpr (std::is_integral_v<T>) {
       std::vector<int64_t> tmp(values.begin(), values.end());
       auto &pub = GetOrCreate(name, m_intArrPubs, [&] {
         return m_instance.GetIntegerArrayTopic(name).Publish();
@@ -133,8 +133,7 @@ public:
   }
 
   template <typename T, size_t N>
-  void Log(std::string_view name, const std::array<T, N> &arr,
-           int64_t ts = 0) {
+  void Log(std::string_view name, const std::array<T, N> &arr, int64_t ts = 0) {
     if constexpr (wpi::StructSerializable<T>) {
       auto &pub = GetOrCreate(name, GetStructArrMap<T>(), [&] {
         return m_instance.GetStructArrayTopic<T>(name).Publish();

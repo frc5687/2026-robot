@@ -4,10 +4,10 @@
 
 #include <frc/DriverStation.h>
 #include <frc/RobotBase.h>
+#include <frc/livewindow/LiveWindow.h>
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/RunCommand.h>
-#include <frc/livewindow/LiveWindow.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>

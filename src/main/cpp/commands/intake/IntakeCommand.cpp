@@ -5,14 +5,13 @@
 IntakeCommand::IntakeCommand(IntakeDeployerSubsystem *deployer,
                              IntakeTopRollerSubsystem *topRoller,
                              IntakeBottomRollerSubsystem *bottomRoller)
-    : m_deployer(deployer), m_topRoller(topRoller), m_bottomRoller(bottomRoller) {
+    : m_deployer(deployer), m_topRoller(topRoller),
+      m_bottomRoller(bottomRoller) {
   AddRequirements({deployer, topRoller, bottomRoller});
   SetName("IntakeCommand");
 }
 
-void IntakeCommand::Initialize() {
-  m_deployer->Deploy();
-}
+void IntakeCommand::Initialize() { m_deployer->Deploy(); }
 
 void IntakeCommand::Execute() {
   m_deployer->Deploy();

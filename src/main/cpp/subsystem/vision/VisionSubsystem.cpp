@@ -2,6 +2,8 @@
 
 #include "subsystem/vision/VisionSubsystem.h"
 
+#include <frc/Timer.h>
+
 #include <iostream>
 #include <memory>
 #include <string>
@@ -20,6 +22,12 @@ void VisionSubsystem::UpdateInputs() {
   SetRobotPose(m_odometryThread->GetOdometryPose());
 
   m_io->UpdateInputs(m_inputs);
+
+  m_totalUpdates++;
+  if (!m_inputs.visionPoseMeasurements.empty()) {
+    m_updatesWithMeasurements++;
+  }
+
   for (auto measurement : m_inputs.visionPoseMeasurements) {
     m_odometryThread->AddVisionMeasurement(measurement.second);
   }
@@ -32,22 +40,20 @@ void VisionSubsystem::LogTelemetry() {
   }
 
   std::vector<frc::Pose3d> tags;
-  for (auto tag : m_inputs.cameraTagObservations) {
-    std::string cam = tag.first;
-
+  for (const auto &[cam, observations] : m_inputs.cameraTagObservations) {
     auto it = Constants::Vision::kTransformMap.find(cam);
     if (it == Constants::Vision::kTransformMap.end()) {
       std::cerr << "Failed to find camera: " << cam << "\n";
-      return;
+      continue;
     }
     frc::Transform3d cameraTransform = it->second;
-    frc::Transform3d camTransformToTarget = tag.second.Transform();
-
     frc::Pose3d robotPose3d{m_odometryThread->GetEstimatedPose()};
-    frc::Pose3d tagPoseInField = robotPose3d.TransformBy(cameraTransform)
-                                     .TransformBy(camTransformToTarget);
 
-    tags.push_back(tagPoseInField);
+    for (const auto &obs : observations) {
+      frc::Pose3d tagPoseInField =
+          robotPose3d.TransformBy(cameraTransform).TransformBy(obs.Transform());
+      tags.push_back(tagPoseInField);
+    }
   }
 
   Log("Tag Poses", tags);
@@ -56,4 +62,38 @@ void VisionSubsystem::LogTelemetry() {
   };
 
   Log("Transforms", camTransforms);
+  Log("TotalUpdates", m_totalUpdates);
+  Log("UpdatesWithMeasurements", m_updatesWithMeasurements);
+  size_t tagsSeen = 0;
+  for (const auto &[name, observations] : m_inputs.cameraTagObservations) {
+    tagsSeen += observations.size();
+  }
+  Log("TagsSeenThisLoop", tagsSeen);
+  Log("MeasurementsThisLoop", m_inputs.visionPoseMeasurements.size());
+
+  auto now = frc::Timer::GetFPGATimestamp();
+  for (const auto &[name, m] : m_inputs.visionPoseMeasurements) {
+    std::string prefix = name + "/";
+    Log(prefix + "TagCount", m.tagCount);
+    Log(prefix + "AvgTagDist", m.avgTagDistance);
+    Log(prefix + "Confidence", m.confidence);
+    Log(prefix + "Ambiguity", m.ambiguity);
+    Log(prefix + "XYStdDev", m.xyStdDev);
+    Log(prefix + "ThetaStdDev", m.thetaStdDev);
+    Log(prefix + "Latency", (now - m.timestamp).value());
+    Log(prefix + "Pose", m.pose);
+  }
+
+  int totalTags = 0;
+  for (const auto &[name, observations] : m_inputs.cameraTagObservations) {
+    for (const auto &obs : observations) {
+      std::string prefix = name + "/Tag" + std::to_string(totalTags) + "/";
+      Log(prefix + "ID", obs.Id());
+      Log(prefix + "Ambiguity", obs.Ambiguity());
+      Log(prefix + "Area", obs.Area());
+      Log(prefix + "Confidence", obs.Confidence());
+      totalTags++;
+    }
+  }
+  Log("TagCount", totalTags);
 }

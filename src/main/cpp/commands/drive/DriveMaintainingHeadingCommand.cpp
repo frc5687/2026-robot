@@ -99,7 +99,8 @@ void DriveMaintainingHeadingCommand::Execute() {
       m_headingController.Reset();
     }
 
-    rotVelocity = CalculateHeadingCorrection(heading, m_headingSetpoint.value());
+    rotVelocity =
+        CalculateHeadingCorrection(heading, m_headingSetpoint.value());
   }
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});

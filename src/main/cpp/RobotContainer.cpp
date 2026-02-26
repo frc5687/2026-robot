@@ -5,6 +5,7 @@
 
 #include <frc/RobotBase.h>
 #include <frc2/command/Commands.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
@@ -47,7 +48,6 @@
 #include "subsystem/vision/LimelightCamera.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
-#include <pathplanner/lib/auto/NamedCommands.h>
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
@@ -70,9 +70,9 @@ std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
       +0.405517578125_tr, // FL
-      +0.110595703125_tr,  // FR
+      +0.110595703125_tr, // FR
       +0.33642578125_tr,  // BL
-      -0.0517578125_tr   // BR
+      -0.0517578125_tr    // BR
   };
 
   if (frc::RobotBase::IsSimulation()) {
@@ -210,10 +210,9 @@ void RobotContainer::Periodic() {
   // m_robotViz.FutureViz(1_s);
 }
 
-void RobotContainer::ConfigureAutoCommands(){
-  pathplanner::NamedCommands::registerCommand("Shoot", nullptr); 
-} 
-
+void RobotContainer::ConfigureAutoCommands() {
+  pathplanner::NamedCommands::registerCommand("Shoot", nullptr);
+}
 
 void RobotContainer::ConfigureBindings() {
   // Set default drive command
@@ -225,12 +224,12 @@ void RobotContainer::ConfigureBindings() {
       [this] { return -m_driver.GetRightX(); },
       true)); // slew limiter
 
-  //m_driver.Circle().WhileTrue(
-  //    Run([this] { m_flywheel->SetRPM(600_rpm); }, {m_flywheel.get()}));
-  //m_driver.Triangle().WhileTrue(
-  //    Run([this] { m_kicker->SetVelocity(60_tps); }, {m_kicker.get()}));
+  // m_driver.Circle().WhileTrue(
+  //     Run([this] { m_flywheel->SetRPM(600_rpm); }, {m_flywheel.get()}));
+  // m_driver.Triangle().WhileTrue(
+  //     Run([this] { m_kicker->SetVelocity(60_tps); }, {m_kicker.get()}));
   m_driver.Cross().WhileTrue(
-    Run([this] { m_hood->SetPosition(0_deg); }, {m_hood.get()}));
+      Run([this] { m_hood->SetPosition(0_deg); }, {m_hood.get()}));
 
   m_driver.L2().WhileTrue(IntakeCommand(m_intakeDeployer.get(),
                                         m_intakeTopRoller.get(),
@@ -243,25 +242,26 @@ void RobotContainer::ConfigureBindings() {
                               m_kicker.get(),
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
-                             .ToPtr());
-
-  m_driver.Square().WhileTrue(EjectIntakeCommand(m_intakeDeployer.get(),
-                                        m_intakeTopRoller.get(),
-                                        m_intakeBottomRoller.get())
                               .ToPtr());
 
+  m_driver.Square().WhileTrue(EjectIntakeCommand(m_intakeDeployer.get(),
+                                                 m_intakeTopRoller.get(),
+                                                 m_intakeBottomRoller.get())
+                                  .ToPtr());
 
-    m_driver.R1().OnFalse(
-        Run( [this] {
+  m_driver.R1().OnFalse(Run(
+      [this] {
         m_flywheel->SetRPM(0_rpm);
         m_kicker->Stop();
         m_hood->SetPosition(0_deg);
         m_floorRoller->Stop();
         m_intakeBottomRoller->Stop();
       },
-      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(), m_intakeBottomRoller.get()}));
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(),
+       m_intakeBottomRoller.get()}));
 
-  m_driver.R1().WhileTrue(Run( [this] {
+  m_driver.R1().WhileTrue(Run(
+      [this] {
         m_flywheel->SetRPM(1000_rpm);
         m_kicker->SetVelocity(60_tps);
         m_hood->SetPosition(10_deg);
@@ -273,7 +273,8 @@ void RobotContainer::ConfigureBindings() {
           m_floorRoller->Stop();
         }
       },
-      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(), m_intakeBottomRoller.get(), m_intakeDeployer.get()}));
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(),
+       m_intakeBottomRoller.get(), m_intakeDeployer.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -25,4 +25,6 @@ private:
   std::unique_ptr<VisionIO> m_io;
   std::shared_ptr<OdometryThread> m_odometryThread;
   VisionIOInputs m_inputs;
+  size_t m_totalUpdates{0};
+  size_t m_updatesWithMeasurements{0};
 };

@@ -35,14 +35,7 @@ void LimelightVisionIO::UpdateInputs(VisionIOInputs &inputs) {
     }
 
     if (!result.tags.empty()) {
-      const AprilTagObservation &best = *std::ranges::max_element(
-          result.tags,
-          [](const AprilTagObservation &a, const AprilTagObservation &b) {
-            if (a.Confidence() != b.Confidence())
-              return a.Confidence() < b.Confidence();
-            return a.Area() < b.Area();
-          });
-      inputs.cameraTagObservations.emplace(cam.Name(), best);
+      inputs.cameraTagObservations.emplace(cam.Name(), std::move(result.tags));
     }
   }
 }

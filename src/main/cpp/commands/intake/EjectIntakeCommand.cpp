@@ -2,18 +2,16 @@
 
 #include "commands/intake/EjectIntakeCommand.h"
 
-EjectIntakeCommand::EjectIntakeCommand(IntakeDeployerSubsystem *deployer,
-                             IntakeTopRollerSubsystem *topRoller,
-                             IntakeBottomRollerSubsystem *bottomRoller)
+EjectIntakeCommand::EjectIntakeCommand(
+    IntakeDeployerSubsystem *deployer, IntakeTopRollerSubsystem *topRoller,
+    IntakeBottomRollerSubsystem *bottomRoller)
     : m_deployer(deployer), m_topRoller(topRoller),
       m_bottomRoller(bottomRoller) {
   AddRequirements({deployer, topRoller, bottomRoller});
   SetName("IntakeCommand");
 }
 
-void EjectIntakeCommand::Initialize() {
-  m_deployer->Deploy();
-}
+void EjectIntakeCommand::Initialize() { m_deployer->Deploy(); }
 
 void EjectIntakeCommand::Execute() {
   m_deployer->Deploy();

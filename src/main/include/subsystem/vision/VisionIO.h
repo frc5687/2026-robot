@@ -4,13 +4,15 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "frc/geometry/Pose2d.h"
 #include "utils/vision/AprilTagObservation.h"
 #include "utils/vision/VisionMeasurement.h"
 
 struct VisionIOInputs {
-  std::unordered_map<std::string, AprilTagObservation> cameraTagObservations{};
+  std::unordered_map<std::string, std::vector<AprilTagObservation>>
+      cameraTagObservations{};
   std::unordered_map<std::string, VisionMeasurement> visionPoseMeasurements{};
 };
 

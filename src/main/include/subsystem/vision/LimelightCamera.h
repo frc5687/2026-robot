@@ -41,8 +41,7 @@ public:
 
   // Call once per camera per loop before Flush(). Needed for MegaTag2.
   void SetRobotOrientationNoFlush(
-      units::degree_t yaw,
-      units::degrees_per_second_t yawRate = 0.0_deg_per_s,
+      units::degree_t yaw, units::degrees_per_second_t yawRate = 0.0_deg_per_s,
       units::degree_t pitch = 0.0_deg,
       units::degrees_per_second_t pitchRate = 0.0_deg_per_s,
       units::degree_t roll = 0.0_deg,
@@ -72,19 +71,19 @@ public:
 
       for (size_t i = 0; i < est.rawFiducials.size(); ++i) {
         const LimelightHelpers::RawFiducial &fid = est.rawFiducials[i];
-        out.tags.emplace_back(
-            fid.id, (i == 0) ? primaryTransform : frc::Transform3d{},
-            fid.ambiguity, fid.ta, units::degree_t{fid.txnc},
-            units::degree_t{fid.tync}, est.timestampSeconds,
-            std::clamp(1.0 - fid.ambiguity, 0.0, 1.0));
+        out.tags.emplace_back(fid.id,
+                              (i == 0) ? primaryTransform : frc::Transform3d{},
+                              fid.ambiguity, fid.ta, units::degree_t{fid.txnc},
+                              units::degree_t{fid.tync}, est.timestampSeconds,
+                              std::clamp(1.0 - fid.ambiguity, 0.0, 1.0));
       }
     }
 
     if (LimelightHelpers::validPoseEstimate(est)) {
-      const bool highAmbiguity = m_cfg.mode == MegaTagMode::kMegaTag1 &&
-                                 est.tagCount == 1 &&
-                                 !est.rawFiducials.empty() &&
-                                 est.rawFiducials[0].ambiguity > m_cfg.maxAmbiguity;
+      const bool highAmbiguity =
+          m_cfg.mode == MegaTagMode::kMegaTag1 && est.tagCount == 1 &&
+          !est.rawFiducials.empty() &&
+          est.rawFiducials[0].ambiguity > m_cfg.maxAmbiguity;
       if (!highAmbiguity) {
         out.poseEstimate = BuildMeasurement(est);
       }
@@ -102,12 +101,12 @@ private:
     if (arr.size() < 6)
       return frc::Transform3d{};
     constexpr double kD2R = std::numbers::pi / 180.0;
-    return frc::Transform3d{
-        frc::Translation3d{units::meter_t{arr[0]}, units::meter_t{arr[1]},
-                           units::meter_t{arr[2]}},
-        frc::Rotation3d{units::radian_t{arr[3] * kD2R},
-                        units::radian_t{arr[4] * kD2R},
-                        units::radian_t{arr[5] * kD2R}}};
+    return frc::Transform3d{frc::Translation3d{units::meter_t{arr[0]},
+                                               units::meter_t{arr[1]},
+                                               units::meter_t{arr[2]}},
+                            frc::Rotation3d{units::radian_t{arr[3] * kD2R},
+                                            units::radian_t{arr[4] * kD2R},
+                                            units::radian_t{arr[5] * kD2R}}};
   }
 
   VisionMeasurement

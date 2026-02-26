@@ -237,7 +237,7 @@ void OdometryThread::UpdateOdometryAndEstimator() {
     std::unique_lock lock(m_dataMutex); // one lock for both operations
     auto newPose = m_odometry.Update(m_gyroInputs.yaw, modulePositions);
 
-    m_latestData.odometryPose= newPose;
+    m_latestData.odometryPose = newPose;
     m_latestData.modulePositions = modulePositions;
     m_latestData.moduleStates = moduleStates;
     m_latestData.chassisSpeeds = chassisSpeeds;

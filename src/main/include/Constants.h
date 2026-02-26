@@ -157,7 +157,8 @@ inline constexpr size_t kTotalSignals =
 } // namespace Odometry
 
 namespace Shooting {
-inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting = 1.5_mps;
+inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting =
+    1.5_mps;
 } // namespace Shooting
 
 } // namespace SwerveDrive
@@ -325,11 +326,12 @@ inline constexpr bool kInverted = false;
 inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
 
-inline constexpr units::meter_t kPinionRadius = 0.5_in; // TODO: set to actual pinion pitch radius
+inline constexpr units::meter_t kPinionRadius =
+    0.5_in; // TODO: set to actual pinion pitch radius
 inline constexpr units::meter_t kPinionCircumference =
     kPinionRadius * 2.0 * std::numbers::pi_v<double>;
 inline constexpr double kMetersPerMotorRotation = 0.29 / 7.192;
-    //kPinionCircumference.value() / kGearRatio;
+// kPinionCircumference.value() / kGearRatio;
 
 inline constexpr units::meter_t kRetractedExtension = 0_m;
 inline constexpr units::meter_t kMidExtension = 0.18_m;

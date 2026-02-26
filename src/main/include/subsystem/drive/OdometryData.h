@@ -14,7 +14,7 @@
 #include "utils/Utils.h"
 
 struct OdometryData {
-  frc::Pose2d odometryPose{}; // Raw odometry pose
+  frc::Pose2d odometryPose{};  // Raw odometry pose
   frc::Pose2d estimatedPose{}; // This is the pose from estimator
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
       modulePositions{};

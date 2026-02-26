@@ -32,7 +32,8 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
 
 void ShootCommand::Initialize() {
   m_headingController.Reset();
-  m_drive->SetMaxSpeeds(Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
+  m_drive->SetMaxSpeeds(
+      Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
 }
 
 void ShootCommand::Execute() {
@@ -80,7 +81,7 @@ void ShootCommand::Execute() {
 
 void ShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
-  //m_hood->Stop();
+  // m_hood->Stop();
   m_hood->SetPosition(0_rad);
   m_bottomRoller->Stop();
   m_floorRoller->Stop();

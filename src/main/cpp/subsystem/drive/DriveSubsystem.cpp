@@ -23,7 +23,6 @@
 #include "subsystem/drive/PoseEstimator.h"
 #include "units/velocity.h"
 
-
 DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                                std::unique_ptr<ModuleIO> frontRight,
                                std::unique_ptr<ModuleIO> backLeft,
@@ -34,8 +33,7 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                 std::make_unique<Module>(std::move(frontRight)),
                 std::make_unique<Module>(std::move(backLeft)),
                 std::make_unique<Module>(std::move(backRight))},
-      m_gyro(std::move(gyro)),
-      m_robotConfig(BuildRobotConfig()) {
+      m_gyro(std::move(gyro)), m_robotConfig(BuildRobotConfig()) {
   m_gyro->Reset();
   PoseEstimator::Config config{};
   config.odometryXStdDev = 0.08;       // Trust odometry more on smooth field
@@ -136,9 +134,9 @@ void DriveSubsystem::SetModuleStates(
   wpi::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
       desaturatedStates = states;
   frc::SwerveDriveKinematics<Constants::SwerveDrive::kModuleCount>::
-      DesaturateWheelSpeeds(&desaturatedStates,
-      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed
-      );
+      DesaturateWheelSpeeds(
+          &desaturatedStates,
+          Constants::SwerveDrive::Module::kMaxModuleLinearSpeed);
 
   for (size_t i = 0; i < Constants::SwerveDrive::kModuleCount; i++) {
     m_modules[i]->SetDesiredState(desaturatedStates[i]);
@@ -162,7 +160,8 @@ void DriveSubsystem::LockWheels() {
   SetModuleStates(lockStates);
 }
 
-std::pair<units::meters_per_second_t, units::radians_per_second_t> DriveSubsystem::GetMaxSpeeds() const {
+std::pair<units::meters_per_second_t, units::radians_per_second_t>
+DriveSubsystem::GetMaxSpeeds() const {
   return {m_maxLinearSpeed, m_maxAngularSpeed};
 }
 

@@ -26,7 +26,7 @@ void IntakeDeployerSubsystem::RetractMid() {
 
 void IntakeDeployerSubsystem::Retract() {
   Log("Retract", true);
-  //m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
+  // m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
 }
 
 void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {
@@ -34,7 +34,8 @@ void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {
 }
 
 units::meter_t IntakeDeployerSubsystem::GetPosition() const {
-  return units::meter_t{m_inputs.motorPosition.value() * kMetersPerMotorRotation};
+  return units::meter_t{m_inputs.motorPosition.value() *
+                        kMetersPerMotorRotation};
 }
 
 void IntakeDeployerSubsystem::SetVoltage(units::volt_t voltage) {
