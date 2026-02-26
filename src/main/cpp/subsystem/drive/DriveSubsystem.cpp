@@ -136,7 +136,7 @@ void DriveSubsystem::SetModuleStates(
   wpi::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
       desaturatedStates = states;
   frc::SwerveDriveKinematics<Constants::SwerveDrive::kModuleCount>::
-      DesaturateWheelSpeeds(&desaturatedStates, 
+      DesaturateWheelSpeeds(&desaturatedStates,
       Constants::SwerveDrive::Module::kMaxModuleLinearSpeed
       );
 

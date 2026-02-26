@@ -267,12 +267,13 @@ void RobotContainer::ConfigureBindings() {
         m_hood->SetPosition(10_deg);
         if (m_flywheel->AtSetpoint()) {
           m_floorRoller->SetVoltage(10_V);
+          m_intakeDeployer->RetractMid();
           m_intakeBottomRoller->SetVoltage(10_V);
         } else {
           m_floorRoller->Stop();
         }
       },
-      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(), m_intakeBottomRoller.get()}));
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(), m_intakeBottomRoller.get(), m_intakeDeployer.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
