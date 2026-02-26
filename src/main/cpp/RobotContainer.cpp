@@ -47,6 +47,7 @@
 #include "subsystem/vision/LimelightCamera.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
+#include <pathplanner/lib/auto/NamedCommands.h>
 
 RobotContainer::RobotContainer() {
   m_drive = CreateDrive();
@@ -62,6 +63,7 @@ RobotContainer::RobotContainer() {
       *m_intakeDeployer, *m_intakeTopRoller, *m_intakeBottomRoller);
   m_shooter = std::make_unique<ShooterSystem>(*m_flywheel, *m_hood);
   ConfigureBindings();
+  ConfigureAutoCommands();
 }
 
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
@@ -207,6 +209,11 @@ void RobotContainer::Periodic() {
   m_robotViz.Update();
   // m_robotViz.FutureViz(1_s);
 }
+
+void RobotContainer::ConfigureAutoCommands(){
+  pathplanner::NamedCommands::registerCommand("Shoot", nullptr); 
+} 
+
 
 void RobotContainer::ConfigureBindings() {
   // Set default drive command

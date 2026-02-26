@@ -31,6 +31,7 @@ public:
 
 private:
   void ConfigureBindings();
+  void ConfigureAutoCommands();
 
   std::unique_ptr<DriveSubsystem> CreateDrive();
   std::unique_ptr<FlywheelSubsystem> CreateFlywheel();
