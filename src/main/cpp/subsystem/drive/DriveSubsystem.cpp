@@ -42,7 +42,8 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
   config.baseXYStdDev = 0.15;          // Conservative vision trust
   config.odometryThetaStdDev = 0.0001; // Really trust IMU
   config.baseThetaStdDev = 0.2;        // Dont really trust camera rotations
-  config.singleTagPenalty = 5.5;
+  config.singleTagPenalty = 2.5;
+  config.minConfidence = 0.1;
   m_odometryThread =
       std::make_unique<OdometryThread>(m_modules, m_gyro, config);
   StartOdometryThread();
@@ -167,7 +168,7 @@ std::pair<units::meters_per_second_t, units::radians_per_second_t> DriveSubsyste
 
 frc::Pose2d DriveSubsystem::GetPose() const {
   if (m_odometryThread) {
-    return m_odometryThread->GetOdometryPose();
+    return m_odometryThread->GetEstimatedPose();
   }
   return frc::Pose2d{};
 }

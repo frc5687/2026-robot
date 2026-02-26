@@ -127,16 +127,21 @@ void PoseEstimator::ProcessVisionMeasurement(
   m_processedCount++;
   m_lastVisionTime = frc::Timer::GetFPGATimestamp();
 
-  // static auto lastLog = 0_s;
-  // auto now = frc::Timer::GetFPGATimestamp();
-  // if (now - lastLog > 0.2_s) {
-  //   Logger::Instance().Log("PoseEstimator/MeasurementXYStd",
-  //                          measurement.xyStdDev);
-  //   Logger::Instance().Log("PoseEstimator/MeasurementThetaStd",
-  //                          measurement.thetaStdDev);
-  //   Logger::Instance().Log("PoseEstimator/KalmanGain", gain);
-  //   lastLog = now;
-  // }
+  static auto lastLog = 0_s;
+  auto now = frc::Timer::GetFPGATimestamp();
+  if (now - lastLog > 0.2_s) {
+    Logger::Instance().Log("PoseEstimator/MeasurementXYStd",
+                           measurement.xyStdDev);
+    Logger::Instance().Log("PoseEstimator/MeasurementThetaStd",
+                           measurement.thetaStdDev);
+    Logger::Instance().Log("PoseEstimator/KalmanGainX", gain[0]);
+    Logger::Instance().Log("PoseEstimator/KalmanGainY", gain[1]);
+    Logger::Instance().Log("PoseEstimator/ProcessedCount",
+                           static_cast<double>(m_processedCount));
+    Logger::Instance().Log("PoseEstimator/RejectedCount",
+                           static_cast<double>(m_rejectedCount));
+    lastLog = now;
+  }
 }
 
 bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
@@ -152,7 +157,8 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
   }
 
   if (measurement.confidence > 0 &&
-      measurement.confidence < m_config.minConfidence) {
+      measurement.confidence < m_config.minConfidence &&
+      measurement.tagCount <= 1) {
     return false;
   }
 
@@ -179,38 +185,35 @@ bool PoseEstimator::ValidateMeasurement(VisionMeasurement &measurement) {
 
 void PoseEstimator::CalculateStandardDeviations(
     VisionMeasurement &measurement) {
-  double xyStd = m_config.baseXYStdDev;
-  double thetaStd = m_config.baseThetaStdDev;
+  double xyStd = (measurement.xyStdDev > 0.0) ? measurement.xyStdDev
+                                               : m_config.baseXYStdDev;
+  double thetaStd = (measurement.thetaStdDev > 0.0) ? measurement.thetaStdDev
+                                                     : m_config.baseThetaStdDev;
 
-  // I'm being lazy with all the magic numbers TODO: Move to constants.
   if (measurement.tagCount <= 1) {
     xyStd *= m_config.singleTagPenalty;
-    thetaStd *= m_config.singleTagPenalty * 0.75;
+    thetaStd *= m_config.singleTagPenalty * m_config.singleTagThetaScale;
   }
 
-  if (measurement.avgTagDistance > 3.0) {
+  if (measurement.avgTagDistance > m_config.distancePenaltyThreshold) {
     double distanceFactor =
-        1.0 + (measurement.avgTagDistance - 3.0) * m_config.distancePenaltyRate;
+        1.0 + (measurement.avgTagDistance - m_config.distancePenaltyThreshold) *
+                   m_config.distancePenaltyRate;
     xyStd *= distanceFactor;
-    thetaStd *= distanceFactor * 0.6;
+    thetaStd *= distanceFactor * m_config.distanceThetaScale;
   }
 
-  if (measurement.confidence < m_config.confidenceThreshold) {
-    double confidenceFactor =
-        1.0 + (m_config.confidenceThreshold - measurement.confidence) *
-                  m_config.confidencePenaltyRate;
-    xyStd *= confidenceFactor;
-    thetaStd *= confidenceFactor;
-  }
-
-  if (measurement.ambiguity > 0.2) {
-    double ambiguityFactor = 1.0 + measurement.ambiguity * 2.0;
+  if (measurement.ambiguity > m_config.ambiguityThreshold) {
+    double ambiguityFactor =
+        1.0 + measurement.ambiguity * m_config.ambiguityPenaltyRate;
     xyStd *= ambiguityFactor;
     thetaStd *= ambiguityFactor;
   }
 
-  measurement.xyStdDev = std::clamp(xyStd, 0.02, 3.0);
-  measurement.thetaStdDev = std::clamp(thetaStd, 0.01, 1.5);
+  measurement.xyStdDev =
+      std::clamp(xyStd, m_config.minXYStdDev, m_config.maxXYStdDev);
+  measurement.thetaStdDev =
+      std::clamp(thetaStd, m_config.minThetaStdDev, m_config.maxThetaStdDev);
 }
 
 std::array<double, 3>
