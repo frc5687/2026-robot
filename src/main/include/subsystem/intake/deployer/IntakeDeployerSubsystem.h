@@ -17,6 +17,7 @@ public:
   explicit IntakeDeployerSubsystem(std::unique_ptr<IntakeDeployerIO> io);
 
   void Deploy();
+  void RetractMid();
   void Retract();
 
   // Not tested at all

@@ -30,8 +30,8 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
   m_headingController.SetTolerance(0.035); // ~2 deg
 }
 
-void ShootCommand::Initialize() { 
-  m_headingController.Reset(); 
+void ShootCommand::Initialize() {
+  m_headingController.Reset();
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
 }
 

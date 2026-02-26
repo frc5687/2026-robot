@@ -12,17 +12,17 @@ EjectIntakeCommand::EjectIntakeCommand(IntakeDeployerSubsystem *deployer,
 }
 
 void EjectIntakeCommand::Initialize() {
-  // m_deployer->Deploy();
+  m_deployer->Deploy();
 }
 
 void EjectIntakeCommand::Execute() {
-  // m_deployer->Deploy();
+  m_deployer->Deploy();
   m_topRoller->SetVoltage(kTopRollerVoltage);
   m_bottomRoller->SetVoltage(kBottomRollerVoltage);
 }
 
 void EjectIntakeCommand::End(bool interrupted) {
-  m_deployer->Retract();
+  // m_deployer->RetractMid();
   m_topRoller->Stop();
   m_bottomRoller->Stop();
 }
