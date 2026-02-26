@@ -67,9 +67,9 @@ RobotContainer::RobotContainer() {
 std::unique_ptr<DriveSubsystem> RobotContainer::CreateDrive() {
   // Module encoder offsets (tune these per robot)
   constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-      0.405517578125_tr, // FL
-      -0.2236328125_tr,  // FR
-      0.33642578125_tr,  // BL
+      +0.405517578125_tr, // FL
+      +0.110595703125_tr,  // FR
+      +0.33642578125_tr,  // BL
       -0.0517578125_tr   // BR
   };
 
@@ -250,8 +250,9 @@ void RobotContainer::ConfigureBindings() {
         m_kicker->Stop();
         m_hood->SetPosition(0_deg);
         m_floorRoller->Stop();
+        m_intakeBottomRoller->Stop();
       },
-      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get()}));
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(), m_intakeBottomRoller.get()}));
 
   m_driver.R1().WhileTrue(Run( [this] {
         m_flywheel->SetRPM(1000_rpm);
@@ -259,11 +260,12 @@ void RobotContainer::ConfigureBindings() {
         m_hood->SetPosition(10_deg);
         if (m_flywheel->AtSetpoint()) {
           m_floorRoller->SetVoltage(10_V);
+          m_intakeBottomRoller->SetVoltage(10_V);
         } else {
           m_floorRoller->Stop();
         }
       },
-      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get()}));
+      {m_flywheel.get(), m_kicker.get(), m_floorRoller.get(), m_hood.get(), m_intakeBottomRoller.get()}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

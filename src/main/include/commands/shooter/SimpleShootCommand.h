@@ -11,6 +11,7 @@
 #include "subsystem/floorroller/FloorRollerSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
+#include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/kicker/KickerSubsystem.h"
 
 class SimpleShootCommand
@@ -18,6 +19,7 @@ class SimpleShootCommand
 public:
   SimpleShootCommand(FlywheelSubsystem *flywheel, KickerSubsystem *kicker,
                      FloorRollerSubsystem *floorRoller, HoodSubsystem *hood,
+                     IntakeBottomRollerSubsystem *bottomRoller,
                      units::revolutions_per_minute_t flywheelRPM,
                      units::turns_per_second_t kickerRPS,
                      units::degree_t hoodAngle);
@@ -32,10 +34,12 @@ private:
   KickerSubsystem *m_kicker;
   FloorRollerSubsystem *m_floorRoller;
   HoodSubsystem *m_hood;
+  IntakeBottomRollerSubsystem *m_bottomRoller;
 
   units::revolutions_per_minute_t m_flywheelRPM;
   units::turns_per_second_t m_kickerRPS;
   units::degree_t m_hoodAngle;
 
   static constexpr units::volt_t kFloorRollerVoltage = 10_V;
+  static constexpr units::volt_t kBottomVoltage = 10_V;
 };

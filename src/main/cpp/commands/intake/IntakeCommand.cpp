@@ -11,17 +11,17 @@ IntakeCommand::IntakeCommand(IntakeDeployerSubsystem *deployer,
 }
 
 void IntakeCommand::Initialize() {
-  // m_deployer->Deploy();
+  m_deployer->Deploy();
 }
 
 void IntakeCommand::Execute() {
-  // m_deployer->Deploy();
+  m_deployer->Deploy();
   m_topRoller->SetVoltage(kTopRollerVoltage);
   m_bottomRoller->SetVoltage(kBottomRollerVoltage);
 }
 
 void IntakeCommand::End(bool interrupted) {
-  m_deployer->Retract();
+  // m_deployer->RetractMid();
   m_topRoller->Stop();
   m_bottomRoller->Stop();
 }
