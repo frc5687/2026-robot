@@ -28,5 +28,5 @@ private:
 
   static constexpr units::volt_t kTopRollerVoltage = 7_V;
   static constexpr units::volt_t kBottomRollerVoltage = 7_V;
-  static constexpr units::volt_t kFloorRollerVoltage = 8_V;
+  static constexpr units::volt_t kFeederVoltage = 8_V;
 };

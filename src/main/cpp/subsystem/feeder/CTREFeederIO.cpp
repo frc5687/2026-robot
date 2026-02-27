@@ -1,15 +1,15 @@
 // Team 5687 2026
 
-#include "subsystem/floorroller/CTREFloorRollerIO.h"
+#include "subsystem/feeder/CTREFeederIO.h"
 
 #include <frc/Timer.h>
 
 #include "Constants.h"
 
-using namespace Constants::FloorRoller;
+using namespace Constants::Feeder;
 using namespace ctre::phoenix6;
 
-CTREFloorRollerIO::CTREFloorRollerIO(const CANDevice &leader,
+CTREFeederIO::CTREFeederIO(const CANDevice &leader,
                                      const CANDevice &follower)
     : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
       m_positionSignal(m_leader.GetPosition()),
@@ -24,7 +24,7 @@ CTREFloorRollerIO::CTREFloorRollerIO(const CANDevice &leader,
   ConfigureSignalFrequencies();
 }
 
-void CTREFloorRollerIO::ConfigureDevices() {
+void CTREFeederIO::ConfigureDevices() {
   m_leaderConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
   m_leaderConfig.MotorOutput.Inverted =
       kLeaderInverted ? signals::InvertedValue::Clockwise_Positive
@@ -48,7 +48,7 @@ void CTREFloorRollerIO::ConfigureDevices() {
       controls::Follower{m_leader.GetDeviceID(), kFollowerOpposed});
 }
 
-void CTREFloorRollerIO::ConfigureClosedLoop() {
+void CTREFeederIO::ConfigureClosedLoop() {
   m_leaderConfig.Slot0.kS = PID::kS;
   m_leaderConfig.Slot0.kV = PID::kV;
   m_leaderConfig.Slot0.kA = PID::kA;
@@ -57,7 +57,7 @@ void CTREFloorRollerIO::ConfigureClosedLoop() {
   m_leaderConfig.Slot0.kD = PID::kD;
 }
 
-void CTREFloorRollerIO::ConfigureSignalFrequencies() {
+void CTREFeederIO::ConfigureSignalFrequencies() {
   m_positionSignal.SetUpdateFrequency(100_Hz);
   m_velocitySignal.SetUpdateFrequency(100_Hz);
   m_voltageSignal.SetUpdateFrequency(100_Hz);
@@ -68,7 +68,7 @@ void CTREFloorRollerIO::ConfigureSignalFrequencies() {
   m_follower.OptimizeBusUtilization();
 }
 
-void CTREFloorRollerIO::UpdateInputs(FloorRollerIOInputs &inputs) {
+void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_criticalSignals);
   BaseStatusSignal::RefreshAll(m_batchedSignals);
 
@@ -80,12 +80,12 @@ void CTREFloorRollerIO::UpdateInputs(FloorRollerIOInputs &inputs) {
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 
-void CTREFloorRollerIO::SetVoltage(units::volt_t voltage) {
+void CTREFeederIO::SetVoltage(units::volt_t voltage) {
   m_leader.SetControl(m_voltageRequest.WithOutput(voltage));
 }
 
-void CTREFloorRollerIO::SetVelocity(units::turns_per_second_t rps) {
+void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {
   m_leader.SetControl(m_velocityRequest.WithVelocity(rps).WithSlot(0));
 }
 
-void CTREFloorRollerIO::Stop() { m_leader.SetControl(m_neutralRequest); }
+void CTREFeederIO::Stop() { m_leader.SetControl(m_neutralRequest); }

@@ -36,8 +36,8 @@ inline constexpr CANDevice RightBottomFollowerFlywheel{21, Bus::kShooter};
 inline constexpr CANDevice LeftLeaderFlywheel{22, Bus::kShooter};
 inline constexpr CANDevice LeftFollowerFlywheel{23, Bus::kShooter};
 
-inline constexpr CANDevice FloorRollerLeader{24, Bus::kShooter};
-inline constexpr CANDevice FloorRollerFollower{25, Bus::kShooter};
+inline constexpr CANDevice FeederLeader{24, Bus::kShooter};
+inline constexpr CANDevice FeederFollower{25, Bus::kShooter};
 
 inline constexpr CANDevice KickerLeader{27, Bus::kShooter};   // left
 inline constexpr CANDevice KickerFollower{26, Bus::kShooter}; // right

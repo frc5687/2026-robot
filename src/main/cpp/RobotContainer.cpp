@@ -23,8 +23,8 @@
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "subsystem/drive/module/ModuleConfig.h"
 #include "subsystem/drive/module/SimModuleIO.h"
-#include "subsystem/floorroller/CTREFloorRollerIO.h"
-#include "subsystem/floorroller/SimFloorRollerIO.h"
+#include "subsystem/feeder/CTREFeederIO.h"
+#include "subsystem/feeder/SimFeederIO.h"
 #include "subsystem/flywheel/CTREFlywheelIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
 #include "subsystem/hood/CTREHoodIO.h"
@@ -83,13 +83,13 @@ std::unique_ptr<HoodIO> MakeHoodIO() {
                                       HardwareMap::CAN::CANCoder::HoodEncoder);
 }
 
-std::unique_ptr<FloorRollerIO> MakeFloorRollerIO() {
+std::unique_ptr<FeederIO> MakeFeederIO() {
   if (frc::RobotBase::IsSimulation()) {
-    return std::make_unique<SimFloorRollerIO>();
+    return std::make_unique<SimFeederIO>();
   }
-  return std::make_unique<CTREFloorRollerIO>(
-      HardwareMap::CAN::TalonFX::FloorRollerLeader,
-      HardwareMap::CAN::TalonFX::FloorRollerFollower);
+  return std::make_unique<CTREFeederIO>(
+      HardwareMap::CAN::TalonFX::FeederLeader,
+      HardwareMap::CAN::TalonFX::FeederFollower);
 }
 
 std::unique_ptr<KickerIO> MakeKickerIO() {
@@ -156,7 +156,7 @@ RobotContainer::RobotContainer()
           MakeGyroIO()}
     , m_flywheel{MakeFlywheelIO()}
     , m_hood{MakeHoodIO()}
-    , m_floorRoller{MakeFloorRollerIO()}
+    , m_feeder{MakeFeederIO()}
     , m_kicker{MakeKickerIO()}
     , m_intakeDeployer{MakeIntakeDeployerIO()}
     , m_intakeTopRoller{MakeIntakeTopRollerIO()}
@@ -196,7 +196,7 @@ void RobotContainer::ConfigureBindings() {
 
   m_driver.R2().WhileTrue(
       ShootCommand(&m_drive, &m_flywheel, &m_hood, &m_intakeBottomRoller,
-                   &m_floorRoller, &m_kicker,
+                   &m_feeder, &m_kicker,
                    [this] { return -m_driver.GetLeftY(); },
                    [this] { return -m_driver.GetLeftX(); })
           .ToPtr());
@@ -211,10 +211,10 @@ void RobotContainer::ConfigureBindings() {
         m_flywheel.SetRPM(0_rpm);
         m_kicker.Stop();
         m_hood.SetPosition(0_deg);
-        m_floorRoller.Stop();
+        m_feeder.Stop();
         m_intakeBottomRoller.Stop();
       },
-      {&m_flywheel, &m_kicker, &m_floorRoller, &m_hood,
+      {&m_flywheel, &m_kicker, &m_feeder, &m_hood,
        &m_intakeBottomRoller}));
 
   m_driver.R1().WhileTrue(Run(
@@ -223,14 +223,14 @@ void RobotContainer::ConfigureBindings() {
         m_kicker.SetVelocity(60_tps);
         m_hood.SetPosition(10_deg);
         if (m_flywheel.AtSetpoint()) {
-          m_floorRoller.SetVoltage(10_V);
+          m_feeder.SetVoltage(10_V);
           m_intakeDeployer.RetractMid();
           m_intakeBottomRoller.SetVoltage(10_V);
         } else {
-          m_floorRoller.Stop();
+          m_feeder.Stop();
         }
       },
-      {&m_flywheel, &m_kicker, &m_floorRoller, &m_hood, &m_intakeBottomRoller,
+      {&m_flywheel, &m_kicker, &m_feeder, &m_hood, &m_intakeBottomRoller,
        &m_intakeDeployer}));
 }
 

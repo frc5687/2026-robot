@@ -8,7 +8,7 @@
 #include <units/angular_velocity.h>
 #include <units/voltage.h>
 
-#include "subsystem/floorroller/FloorRollerSubsystem.h"
+#include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
@@ -18,7 +18,7 @@ class SimpleShootCommand
     : public frc2::CommandHelper<frc2::Command, SimpleShootCommand> {
 public:
   SimpleShootCommand(FlywheelSubsystem *flywheel, KickerSubsystem *kicker,
-                     FloorRollerSubsystem *floorRoller, HoodSubsystem *hood,
+                     FeederSubsystem *feeder, HoodSubsystem *hood,
                      IntakeBottomRollerSubsystem *bottomRoller,
                      units::revolutions_per_minute_t flywheelRPM,
                      units::turns_per_second_t kickerRPS,
@@ -32,7 +32,7 @@ public:
 private:
   FlywheelSubsystem *m_flywheel;
   KickerSubsystem *m_kicker;
-  FloorRollerSubsystem *m_floorRoller;
+  FeederSubsystem *m_feeder;
   HoodSubsystem *m_hood;
   IntakeBottomRollerSubsystem *m_bottomRoller;
 
@@ -40,6 +40,6 @@ private:
   units::turns_per_second_t m_kickerRPS;
   units::degree_t m_hoodAngle;
 
-  static constexpr units::volt_t kFloorRollerVoltage = 10_V;
+  static constexpr units::volt_t kFeederVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
 };

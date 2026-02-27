@@ -16,14 +16,14 @@
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
                            IntakeBottomRollerSubsystem *bottomRoller,
-                           FloorRollerSubsystem *floorRoller,
+                           FeederSubsystem *feeder,
                            KickerSubsystem *kicker,
                            std::function<double()> throttle,
                            std::function<double()> strafe)
     : m_drive(drive), m_flywheel(flywheel), m_hood(hood),
-      m_bottomRoller(bottomRoller), m_floorRoller(floorRoller),
+      m_bottomRoller(bottomRoller), m_feeder(feeder),
       m_kicker(kicker), m_throttle(throttle), m_strafe(strafe) {
-  AddRequirements({drive, flywheel, hood, floorRoller, kicker});
+  AddRequirements({drive, flywheel, hood, feeder, kicker});
   SetName("ShootCommand");
   m_headingController.EnableContinuousInput(-std::numbers::pi,
                                             std::numbers::pi);
@@ -70,11 +70,11 @@ void ShootCommand::Execute() {
       frc::ChassisSpeeds{xVel, yVel, units::radians_per_second_t{rotOutput}});
 
   if (solution.ready) {
-    m_floorRoller->SetVoltage(kFeedVoltage);
+    m_feeder->SetVoltage(kFeedVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
     m_kicker->SetVelocity(kKickerRPS);
   } else {
-    m_floorRoller->Stop();
+    m_feeder->Stop();
     m_kicker->Stop();
   }
 }
@@ -84,7 +84,7 @@ void ShootCommand::End(bool interrupted) {
   // m_hood->Stop();
   m_hood->SetPosition(0_rad);
   m_bottomRoller->Stop();
-  m_floorRoller->Stop();
+  m_feeder->Stop();
   m_kicker->Stop();
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();

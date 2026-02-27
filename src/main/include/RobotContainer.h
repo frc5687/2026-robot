@@ -8,7 +8,7 @@
 #include <units/angle.h>
 
 #include "subsystem/drive/DriveSubsystem.h"
-#include "subsystem/floorroller/FloorRollerSubsystem.h"
+#include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/IntakeSystem.h"
@@ -34,13 +34,13 @@ private:
   DriveSubsystem m_drive;
   FlywheelSubsystem m_flywheel;
   HoodSubsystem m_hood;
-  FloorRollerSubsystem m_floorRoller;
+  FeederSubsystem m_feeder;
   KickerSubsystem m_kicker;
   IntakeDeployerSubsystem m_intakeDeployer;
   IntakeTopRollerSubsystem m_intakeTopRoller;
   IntakeBottomRollerSubsystem m_intakeBottomRoller;
   VisionSubsystem m_vision;
-  IntakeSystem m_intake; 
+  IntakeSystem m_intake;
   ShooterSystem m_shooter;
   TunableDouble m_simpleShootFlywheelRPM{"SmartDashboard",
                                          "SimpleShoot/FlywheelRPM", 1600.0};

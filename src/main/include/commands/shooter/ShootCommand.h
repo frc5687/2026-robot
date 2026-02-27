@@ -12,7 +12,7 @@
 #include <numbers>
 
 #include "subsystem/drive/DriveSubsystem.h"
-#include "subsystem/floorroller/FloorRollerSubsystem.h"
+#include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
@@ -23,7 +23,7 @@ class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
 public:
   ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                HoodSubsystem *hood, IntakeBottomRollerSubsystem *bottomRoller,
-               FloorRollerSubsystem *floorRoller, KickerSubsystem *kicker,
+               FeederSubsystem *feeder, KickerSubsystem *kicker,
                std::function<double()> throttle,
                std::function<double()> strafe);
 
@@ -37,7 +37,7 @@ private:
   FlywheelSubsystem *m_flywheel;
   HoodSubsystem *m_hood;
   IntakeBottomRollerSubsystem *m_bottomRoller;
-  FloorRollerSubsystem *m_floorRoller;
+  FeederSubsystem *m_feeder;
   KickerSubsystem *m_kicker;
 
   std::function<double()> m_throttle;

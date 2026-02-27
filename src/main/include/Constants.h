@@ -263,7 +263,7 @@ inline constexpr double kAcceleration = 80.0;   // rps/s
 } // namespace PID
 } // namespace Hood
 
-namespace FloorRoller {
+namespace Feeder {
 
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(2);
 inline constexpr units::inch_t kRadius = 2_in;
@@ -288,7 +288,7 @@ inline constexpr double kA = 0.0;
 
 inline constexpr double kGearRatio = (42.0 / 9.0);
 
-} // namespace FloorRoller
+} // namespace Feeder
 
 namespace Kicker {
 

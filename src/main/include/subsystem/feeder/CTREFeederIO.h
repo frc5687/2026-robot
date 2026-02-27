@@ -11,14 +11,14 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "FloorRollerIO.h"
+#include "FeederIO.h"
 #include "utils/CANDevice.h"
 
-class CTREFloorRollerIO : public FloorRollerIO {
+class CTREFeederIO : public FeederIO {
 public:
-  CTREFloorRollerIO(const CANDevice &leader, const CANDevice &follower);
+  CTREFeederIO(const CANDevice &leader, const CANDevice &follower);
 
-  void UpdateInputs(FloorRollerIOInputs &inputs) override;
+  void UpdateInputs(FeederIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
   void SetVelocity(units::turns_per_second_t rps) override;
   void Stop() override;
