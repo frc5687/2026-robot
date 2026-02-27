@@ -222,6 +222,7 @@ void RobotContainer::ConfigureBindings() {
       m_drive.get(), [this] { return -m_driver.GetLeftY(); },
       [this] { return -m_driver.GetLeftX(); },
       [this] { return -m_driver.GetRightX(); },
+      [this] {return m_driver.L1().Get();},
       true)); // slew limiter
 
   // m_driver.Circle().WhileTrue(
@@ -235,6 +236,9 @@ void RobotContainer::ConfigureBindings() {
                                         m_intakeTopRoller.get(),
                                         m_intakeBottomRoller.get())
                               .ToPtr());
+
+  m_driver.Options().WhileTrue(
+      Run([this] { m_drive->ResetHeading(0_deg); }));
 
   m_driver.R2().WhileTrue(ShootCommand(
                               m_drive.get(), m_flywheel.get(), m_hood.get(),

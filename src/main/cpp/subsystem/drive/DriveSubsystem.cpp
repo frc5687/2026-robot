@@ -184,9 +184,10 @@ void DriveSubsystem::ResetHeading(units::degree_t heading) {
   m_gyro->Reset(heading);
 
   // Update pose with new heading
-  // auto currentPose = GetPose();
-  // ResetPose(frc::Pose2d{currentPose.Translation(),
-  // frc::Rotation2d{heading}});
+  auto currentPose = GetPose();
+  ResetPose(frc::Pose2d{currentPose.Translation(),
+  frc::Rotation2d{heading}});
+  
 }
 
 frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds() const {
