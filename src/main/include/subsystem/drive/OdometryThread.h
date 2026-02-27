@@ -70,7 +70,7 @@ private:
 
   mutable std::shared_mutex m_dataMutex;
   OdometryData m_latestData;
-  std::unique_ptr<frc::Notifier> m_notifier;
+  frc::Notifier m_notifier;
   std::atomic<bool> m_isRunning{false};
 
   std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>
@@ -109,5 +109,5 @@ private:
   std::atomic<units::second_t> m_lastIterationTime{0_s};
   units::second_t m_startTime{0_s};
 
-  std::unique_ptr<PoseEstimator> m_estimator;
+  PoseEstimator m_estimator;
 };

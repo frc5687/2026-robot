@@ -7,8 +7,6 @@
 #include <frc2/command/button/CommandPS5Controller.h>
 #include <units/angle.h>
 
-#include <memory>
-
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/floorroller/FloorRollerSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
@@ -33,29 +31,17 @@ private:
   void ConfigureBindings();
   void ConfigureAutoCommands();
 
-  std::unique_ptr<DriveSubsystem> CreateDrive();
-  std::unique_ptr<FlywheelSubsystem> CreateFlywheel();
-  std::unique_ptr<HoodSubsystem> CreateHood();
-  std::unique_ptr<VisionSubsystem> CreateVision();
-  std::unique_ptr<FloorRollerSubsystem> CreateFloorRoller();
-  std::unique_ptr<KickerSubsystem> CreateKicker();
-  std::unique_ptr<IntakeDeployerSubsystem> CreateIntakeDeployer();
-  std::unique_ptr<IntakeTopRollerSubsystem> CreateIntakeTopRoller();
-  std::unique_ptr<IntakeBottomRollerSubsystem> CreateIntakeBottomRoller();
-
-  std::unique_ptr<DriveSubsystem> m_drive;
-  std::unique_ptr<FlywheelSubsystem> m_flywheel;
-  std::unique_ptr<HoodSubsystem> m_hood;
-  std::unique_ptr<FloorRollerSubsystem> m_floorRoller;
-  std::unique_ptr<KickerSubsystem> m_kicker;
-  std::unique_ptr<IntakeDeployerSubsystem> m_intakeDeployer;
-  std::unique_ptr<IntakeTopRollerSubsystem> m_intakeTopRoller;
-  std::unique_ptr<IntakeBottomRollerSubsystem> m_intakeBottomRoller;
-  std::unique_ptr<IntakeSystem> m_intake;
-  std::unique_ptr<VisionSubsystem> m_vision;
-
-  std::unique_ptr<ShooterSystem> m_shooter;
-
+  DriveSubsystem m_drive;
+  FlywheelSubsystem m_flywheel;
+  HoodSubsystem m_hood;
+  FloorRollerSubsystem m_floorRoller;
+  KickerSubsystem m_kicker;
+  IntakeDeployerSubsystem m_intakeDeployer;
+  IntakeTopRollerSubsystem m_intakeTopRoller;
+  IntakeBottomRollerSubsystem m_intakeBottomRoller;
+  VisionSubsystem m_vision;
+  IntakeSystem m_intake; 
+  ShooterSystem m_shooter;
   TunableDouble m_simpleShootFlywheelRPM{"SmartDashboard",
                                          "SimpleShoot/FlywheelRPM", 1600.0};
   TunableDouble m_simpleShootKickerRPS{"SmartDashboard",

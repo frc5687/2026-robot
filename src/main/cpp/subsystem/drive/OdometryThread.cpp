@@ -19,14 +19,14 @@ OdometryThread::OdometryThread(
     std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>
         &modules,
     std::unique_ptr<GyroIO> &gyro, const PoseEstimator::Config &estimatorConfig)
-    : m_modules(modules), m_gyro(gyro),
+    : m_notifier{[this] { PeriodicUpdate(); }},
+      m_modules(modules), m_gyro(gyro),
       m_odometry(m_kinematics, frc::Rotation2d{}, GetModulePositions(),
                  frc::Pose2d{}),
-      m_estimator(std::make_unique<PoseEstimator>(estimatorConfig)) {
+      m_estimator(estimatorConfig) {
+  m_notifier.SetName("OdometryThread");
   m_loopTimes.fill(0_s);
   SetupBatchedSignals();
-  m_notifier = std::make_unique<frc::Notifier>([this] { PeriodicUpdate(); });
-  m_notifier->SetName("OdometryThread");
   m_startTime = frc::Timer::GetFPGATimestamp();
 
   Logger::Instance().Log("OdometryThread/Initialized", true);
@@ -40,7 +40,7 @@ void OdometryThread::Start() {
     return;
   }
 
-  m_notifier->StartPeriodic(m_updatePeriod.load());
+  m_notifier.StartPeriodic(m_updatePeriod.load());
   Logger::Instance().Log("OdometryThread/UpdateFrequency",
                          m_updateFrequency.load().value());
   Logger::Instance().Log("OdometryThread/UpdatePeriod_ms",
@@ -54,9 +54,7 @@ void OdometryThread::Stop() {
 
   Logger::Instance().Log("OdometryThread/Stopping", true);
 
-  if (m_notifier) {
-    m_notifier->Stop();
-  }
+  m_notifier.Stop();
 
   auto totalRunTime = frc::Timer::GetFPGATimestamp() - m_startTime;
   auto expectedIterations = totalRunTime * m_updateFrequency.load();
@@ -246,8 +244,8 @@ void OdometryThread::UpdateOdometryAndEstimator() {
     m_latestData.timestamp = currentTime;
     m_latestData.isValid = true;
 
-    m_estimator->UpdatePoseEstimate(m_latestData);
-    m_latestData.estimatedPose = m_estimator->GetEstimatedPose();
+    m_estimator.UpdatePoseEstimate(m_latestData);
+    m_latestData.estimatedPose = m_estimator.GetEstimatedPose();
   }
 }
 
@@ -282,7 +280,7 @@ void OdometryThread::UpdateOdometryAndEstimator() {
 //     auto newPose = m_odometry.Update(m_gyroInputs.yaw, modulePositions);
 //
 //     m_latestData.pose = newPose;
-//     m_latestData.estimatedPose = m_estimator->GetEstimatedPose(); // mutex
+//     m_latestData.estimatedPose = m_estimator.GetEstimatedPose(); // mutex
 //     m_latestData.modulePositions = modulePositions;
 //     m_latestData.moduleStates = moduleStates;
 //     m_latestData.chassisSpeeds = chassisSpeeds;
@@ -295,7 +293,7 @@ void OdometryThread::UpdateOdometryAndEstimator() {
 //
 // void OdometryThread::UpdatePoseEstimator() {
 //   std::scoped_lock lock(m_dataMutex);
-//   m_estimator->UpdatePoseEstimate(m_latestData);
+//   m_estimator.UpdatePoseEstimate(m_latestData);
 // }
 
 void OdometryThread::UpdateStatistics(units::second_t loopTime) {
@@ -354,7 +352,7 @@ void OdometryThread::UpdateStatistics(units::second_t loopTime) {
 void OdometryThread::AddVisionMeasurement(
     const VisionMeasurement &measurement) {
   std::scoped_lock lock(m_dataMutex);
-  m_estimator->AddVisionMeasurement(measurement);
+  m_estimator.AddVisionMeasurement(measurement);
 }
 
 void OdometryThread::AddVisionMeasurement(const frc::Pose3d &pose3d,
@@ -362,18 +360,18 @@ void OdometryThread::AddVisionMeasurement(const frc::Pose3d &pose3d,
                                           int tagCount, double avgDistance,
                                           double confidence, double ambiguity) {
   std::scoped_lock lock(m_dataMutex);
-  m_estimator->AddVisionMeasurement(pose3d, timestamp, tagCount, avgDistance,
+  m_estimator.AddVisionMeasurement(pose3d, timestamp, tagCount, avgDistance,
                                     confidence, ambiguity);
 }
 
 void OdometryThread::SetVisionEnabled(bool enabled) {
   std::shared_lock lock(m_dataMutex);
-  m_estimator->SetVisionEnabled(enabled);
+  m_estimator.SetVisionEnabled(enabled);
 }
 
 bool OdometryThread::IsVisionEnabled() const {
   std::shared_lock lock(m_dataMutex);
-  return m_estimator->IsVisionEnabled();
+  return m_estimator.IsVisionEnabled();
 }
 
 OdometryData OdometryThread::GetLatestData() const {
@@ -388,7 +386,7 @@ frc::Pose2d OdometryThread::GetOdometryPose() const {
 
 frc::Pose2d OdometryThread::GetEstimatedPose() const {
   std::shared_lock lock(m_dataMutex);
-  return m_estimator->GetEstimatedPose();
+  return m_estimator.GetEstimatedPose();
 }
 
 std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
@@ -419,7 +417,7 @@ void OdometryThread::ResetPose(const frc::Pose2d &pose) {
   m_odometry.ResetPosition(m_gyroInputs.yaw, currentPositions, pose);
   m_latestData.odometryPose = pose;
   m_latestData.modulePositions = currentPositions;
-  m_estimator->ResetPose(pose);
+  m_estimator.ResetPose(pose);
 }
 
 void OdometryThread::ResetPoseKeepRotation(const frc::Pose2d &pose) {
@@ -436,7 +434,7 @@ void OdometryThread::ResetPoseKeepRotation(const frc::Pose2d &pose) {
   m_odometry.ResetPosition(m_gyroInputs.yaw, currentPositions, newPose);
   m_latestData.odometryPose = newPose;
   m_latestData.modulePositions = currentPositions;
-  m_estimator->ResetPose(newPose);
+  m_estimator.ResetPose(newPose);
 }
 
 void OdometryThread::SetUpdateFrequency(units::hertz_t frequency) {

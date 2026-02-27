@@ -14,7 +14,6 @@
 
 #include <array>
 #include <memory>
-#include <vector>
 
 #include "Constants.h"
 #include "GyroIO.h"
@@ -93,7 +92,6 @@ private:
   std::array<T, Constants::SwerveDrive::kModuleCount>
   GetModuleData(T (Module::*getter)() const) const;
 
-  std::vector<std::unique_ptr<Module>> m_test;
   std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>
       m_modules;
   std::unique_ptr<GyroIO> m_gyro;
