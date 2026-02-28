@@ -4,7 +4,6 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-#include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/time.h>
 #include <units/voltage.h>
@@ -15,17 +14,15 @@
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/kicker/KickerSubsystem.h"
+#include "subsystem/shooter/ShotCalculator.h"
 
-class SimpleShootCommand
-    : public frc2::CommandHelper<frc2::Command, SimpleShootCommand> {
+class AutoShootCommand
+    : public frc2::CommandHelper<frc2::Command, AutoShootCommand> {
 public:
-  SimpleShootCommand(FlywheelSubsystem *flywheel, KickerSubsystem *kicker,
-                     FeederSubsystem *feeder, HoodSubsystem *hood,
-                     IntakeBottomRollerSubsystem *bottomRoller,
-                     IntakeDeployerSubsystem *deployer,
-                     units::revolutions_per_minute_t flywheelRPM,
-                     units::turns_per_second_t kickerRPS,
-                     units::degree_t hoodAngle);
+  AutoShootCommand(FlywheelSubsystem *flywheel, HoodSubsystem *hood,
+                   FeederSubsystem *feeder, KickerSubsystem *kicker,
+                   IntakeBottomRollerSubsystem *bottomRoller,
+                   IntakeDeployerSubsystem *deployer);
 
   void Initialize() override;
   void Execute() override;
@@ -34,21 +31,20 @@ public:
 
 private:
   FlywheelSubsystem *m_flywheel;
-  KickerSubsystem *m_kicker;
-  FeederSubsystem *m_feeder;
   HoodSubsystem *m_hood;
+  FeederSubsystem *m_feeder;
+  KickerSubsystem *m_kicker;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   IntakeDeployerSubsystem *m_deployer;
 
-  units::revolutions_per_minute_t m_flywheelRPM;
-  units::turns_per_second_t m_kickerRPS;
-  units::degree_t m_hoodAngle;
+  ShotCalculator m_shotCalculator;
 
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};
 
-  static constexpr units::volt_t kFeederVoltage = 10_V;
+  static constexpr units::volt_t kFeedVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
+  static constexpr units::turns_per_second_t kKickerRPS = 60_tps;
   static constexpr units::second_t kPulseExtendDuration = 0.3_s;
   static constexpr units::second_t kPulseRetractDuration = 0.25_s;
 };

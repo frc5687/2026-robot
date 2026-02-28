@@ -17,7 +17,9 @@
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
+#include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/ShootCommand.h"
+#include "pathplanner/lib/commands/PathPlannerAuto.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
@@ -167,7 +169,20 @@ RobotContainer::RobotContainer()
 void RobotContainer::Periodic() { m_robotViz.Update(); }
 
 void RobotContainer::ConfigureAutoCommands() {
-  pathplanner::NamedCommands::registerCommand("Shoot", nullptr);
+  pathplanner::NamedCommands::registerCommand("Shoot", 
+    AutoShootCommand(
+      &m_flywheel,
+       &m_hood,
+        &m_feeder, 
+        &m_kicker,
+         &m_intakeBottomRoller,
+          &m_intakeDeployer
+        ).ToPtr()
+  );
+
+  pathplanner::NamedCommands::registerCommand("Intake",
+    IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller, &m_intakeBottomRoller).ToPtr()
+  );
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -191,6 +206,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.R2().WhileTrue(ShootCommand(
                               &m_drive, &m_flywheel, &m_hood,
                               &m_intakeBottomRoller, &m_feeder, &m_kicker,
+                              &m_intakeDeployer,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
                               .ToPtr());
@@ -228,5 +244,5 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return frc2::cmd::Print("No autonomous command configured");
+  return pathplanner::PathPlannerAuto("Left").ToPtr();
 }

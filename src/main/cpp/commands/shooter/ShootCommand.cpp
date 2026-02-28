@@ -17,12 +17,13 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
                            IntakeBottomRollerSubsystem *bottomRoller,
                            FeederSubsystem *feeder, KickerSubsystem *kicker,
+                           IntakeDeployerSubsystem *deployer,
                            std::function<double()> throttle,
                            std::function<double()> strafe)
     : m_drive(drive), m_flywheel(flywheel), m_hood(hood),
       m_bottomRoller(bottomRoller), m_feeder(feeder), m_kicker(kicker),
-      m_throttle(throttle), m_strafe(strafe) {
-  AddRequirements({drive, flywheel, hood, feeder, kicker});
+      m_deployer(deployer), m_throttle(throttle), m_strafe(strafe) {
+  AddRequirements({drive, flywheel, hood, feeder, kicker, deployer});
   SetName("ShootCommand");
   m_headingController.EnableContinuousInput(-std::numbers::pi,
                                             std::numbers::pi);
@@ -33,6 +34,9 @@ void ShootCommand::Initialize() {
   m_headingController.Reset();
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
+  m_deployer->RetractMid();
+  m_deployerExtended = false;
+  m_pulseStartTime = frc::Timer::GetFPGATimestamp();
 }
 
 void ShootCommand::Execute() {
@@ -68,6 +72,22 @@ void ShootCommand::Execute() {
   m_drive->DriveFieldRelative(
       frc::ChassisSpeeds{xVel, yVel, units::radians_per_second_t{rotOutput}});
 
+  auto elapsed = now - m_pulseStartTime;
+
+  if (m_deployerExtended) {
+    if (elapsed >= kPulseExtendDuration) {
+      m_deployer->RetractMid();
+      m_deployerExtended = false;
+      m_pulseStartTime = now;
+    }
+  } else {
+    if (elapsed >= kPulseRetractDuration) {
+      m_deployer->Deploy();
+      m_deployerExtended = true;
+      m_pulseStartTime = now;
+    }
+  }
+
   if (solution.ready) {
     m_feeder->SetVoltage(kFeedVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
@@ -80,11 +100,11 @@ void ShootCommand::Execute() {
 
 void ShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
-  // m_hood->Stop();
   m_hood->SetPosition(0_rad);
   m_bottomRoller->Stop();
   m_feeder->Stop();
   m_kicker->Stop();
+  m_deployer->RetractMid();
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }
