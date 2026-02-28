@@ -17,7 +17,7 @@
 
 class CTREHoodIO : public HoodIO {
 public:
-  CTREHoodIO(const CANDevice &motor, const CANDevice &encoder);
+  CTREHoodIO(const CANDevice &motor);
 
   void UpdateInputs(HoodIOInputs &inputs) override;
   void SetPosition(units::turn_t position) override;
@@ -27,16 +27,14 @@ public:
 
 private:
   ctre::phoenix6::hardware::TalonFX m_motor;
-  ctre::phoenix6::hardware::CANcoder m_encoder;
 
   ctre::phoenix6::StatusSignal<units::turn_t> &m_positionSignal;
   ctre::phoenix6::StatusSignal<units::turns_per_second_t> &m_velocitySignal;
   ctre::phoenix6::StatusSignal<units::volt_t> &m_voltageSignal;
   ctre::phoenix6::StatusSignal<units::ampere_t> &m_statorSignal;
   ctre::phoenix6::StatusSignal<units::ampere_t> &m_supplySignal;
-  ctre::phoenix6::StatusSignal<units::turn_t> &m_encoderAbsPositionSignal;
 
-  std::array<ctre::phoenix6::BaseStatusSignal *, 5> m_criticalSignals;
+  std::array<ctre::phoenix6::BaseStatusSignal *, 4> m_criticalSignals;
   std::array<ctre::phoenix6::BaseStatusSignal *, 1> m_batchedSignals;
 
   ctre::phoenix6::controls::MotionMagicVoltage m_positionRequest{0_tr};
@@ -46,7 +44,6 @@ private:
   ctre::phoenix6::configs::TalonFXConfiguration m_config{};
 
   void ConfigureDevices();
-  void ConfigureEncoder();
   void ConfigureClosedLoop();
   void ConfigureSignalFrequencies();
 };

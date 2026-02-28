@@ -75,13 +75,13 @@ void ShootCommand::Execute() {
   auto elapsed = now - m_pulseStartTime;
 
   if (m_deployerExtended) {
-    if (elapsed >= kPulseExtendDuration) {
+    if (elapsed >= Constants::IntakeDeployer::kPulseExtendDuration) {
       m_deployer->RetractMid();
       m_deployerExtended = false;
       m_pulseStartTime = now;
     }
   } else {
-    if (elapsed >= kPulseRetractDuration) {
+    if (elapsed >= Constants::IntakeDeployer::kPulseRetractDuration) {
       m_deployer->Deploy();
       m_deployerExtended = true;
       m_pulseStartTime = now;

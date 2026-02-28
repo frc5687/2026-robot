@@ -89,6 +89,6 @@ void CTREIntakeDeployerIO::SetVoltage(units::volt_t voltage) {
   m_motor.SetControl(m_voltageRequest.WithOutput(voltage));
 }
 
-void CTREIntakeDeployerIO::ZeroPosition() { m_motor.SetPosition(0_tr); }
+void CTREIntakeDeployerIO::ZeroPosition() { m_motor.SetPosition(7.564_tr); }
 
 void CTREIntakeDeployerIO::Stop() { m_motor.SetControl(m_neutralRequest); }

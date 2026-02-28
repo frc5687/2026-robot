@@ -15,6 +15,7 @@
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/kicker/KickerSubsystem.h"
+#include "utils/TunableDouble.h"
 
 class SimpleShootCommand
     : public frc2::CommandHelper<frc2::Command, SimpleShootCommand> {
@@ -49,6 +50,7 @@ private:
 
   static constexpr units::volt_t kFeederVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
-  static constexpr units::second_t kPulseExtendDuration = 0.3_s;
-  static constexpr units::second_t kPulseRetractDuration = 0.25_s;
+  TunableDouble m_tunableFlywheelRPM;
+  TunableDouble m_tunableKickerRPS;
+  TunableDouble m_tunableHoodAngle;
 };

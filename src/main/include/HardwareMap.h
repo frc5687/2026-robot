@@ -19,11 +19,11 @@ namespace TalonFX {
 inline constexpr CANDevice FrontLeftDrive{5, Bus::kDriveTrain};
 inline constexpr CANDevice FrontLeftSteer{4, Bus::kDriveTrain};
 
-inline constexpr CANDevice FrontRightDrive{3, Bus::kDriveTrain};
-inline constexpr CANDevice FrontRightSteer{2, Bus::kDriveTrain};
+inline constexpr CANDevice FrontRightDrive{7, Bus::kDriveTrain};
+inline constexpr CANDevice FrontRightSteer{6, Bus::kDriveTrain};
 
-inline constexpr CANDevice BackLeftDrive{7, Bus::kDriveTrain};
-inline constexpr CANDevice BackLeftSteer{6, Bus::kDriveTrain};
+inline constexpr CANDevice BackLeftDrive{3, Bus::kDriveTrain};
+inline constexpr CANDevice BackLeftSteer{2, Bus::kDriveTrain};
 
 inline constexpr CANDevice BackRightDrive{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
@@ -53,11 +53,9 @@ inline constexpr CANDevice IntakeBottomRoller{13, Bus::kDriveTrain};
 
 namespace CANCoder {
 inline constexpr CANDevice FrontLeftEncoder{2, Bus::kDriveTrain};
-inline constexpr CANDevice FrontRightEncoder{1, Bus::kDriveTrain};
-inline constexpr CANDevice BackLeftEncoder{3, Bus::kDriveTrain};
+inline constexpr CANDevice FrontRightEncoder{3, Bus::kDriveTrain};
+inline constexpr CANDevice BackLeftEncoder{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightEncoder{0, Bus::kDriveTrain};
-
-inline constexpr CANDevice HoodEncoder{0, Bus::kShooter};
 } // namespace CANCoder
 
 namespace Pidgeon2 {

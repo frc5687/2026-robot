@@ -65,6 +65,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   Logger::Instance().Log("ShotCalculator/launcherPose", launcherPose);
   frc::Translation2d launcherXY = launcherPose.Translation();
   frc::Translation2d target = FlipAlliance(m_cfg.targetXY, isRed);
+  Logger::Instance().Log("ShotCalculator/TargetPose", target);
 
   frc::Rotation2d heading = futureDrive.estimatedPose.Rotation();
   double cos_h = heading.Cos();
@@ -119,6 +120,9 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double aimY = ty - ly - fieldVy * tof;
   frc::Rotation2d aimToTarget{units::radian_t{std::atan2(aimY, aimX)}};
   frc::Rotation2d driveAngle = aimToTarget - m_cfg.robotToLauncher.Rotation();
+  Logger::Instance().Log("ShotCalculator/DrivePoseShot",
+                         frc::Pose2d{
+                         {units::meter_t{lookaheadX}, units::meter_t{lookaheadY}}, driveAngle});
 
   // Compare current robot heading against required drive angle.
   OdometryData currentDrive = rs.GetDriveState(now);

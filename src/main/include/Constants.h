@@ -133,6 +133,13 @@ inline constexpr std::array<frc::Translation2d, kModuleCount>
         frc::Translation2d{-kWheelBase / 2, -kTrackWidth / 2}, // (-, -)
     };
 
+inline constexpr std::array<units::turn_t, 4> kEncoderOffsets{
+    -0.150634765625_tr + 0.5_tr, // FL
+    -0.225830078125_tr+ 0.5_tr, // FR
+    -0.055419921875_tr+ 0.5_tr, // BL
+    -0.394775390625_tr+ 0.5_tr  // BR
+};
+
 /*
   Rectangular prism I_zz = 1/12 mass (h^2 + w^2)
   h = wheelbase, w = track width
@@ -161,7 +168,6 @@ inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting =
     1.5_mps;
 } // namespace Shooting
 
-
 namespace PID {
 namespace Translation {
 inline constexpr double kP = 5.0;
@@ -172,7 +178,7 @@ namespace Rotation {
 inline constexpr double kP = 5.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
-}
+} // namespace Rotation
 } // namespace PID
 } // namespace SwerveDrive
 
@@ -187,9 +193,7 @@ inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(4);
 inline constexpr units::inch_t kFlywheelRadius = 3.125_in;
 inline constexpr units::pound_t kFlywheelMass = 11_lb;
 
-// Cylinder inertia: 1/2 * m * r^2
-inline constexpr units::kilogram_square_meter_t kInertia =
-    0.5 * kFlywheelMass * kFlywheelRadius * kFlywheelRadius;
+inline constexpr units::kilogram_square_meter_t kInertia = 75.0 * 1.0_lb * 1.0_in* 1.0_in;
 
 inline constexpr bool kLeaderInverted = false;
 
@@ -217,8 +221,8 @@ constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
 constexpr double kSimKs = PID::kS;
 constexpr double kSimKv = PID::kV / (2.0 * std::numbers::pi);
 constexpr double kSimKa = PID::kA / (2.0 * std::numbers::pi);
-constexpr double kSimP = PID::kP / (2.0 * std::numbers::pi);
-constexpr double kSimD = PID::kD / (2.0 * std::numbers::pi);
+constexpr double kSimP = 3;
+constexpr double kSimD = 0;
 
 constexpr units::radians_per_second_t kSimToleranceRPS{5.0 * 2.0 *
                                                        std::numbers::pi / 60.0};
@@ -348,11 +352,14 @@ inline constexpr double kMetersPerMotorRotation = 0.29 / 7.192;
 
 inline constexpr units::meter_t kRetractedExtension = 0_m;
 inline constexpr units::meter_t kMidExtension = 0.18_m;
-inline constexpr units::meter_t kDeployedExtension = 0.29_m; // 0.29
+inline constexpr units::meter_t kDeployedExtension = 0.305_m; // 0.29
 inline constexpr units::meter_t kExtensionTolerance = 0.005_m;
 
 inline constexpr units::turn_t kForwardSoftLimit = 10.5_tr; // TODO
 inline constexpr units::turn_t kReverseSoftLimit = -0.5_tr; // TODO
+//
+inline constexpr units::second_t kPulseExtendDuration = 0.5_s;
+inline constexpr units::second_t kPulseRetractDuration = 0.5_s;
 
 namespace PID {
 inline constexpr double kP = 35.0;

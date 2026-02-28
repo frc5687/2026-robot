@@ -58,8 +58,6 @@ private:
   static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::turns_per_second_t kKickerRPS = 60_tps;
   static constexpr double kDeadband = 0.1;
-  static constexpr units::second_t kPulseExtendDuration = 0.3_s;
-  static constexpr units::second_t kPulseRetractDuration = 0.25_s;
 
   double ApplyDeadband(double value, double deadband);
 };
