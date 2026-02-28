@@ -10,8 +10,8 @@ SimpleShootCommand::SimpleShootCommand(
     IntakeBottomRollerSubsystem *bottomRoller,
     units::revolutions_per_minute_t flywheelRPM,
     units::turns_per_second_t kickerRPS, units::degree_t hoodAngle)
-    : m_flywheel(flywheel), m_kicker(kicker), m_feeder(feeder),
-      m_hood(hood), m_bottomRoller(bottomRoller), m_flywheelRPM(flywheelRPM),
+    : m_flywheel(flywheel), m_kicker(kicker), m_feeder(feeder), m_hood(hood),
+      m_bottomRoller(bottomRoller), m_flywheelRPM(flywheelRPM),
       m_kickerRPS(kickerRPS), m_hoodAngle(hoodAngle) {
   AddRequirements({flywheel, kicker, feeder});
   SetName("SimpleShootCommand");

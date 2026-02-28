@@ -19,7 +19,7 @@ struct FeederState {
   }
 
   static FeederState Interpolate(const FeederState &start,
-                                      const FeederState &end, double t) {
+                                 const FeederState &end, double t) {
     FeederState interpolated;
     interpolated.timestamp = Lerp(start.timestamp, end.timestamp, t);
     interpolated.velocity = Lerp(start.velocity, end.velocity, t);

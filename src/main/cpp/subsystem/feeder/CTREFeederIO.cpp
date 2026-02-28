@@ -9,8 +9,7 @@
 using namespace Constants::Feeder;
 using namespace ctre::phoenix6;
 
-CTREFeederIO::CTREFeederIO(const CANDevice &leader,
-                                     const CANDevice &follower)
+CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
     : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
       m_positionSignal(m_leader.GetPosition()),
       m_velocitySignal(m_leader.GetVelocity()),

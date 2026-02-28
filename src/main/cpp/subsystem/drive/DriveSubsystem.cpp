@@ -45,43 +45,32 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
   m_odometryThread =
       std::make_unique<OdometryThread>(m_modules, m_gyro, config);
   StartOdometryThread();
-  pathplanner::AutoBuilder::configure(
-      [this]() { return GetPose(); }, // Robot pose supplier
-      [this](frc::Pose2d pose) {
-        ResetPose(pose);
-      }, // Method to reset odometry (will be called if your auto has a
-         // starting pose)
-      [this]() {
-        return GetChassisSpeeds();
-      }, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      [this](auto speeds, auto feedforwards) {
-        Drive(speeds);
-      }, // Method that will drive the robot given ROBOT RELATIVE
-         // ChassisSpeeds. Also optionally outputs individual module
-         // feedforwards
-      std::make_shared<
-          pathplanner::PPHolonomicDriveController>( // PPHolonomicController is
-                                                    // the built in path
-                                                    // following controller for
-                                                    // holonomic drive trains
-          pathplanner::PIDConstants(5.0, 0.0,
-                                    0.0),          // Translation PID constants
-          pathplanner::PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-          ),
-      m_robotConfig, // The robot configuration
-      []() {
-        // Boolean supplier that controls when the path will be mirrored for the
-        // red alliance This will flip the path being followed to the red side
-        // of the field. THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
+  pathplanner::AutoBuilder::configure(
+      [this]() { return GetPose(); },
+      [this](frc::Pose2d pose) { ResetPose(pose); },
+      [this]() { return GetChassisSpeeds(); },
+      [this](auto speeds, auto feedforwards) { Drive(speeds); }, // relative
+      std::make_shared<pathplanner::PPHolonomicDriveController>(
+          pathplanner::PIDConstants(
+                Constants::SwerveDrive::PID::Translation::kP,
+                Constants::SwerveDrive::PID::Translation::kI,
+                Constants::SwerveDrive::PID::Translation::kD
+            ),
+          pathplanner::PIDConstants(
+                Constants::SwerveDrive::PID::Rotation::kP,
+                Constants::SwerveDrive::PID::Rotation::kI,
+                Constants::SwerveDrive::PID::Rotation::kD
+            )),
+      m_robotConfig,
+      []() {
         auto alliance = frc::DriverStation::GetAlliance();
         if (alliance) {
           return alliance.value() == frc::DriverStation::Alliance::kRed;
         }
         return false;
       },
-      this // Reference to this subsystem to set requirements
-  );
+      this);
 }
 
 DriveSubsystem::~DriveSubsystem() { StopOdometryThread(); }
@@ -185,9 +174,7 @@ void DriveSubsystem::ResetHeading(units::degree_t heading) {
 
   // Update pose with new heading
   auto currentPose = GetPose();
-  ResetPose(frc::Pose2d{currentPose.Translation(),
-  frc::Rotation2d{heading}});
-  
+  ResetPose(frc::Pose2d{currentPose.Translation(), frc::Rotation2d{heading}});
 }
 
 frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds() const {

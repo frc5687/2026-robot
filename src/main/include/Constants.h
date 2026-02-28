@@ -161,6 +161,19 @@ inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting =
     1.5_mps;
 } // namespace Shooting
 
+
+namespace PID {
+namespace Translation {
+inline constexpr double kP = 5.0;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+} // namespace Translation
+namespace Rotation {
+inline constexpr double kP = 5.0;
+inline constexpr double kI = 0.0;
+inline constexpr double kD = 0.0;
+}
+} // namespace PID
 } // namespace SwerveDrive
 
 namespace Flywheel {

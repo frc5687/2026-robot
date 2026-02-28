@@ -45,7 +45,6 @@ private:
   double m_joystickLastTouched;
   std::function<double()> m_headingFlag;
 
-
   // We are currently just limiting the joysticks, not the MPS of robot
   // If we want to later, change to MPS and limit velocity not joysticks input
   // TODO: move to constants

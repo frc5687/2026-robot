@@ -19,10 +19,9 @@ OdometryThread::OdometryThread(
     std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>
         &modules,
     std::unique_ptr<GyroIO> &gyro, const PoseEstimator::Config &estimatorConfig)
-    : m_notifier{[this] { PeriodicUpdate(); }},
-      m_modules(modules), m_gyro(gyro),
-      m_odometry(m_kinematics, frc::Rotation2d{}, GetModulePositions(),
-                 frc::Pose2d{}),
+    : m_notifier{[this] { PeriodicUpdate(); }}, m_modules(modules),
+      m_gyro(gyro), m_odometry(m_kinematics, frc::Rotation2d{},
+                               GetModulePositions(), frc::Pose2d{}),
       m_estimator(estimatorConfig) {
   m_notifier.SetName("OdometryThread");
   m_loopTimes.fill(0_s);
@@ -361,7 +360,7 @@ void OdometryThread::AddVisionMeasurement(const frc::Pose3d &pose3d,
                                           double confidence, double ambiguity) {
   std::scoped_lock lock(m_dataMutex);
   m_estimator.AddVisionMeasurement(pose3d, timestamp, tagCount, avgDistance,
-                                    confidence, ambiguity);
+                                   confidence, ambiguity);
 }
 
 void OdometryThread::SetVisionEnabled(bool enabled) {

@@ -16,13 +16,12 @@
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
                            IntakeBottomRollerSubsystem *bottomRoller,
-                           FeederSubsystem *feeder,
-                           KickerSubsystem *kicker,
+                           FeederSubsystem *feeder, KickerSubsystem *kicker,
                            std::function<double()> throttle,
                            std::function<double()> strafe)
     : m_drive(drive), m_flywheel(flywheel), m_hood(hood),
-      m_bottomRoller(bottomRoller), m_feeder(feeder),
-      m_kicker(kicker), m_throttle(throttle), m_strafe(strafe) {
+      m_bottomRoller(bottomRoller), m_feeder(feeder), m_kicker(kicker),
+      m_throttle(throttle), m_strafe(strafe) {
   AddRequirements({drive, flywheel, hood, feeder, kicker});
   SetName("ShootCommand");
   m_headingController.EnableContinuousInput(-std::numbers::pi,

@@ -41,7 +41,6 @@
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
 
-
 constexpr std::array<units::turn_t, 4> kEncoderOffsets{
     +0.405517578125_tr, // FL
     +0.110595703125_tr, // FR
@@ -136,34 +135,31 @@ std::unique_ptr<VisionIO> MakeVisionIO() {
 }
 
 RobotContainer::RobotContainer()
-    : m_drive{
-          MakeModuleIO(ModulePosition::FrontLeft,  kEncoderOffsets[0],
-                       {HardwareMap::CAN::TalonFX::FrontLeftDrive,
-                        HardwareMap::CAN::TalonFX::FrontLeftSteer,
-                        HardwareMap::CAN::CANCoder::FrontLeftEncoder}),
-          MakeModuleIO(ModulePosition::FrontRight, kEncoderOffsets[1],
-                       {HardwareMap::CAN::TalonFX::FrontRightDrive,
-                        HardwareMap::CAN::TalonFX::FrontRightSteer,
-                        HardwareMap::CAN::CANCoder::FrontRightEncoder}),
-          MakeModuleIO(ModulePosition::BackLeft,   kEncoderOffsets[2],
-                       {HardwareMap::CAN::TalonFX::BackLeftDrive,
-                        HardwareMap::CAN::TalonFX::BackLeftSteer,
-                        HardwareMap::CAN::CANCoder::BackLeftEncoder}),
-          MakeModuleIO(ModulePosition::BackRight,  kEncoderOffsets[3],
-                       {HardwareMap::CAN::TalonFX::BackRightDrive,
-                        HardwareMap::CAN::TalonFX::BackRightSteer,
-                        HardwareMap::CAN::CANCoder::BackRightEncoder}),
-          MakeGyroIO()}
-    , m_flywheel{MakeFlywheelIO()}
-    , m_hood{MakeHoodIO()}
-    , m_feeder{MakeFeederIO()}
-    , m_kicker{MakeKickerIO()}
-    , m_intakeDeployer{MakeIntakeDeployerIO()}
-    , m_intakeTopRoller{MakeIntakeTopRollerIO()}
-    , m_intakeBottomRoller{MakeIntakeBottomRollerIO()}
-    , m_vision{MakeVisionIO(), m_drive.GetOdometryThread()}
-    , m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller}
-    , m_shooter{m_flywheel, m_hood} {
+    : m_drive{MakeModuleIO(ModulePosition::FrontLeft, kEncoderOffsets[0],
+                           {HardwareMap::CAN::TalonFX::FrontLeftDrive,
+                            HardwareMap::CAN::TalonFX::FrontLeftSteer,
+                            HardwareMap::CAN::CANCoder::FrontLeftEncoder}),
+              MakeModuleIO(ModulePosition::FrontRight, kEncoderOffsets[1],
+                           {HardwareMap::CAN::TalonFX::FrontRightDrive,
+                            HardwareMap::CAN::TalonFX::FrontRightSteer,
+                            HardwareMap::CAN::CANCoder::FrontRightEncoder}),
+              MakeModuleIO(ModulePosition::BackLeft, kEncoderOffsets[2],
+                           {HardwareMap::CAN::TalonFX::BackLeftDrive,
+                            HardwareMap::CAN::TalonFX::BackLeftSteer,
+                            HardwareMap::CAN::CANCoder::BackLeftEncoder}),
+              MakeModuleIO(ModulePosition::BackRight, kEncoderOffsets[3],
+                           {HardwareMap::CAN::TalonFX::BackRightDrive,
+                            HardwareMap::CAN::TalonFX::BackRightSteer,
+                            HardwareMap::CAN::CANCoder::BackRightEncoder}),
+              MakeGyroIO()},
+      m_flywheel{MakeFlywheelIO()}, m_hood{MakeHoodIO()},
+      m_feeder{MakeFeederIO()}, m_kicker{MakeKickerIO()},
+      m_intakeDeployer{MakeIntakeDeployerIO()},
+      m_intakeTopRoller{MakeIntakeTopRollerIO()},
+      m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
+      m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
+      m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
+      m_shooter{m_flywheel, m_hood} {
   ConfigureBindings();
   ConfigureAutoCommands();
 }
@@ -181,8 +177,7 @@ void RobotContainer::ConfigureBindings() {
       &m_drive, [this] { return -m_driver.GetLeftY(); },
       [this] { return -m_driver.GetLeftX(); },
       [this] { return -m_driver.GetRightX(); },
-      [this] { return m_driver.L1().Get(); },
-      true));
+      [this] { return m_driver.L1().Get(); }, true));
 
   m_driver.Cross().WhileTrue(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));
@@ -191,20 +186,19 @@ void RobotContainer::ConfigureBindings() {
                                         &m_intakeBottomRoller)
                               .ToPtr());
 
-  m_driver.Options().WhileTrue(
-      Run([this] { m_drive.ResetHeading(0_deg); }));
+  m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
 
-  m_driver.R2().WhileTrue(
-      ShootCommand(&m_drive, &m_flywheel, &m_hood, &m_intakeBottomRoller,
-                   &m_feeder, &m_kicker,
-                   [this] { return -m_driver.GetLeftY(); },
-                   [this] { return -m_driver.GetLeftX(); })
-          .ToPtr());
+  m_driver.R2().WhileTrue(ShootCommand(
+                              &m_drive, &m_flywheel, &m_hood,
+                              &m_intakeBottomRoller, &m_feeder, &m_kicker,
+                              [this] { return -m_driver.GetLeftY(); },
+                              [this] { return -m_driver.GetLeftX(); })
+                              .ToPtr());
 
-  m_driver.Square().WhileTrue(
-      EjectIntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
-                         &m_intakeBottomRoller)
-          .ToPtr());
+  m_driver.Square().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
+                                                 &m_intakeTopRoller,
+                                                 &m_intakeBottomRoller)
+                                  .ToPtr());
 
   m_driver.R1().OnFalse(Run(
       [this] {
@@ -214,8 +208,7 @@ void RobotContainer::ConfigureBindings() {
         m_feeder.Stop();
         m_intakeBottomRoller.Stop();
       },
-      {&m_flywheel, &m_kicker, &m_feeder, &m_hood,
-       &m_intakeBottomRoller}));
+      {&m_flywheel, &m_kicker, &m_feeder, &m_hood, &m_intakeBottomRoller}));
 
   m_driver.R1().WhileTrue(Run(
       [this] {
