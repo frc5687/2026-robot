@@ -11,8 +11,7 @@ using namespace Constants::Hood;
 using namespace ctre::phoenix6;
 
 CTREHoodIO::CTREHoodIO(const CANDevice &motor)
-    : m_motor(motor.id, motor.bus),
-      m_positionSignal(m_motor.GetPosition()),
+    : m_motor(motor.id, motor.bus), m_positionSignal(m_motor.GetPosition()),
       m_velocitySignal(m_motor.GetVelocity()),
       m_voltageSignal(m_motor.GetMotorVoltage()),
       m_statorSignal(m_motor.GetStatorCurrent()),

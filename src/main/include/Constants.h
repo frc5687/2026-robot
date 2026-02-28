@@ -135,9 +135,9 @@ inline constexpr std::array<frc::Translation2d, kModuleCount>
 
 inline constexpr std::array<units::turn_t, 4> kEncoderOffsets{
     -0.150634765625_tr + 0.5_tr, // FL
-    -0.225830078125_tr+ 0.5_tr, // FR
-    -0.055419921875_tr+ 0.5_tr, // BL
-    -0.394775390625_tr+ 0.5_tr  // BR
+    -0.225830078125_tr + 0.5_tr, // FR
+    -0.055419921875_tr + 0.5_tr, // BL
+    -0.394775390625_tr + 0.5_tr  // BR
 };
 
 /*
@@ -175,7 +175,7 @@ inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace Translation
 namespace Rotation {
-inline constexpr double kP = 5.0;
+inline constexpr double kP = 8.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace Rotation
@@ -193,7 +193,8 @@ inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(4);
 inline constexpr units::inch_t kFlywheelRadius = 3.125_in;
 inline constexpr units::pound_t kFlywheelMass = 11_lb;
 
-inline constexpr units::kilogram_square_meter_t kInertia = 75.0 * 1.0_lb * 1.0_in* 1.0_in;
+inline constexpr units::kilogram_square_meter_t kInertia =
+    75.0 * 1.0_lb * 1.0_in * 1.0_in;
 
 inline constexpr bool kLeaderInverted = false;
 

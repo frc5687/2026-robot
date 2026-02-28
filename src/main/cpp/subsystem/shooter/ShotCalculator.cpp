@@ -17,7 +17,6 @@ ShotCalculator::ShotCalculator() {
   // 13 feet, 1520 rpm, 60 rps, 12 deg
   // 16 feet, 1650 rpm, 60 rps, 19 deg
 
-  constexpr double rpmOffset = -25.0;
   std::vector<std::pair<double, double>> hoodMap{
       {1.52, 0.0}, {2.13, 6.0}, {3.048, 10.0}, {3.96, 12.0}, {4.88, 19.0},
   };
@@ -26,9 +25,7 @@ ShotCalculator::ShotCalculator() {
 
   // TODO: Make this use units
   std::vector<std::pair<double, double>> flyMap{
-      {1.52, 1200 + rpmOffset},  {2.13, 1300 + rpmOffset},
-      {3.048, 1400 + rpmOffset}, {3.96, 1520 + rpmOffset},
-      {4.88, 1650 + rpmOffset},
+      {1.52, 1200}, {2.13, 1300}, {3.048, 1400}, {3.96, 1520}, {4.88, 1650},
   };
 
   m_flywheelMap.InsertValues(flyMap);
@@ -120,9 +117,10 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   double aimY = ty - ly - fieldVy * tof;
   frc::Rotation2d aimToTarget{units::radian_t{std::atan2(aimY, aimX)}};
   frc::Rotation2d driveAngle = aimToTarget - m_cfg.robotToLauncher.Rotation();
-  Logger::Instance().Log("ShotCalculator/DrivePoseShot",
-                         frc::Pose2d{
-                         {units::meter_t{lookaheadX}, units::meter_t{lookaheadY}}, driveAngle});
+  Logger::Instance().Log(
+      "ShotCalculator/DrivePoseShot",
+      frc::Pose2d{{units::meter_t{lookaheadX}, units::meter_t{lookaheadY}},
+                  driveAngle});
 
   // Compare current robot heading against required drive angle.
   OdometryData currentDrive = rs.GetDriveState(now);

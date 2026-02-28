@@ -101,13 +101,13 @@ void DriveSubsystem::Drive(const frc::ChassisSpeeds &speeds) {
 }
 
 void DriveSubsystem::DriveFieldRelative(const frc::ChassisSpeeds &speeds) {
-   std::optional<frc::DriverStation::Alliance> alliance =
-       frc::DriverStation::GetAlliance();
+  std::optional<frc::DriverStation::Alliance> alliance =
+      frc::DriverStation::GetAlliance();
   frc::Rotation2d relativeHeading = GetEstimatedHeading();
 
   if (alliance.has_value() &&
-       alliance.value() == frc::DriverStation::Alliance::kRed) {
-     relativeHeading = GetEstimatedHeading().RotateBy({180_deg});
+      alliance.value() == frc::DriverStation::Alliance::kRed) {
+    relativeHeading = GetEstimatedHeading().RotateBy({180_deg});
   }
   auto robotRelative =
       frc::ChassisSpeeds::FromFieldRelativeSpeeds(speeds, relativeHeading);

@@ -49,7 +49,8 @@ private:
 
   ShotCalculator m_shotCalculator;
 
-  frc::PIDController m_headingController{5.0, 0.0, 0.0};
+  frc::PIDController m_headingController{
+      Constants::SwerveDrive::PID::Rotation::kP, 0.0, 0.0};
 
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};

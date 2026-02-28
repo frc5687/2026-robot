@@ -4,8 +4,8 @@
 
 #include <frc/Timer.h>
 
-#include "units/angular_velocity.h"
 #include "Constants.h"
+#include "units/angular_velocity.h"
 
 SimpleShootCommand::SimpleShootCommand(
     FlywheelSubsystem *flywheel, KickerSubsystem *kicker,
@@ -20,8 +20,7 @@ SimpleShootCommand::SimpleShootCommand(
       m_hoodAngle(hoodAngle),
       m_tunableFlywheelRPM("SimpleShoot", "FlywheelRPM", flywheelRPM.value()),
       m_tunableKickerRPS("SimpleShoot", "KickerRPM", kickerRPS.value()),
-      m_tunableHoodAngle("SimpleShoot", "HoodAngleDeg", hoodAngle.value())
-{
+      m_tunableHoodAngle("SimpleShoot", "HoodAngleDeg", hoodAngle.value()) {
   AddRequirements({flywheel, kicker, feeder, deployer});
   SetName("SimpleShootCommand");
 }

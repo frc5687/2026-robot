@@ -126,7 +126,10 @@ std::unique_ptr<VisionIO> MakeVisionIO() {
     return std::make_unique<SimVisionIO>();
   }
   std::vector<LimelightCamera::Config> limelights{
-      {"limelight", LimelightCamera::MegaTagMode::kMegaTag1}};
+      {"limelight", LimelightCamera::MegaTagMode::kMegaTag1},
+      {"limelight-left", LimelightCamera::MegaTagMode::kMegaTag1},
+      {"limelight-right", LimelightCamera::MegaTagMode::kMegaTag1},
+  };
   return std::make_unique<LimelightVisionIO>(std::move(limelights));
 }
 
@@ -212,38 +215,30 @@ void RobotContainer::ConfigureBindings() {
                                                  &m_intakeTopRoller,
                                                  &m_intakeBottomRoller)
                                   .ToPtr());
-  m_driver.R1().WhileTrue(
-        SimpleShootCommand(
-            &m_flywheel,
-            &m_kicker,
-            &m_feeder,
-            &m_hood,
-            &m_intakeBottomRoller,
-            &m_intakeDeployer,
-        1000_rpm, 60_tps, 10_deg
-    ).ToPtr());
+  m_driver.R1().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
+                                             &m_hood, &m_intakeBottomRoller,
+                                             &m_intakeDeployer, 1000_rpm,
+                                             60_tps, 10_deg)
+                              .ToPtr());
 
-  m_driver.POVLeft().OnFalse(Run(
-      [this] {
-            m_intakeDeployer.ZeroPosition();
-      },
-      {&m_intakeDeployer}));
+  m_driver.POVLeft().OnFalse(
+      Run([this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
 
- // m_driver.R1().WhileTrue(Run(
- //     [this] {
- //       m_flywheel.SetRPM(1000_rpm);
- //       m_kicker.SetVelocity(60_tps);
- //       m_hood.SetPosition(10_deg);
- //       if (m_flywheel.AtSetpoint()) {
- //         m_feeder.SetVoltage(10_V);
- //         m_intakeDeployer.RetractMid();
- //         m_intakeBottomRoller.SetVoltage(10_V);
- //       } else {
- //         m_feeder.Stop();
- //       }
- //     },
- //     {&m_flywheel, &m_kicker, &m_feeder, &m_hood, &m_intakeBottomRoller,
- //      &m_intakeDeployer}));
+  // m_driver.R1().WhileTrue(Run(
+  //     [this] {
+  //       m_flywheel.SetRPM(1000_rpm);
+  //       m_kicker.SetVelocity(60_tps);
+  //       m_hood.SetPosition(10_deg);
+  //       if (m_flywheel.AtSetpoint()) {
+  //         m_feeder.SetVoltage(10_V);
+  //         m_intakeDeployer.RetractMid();
+  //         m_intakeBottomRoller.SetVoltage(10_V);
+  //       } else {
+  //         m_feeder.Stop();
+  //       }
+  //     },
+  //     {&m_flywheel, &m_kicker, &m_feeder, &m_hood, &m_intakeBottomRoller,
+  //      &m_intakeDeployer}));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
