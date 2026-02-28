@@ -21,6 +21,8 @@
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/SimpleShootCommand.h"
+#include "frc2/command/CommandPtr.h"
+#include "pathplanner/lib/auto/AutoBuilder.h"
 #include "pathplanner/lib/commands/PathPlannerAuto.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
@@ -162,9 +164,12 @@ RobotContainer::RobotContainer()
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
       m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
       m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
-      m_shooter{m_flywheel, m_hood} {
+      m_shooter{m_flywheel, m_hood},
+      m_autoChooser{pathplanner::AutoBuilder::buildAutoChooser()} {
   ConfigureBindings();
   ConfigureAutoCommands();
+  frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
+
 }
 
 void RobotContainer::Periodic() { m_robotViz.Update(); }
@@ -241,6 +246,6 @@ void RobotContainer::ConfigureBindings() {
   //      &m_intakeDeployer}));
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  return pathplanner::PathPlannerAuto("Left").ToPtr();
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+  return m_autoChooser.GetSelected();
 }

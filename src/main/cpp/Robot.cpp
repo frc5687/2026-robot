@@ -40,8 +40,8 @@ void Robot::DisabledExit() {}
 
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
-  if (m_autonomousCommand) {
-    frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand->get());
+  if (m_autonomousCommand != nullptr) {
+    frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand);
   }
 }
 

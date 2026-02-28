@@ -6,7 +6,9 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandPS5Controller.h>
 #include <units/angle.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 
+#include "frc/smartdashboard/SendableChooser.h"
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
@@ -18,13 +20,12 @@
 #include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
-#include "utils/TunableDouble.h"
 #include "viz/RobotViz.h"
 
 class RobotContainer {
 public:
   RobotContainer();
-  frc2::CommandPtr GetAutonomousCommand();
+  frc2::Command* GetAutonomousCommand();
   void Periodic();
 
 private:
@@ -44,4 +45,5 @@ private:
   ShooterSystem m_shooter;
   RobotViz m_robotViz{};
   frc2::CommandPS5Controller m_driver{0};
+  frc::SendableChooser<frc2::Command*> m_autoChooser;
 };
