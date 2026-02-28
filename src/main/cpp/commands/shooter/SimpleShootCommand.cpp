@@ -5,17 +5,23 @@
 #include <frc/Timer.h>
 
 #include "units/angular_velocity.h"
+#include "Constants.h"
 
 SimpleShootCommand::SimpleShootCommand(
     FlywheelSubsystem *flywheel, KickerSubsystem *kicker,
     FeederSubsystem *feeder, HoodSubsystem *hood,
-    IntakeBottomRollerSubsystem *bottomRoller, IntakeDeployerSubsystem *deployer,
+    IntakeBottomRollerSubsystem *bottomRoller,
+    IntakeDeployerSubsystem *deployer,
     units::revolutions_per_minute_t flywheelRPM,
     units::turns_per_second_t kickerRPS, units::degree_t hoodAngle)
     : m_flywheel(flywheel), m_kicker(kicker), m_feeder(feeder), m_hood(hood),
       m_bottomRoller(bottomRoller), m_deployer(deployer),
       m_flywheelRPM(flywheelRPM), m_kickerRPS(kickerRPS),
-      m_hoodAngle(hoodAngle) {
+      m_hoodAngle(hoodAngle),
+      m_tunableFlywheelRPM("SimpleShoot", "FlywheelRPM", flywheelRPM.value()),
+      m_tunableKickerRPS("SimpleShoot", "KickerRPM", kickerRPS.value()),
+      m_tunableHoodAngle("SimpleShoot", "HoodAngleDeg", hoodAngle.value())
+{
   AddRequirements({flywheel, kicker, feeder, deployer});
   SetName("SimpleShootCommand");
 }
@@ -30,6 +36,19 @@ void SimpleShootCommand::Initialize() {
 }
 
 void SimpleShootCommand::Execute() {
+  if (m_tunableFlywheelRPM.HasChanged()) {
+    m_flywheelRPM = units::revolutions_per_minute_t{m_tunableFlywheelRPM.Get()};
+  }
+
+  if (m_tunableKickerRPS.HasChanged()) {
+    m_kickerRPS = units::turns_per_second_t{m_tunableKickerRPS.Get()};
+  }
+
+  if (m_tunableHoodAngle.HasChanged()) {
+    m_hoodAngle = units::degree_t{m_tunableHoodAngle.Get()};
+    m_hood->SetPosition(m_hoodAngle);
+  }
+
   m_flywheel->SetRPM(m_flywheelRPM);
   m_kicker->SetVelocity(m_kickerRPS);
 
@@ -37,13 +56,13 @@ void SimpleShootCommand::Execute() {
   auto elapsed = now - m_pulseStartTime;
 
   if (m_deployerExtended) {
-    if (elapsed >= kPulseExtendDuration) {
+    if (elapsed >= Constants::IntakeDeployer::kPulseExtendDuration) {
       m_deployer->RetractMid();
       m_deployerExtended = false;
       m_pulseStartTime = now;
     }
   } else {
-    if (elapsed >= kPulseRetractDuration) {
+    if (elapsed >= Constants::IntakeDeployer::kPulseRetractDuration) {
       m_deployer->Deploy();
       m_deployerExtended = true;
       m_pulseStartTime = now;

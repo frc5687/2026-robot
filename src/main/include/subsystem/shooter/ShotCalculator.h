@@ -14,7 +14,7 @@
 #include "utils/InterpolatingTreeMap.h"
 
 struct ShotConfig {
-  frc::Transform2d robotToLauncher{{-0.114_m, 0.191_m}, frc::Rotation2d{0_rad}};
+  frc::Transform2d robotToLauncher{{0.15_m, 0_m}, frc::Rotation2d{0_rad}};
   frc::Translation2d targetXY{
       Constants::Field::Hub::kInnerCenterPoint.ToTranslation2d()};
   units::second_t totalLatency{0.06_s};

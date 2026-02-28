@@ -53,15 +53,12 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
       [this](auto speeds, auto feedforwards) { Drive(speeds); }, // relative
       std::make_shared<pathplanner::PPHolonomicDriveController>(
           pathplanner::PIDConstants(
-                Constants::SwerveDrive::PID::Translation::kP,
-                Constants::SwerveDrive::PID::Translation::kI,
-                Constants::SwerveDrive::PID::Translation::kD
-            ),
-          pathplanner::PIDConstants(
-                Constants::SwerveDrive::PID::Rotation::kP,
-                Constants::SwerveDrive::PID::Rotation::kI,
-                Constants::SwerveDrive::PID::Rotation::kD
-            )),
+              Constants::SwerveDrive::PID::Translation::kP,
+              Constants::SwerveDrive::PID::Translation::kI,
+              Constants::SwerveDrive::PID::Translation::kD),
+          pathplanner::PIDConstants(Constants::SwerveDrive::PID::Rotation::kP,
+                                    Constants::SwerveDrive::PID::Rotation::kI,
+                                    Constants::SwerveDrive::PID::Rotation::kD)),
       m_robotConfig,
       []() {
         auto alliance = frc::DriverStation::GetAlliance();
@@ -104,14 +101,14 @@ void DriveSubsystem::Drive(const frc::ChassisSpeeds &speeds) {
 }
 
 void DriveSubsystem::DriveFieldRelative(const frc::ChassisSpeeds &speeds) {
-  std::optional<frc::DriverStation::Alliance> alliance =
-      frc::DriverStation::GetAlliance();
-  frc::Rotation2d relativeHeading = GetHeading();
+  // std::optional<frc::DriverStation::Alliance> alliance =
+  //     frc::DriverStation::GetAlliance();
+  frc::Rotation2d relativeHeading = GetEstimatedHeading();
 
-  if (alliance.has_value() &&
-      alliance.value() == frc::DriverStation::Alliance::kRed) {
-    relativeHeading = GetHeading().RotateBy({180_deg});
-  }
+  // if (alliance.has_value() &&
+  //     alliance.value() == frc::DriverStation::Alliance::kRed) {
+  //   relativeHeading = GetEstimatedHeading().RotateBy({180_deg});
+  // }
   auto robotRelative =
       frc::ChassisSpeeds::FromFieldRelativeSpeeds(speeds, relativeHeading);
   Drive(robotRelative);
@@ -169,6 +166,13 @@ frc::Rotation2d DriveSubsystem::GetHeading() const {
   return frc::Rotation2d{};
 }
 
+frc::Rotation2d DriveSubsystem::GetEstimatedHeading() const {
+  if (m_odometryThread) {
+    return GetPose().Rotation();
+  }
+  return frc::Rotation2d{};
+}
+
 void DriveSubsystem::ResetHeading(units::degree_t heading) {
   m_gyro->Reset(heading);
 
@@ -186,7 +190,8 @@ frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds() const {
 
 frc::ChassisSpeeds DriveSubsystem::GetFieldRelativeSpeeds() const {
   auto robotSpeeds = GetChassisSpeeds();
-  return frc::ChassisSpeeds::FromRobotRelativeSpeeds(robotSpeeds, GetHeading());
+  return frc::ChassisSpeeds::FromRobotRelativeSpeeds(robotSpeeds,
+                                                     GetEstimatedHeading());
 }
 
 std::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>

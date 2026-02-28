@@ -44,6 +44,7 @@ public:
 
   frc::Pose2d GetPose() const;
   frc::Rotation2d GetHeading() const;
+  frc::Rotation2d GetEstimatedHeading() const;
   void ResetHeading(units::degree_t heading = 0_deg);
 
   // State information

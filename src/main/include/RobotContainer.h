@@ -42,13 +42,6 @@ private:
   VisionSubsystem m_vision;
   IntakeSystem m_intake;
   ShooterSystem m_shooter;
-  TunableDouble m_simpleShootFlywheelRPM{"SmartDashboard",
-                                         "SimpleShoot/FlywheelRPM", 1600.0};
-  TunableDouble m_simpleShootKickerRPS{"SmartDashboard",
-                                       "SimpleShoot/KickerRPS", 60.0};
-  TunableDouble m_simpleShootAngle{"SmartDashboard", "SimpleShoot/AngleDeg",
-                                   10.0};
-
   RobotViz m_robotViz{};
   frc2::CommandPS5Controller m_driver{0};
 };

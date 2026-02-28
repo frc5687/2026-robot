@@ -2,8 +2,6 @@
 
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
-#include "Constants.h"
-
 IntakeTopRollerSubsystem::IntakeTopRollerSubsystem(
     std::unique_ptr<IntakeTopRollerIO> io)
     : LoggedSubsystem("IntakeTopRoller"), m_io(std::move(io)) {}
