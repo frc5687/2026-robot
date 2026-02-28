@@ -65,8 +65,6 @@ void ShootCommand::Execute() {
                                         .Radians()
                                         .value(),
                                     solution.driveAngle.Radians().value());
-  rotOutput = -rotOutput;
-
   rotOutput =
       std::clamp(rotOutput, -Constants::SwerveDrive::kMaxAngularSpeed.value(),
                  Constants::SwerveDrive::kMaxAngularSpeed.value());

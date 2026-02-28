@@ -134,10 +134,10 @@ inline constexpr std::array<frc::Translation2d, kModuleCount>
     };
 
 inline constexpr std::array<units::turn_t, 4> kEncoderOffsets{
-    -0.150634765625_tr, // FL
-    -0.225830078125_tr, // FR
-    -0.055419921875_tr, // BL
-    -0.394775390625_tr  // BR
+    -0.150634765625_tr + 0.5_tr, // FL
+    -0.225830078125_tr+ 0.5_tr, // FR
+    -0.055419921875_tr+ 0.5_tr, // BL
+    -0.394775390625_tr+ 0.5_tr  // BR
 };
 
 /*
