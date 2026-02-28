@@ -17,6 +17,7 @@
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
+#include "commands/intake/StopIntakeCommand.h"
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/SimpleShootCommand.h"
@@ -173,6 +174,11 @@ void RobotContainer::ConfigureAutoCommands() {
 
   pathplanner::NamedCommands::registerCommand(
       "Intake", IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
+                              &m_intakeBottomRoller)
+                    .ToPtr());
+
+  pathplanner::NamedCommands::registerCommand(
+      "StopIntake", StopIntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
                               &m_intakeBottomRoller)
                     .ToPtr());
 }
