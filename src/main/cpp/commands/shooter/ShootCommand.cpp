@@ -12,17 +12,20 @@
 
 #include "Constants.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
+#include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
+                           IntakeTopRollerSubsystem *topRoller,
                            IntakeBottomRollerSubsystem *bottomRoller,
                            FeederSubsystem *feeder, KickerSubsystem *kicker,
                            IntakeDeployerSubsystem *deployer,
                            std::function<double()> throttle,
                            std::function<double()> strafe)
     : m_drive(drive), m_flywheel(flywheel), m_hood(hood),
-      m_bottomRoller(bottomRoller), m_feeder(feeder), m_kicker(kicker),
-      m_deployer(deployer), m_throttle(throttle), m_strafe(strafe) {
+      m_topRoller(topRoller), m_bottomRoller(bottomRoller), m_feeder(feeder),
+      m_kicker(kicker), m_deployer(deployer), m_throttle(throttle),
+      m_strafe(strafe) {
   AddRequirements({drive, flywheel, hood, feeder, kicker, deployer});
   SetName("ShootCommand");
   m_headingController.EnableContinuousInput(-std::numbers::pi,
@@ -90,6 +93,7 @@ void ShootCommand::Execute() {
 
   if (solution.ready) {
     m_feeder->SetVoltage(kFeedVoltage);
+    m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
     m_kicker->SetVelocity(kKickerRPS);
   } else {
@@ -101,6 +105,7 @@ void ShootCommand::Execute() {
 void ShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
   m_hood->SetPosition(0_rad);
+  m_topRoller->Stop();
   m_bottomRoller->Stop();
   m_feeder->Stop();
   m_kicker->Stop();

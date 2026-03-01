@@ -35,7 +35,7 @@ public:
   void TestExit() override;
 
 private:
-  frc2::Command* m_autonomousCommand;
+  frc2::Command *m_autonomousCommand;
 
   RobotContainer m_container;
 };

@@ -3,8 +3,8 @@
 #include "commands/intake/StopIntakeCommand.h"
 
 StopIntakeCommand::StopIntakeCommand(IntakeDeployerSubsystem *deployer,
-                             IntakeTopRollerSubsystem *topRoller,
-                             IntakeBottomRollerSubsystem *bottomRoller)
+                                     IntakeTopRollerSubsystem *topRoller,
+                                     IntakeBottomRollerSubsystem *bottomRoller)
     : m_deployer(deployer), m_topRoller(topRoller),
       m_bottomRoller(bottomRoller) {
   AddRequirements({deployer, topRoller, bottomRoller});

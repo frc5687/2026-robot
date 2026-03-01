@@ -3,7 +3,9 @@
 #include "Robot.h"
 
 #include <frc/DriverStation.h>
+#include <frc/Notifier.h>
 #include <frc/RobotBase.h>
+#include <frc/Threads.h>
 #include <frc/livewindow/LiveWindow.h>
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/Commands.h>
@@ -11,6 +13,7 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
+#include <wpi/raw_ostream.h>
 
 #include <ctre/phoenix6/SignalLogger.hpp>
 
@@ -20,6 +23,15 @@ Robot::Robot() {
   frc::LiveWindow::DisableAllTelemetry();
   ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::DriverStation::SilenceJoystickConnectionWarning(true);
+
+  if (!frc::Notifier::SetHALThreadPriority(true, 40)) {
+    wpi::errs() << "Failed to set HAL notifier thread priority\n";
+  }
+
+  // 2) Main robot loop thread
+  if (!frc::SetCurrentThreadPriority(true, 15)) {
+    wpi::errs() << "Failed to set main robot thread priority\n";
+  }
 }
 
 void Robot::RobotPeriodic() {

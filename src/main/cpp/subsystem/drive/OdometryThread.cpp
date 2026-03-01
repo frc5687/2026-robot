@@ -3,7 +3,9 @@
 #include "subsystem/drive/OdometryThread.h"
 
 #include <fmt/format.h>
+#include <frc/Threads.h>
 #include <frc/Timer.h>
+#include <wpi/raw_ostream.h>
 
 #include <memory>
 #include <mutex>
@@ -79,6 +81,13 @@ void OdometryThread::PeriodicUpdate() {
   if (!m_isRunning.load()) {
     return;
   }
+  static bool prioInit = [] {
+    if (!frc::SetCurrentThreadPriority(true, 30)) {
+      wpi::errs() << "Failed to set odometry notifier thread priority\n";
+    }
+    return true;
+  }();
+  (void)prioInit;
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   m_totalIterations++;

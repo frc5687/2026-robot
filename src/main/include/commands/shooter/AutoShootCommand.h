@@ -13,6 +13,7 @@
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
+#include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
 
@@ -21,6 +22,7 @@ class AutoShootCommand
 public:
   AutoShootCommand(FlywheelSubsystem *flywheel, HoodSubsystem *hood,
                    FeederSubsystem *feeder, KickerSubsystem *kicker,
+                   IntakeTopRollerSubsystem *topRoller,
                    IntakeBottomRollerSubsystem *bottomRoller,
                    IntakeDeployerSubsystem *deployer);
 
@@ -34,6 +36,7 @@ private:
   HoodSubsystem *m_hood;
   FeederSubsystem *m_feeder;
   KickerSubsystem *m_kicker;
+  IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   IntakeDeployerSubsystem *m_deployer;
 
@@ -43,6 +46,7 @@ private:
   bool m_deployerExtended{false};
 
   static constexpr units::volt_t kFeedVoltage = 10_V;
+  static constexpr units::volt_t kTopVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::turns_per_second_t kKickerRPS = 60_tps;
   static constexpr units::second_t kPulseExtendDuration = 0.3_s;

@@ -18,13 +18,15 @@
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
+#include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
 
 class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
 public:
   ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
-               HoodSubsystem *hood, IntakeBottomRollerSubsystem *bottomRoller,
+               HoodSubsystem *hood, IntakeTopRollerSubsystem *topRoller,
+               IntakeBottomRollerSubsystem *bottomRoller,
                FeederSubsystem *feeder, KickerSubsystem *kicker,
                IntakeDeployerSubsystem *deployer,
                std::function<double()> throttle,
@@ -39,6 +41,7 @@ private:
   DriveSubsystem *m_drive;
   FlywheelSubsystem *m_flywheel;
   HoodSubsystem *m_hood;
+  IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   FeederSubsystem *m_feeder;
   KickerSubsystem *m_kicker;
@@ -56,6 +59,7 @@ private:
   bool m_deployerExtended{false};
 
   static constexpr units::volt_t kFeedVoltage = 10_V;
+  static constexpr units::volt_t kTopVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::turns_per_second_t kKickerRPS = 60_tps;
   static constexpr double kDeadband = 0.1;
