@@ -189,6 +189,8 @@ void RobotContainer::ConfigureAutoCommands() {
       "StopIntake", StopIntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
                                       &m_intakeBottomRoller)
                         .ToPtr());
+
+  pathplanner::NamedCommands::registerCommand("SpinUpFlywheel", SpinUpFlywheel(&m_flywheel).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
