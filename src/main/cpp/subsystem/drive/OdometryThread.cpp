@@ -3,13 +3,13 @@
 #include "subsystem/drive/OdometryThread.h"
 
 #include <fmt/format.h>
+#include <frc/Threads.h>
 #include <frc/Timer.h>
+#include <wpi/raw_ostream.h>
 
 #include <memory>
 #include <mutex>
 
-#include <frc/Threads.h>
-#include <wpi/raw_ostream.h>
 #include "Constants.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "subsystem/drive/PigeonIO.h"

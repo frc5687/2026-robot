@@ -169,7 +169,6 @@ RobotContainer::RobotContainer()
   ConfigureAutoCommands();
   m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
-
 }
 
 void RobotContainer::Periodic() { m_robotViz.Update(); }
@@ -177,7 +176,8 @@ void RobotContainer::Periodic() { m_robotViz.Update(); }
 void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
       "Shoot", AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_kicker,
-                                &m_intakeBottomRoller, &m_intakeDeployer)
+                                &m_intakeTopRoller, &m_intakeBottomRoller,
+                                &m_intakeDeployer)
                    .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
@@ -187,8 +187,8 @@ void RobotContainer::ConfigureAutoCommands() {
 
   pathplanner::NamedCommands::registerCommand(
       "StopIntake", StopIntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
-                              &m_intakeBottomRoller)
-                    .ToPtr());
+                                      &m_intakeBottomRoller)
+                        .ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
@@ -246,6 +246,6 @@ void RobotContainer::ConfigureBindings() {
   //      &m_intakeDeployer}));
 }
 
-frc2::Command* RobotContainer::GetAutonomousCommand() {
+frc2::Command *RobotContainer::GetAutonomousCommand() {
   return m_autoChooser.GetSelected();
 }

@@ -5,13 +5,17 @@
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
 
+#include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
+
 AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
                                    HoodSubsystem *hood, FeederSubsystem *feeder,
                                    KickerSubsystem *kicker,
+                                   IntakeTopRollerSubsystem *topRoller,
                                    IntakeBottomRollerSubsystem *bottomRoller,
                                    IntakeDeployerSubsystem *deployer)
     : m_flywheel(flywheel), m_hood(hood), m_feeder(feeder), m_kicker(kicker),
-      m_bottomRoller(bottomRoller), m_deployer(deployer) {
+      m_topRoller(topRoller), m_bottomRoller(bottomRoller),
+      m_deployer(deployer) {
   AddRequirements({flywheel, hood, feeder, kicker, deployer});
   SetName("AutoShootCommand");
 }
@@ -50,6 +54,7 @@ void AutoShootCommand::Execute() {
 
   if (solution.ready) {
     m_feeder->SetVoltage(kFeedVoltage);
+    m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
     m_kicker->SetVelocity(kKickerRPS);
   } else {
@@ -61,6 +66,7 @@ void AutoShootCommand::Execute() {
 void AutoShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
   m_hood->SetPosition(0_rad);
+  m_topRoller->Stop();
   m_bottomRoller->Stop();
   m_feeder->Stop();
   m_kicker->Stop();

@@ -3,7 +3,9 @@
 #include "Robot.h"
 
 #include <frc/DriverStation.h>
+#include <frc/Notifier.h>
 #include <frc/RobotBase.h>
+#include <frc/Threads.h>
 #include <frc/livewindow/LiveWindow.h>
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/Commands.h>
@@ -11,13 +13,9 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
-#include <frc/Threads.h>
-#include <frc/Notifier.h>
 #include <wpi/raw_ostream.h>
 
-
 #include <ctre/phoenix6/SignalLogger.hpp>
-
 
 #include "subsystem/CoordinatedSystemManager.h"
 
@@ -78,7 +76,5 @@ void Robot::TestPeriodic() {}
 void Robot::TestExit() {}
 
 #ifndef RUNNING_FRC_TESTS
-int main() {
-  return frc::StartRobot<Robot>();
-}
+int main() { return frc::StartRobot<Robot>(); }
 #endif
