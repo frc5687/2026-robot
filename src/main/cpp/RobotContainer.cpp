@@ -21,9 +21,7 @@
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/SimpleShootCommand.h"
-#include "frc2/command/CommandPtr.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
-#include "pathplanner/lib/commands/PathPlannerAuto.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
@@ -209,12 +207,13 @@ void RobotContainer::ConfigureBindings() {
 
   m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
 
-  m_driver.R2().WhileTrue(
-      ShootCommand(
-          &m_drive, &m_flywheel, &m_hood, &m_intakeBottomRoller, &m_feeder,
-          &m_kicker, &m_intakeDeployer, [this] { return -m_driver.GetLeftY(); },
-          [this] { return -m_driver.GetLeftX(); })
-          .ToPtr());
+  m_driver.R2().WhileTrue(ShootCommand(
+                              &m_drive, &m_flywheel, &m_hood,
+                              &m_intakeTopRoller, &m_intakeBottomRoller,
+                              &m_feeder, &m_kicker, &m_intakeDeployer,
+                              [this] { return -m_driver.GetLeftY(); },
+                              [this] { return -m_driver.GetLeftX(); })
+                              .ToPtr());
 
   m_driver.Square().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
                                                  &m_intakeTopRoller,
