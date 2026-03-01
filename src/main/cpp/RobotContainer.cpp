@@ -164,10 +164,10 @@ RobotContainer::RobotContainer()
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
       m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
       m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
-      m_shooter{m_flywheel, m_hood},
-      m_autoChooser{pathplanner::AutoBuilder::buildAutoChooser()} {
+      m_shooter{m_flywheel, m_hood} {
   ConfigureBindings();
   ConfigureAutoCommands();
+  m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
 
 }
@@ -176,19 +176,19 @@ void RobotContainer::Periodic() { m_robotViz.Update(); }
 
 void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
-      "Shoot", AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_kicker,
+      "Shoot", std::move(AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_kicker,
                                 &m_intakeBottomRoller, &m_intakeDeployer)
-                   .ToPtr());
+                   .ToPtr()));
 
   pathplanner::NamedCommands::registerCommand(
-      "Intake", IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
+      "Intake", std::move(IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
                               &m_intakeBottomRoller)
-                    .ToPtr());
+                    .ToPtr()));
 
   pathplanner::NamedCommands::registerCommand(
-      "StopIntake", StopIntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
+      "StopIntake", std::move(StopIntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
                               &m_intakeBottomRoller)
-                    .ToPtr());
+                    .ToPtr()));
 }
 
 void RobotContainer::ConfigureBindings() {
