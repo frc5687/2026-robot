@@ -28,13 +28,13 @@ void VisionSubsystem::UpdateInputs() {
     m_updatesWithMeasurements++;
   }
 
-  for (auto measurement : m_inputs.visionPoseMeasurements) {
+  for (const auto &measurement : m_inputs.visionPoseMeasurements) {
     m_odometryThread->AddVisionMeasurement(measurement.second);
   }
 }
 
 void VisionSubsystem::LogTelemetry() {
-  for (auto est : m_inputs.visionPoseMeasurements) {
+  for (const auto &est : m_inputs.visionPoseMeasurements) {
     std::string key = "Estimated Pose" + est.first;
     Log(key, est.second.pose);
   }

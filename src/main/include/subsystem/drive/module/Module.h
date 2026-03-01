@@ -51,6 +51,7 @@ private:
 
   ModulePosition m_position;
   std::string m_name;
+  std::string m_logPrefix;
 
   ModuleIOInputs m_inputs;
   frc::SwerveModuleState m_desiredState;
