@@ -17,10 +17,17 @@
 #include <networktables/StructTopic.h>
 #include <wpi/struct/Struct.h>
 
+#include <array>
+#include <atomic>
+#include <condition_variable>
+#include <deque>
+#include <functional>
+#include <mutex>
 #include <shared_mutex>
 #include <span>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
@@ -42,98 +49,160 @@ public:
 
   template <typename T>
   void Log(std::string_view name, const T &value, int64_t ts = 0) {
+    std::string key{name};
+    auto valueCopy = value;
+    EnqueueTask([this, key = std::move(key), value = std::move(valueCopy),
+                 ts] { LogSync(std::string_view{key}, value, ts); });
+  }
+
+  template <typename T>
+  void Log(std::string_view name, const std::vector<T> &values,
+           int64_t ts = 0) {
+    std::string key{name};
+    std::vector<T> valuesCopy{values};
+    EnqueueTask([this, key = std::move(key), values = std::move(valuesCopy),
+                 ts] { LogSync(std::string_view{key}, values, ts); });
+  }
+
+  template <typename T, size_t N>
+  void Log(std::string_view name, const std::array<T, N> &arr, int64_t ts = 0) {
+    std::string key{name};
+    auto arrCopy = arr;
+    EnqueueTask([this, key = std::move(key), arr = std::move(arrCopy),
+                 ts] { LogSync(std::string_view{key}, arr, ts); });
+  }
+
+private:
+  Logger() : m_instance(nt::NetworkTableInstance::GetDefault()) {
+    m_worker = std::thread([this] { WorkerLoop(); });
+  }
+  ~Logger() {
+    {
+      std::lock_guard guard(m_queueMutex);
+      m_running.store(false);
+    }
+    m_queueCV.notify_all();
+    if (m_worker.joinable()) {
+      m_worker.join();
+    }
+  }
+
+  Logger(const Logger &) = delete;
+  Logger &operator=(const Logger &) = delete;
+
+  void WorkerLoop() {
+    while (true) {
+      std::function<void()> task;
+      {
+        std::unique_lock lock(m_queueMutex);
+        m_queueCV.wait(
+            lock, [this] { return !m_running.load() || !m_taskQueue.empty(); });
+        if (!m_running.load() && m_taskQueue.empty()) {
+          break;
+        }
+        task = std::move(m_taskQueue.front());
+        m_taskQueue.pop_front();
+      }
+      task();
+    }
+  }
+
+  void EnqueueTask(std::function<void()> task) {
+    {
+      std::lock_guard guard(m_queueMutex);
+      if (m_taskQueue.size() >= kMaxQueueSize) {
+        m_droppedTaskCount.fetch_add(1, std::memory_order_relaxed);
+        return;
+      }
+      m_taskQueue.emplace_back(std::move(task));
+    }
+    m_queueCV.notify_one();
+  }
+
+  template <typename T>
+  void LogSync(std::string_view name, const T &value, int64_t ts = 0) {
     if constexpr (std::is_same_v<T, bool>) {
       auto &pub = GetOrCreate(name, m_boolPubs, [&] {
         return m_instance.GetBooleanTopic(name).Publish();
       });
       pub.Set(value, ts);
-
     } else if constexpr (std::is_integral_v<T>) {
       auto &pub = GetOrCreate(name, m_intPubs, [&] {
         return m_instance.GetIntegerTopic(name).Publish();
       });
       pub.Set(static_cast<int64_t>(value), ts);
-
     } else if constexpr (std::is_same_v<T, float>) {
       auto &pub = GetOrCreate(name, m_floatPubs, [&] {
         return m_instance.GetFloatTopic(name).Publish();
       });
       pub.Set(value, ts);
-
     } else if constexpr (std::is_same_v<T, double>) {
       auto &pub = GetOrCreate(name, m_doublePubs, [&] {
         return m_instance.GetDoubleTopic(name).Publish();
       });
       pub.Set(value, ts);
-
     } else if constexpr (std::is_same_v<T, std::string>) {
       auto &pub = GetOrCreate(name, m_stringPubs, [&] {
         return m_instance.GetStringTopic(name).Publish();
       });
       pub.Set(value, ts);
-
     } else if constexpr (wpi::StructSerializable<T>) {
       auto &pub = GetOrCreate(name, GetStructMap<T>(), [&] {
         return m_instance.GetStructTopic<T>(name).Publish();
       });
       pub.Set(value, ts);
-
     } else {
       static_assert(!sizeof(T), "Type not supported");
     }
   }
 
   template <typename T>
-  void Log(std::string_view name, const std::vector<T> &values,
-           int64_t ts = 0) {
+  void LogSync(std::string_view name, const std::vector<T> &values,
+               int64_t ts = 0) {
     if constexpr (std::is_same_v<T, bool>) {
       std::vector<int> tmp;
       tmp.reserve(values.size());
-      for (bool b : values)
+      for (bool b : values) {
         tmp.push_back(b ? 1 : 0);
+      }
       auto &pub = GetOrCreate(name, m_boolArrPubs, [&] {
         return m_instance.GetBooleanArrayTopic(name).Publish();
       });
       pub.Set(tmp, ts);
-
     } else if constexpr (std::is_integral_v<T>) {
       std::vector<int64_t> tmp(values.begin(), values.end());
       auto &pub = GetOrCreate(name, m_intArrPubs, [&] {
         return m_instance.GetIntegerArrayTopic(name).Publish();
       });
       pub.Set(tmp, ts);
-
     } else if constexpr (std::is_same_v<T, float>) {
       auto &pub = GetOrCreate(name, m_floatArrPubs, [&] {
         return m_instance.GetFloatArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
-
     } else if constexpr (std::is_same_v<T, double>) {
       auto &pub = GetOrCreate(name, m_doubleArrPubs, [&] {
         return m_instance.GetDoubleArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
-
     } else if constexpr (std::is_same_v<T, std::string>) {
       auto &pub = GetOrCreate(name, m_stringArrPubs, [&] {
         return m_instance.GetStringArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
-
     } else if constexpr (wpi::StructSerializable<T>) {
       auto &pub = GetOrCreate(name, GetStructArrMap<T>(), [&] {
         return m_instance.GetStructArrayTopic<T>(name).Publish();
       });
       pub.Set(values, ts);
-
     } else {
       static_assert(!sizeof(T), "Type not supported");
     }
   }
 
   template <typename T, size_t N>
-  void Log(std::string_view name, const std::array<T, N> &arr, int64_t ts = 0) {
+  void LogSync(std::string_view name, const std::array<T, N> &arr,
+               int64_t ts = 0) {
     if constexpr (wpi::StructSerializable<T>) {
       auto &pub = GetOrCreate(name, GetStructArrMap<T>(), [&] {
         return m_instance.GetStructArrayTopic<T>(name).Publish();
@@ -150,14 +219,10 @@ public:
       });
       pub.Set(std::span<const float>{arr.data(), N}, ts);
     } else {
-      // Fallback for types needing conversion (bool→int, int→int64_t)
       std::vector<T> tmp(arr.begin(), arr.end());
-      Log(name, tmp, ts);
+      LogSync(name, tmp, ts);
     }
   }
-
-private:
-  Logger() : m_instance(nt::NetworkTableInstance::GetDefault()) {}
 
   // Hot path: shared (read) lock finds existing publisher — no allocation.
   // Cold path: exclusive (write) lock creates publisher once per key.
@@ -192,6 +257,14 @@ private:
 
   nt::NetworkTableInstance m_instance;
   std::shared_mutex m_lock;
+  using Task = std::function<void()>;
+  static constexpr size_t kMaxQueueSize = 8192;
+  std::atomic<bool> m_running{true};
+  std::thread m_worker;
+  std::mutex m_queueMutex;
+  std::condition_variable m_queueCV;
+  std::deque<Task> m_taskQueue;
+  std::atomic<size_t> m_droppedTaskCount{0};
 
   using SMap = std::equal_to<>;
   std::unordered_map<std::string, nt::BooleanPublisher, StringHash, SMap>

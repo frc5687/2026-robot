@@ -44,6 +44,8 @@ private:
   units::revolutions_per_minute_t m_flywheelRPM;
   units::turns_per_second_t m_kickerRPS;
   units::degree_t m_hoodAngle;
+  units::volt_t m_feederVolts{0_V};
+  units::volt_t m_bottomVolts{0_V};
 
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};
@@ -53,4 +55,6 @@ private:
   TunableDouble m_tunableFlywheelRPM;
   TunableDouble m_tunableKickerRPS;
   TunableDouble m_tunableHoodAngle;
+  TunableDouble m_tunableBottomVoltage;
+  TunableDouble m_tunableFeederVoltage;
 };
