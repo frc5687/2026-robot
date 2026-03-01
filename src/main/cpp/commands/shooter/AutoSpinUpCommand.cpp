@@ -8,7 +8,7 @@
 
 AutoSpinUpCommand::AutoSpinUpCommand(FlywheelSubsystem *flywheel)
     : m_flywheel(flywheel){
-  AddRequirements({flywheel});
+  AddRequirements(flywheel);
   SetName("AutoSpinUpCommand");
 }
 

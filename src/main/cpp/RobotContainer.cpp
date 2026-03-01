@@ -19,6 +19,7 @@
 #include "commands/intake/IntakeCommand.h"
 #include "commands/intake/StopIntakeCommand.h"
 #include "commands/shooter/AutoShootCommand.h"
+#include "commands/shooter/AutoSpinUpCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/SimpleShootCommand.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
@@ -188,7 +189,7 @@ void RobotContainer::ConfigureAutoCommands() {
                                       &m_intakeBottomRoller)
                         .ToPtr());
 
-  pathplanner::NamedCommands::registerCommand("SpinUpFlywheel", SpinUpFlywheel(&m_flywheel).ToPtr());
+  pathplanner::NamedCommands::registerCommand("SpinUpFlywheel", AutoSpinUpCommand(&m_flywheel).ToPtr());
 }
 
 void RobotContainer::ConfigureBindings() {
