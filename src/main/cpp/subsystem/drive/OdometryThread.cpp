@@ -8,6 +8,8 @@
 #include <memory>
 #include <mutex>
 
+#include <frc/Threads.h>
+#include <wpi/raw_ostream.h>
 #include "Constants.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "subsystem/drive/PigeonIO.h"
@@ -79,6 +81,13 @@ void OdometryThread::PeriodicUpdate() {
   if (!m_isRunning.load()) {
     return;
   }
+  static bool prioInit = [] {
+    if (!frc::SetCurrentThreadPriority(true, 30)) {
+      wpi::errs() << "Failed to set odometry notifier thread priority\n";
+    }
+    return true;
+  }();
+  (void)prioInit;
 
   auto startTime = frc::Timer::GetFPGATimestamp();
   m_totalIterations++;
