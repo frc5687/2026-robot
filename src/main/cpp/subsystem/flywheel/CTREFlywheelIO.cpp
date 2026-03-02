@@ -27,12 +27,12 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leader,
       m_follower2SupplyCurrentSignal(m_follower2.GetSupplyCurrent()),
       m_follower3SupplyCurrentSignal(m_follower3.GetSupplyCurrent()),
 
-      m_criticalSignals{&m_leaderVelocitySignal, &m_leaderPositionSignal,
-                        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
-                        &m_leaderSupplyCurrentSignal},
-      m_diagnosticSignals{&m_follower1SupplyCurrentSignal,
-                          &m_follower2SupplyCurrentSignal,
-                          &m_follower3SupplyCurrentSignal} {
+      m_signals{
+        &m_leaderVelocitySignal, &m_leaderPositionSignal,
+        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
+        &m_leaderSupplyCurrentSignal,
+        &m_follower1SupplyCurrentSignal,
+        &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -107,8 +107,7 @@ void CTREFlywheelIO::ConfigureSignalFrequencies() {
 }
 
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
-  BaseStatusSignal::RefreshAll(m_criticalSignals);
-  BaseStatusSignal::RefreshAll(m_diagnosticSignals);
+  BaseStatusSignal::RefreshAll(m_signals);
 
   inputs.leaderMotorPosition = m_leaderPositionSignal.GetValue();
   inputs.leaderMotorVelocity = m_leaderVelocitySignal.GetValue();

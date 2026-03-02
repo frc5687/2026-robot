@@ -2,6 +2,7 @@
 
 #pragma once
 #include <frc/geometry/Translation2d.h>
+#include <frc/geometry/Translation3d.h>
 #include <frc/system/plant/DCMotor.h>
 #include <units/acceleration.h>
 #include <units/angle.h>
