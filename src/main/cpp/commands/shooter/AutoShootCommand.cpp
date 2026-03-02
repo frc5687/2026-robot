@@ -2,10 +2,15 @@
 
 #include "commands/shooter/AutoShootCommand.h"
 
+#include <units/angular_velocity.h>
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
 
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+
+#include "RobotState.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
+
 
 AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
                                    HoodSubsystem *hood, FeederSubsystem *feeder,
@@ -24,9 +29,14 @@ void AutoShootCommand::Initialize() {
   m_deployer->RetractMid();
   m_deployerExtended = false;
   m_pulseStartTime = frc::Timer::GetFPGATimestamp();
+  pathplanner::PPHolonomicDriveController::overrideRotationFeedback([this]() {
+    return m_rotationFeedback;
+  });
 }
 
 void AutoShootCommand::Execute() {
+
+
   auto now = frc::Timer::GetFPGATimestamp();
   bool isRed =
       frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed;
@@ -37,6 +47,20 @@ void AutoShootCommand::Execute() {
   m_hood->SetPosition(units::radian_t{solution.hoodAngle});
 
   auto elapsed = now - m_pulseStartTime;
+
+  double rotOutput =
+      m_headingController.Calculate(RobotState::Instance().GetDriveState(now).estimatedPose
+                                        .Rotation()
+                                        .Radians()
+                                        .value(),
+                                    solution.driveAngle.Radians().value());
+  rotOutput =
+      std::clamp(rotOutput, -Constants::SwerveDrive::kMaxAngularSpeed.value(),
+                 Constants::SwerveDrive::kMaxAngularSpeed.value());
+
+  m_rotationFeedback = units::radians_per_second_t{rotOutput};
+
+
 
   if (m_deployerExtended) {
     if (elapsed >= kPulseExtendDuration) {
@@ -71,6 +95,8 @@ void AutoShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_kicker->Stop();
   m_deployer->RetractMid();
+
+  pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();
 }
 
 bool AutoShootCommand::IsFinished() { return false; }

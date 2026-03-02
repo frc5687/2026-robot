@@ -198,7 +198,7 @@ void RobotContainer::ConfigureBindings() {
   m_drive.SetDefaultCommand(DriveMaintainingHeadingCommand(
       &m_drive, [this] { return -m_driver.GetLeftY(); },
       [this] { return -m_driver.GetLeftX(); },
-      [this] { return -m_driver.GetRightX(); },
+      [this] { return -m_driver.GetRightX() * 0.5; },
       [this] { return m_driver.Options().Get(); }, true));
 
   m_driver.Cross().WhileTrue(

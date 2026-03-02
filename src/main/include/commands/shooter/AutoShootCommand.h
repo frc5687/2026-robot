@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <frc/controller/PIDController.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include <units/angular_velocity.h>
@@ -41,6 +42,11 @@ private:
   IntakeDeployerSubsystem *m_deployer;
 
   ShotCalculator m_shotCalculator;
+
+  frc::PIDController m_headingController{
+      Constants::SwerveDrive::PID::Rotation::kP, 0.0, 0.0};
+
+  units::radians_per_second_t m_rotationFeedback{0_rad_per_s};
 
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};

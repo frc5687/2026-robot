@@ -7,19 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost 1A"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Outpost 2A"
+            "pathName": "Depot 1S"
           }
         },
         {

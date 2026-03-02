@@ -80,12 +80,12 @@
     },
     {
       "anchor": {
-        "x": 3.443880171184022,
-        "y": 5.6070470756062765
+        "x": 3.2886162624821687,
+        "y": 5.568231098430813
       },
       "prevControl": {
-        "x": 4.336647646219685,
-        "y": 5.4517831669044226
+        "x": 4.181383737517831,
+        "y": 5.412967189728959
       },
       "nextControl": null,
       "isLocked": false,
@@ -137,11 +137,22 @@
           "name": "Intake"
         }
       }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 3.8560794044664974,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -149,7 +160,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.25957769742345
+    "rotation": -50.24181994697957
   },
   "reversed": false,
   "folder": null,
