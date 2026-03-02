@@ -238,7 +238,9 @@ void RobotContainer::ConfigureBindings() {
     frc2::cmd::Defer([this]() {
         return m_drive.GetPathCommand(
             RobotState::Instance().GetDriveState(frc::Timer::GetFPGATimestamp()).estimatedPose);
-    }, {&m_drive}));
+    }, {&m_drive}).AlongWith(
+      Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})));
+      
   // m_driver.R1().WhileTrue(Run(
   //     [this] {
   //       m_flywheel.SetRPM(1000_rpm);
