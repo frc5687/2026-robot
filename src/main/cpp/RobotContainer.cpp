@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "HardwareMap.h"
+#include "RobotState.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
@@ -22,6 +23,7 @@
 #include "commands/shooter/AutoSpinUpCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/SimpleShootCommand.h"
+#include "frc/Timer.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
@@ -164,8 +166,9 @@ RobotContainer::RobotContainer()
       m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
       m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
       m_shooter{m_flywheel, m_hood} {
-  ConfigureBindings();
   ConfigureAutoCommands();
+  ConfigureBindings();
+
   m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
 }
@@ -230,7 +233,14 @@ void RobotContainer::ConfigureBindings() {
 
   m_driver.POVLeft().OnFalse(
       Run([this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
-
+  
+  m_driver.POVRight().WhileTrue(
+    frc2::cmd::Defer([this]() {
+        return m_drive.GetPathCommand(
+            RobotState::Instance().GetDriveState(frc::Timer::GetFPGATimestamp()).estimatedPose);
+    }, {&m_drive}).AlongWith(
+      Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})));
+      
   // m_driver.R1().WhileTrue(Run(
   //     [this] {
   //       m_flywheel.SetRPM(1000_rpm);

@@ -18,6 +18,7 @@
 #include "Constants.h"
 #include "GyroIO.h"
 #include "OdometryThread.h"
+#include "frc2/command/CommandPtr.h"
 #include "module/Module.h"
 #include "subsystem/LoggedSubsystem.h"
 #include "units/angular_velocity.h"
@@ -84,6 +85,7 @@ public:
     return m_odometryThread;
   }
 
+  frc2::CommandPtr GetPathCommand(frc::Pose2d currentPose);
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;

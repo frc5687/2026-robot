@@ -14,6 +14,7 @@
 #include "Constants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
+#include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/ChassisSpeeds.h"
@@ -282,6 +283,59 @@ bool DriveSubsystem::IsAtPose(const frc::Pose2d &pose,
   auto distance = currentPose.Translation().Distance(pose.Translation());
   return distance < tolerance;
 }
+
+frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
+
+  pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
+    3.0_mps, 4.0_mps_sq,
+    540_deg_per_s, 720_deg_per_s_sq);
+
+  frc::Translation2d esttranslation = currentPose.Translation();
+  if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/4.0) && esttranslation.X() < Constants::Field::kFieldLength * (1.0/2.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::InsideBottomBlue,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+}
+if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() < Constants::Field::kFieldLength * (1.0/4.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::OutsideBottomBlue,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+}
+if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/2.0) && esttranslation.X() < Constants::Field::kFieldLength * (3.0/4.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::InsideTopRed,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+}
+if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (3.0/4.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::OutsideTopRed,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+}
+if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/2.0) && esttranslation.X() < Constants::Field::kFieldLength * (3.0/4.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::InsideBottomRed,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+}
+if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (3.0/4.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::OutsideBottomRed,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+}
+
+  //not near anything so "pathfinds" to current pose
+ frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      currentPose,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+  
+ }
+
 
 // This is handled by the odometry thread
 void DriveSubsystem::UpdateInputs() {
