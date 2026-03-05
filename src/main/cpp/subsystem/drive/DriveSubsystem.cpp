@@ -291,6 +291,18 @@ frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
     540_deg_per_s, 720_deg_per_s_sq);
 
   frc::Translation2d esttranslation = currentPose.Translation();
+  if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/4.0) && esttranslation.X() < Constants::Field::kFieldLength * (1.0/2.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::InsideTopBlue,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+  }
+  if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() < Constants::Field::kFieldLength * (1.0/4.0)){
+    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
+      Constants::Field::Trench::OutsideTopBlue,
+      constraints, 1.0_mps);
+    return pathfindingCommand;
+  }
   if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/4.0) && esttranslation.X() < Constants::Field::kFieldLength * (1.0/2.0)){
     frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
       Constants::Field::Trench::InsideBottomBlue,

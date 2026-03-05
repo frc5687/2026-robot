@@ -204,7 +204,7 @@ void RobotContainer::ConfigureBindings() {
       [this] { return -m_driver.GetRightX() * 0.5; },
       [this] { return m_driver.Options().Get(); }, true));
 
-  m_driver.Cross().WhileTrue(
+  m_driver.POVUp().WhileTrue(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));
 
   m_driver.L2().WhileTrue(IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
@@ -221,7 +221,7 @@ void RobotContainer::ConfigureBindings() {
                               [this] { return -m_driver.GetLeftX(); })
                               .ToPtr());
 
-  m_driver.Square().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
+  m_driver.L1().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
                                                  &m_intakeTopRoller,
                                                  &m_intakeBottomRoller)
                                   .ToPtr());
@@ -234,7 +234,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.POVLeft().OnFalse(
       Run([this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
   
-  m_driver.POVRight().WhileTrue(
+  m_driver.Cross().WhileTrue(
     frc2::cmd::Defer([this]() {
         return m_drive.GetPathCommand(
             RobotState::Instance().GetDriveState(frc::Timer::GetFPGATimestamp()).estimatedPose);

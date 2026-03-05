@@ -60,7 +60,7 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
 inline constexpr units::ampere_t kDriveSlipCurrent =
     80_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 40_A;
+inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 20_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
 
 inline constexpr bool kDriveInverted =
@@ -211,12 +211,12 @@ namespace PID {
 constexpr double kS = 0.28059;  //< Static friction (V)
 constexpr double kV = 0.12273;  //< Velocity FF (V / motor-RPS)
 constexpr double kA = 0.008801; //< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.2;      //< Proportional (V / motor-RPS error)
+constexpr double kP = 0.8;      //< Proportional (V / motor-RPS error)
 constexpr double kI = 0.0;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
-inline constexpr units::second_t kClosedLoopRampPeriod = 0.5_s;
+inline constexpr units::second_t kClosedLoopRampPeriod = 1.0_s;
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
 
 constexpr double kSimKs = PID::kS;
@@ -326,7 +326,7 @@ namespace PID {
 inline constexpr double kP = 0.6;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
-inline constexpr double kV = 0.0;
+inline constexpr double kV = 0.115;
 inline constexpr double kS = 0.0;
 inline constexpr double kA = 0.0;
 } // namespace PID
@@ -388,7 +388,7 @@ inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
 inline constexpr bool kLeaderInverted = true;
 inline constexpr bool kFollowerOpposed = true;
 inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
 
 namespace PID {
 inline constexpr double kP = 0.5;

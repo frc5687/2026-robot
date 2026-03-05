@@ -23,7 +23,7 @@ struct ShotConfig {
 
   units::radian_t driveAngleTolerance{0.06_rad}; // ~2 deg
   units::radian_t hoodTolerance{0.017_rad};      // ~1 deg
-  double flywheelToleranceFrac = 0.05;           // 5 %
+  double flywheelToleranceFrac = 0.03;           // 3 %
 
   double minDistanceMeters = 1.34;
   double maxDistanceMeters = 5.60;
