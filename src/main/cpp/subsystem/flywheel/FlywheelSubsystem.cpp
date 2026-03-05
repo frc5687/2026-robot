@@ -77,10 +77,10 @@ void FlywheelSubsystem::SysIdDrive(units::volt_t voltage) {
 }
 
 void FlywheelSubsystem::SysIdLog(frc::sysid::SysIdRoutineLog *log) {
-  // log->Motor("flywheel-leader")
-  //     .voltage(m_inputs.leaderAppliedVolts)
-  //     .position(m_inputs.leaderMotorPosition)
-  //     .velocity(m_inputs.leaderMotorVelocity);
+  log->Motor("flywheel-leader")
+      .voltage(m_inputs.leaderAppliedVolts)
+      .position(m_inputs.leaderMotorPosition)
+      .velocity(m_inputs.leaderMotorVelocity);
 }
 
 void FlywheelSubsystem::UpdateInputs() {
