@@ -27,9 +27,14 @@ void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {
   auto now = units::second_t{frc::Timer::GetFPGATimestamp().value()};
   m_desiredRPM = desiredRPM;
 
+  const auto deltaRPM = units::math::abs(desiredRPM - m_commandedRPM);
   const bool spinup =
       units::math::abs(desiredRPM) > units::math::abs(m_commandedRPM);
-  if (!spinup || Constants::Flywheel::kSpinupRampDuration <= 0_s) {
+  const bool shouldRamp =
+      spinup && deltaRPM > Constants::Flywheel::kSpinupRampThreshold &&
+      Constants::Flywheel::kSpinupRampDuration > 0_s;
+
+  if (!shouldRamp) {
     m_targetRPM = desiredRPM;
     m_rampStartRPM = desiredRPM;
     m_commandedRPM = desiredRPM;

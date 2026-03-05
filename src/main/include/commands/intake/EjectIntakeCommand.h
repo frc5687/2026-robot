@@ -6,6 +6,7 @@
 #include <frc2/command/CommandHelper.h>
 #include <units/voltage.h>
 
+#include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
@@ -15,7 +16,9 @@ class EjectIntakeCommand
 public:
   EjectIntakeCommand(IntakeDeployerSubsystem *deployer,
                      IntakeTopRollerSubsystem *topRoller,
-                     IntakeBottomRollerSubsystem *bottomRoller);
+                     IntakeBottomRollerSubsystem *bottomRoller,
+                     FeederSubsystem* feeder
+                    );
 
   void Initialize() override;
   void Execute() override;
@@ -26,8 +29,9 @@ private:
   IntakeDeployerSubsystem *m_deployer;
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
+  FeederSubsystem *m_feeder;
 
-  static constexpr units::volt_t kTopRollerVoltage = -3_V;
-  static constexpr units::volt_t kBottomRollerVoltage = -3_V;
-  static constexpr units::volt_t kFeederVoltage = -10_V;
+  static constexpr units::volt_t kTopRollerVoltage = -6_V;
+  static constexpr units::volt_t kBottomRollerVoltage = -6_V;
+  static constexpr units::volt_t kFeederVoltage = -6_V;
 };

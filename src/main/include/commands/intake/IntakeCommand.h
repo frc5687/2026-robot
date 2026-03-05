@@ -6,13 +6,16 @@
 #include <frc2/command/CommandHelper.h>
 #include <units/voltage.h>
 
+#include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
 class IntakeCommand : public frc2::CommandHelper<frc2::Command, IntakeCommand> {
 public:
-  IntakeCommand(IntakeDeployerSubsystem *deployer,
+  IntakeCommand(
+    DriveSubsystem *drive,
+    IntakeDeployerSubsystem *deployer,
                 IntakeTopRollerSubsystem *topRoller,
                 IntakeBottomRollerSubsystem *bottomRoller);
 
@@ -22,6 +25,7 @@ public:
   bool IsFinished() override;
 
 private:
+  DriveSubsystem *m_drive;
   IntakeDeployerSubsystem *m_deployer;
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;

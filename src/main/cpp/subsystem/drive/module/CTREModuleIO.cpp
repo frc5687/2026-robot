@@ -139,7 +139,7 @@ void CTREModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
   // --- Steer: command in TURNS, enable wrap in config
   const units::turn_t targetSteerTurns = state.angle.Radians();
   m_steerMotor.SetControl(
-      m_steerPosition.WithPosition(targetSteerTurns).WithSlot(0));
+      m_steerPosition.WithPosition(targetSteerTurns).WithSlot(0).WithEnableFOC(kSteerFOC));
 
   // --- Drive: convert wheel velocity to motor rotor velocity
   constexpr auto metersPerTurn = kMeterPerTurn;
@@ -151,7 +151,7 @@ void CTREModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
   // Convert wheel turns per second to motor rotor turns per second
   const units::turns_per_second_t motorRps = wheelRps * driveGearRatio;
 
-  m_driveMotor.SetControl(m_driveVelocity.WithVelocity(motorRps).WithSlot(0));
+  m_driveMotor.SetControl(m_driveVelocity.WithVelocity(motorRps).WithSlot(0).WithEnableFOC(kDriveFOC));
 }
 
 void CTREModuleIO::Stop() {

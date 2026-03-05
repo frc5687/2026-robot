@@ -183,7 +183,7 @@ void RobotContainer::ConfigureAutoCommands() {
                    .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
-      "Intake", IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
+      "Intake", IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
                               &m_intakeBottomRoller)
                     .ToPtr());
 
@@ -207,7 +207,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.POVUp().WhileTrue(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));
 
-  m_driver.L2().WhileTrue(IntakeCommand(&m_intakeDeployer, &m_intakeTopRoller,
+  m_driver.L2().WhileTrue(IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
                                         &m_intakeBottomRoller)
                               .ToPtr());
 
@@ -221,26 +221,28 @@ void RobotContainer::ConfigureBindings() {
                               [this] { return -m_driver.GetLeftX(); })
                               .ToPtr());
 
-  m_driver.L1().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
+  m_driver.R1().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
                                                  &m_intakeTopRoller,
-                                                 &m_intakeBottomRoller)
+                                                 &m_intakeBottomRoller,
+                                                 &m_feeder
+                                                )
                                   .ToPtr());
-  m_driver.R1().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
-                                             &m_hood, &m_intakeBottomRoller,
-                                             &m_intakeDeployer, 1000_rpm,
-                                             60_tps, 10_deg)
-                              .ToPtr());
+  //m_driver.R1().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
+  //                                           &m_hood, &m_intakeBottomRoller,
+  //                                           &m_intakeDeployer, 1000_rpm,
+  //                                           60_tps, 10_deg)
+  //                            .ToPtr());
 
   m_driver.POVLeft().OnFalse(
       Run([this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
-  
+
   m_driver.Cross().WhileTrue(
     frc2::cmd::Defer([this]() {
         return m_drive.GetPathCommand(
             RobotState::Instance().GetDriveState(frc::Timer::GetFPGATimestamp()).estimatedPose);
     }, {&m_drive}).AlongWith(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})));
-      
+
   // m_driver.R1().WhileTrue(Run(
   //     [this] {
   //       m_flywheel.SetRPM(1000_rpm);

@@ -61,13 +61,15 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
 inline constexpr units::ampere_t kDriveSlipCurrent =
     80_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 20_A;
+inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 60_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
 
 inline constexpr bool kDriveInverted =
     false; // true is clockwise positive, false is counter clockwise positive
 inline constexpr bool kSteerInverted =
     false; // true is clockwise positive, false is counter clockwise positive
+inline constexpr bool kDriveFOC = true;
+inline constexpr bool kSteerFOC = true;
 
 namespace PID {
 namespace DriveVelocity {
@@ -218,6 +220,7 @@ constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
 inline constexpr units::second_t kSpinupRampDuration = 0.5_s;
+constexpr units::revolutions_per_minute_t kSpinupRampThreshold{500_rpm};
 constexpr units::revolutions_per_minute_t kSpinupRetargetTolerance{10_rpm};
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
 
