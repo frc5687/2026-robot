@@ -59,7 +59,7 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
     ((kDriveMotor.freeSpeed / kDriveGearRatio) * kWheelRadius) / 1_rad;
 
 inline constexpr units::ampere_t kDriveSlipCurrent =
-    80_A; // TODO: Tune, this is the max stator current to prevent sliping of
+    60_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
 inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 60_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
