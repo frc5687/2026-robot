@@ -217,7 +217,8 @@ constexpr double kI = 0.0;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
-inline constexpr units::second_t kClosedLoopRampPeriod = 1.0_s;
+inline constexpr units::second_t kSpinupRampDuration = 0.5_s;
+constexpr units::revolutions_per_minute_t kSpinupRetargetTolerance{10_rpm};
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
 
 constexpr double kSimKs = PID::kS;

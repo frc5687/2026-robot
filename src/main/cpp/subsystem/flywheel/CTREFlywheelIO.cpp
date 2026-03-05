@@ -84,8 +84,6 @@ void CTREFlywheelIO::ConfigureClosedLoop() {
   m_leaderConfig.Slot0.kP = PID::kP;
   m_leaderConfig.Slot0.kI = PID::kI;
   m_leaderConfig.Slot0.kD = PID::kD;
-  m_leaderConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod =
-      kClosedLoopRampPeriod;
   m_velocityRequest.UpdateFreqHz = 1000_Hz;
 }
 

@@ -5,6 +5,7 @@
 #include <frc/filter/LinearFilter.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
+#include <units/time.h>
 #include <units/angular_velocity.h>
 #include <units/voltage.h>
 
@@ -32,6 +33,10 @@ private:
   FlywheelIOInputs m_inputs{};
 
   units::revolutions_per_minute_t m_desiredRPM{0_rpm};
+  units::revolutions_per_minute_t m_targetRPM{0_rpm};
+  units::revolutions_per_minute_t m_rampStartRPM{0_rpm};
+  units::revolutions_per_minute_t m_commandedRPM{0_rpm};
+  units::second_t m_rampStartTime{0_s};
   frc::LinearFilter<units::revolutions_per_minute_t> m_filter =
       frc::LinearFilter<units::revolutions_per_minute_t>::MovingAverage(6);
   units::revolutions_per_minute_t m_filteredRPM{0_rpm};
