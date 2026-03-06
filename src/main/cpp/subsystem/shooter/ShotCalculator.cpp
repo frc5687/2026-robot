@@ -18,10 +18,10 @@ ShotCalculator::ShotCalculator() {
   // 16 feet, 1650 rpm, 60 rps, 19 deg
 
   //3/4/26
-  
+
 
   std::vector<std::pair<double, double>> hoodMap{
-      {1.4478, 1.0}, {2.43, 4.4}, {3.08, 8.0}, {3.65, 13.0}, {4.2672, 15.0}, {5.4864, 19}
+      {1.52, 1.0}, {2.13, 5}, {3.048, 10.0}, {3.66, 15.0}, {4.2672, 16.0}, {4.88, 14.0}, {5.49, 18.0}
   };
 
   m_hoodAngleMap.InsertValues(hoodMap);
@@ -29,13 +29,13 @@ ShotCalculator::ShotCalculator() {
   // TODO: Make this use units
 
   std::vector<std::pair<double, double>> flyMap{
-      {1.4478, 1300}, {2.43, 1460}, {3.08, 1540}, {3.65, 1620}, {4.2672, 1660}, {5.4864, 1700}
+      {1.52, 1150}, {2.13, 1250}, {3.048, 1400}, {3.66, 1425}, {4.2672, 1500}, {4.88, 1570}, {5.49, 1650.0}
   };
 
   m_flywheelMap.InsertValues(flyMap);
 
   std::vector<std::pair<double, double>> tofMap{
-      {1.4478, 1.1}, {2.43, 1.25}, {3.08, 1.33}, {3.65, 1.12}, {4.2672, 1.2},{5.4864, 1.2}};
+      {1.52, 1.2}, {2.13, 1.2}, {3.048, 1.2}, {3.66, 1.2}, {4.2672, 1.25},{4.88, 1.3}, {5.49, 1.5}};
   m_tofMap.InsertValues(tofMap);
 }
 

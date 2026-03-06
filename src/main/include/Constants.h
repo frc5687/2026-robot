@@ -187,10 +187,10 @@ inline constexpr double kD = 0.0;
 
 namespace Flywheel {
 
-inline constexpr double kGearRatio = (45.0 / 15.0);
+inline constexpr double kGearRatio = (51.0 / 24.0);
 
 // 4 motors total: 1 leader + 3 followers
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(4);
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(4);
 
 // all lies rn btw
 inline constexpr units::inch_t kFlywheelRadius = 3.125_in;
@@ -206,20 +206,20 @@ inline constexpr bool kFollower2Opposed = true;
 inline constexpr bool kFollower3Opposed = true;
 
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 80_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 60_A;
 inline constexpr bool kEnableStatorCurrent = true;
 inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
-constexpr double kS = 0.28059;  //< Static friction (V)
-constexpr double kV = 0.12273;  //< Velocity FF (V / motor-RPS)
-constexpr double kA = 0.008801; //< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.8;      //< Proportional (V / motor-RPS error)
+constexpr double kS = 0.36796;  //< Static friction (V)
+constexpr double kV = 0.12525;  //< Velocity FF (V / motor-RPS)
+constexpr double kA = 0.015443; //< Acceleration FF (V / motor-RPS²)
+constexpr double kP = 0.5;      //< Proportional (V / motor-RPS error)
 constexpr double kI = 0.0;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
-inline constexpr units::second_t kSpinupRampDuration = 0.5_s;
+inline constexpr units::second_t kSpinupRampDuration = 1.0_s;
 constexpr units::revolutions_per_minute_t kSpinupRampThreshold{500_rpm};
 constexpr units::revolutions_per_minute_t kSpinupRetargetTolerance{10_rpm};
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};

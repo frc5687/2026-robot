@@ -243,20 +243,26 @@ void RobotContainer::ConfigureBindings() {
     }, {&m_drive}).AlongWith(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})));
 
-    
+
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
-  m_debugger.Cross().OnTrue(
-    m_flywheel.SysIdDynamic(frc2::sysid::Direction::kForward)
-  );
-  m_debugger.Circle().OnTrue(
-    m_flywheel.SysIdDynamic(frc2::sysid::Direction::kReverse)
-  );
-  m_debugger.Triangle().OnTrue(
-    m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kForward)
-  );
-  m_debugger.Square().OnTrue(
-    m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kReverse)
-  );
+
+  m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
+                                             &m_hood, &m_intakeBottomRoller,
+                                             &m_intakeDeployer, 1000_rpm,
+                                             60_tps, 10_deg)
+                              .ToPtr());
+  //m_debugger.Cross().OnTrue(
+  //  m_flywheel.SysIdDynamic(frc2::sysid::Direction::kForward)
+  //);
+  //m_debugger.Circle().OnTrue(
+  //  m_flywheel.SysIdDynamic(frc2::sysid::Direction::kReverse)
+  //);
+  //m_debugger.Triangle().OnTrue(
+  //  m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kForward)
+  //);
+  //m_debugger.Square().OnTrue(
+  //  m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kReverse)
+  //);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand() {
