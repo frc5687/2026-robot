@@ -102,6 +102,12 @@ void SimModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
   m_steerAppliedVolts = steerPIDOutput;
 }
 
+void SimModuleIO::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                                  units::ampere_t steerSupplyCurrentLimit) {
+  (void)driveSupplyCurrentLimit;
+  (void)steerSupplyCurrentLimit;
+}
+
 ModuleConfig SimModuleIO::GetModuleConfig() { return m_config; }
 
 void SimModuleIO::Stop() {

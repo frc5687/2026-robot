@@ -55,6 +55,7 @@ void Robot::DisabledExit() {}
 
 void Robot::AutonomousInit() {
   MatchTracker::Instance().OnAutonomousInit();
+  m_container.SetAutoDriveCurrentLimits();
   m_autonomousCommand = m_container.GetAutonomousCommand();
   if (m_autonomousCommand != nullptr) {
     frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand);
@@ -66,6 +67,7 @@ void Robot::AutonomousExit() {}
 
 void Robot::TeleopInit() {
   MatchTracker::Instance().OnTeleopInit();
+  m_container.SetTeleopDriveCurrentLimits();
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }

@@ -288,3 +288,11 @@ void RobotContainer::ConfigureBindings() {
 frc2::Command *RobotContainer::GetAutonomousCommand() {
   return m_autoChooser.GetSelected();
 }
+
+void RobotContainer::SetAutoDriveCurrentLimits() {
+  m_drive.SetAutoCurrentLimits();
+}
+
+void RobotContainer::SetTeleopDriveCurrentLimits() {
+  m_drive.SetTeleopCurrentLimits();
+}

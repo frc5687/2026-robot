@@ -38,6 +38,8 @@ public:
   units::ampere_t GetCurrentDraw() const;
   units::newton_meter_t GetDriveTorque() const { return m_inputs.driveTorque; }
   void ConfigureClosedLoop();
+  void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                       units::ampere_t steerSupplyCurrentLimit);
   bool IsConnected() const;
   void SetIsBatchedSignals(const bool &isBatched) {
     m_isSignalsBatched = isBatched;

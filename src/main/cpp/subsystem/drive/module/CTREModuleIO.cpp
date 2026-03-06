@@ -53,8 +53,8 @@ void CTREModuleIO::ConfigureDevices() {
   m_driveConfig.CurrentLimits.StatorCurrentLimit = kDriveSlipCurrent;
   m_driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-  m_driveConfig.CurrentLimits.SupplyCurrentLimit = kDriveSupplyCurrentLimit;
-  m_driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
+                  Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
 
   m_steerConfig.MotorOutput.Inverted =
       kSteerInverted ? signals::InvertedValue::Clockwise_Positive
@@ -70,9 +70,6 @@ void CTREModuleIO::ConfigureDevices() {
   // turns
   m_steerConfig.Feedback.RotorToSensorRatio = kSteerGearRatio;
   m_steerConfig.Feedback.SensorToMechanismRatio = 1.0;
-
-  m_steerConfig.CurrentLimits.SupplyCurrentLimit = kSteerSupplyCurrentLimit;
-  m_steerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
   m_steerConfig.Voltage.PeakForwardVoltage = 12_V;
   m_steerConfig.Voltage.PeakReverseVoltage = -12_V;
@@ -198,6 +195,17 @@ void CTREModuleIO::ConfigureClosedLoop() {
 
   // Let Phoenix wrap the position error across +/- pi
   m_steerConfig.ClosedLoopGeneral.ContinuousWrap = true;
+}
+
+void CTREModuleIO::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                                    units::ampere_t steerSupplyCurrentLimit) {
+  m_driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+  m_steerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+  m_driveConfig.CurrentLimits.SupplyCurrentLimit = driveSupplyCurrentLimit;
+  m_steerConfig.CurrentLimits.SupplyCurrentLimit = steerSupplyCurrentLimit;
+
+  m_driveMotor.GetConfigurator().Apply(m_driveConfig);
+  m_steerMotor.GetConfigurator().Apply(m_steerConfig);
 }
 
 void CTREModuleIO::ConfigureSignalFrequencies() {

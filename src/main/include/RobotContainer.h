@@ -27,6 +27,8 @@ class RobotContainer {
 public:
   RobotContainer();
   frc2::Command *GetAutonomousCommand();
+  void SetAutoDriveCurrentLimits();
+  void SetTeleopDriveCurrentLimits();
   void Periodic();
 
 private:

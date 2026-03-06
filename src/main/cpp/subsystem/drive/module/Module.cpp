@@ -64,6 +64,11 @@ void Module::SetBrakeMode(bool brake) { m_io->SetBrakeMode(brake); }
 
 void Module::ConfigureClosedLoop() { m_io->ConfigureClosedLoop(); }
 
+void Module::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                             units::ampere_t steerSupplyCurrentLimit) {
+  m_io->SetCurrentLimits(driveSupplyCurrentLimit, steerSupplyCurrentLimit);
+}
+
 units::ampere_t Module::GetCurrentDraw() const {
   return units::ampere_t{
       m_currentFilter.Calculate(m_inputs.driveCurrentDraw.value())};

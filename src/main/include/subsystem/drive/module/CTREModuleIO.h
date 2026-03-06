@@ -35,6 +35,8 @@ public:
   void SetBrakeMode(bool brake) override;
   void ResetDriveEncoder() override;
   void ConfigureClosedLoop() override;
+  void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                       units::ampere_t steerSupplyCurrentLimit) override;
   ModuleConfig GetModuleConfig() override;
   std::array<ctre::phoenix6::BaseStatusSignal *,
              Constants::SwerveDrive::Odometry::kSignalsPerModule>

@@ -284,6 +284,23 @@ bool DriveSubsystem::IsAtPose(const frc::Pose2d &pose,
   return distance < tolerance;
 }
 
+void DriveSubsystem::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                                     units::ampere_t steerSupplyCurrentLimit) {
+  for (auto &module : m_modules) {
+    module->SetCurrentLimits(driveSupplyCurrentLimit, steerSupplyCurrentLimit);
+  }
+}
+
+void DriveSubsystem::SetAutoCurrentLimits() {
+  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
+                   Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
+}
+
+void DriveSubsystem::SetTeleopCurrentLimits() {
+  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitTeleop,
+                   Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitTeleop);
+}
+
 frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
 
   pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
@@ -359,7 +376,7 @@ pathplanner::RobotConfig DriveSubsystem::BuildRobotConfig() {
       Constants::SwerveDrive::Module::kFrictionCoefficient,
       Constants::SwerveDrive::Module::kDriveMotor,
       Constants::SwerveDrive::Module::kDriveGearRatio,
-      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimit, 1.0);
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitTeleop, 1.0);
   return pathplanner::RobotConfig(
       Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
       moduleConfig,
