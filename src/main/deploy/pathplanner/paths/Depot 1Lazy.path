@@ -117,17 +117,6 @@
           "name": "Intake"
         }
       }
-    },
-    {
-      "name": "SpinUpFlywheel",
-      "waypointRelativePos": 2.7332883187035764,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "SpinUpFlywheel"
-        }
-      }
     }
   ],
   "globalConstraints": {
