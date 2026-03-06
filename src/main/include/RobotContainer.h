@@ -45,6 +45,7 @@ private:
   ShooterSystem m_shooter;
   RobotViz m_robotViz{};
   frc2::CommandPS5Controller m_driver{0};
+  frc2::CommandPS5Controller m_operator{1};
   frc2::CommandPS5Controller m_debugger{3};
   frc::SendableChooser<frc2::Command *> m_autoChooser;
 };

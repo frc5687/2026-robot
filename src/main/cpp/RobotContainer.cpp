@@ -245,6 +245,10 @@ void RobotContainer::ConfigureBindings() {
       Run([this] { m_intakeDeployer.RetractMid(); }, {&m_intakeDeployer})));
 
 
+    /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
+
+m_operator.R2().OnTrue(AutoSpinUpCommand(&m_flywheel)
+                              .ToPtr());
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
 
   m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
