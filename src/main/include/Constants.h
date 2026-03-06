@@ -68,8 +68,8 @@ inline constexpr bool kDriveInverted =
     false; // true is clockwise positive, false is counter clockwise positive
 inline constexpr bool kSteerInverted =
     false; // true is clockwise positive, false is counter clockwise positive
-inline constexpr bool kDriveFOC = true;
-inline constexpr bool kSteerFOC = true;
+inline constexpr bool kDriveFOC = false;
+inline constexpr bool kSteerFOC = false;
 
 namespace PID {
 namespace DriveVelocity {

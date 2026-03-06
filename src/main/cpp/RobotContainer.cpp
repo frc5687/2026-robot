@@ -256,7 +256,7 @@ void RobotContainer::ConfigureBindings() {
   //                            .ToPtr());
 
   m_driver.POVLeft().OnFalse(
-      Run([this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
+      RunOnce([this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
 
   m_driver.Cross().WhileTrue(
     frc2::cmd::Defer([this]() {

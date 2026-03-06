@@ -2,6 +2,7 @@
 
 #include "commands/shooter/ShotCalculatedSpinUpCommand.h"
 
+#include <algorithm>
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
 
@@ -31,11 +32,13 @@ void ShotCalculatedSpinUpCommand::Execute() {
   auto solution =
       m_shotCalculator.Calculate(frc::Timer::GetFPGATimestamp(),
                                  *alliance == frc::DriverStation::Alliance::kRed);
-  m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
+  double val = std::clamp(solution.flywheelSpeed, 0.0, 1200.0);
+  m_flywheel->SetRPM(units::revolutions_per_minute_t{val});
 }
 
 void ShotCalculatedSpinUpCommand::End(bool interrupted) {
-  m_flywheel->SetRPM(0_rpm);
+  // Do not set to 0
+  //m_flywheel->SetRPM(0_rpm);
 }
 
 bool ShotCalculatedSpinUpCommand::IsFinished() { return false; }
