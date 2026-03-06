@@ -39,6 +39,7 @@ public:
 
   units::second_t GetMatchElapsed() const;
   units::second_t GetMatchRemaining() const;
+  units::second_t GetPhaseRemaining() const;
   MatchPhase GetMatchPhase() const;
 
   void UpdateAllianceState();

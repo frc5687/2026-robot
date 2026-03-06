@@ -65,6 +65,39 @@ units::second_t MatchTracker::GetMatchRemaining() const {
   return units::math::max(0_s, kTotalMatchDuration - GetMatchElapsed());
 }
 
+units::second_t MatchTracker::GetPhaseRemaining() const {
+  const auto elapsed = GetMatchElapsed();
+
+  switch (GetMatchPhase()) {
+    case MatchPhase::Autonomous:
+      return units::math::max(0_s, kAutoDuration - elapsed);
+
+    case MatchPhase::Transition:
+      return units::math::max(0_s, (kAutoDuration + kTransitionDuration) - elapsed);
+
+    case MatchPhase::Shift1:
+      return units::math::max(0_s, (kAutoDuration + kTransitionDuration+ kShiftDuration) - elapsed);
+
+    case MatchPhase::Shift2:
+      return units::math::max(0_s, (kAutoDuration + kTransitionDuration+ 2 * kShiftDuration) - elapsed);
+
+    case MatchPhase::Shift3:
+      return units::math::max(0_s, (kAutoDuration+ kTransitionDuration + 3 * kShiftDuration) - elapsed);
+
+    case MatchPhase::Shift4:
+      return units::math::max(0_s, (kAutoDuration + kTransitionDuration+ 4 * kShiftDuration) - elapsed);
+
+    case MatchPhase::Endgame:
+      return units::math::max(0_s, kTotalMatchDuration - elapsed);
+
+    case MatchPhase::Disabled:
+    case MatchPhase::Test:
+      return 0_s;
+  }
+
+  return 0_s;
+}
+
 MatchTracker::MatchPhase MatchTracker::GetMatchPhase() const {
   return GetMatchPhaseAt(GetMatchElapsed());
 }
@@ -294,6 +327,8 @@ void MatchTracker::LogState(units::second_t timestamp) {
                          GetMatchElapsed().value());
   Logger::Instance().Log("MatchTracker/MatchRemainingSec",
                          GetMatchRemaining().value());
+  Logger::Instance().Log("MatchTracker/PhaseRemainingSec",
+                         GetPhaseRemaining().value());
   Logger::Instance().Log("MatchTracker/MatchPhase",
                          MatchPhaseToString(GetMatchPhase()));
   Logger::Instance().Log(

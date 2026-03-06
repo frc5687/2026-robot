@@ -61,8 +61,8 @@ inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
 inline constexpr units::ampere_t kDriveSlipCurrent =
     60_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 40_A;
-inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 40_A;
+inline constexpr units::ampere_t kDriveSupplyCurrentLimit = 20_A;
+inline constexpr units::ampere_t kSteerSupplyCurrentLimit = 20_A;
 
 inline constexpr bool kDriveInverted =
     false; // true is clockwise positive, false is counter clockwise positive
