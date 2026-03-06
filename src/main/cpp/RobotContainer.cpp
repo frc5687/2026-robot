@@ -177,10 +177,18 @@ void RobotContainer::Periodic() { m_robotViz.Update(); }
 
 void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
-      "Shoot", AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_kicker,
+      "AutoShoot", AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_kicker,
                                 &m_intakeTopRoller, &m_intakeBottomRoller,
                                 &m_intakeDeployer)
                    .ToPtr());
+
+  pathplanner::NamedCommands::registerCommand(
+      "Shoot", ShootCommand(&m_drive, &m_flywheel, &m_hood,
+                              &m_intakeTopRoller, &m_intakeBottomRoller,
+                              &m_feeder, &m_kicker, &m_intakeDeployer,
+                              [this] { return -m_driver.GetLeftY(); },
+                              [this] { return -m_driver.GetLeftX(); })
+                              .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
       "Intake", IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,

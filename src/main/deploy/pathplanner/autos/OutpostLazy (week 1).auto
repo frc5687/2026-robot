@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot 1Lazy"
+            "pathName": "Outpost1Lazy"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 3.5
                 }
               },
               {
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot 2Lazy"
+            "pathName": "Outpost2Lazy"
           }
         },
         {
@@ -42,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 4.0
                 }
               },
               {
@@ -52,12 +52,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Depot3Lazy"
           }
         }
       ]

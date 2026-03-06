@@ -295,7 +295,7 @@
     },
     {
       "waypointRelativePos": 12.0,
-      "rotationDegrees": -48.03409126665562
+      "rotationDegrees": -48.03409126665563
     },
     {
       "waypointRelativePos": 14.0,
@@ -394,13 +394,13 @@
       }
     },
     {
-      "name": "Shoot",
+      "name": "AutoShoot",
       "waypointRelativePos": 4.740040513166792,
       "endWaypointRelativePos": 5.955435516542908,
       "command": {
         "type": "named",
         "data": {
-          "name": "Shoot"
+          "name": "AutoShoot"
         }
       }
     },
@@ -427,13 +427,13 @@
       }
     },
     {
-      "name": "Shoot",
+      "name": "AutoShoot",
       "waypointRelativePos": 11.829844699527353,
       "endWaypointRelativePos": 12.92370020256581,
       "command": {
         "type": "named",
         "data": {
-          "name": "Shoot"
+          "name": "AutoShoot"
         }
       }
     },

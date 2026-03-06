@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.055720399429386,
-        "y": 6.616262482168331
+        "x": 2.9910271041369465,
+        "y": 7.120870185449359
       },
       "isLocked": false,
-      "linkedName": "Depot2-3Lazy"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,12 +20,12 @@
         "y": 7.431398002853067
       },
       "prevControl": {
-        "x": 3.1462910128388017,
-        "y": 7.444336661911555
+        "x": 3.146460129301457,
+        "y": 7.4076151976437785
       },
       "nextControl": {
-        "x": 5.009416516051729,
-        "y": 7.423862755282841
+        "x": 5.6046362339514975,
+        "y": 7.4572753209700435
       },
       "isLocked": false,
       "linkedName": null
@@ -36,65 +36,85 @@
         "y": 7.314950071326677
       },
       "prevControl": {
-        "x": 5.686469593064491,
-        "y": 7.45241883058683
+        "x": 5.67630899252519,
+        "y": 7.431660043959222
       },
       "nextControl": {
-        "x": 6.587974322396575,
-        "y": 6.965606276747503
+        "x": 7.144336661911552,
+        "y": 6.784465049928674
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.80793152639087,
-        "y": 6.292796005706134
+        "x": 7.70069900142653,
+        "y": 5.982268188302426
       },
       "prevControl": {
-        "x": 6.793675015865572,
-        "y": 6.80603038461694
+        "x": 7.519557774607701,
+        "y": 6.5256918687589165
       },
       "nextControl": {
-        "x": 6.8208701854493565,
-        "y": 5.827004279600572
+        "x": 8.361711273918477,
+        "y": 3.9992313708265685
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.691483594864478,
-        "y": 2.721726105563481
+        "x": 5.941041369472182,
+        "y": 5.4647218259629105
       },
       "prevControl": {
-        "x": 6.704422253922965,
-        "y": 3.64037089871612
+        "x": 6.6785449358059905,
+        "y": 5.374151212553495
+      },
+      "nextControl": {
+        "x": 5.401058565827849,
+        "y": 5.531035503603443
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.042781740370898,
+        "y": 5.4647218259629105
+      },
+      "prevControl": {
+        "x": 4.284893009985733,
+        "y": 5.4517831669044226
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot 2-3Wide"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 0.0
+      "rotationDegrees": 177.7093899573614
     },
     {
       "waypointRelativePos": 2,
-      "rotationDegrees": 0.0
+      "rotationDegrees": 156.57130719125462
     },
     {
       "waypointRelativePos": 3,
-      "rotationDegrees": 87.49514923990257
+      "rotationDegrees": 93.4682292589174
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": -42.137594773888154
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
       "minWaypointRelativePos": 0.5833896016205273,
-      "maxWaypointRelativePos": 1.7609723160027357,
+      "maxWaypointRelativePos": 1.3909520594193276,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
@@ -106,8 +126,8 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 2.841323430114772,
-      "maxWaypointRelativePos": 4.0,
+      "minWaypointRelativePos": 3.7,
+      "maxWaypointRelativePos": 5.0,
       "constraints": {
         "maxVelocity": 2.5,
         "maxAcceleration": 6.0,
@@ -130,6 +150,17 @@
           "name": "Intake"
         }
       }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 3.7002025658338895,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
     }
   ],
   "globalConstraints": {
@@ -142,7 +173,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -42.78795799795166
   },
   "reversed": false,
   "folder": null,
