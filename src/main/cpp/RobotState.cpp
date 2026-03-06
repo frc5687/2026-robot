@@ -2,10 +2,7 @@
 
 #include "RobotState.h"
 
-#include <ctime>
-
 #include "subsystem/flywheel/FlywheelState.h"
-#include "units/time.h"
 
 RobotState::RobotState()
     : m_driveBuffer(BUFFER_TIME, OdometryData::Interpolate),
@@ -27,6 +24,7 @@ void RobotState::AddHoodObservation(const HoodState &state) {
 OdometryData RobotState::GetDriveState(units::second_t timestamp) {
   return GetState<OdometryData>(m_driveBuffer, timestamp);
 }
+
 FlywheelState RobotState::GetFlywheelState(units::second_t timestamp) {
   return GetState<FlywheelState>(m_flywheelBuffer, timestamp);
 }
@@ -34,5 +32,3 @@ FlywheelState RobotState::GetFlywheelState(units::second_t timestamp) {
 HoodState RobotState::GetHoodState(units::second_t timestamp) {
   return GetState<HoodState>(m_hoodBuffer, timestamp);
 }
-
-void RobotState::LogState(units::second_t timestamp) {}

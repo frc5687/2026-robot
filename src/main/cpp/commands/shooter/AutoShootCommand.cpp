@@ -38,8 +38,8 @@ void AutoShootCommand::Execute() {
 
 
   auto now = frc::Timer::GetFPGATimestamp();
-  bool isRed =
-      frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed;
+  auto alliance = frc::DriverStation::GetAlliance();
+  bool isRed = alliance == frc::DriverStation::Alliance::kRed;
 
   auto solution = m_shotCalculator.Calculate(now, isRed);
 

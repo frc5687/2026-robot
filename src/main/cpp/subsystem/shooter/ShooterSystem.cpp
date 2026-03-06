@@ -25,7 +25,8 @@ void ShooterSystem::Update() {
   case ShooterState::TRACKING: {
     auto alliance = frc::DriverStation::GetAlliance();
     auto solution = m_shotCalculator.Calculate(
-        frc::Timer::GetFPGATimestamp(), alliance == frc::DriverStation::kRed);
+        frc::Timer::GetFPGATimestamp(),
+        alliance == frc::DriverStation::Alliance::kRed);
     ShooterSetpoint setpoint;
     setpoint.driveAngle = solution.driveAngle;
     setpoint.hoodAngle = solution.hoodAngle;

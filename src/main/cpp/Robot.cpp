@@ -18,6 +18,7 @@
 #include <ctre/phoenix6/SignalLogger.hpp>
 
 #include "subsystem/CoordinatedSystemManager.h"
+#include "utils/MatchTracker.h"
 
 Robot::Robot() {
   frc::LiveWindow::DisableAllTelemetry();
@@ -36,21 +37,24 @@ Robot::Robot() {
 
 void Robot::RobotPeriodic() {
   auto startTime = frc::Timer::GetFPGATimestamp();
+  MatchTracker::Instance().UpdateAllianceState();
 
   frc2::CommandScheduler::GetInstance().Run();
   m_container.Periodic();
   CoordinatedSystemManager::Instance().UpdateAll();
 
   auto endTime = frc::Timer::GetFPGATimestamp();
+  MatchTracker::Instance().LogState(endTime);
   auto updateTime = (endTime - startTime);
   Logger::Instance().Log("Performance/UpdateTime", updateTime.value() * 1000);
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() { MatchTracker::Instance().OnDisableInit(); }
 void Robot::DisabledPeriodic() {}
 void Robot::DisabledExit() {}
 
 void Robot::AutonomousInit() {
+  MatchTracker::Instance().OnAutonomousInit();
   m_autonomousCommand = m_container.GetAutonomousCommand();
   if (m_autonomousCommand != nullptr) {
     frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand);
@@ -61,6 +65,7 @@ void Robot::AutonomousPeriodic() {}
 void Robot::AutonomousExit() {}
 
 void Robot::TeleopInit() {
+  MatchTracker::Instance().OnTeleopInit();
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
@@ -70,7 +75,10 @@ void Robot::TeleopPeriodic() {}
 
 void Robot::TeleopExit() {}
 
-void Robot::TestInit() { frc2::CommandScheduler::GetInstance().CancelAll(); }
+void Robot::TestInit() {
+  MatchTracker::Instance().OnTestInit();
+  frc2::CommandScheduler::GetInstance().CancelAll();
+}
 
 void Robot::TestPeriodic() {}
 void Robot::TestExit() {}
