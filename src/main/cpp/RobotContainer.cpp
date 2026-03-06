@@ -241,7 +241,8 @@ void RobotContainer::ConfigureBindings() {
         return m_drive.GetPathCommand(
             RobotState::Instance().GetDriveState(frc::Timer::GetFPGATimestamp()).estimatedPose);
     }, {&m_drive}).AlongWith(
-      Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})));
+      Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})).AlongWith(
+      Run([this] { m_intakeDeployer.RetractMid(); }, {&m_intakeDeployer})));
 
 
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */

@@ -291,62 +291,34 @@ frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
     540_deg_per_s, 720_deg_per_s_sq);
 
   frc::Translation2d esttranslation = currentPose.Translation();
-  if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/4.0) && esttranslation.X() < Constants::Field::kFieldLength * (1.0/2.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::InsideTopBlue,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-  }
-  if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() < Constants::Field::kFieldLength * (1.0/4.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::OutsideTopBlue,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-  }
-  if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/4.0) && esttranslation.X() < Constants::Field::kFieldLength * (1.0/2.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::InsideBottomBlue,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-}
-if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() < Constants::Field::kFieldLength * (1.0/4.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::OutsideBottomBlue,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-}
-if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/2.0) && esttranslation.X() < Constants::Field::kFieldLength * (3.0/4.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::InsideTopRed,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-}
-if(esttranslation.Y() > Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (3.0/4.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::OutsideTopRed,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-}
-if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (1.0/2.0) && esttranslation.X() < Constants::Field::kFieldLength * (3.0/4.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::InsideBottomRed,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-}
-if(esttranslation.Y() < Constants::Field::kFieldWidth/2.0 && esttranslation.X() > Constants::Field::kFieldLength * (3.0/4.0)){
-    frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      Constants::Field::Trench::OutsideBottomRed,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-}
+  double currentDegrees = currentPose.Rotation().Degrees().value();
 
-  //not near anything so "pathfinds" to current pose
- frc2::CommandPtr pathfindingCommand = pathplanner::AutoBuilder::pathfindToPose(
-      currentPose,
-      constraints, 1.0_mps);
-    return pathfindingCommand;
-  
- }
+  // Normalize to [-180, 180] and snap to nearest cardinal (0 or 180)
+  double normalizedDeg = std::fmod(currentDegrees + 180.0, 360.0);
+  if (normalizedDeg < 0) normalizedDeg += 360.0;
+  normalizedDeg -= 180.0;
+  frc::Rotation2d goalRotation = (std::abs(normalizedDeg) < 90.0)
+    ? frc::Rotation2d(0_deg)
+    : frc::Rotation2d(180_deg);
+
+  frc::Pose2d goalPose = currentPose; // default: pathfind to self
+
+  bool topHalf    = esttranslation.Y() > Constants::Field::kFieldWidth / 2.0;
+  bool bottomHalf = !topHalf;
+  double x = esttranslation.X().value();
+  double L = Constants::Field::kFieldLength.value();
+
+  if      (topHalf    && x > L * 0.25 && x < L * 0.50) goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopBlue.Translation(),    goalRotation);
+  else if (topHalf    &&                  x < L * 0.25) goalPose = frc::Pose2d(Constants::Field::Trench::OutsideTopBlue.Translation(),   goalRotation);
+  else if (bottomHalf && x > L * 0.25 && x < L * 0.50) goalPose = frc::Pose2d(Constants::Field::Trench::InsideBottomBlue.Translation(), goalRotation);
+  else if (bottomHalf &&                  x < L * 0.25) goalPose = frc::Pose2d(Constants::Field::Trench::OutsideBottomBlue.Translation(),goalRotation);
+  else if (topHalf    && x > L * 0.50 && x < L * 0.75) goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopRed.Translation(),     goalRotation);
+  else if (topHalf    && x > L * 0.75)                  goalPose = frc::Pose2d(Constants::Field::Trench::OutsideTopRed.Translation(),    goalRotation);
+  else if (bottomHalf && x > L * 0.50 && x < L * 0.75) goalPose = frc::Pose2d(Constants::Field::Trench::InsideBottomRed.Translation(),  goalRotation);
+  else if (bottomHalf && x > L * 0.75)                  goalPose = frc::Pose2d(Constants::Field::Trench::OutsideBottomRed.Translation(), goalRotation);
+  else goalPose = currentPose;
+  return pathplanner::AutoBuilder::pathfindToPose(goalPose, constraints, 1.0_mps);
+}
 
 
 // This is handled by the odometry thread
