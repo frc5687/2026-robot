@@ -44,6 +44,8 @@
 #include "subsystem/intake/toproller/SimIntakeTopRollerIO.h"
 #include "subsystem/kicker/CTREKickerIO.h"
 #include "subsystem/kicker/SimKickerIO.h"
+#include "subsystem/lights/CTRELightsIO.h"
+#include "subsystem/lights/LightsIO.h"
 #include "subsystem/vision/LimelightCamera.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
@@ -136,6 +138,11 @@ std::unique_ptr<VisionIO> MakeVisionIO() {
   return std::make_unique<LimelightVisionIO>(std::move(limelights));
 }
 
+std::unique_ptr<LightsIO> MakeLightsIO() {
+  return std::make_unique<CTRELightsIO>(
+      HardwareMap::CAN::CANdle::CANdle);
+}
+
 RobotContainer::RobotContainer()
     : m_drive{MakeModuleIO(ModulePosition::FrontLeft,
                            Constants::SwerveDrive::kEncoderOffsets[0],
@@ -165,7 +172,8 @@ RobotContainer::RobotContainer()
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
       m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
       m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
-      m_shooter{m_flywheel, m_hood} {
+      m_shooter{m_flywheel, m_hood},
+      m_lights{MakeLightsIO()} {
   ConfigureAutoCommands();
   ConfigureBindings();
 

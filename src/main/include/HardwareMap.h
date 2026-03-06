@@ -62,6 +62,9 @@ namespace Pidgeon2 {
 inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
 } // namespace Pidgeon2
 
+namespace CANdle {
+    inline constexpr CANDevice CANdle{0, Bus::kRio};
+}
 } // namespace CAN
 
 } // namespace HardwareMap

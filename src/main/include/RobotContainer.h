@@ -18,6 +18,7 @@
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/kicker/KickerSubsystem.h"
+#include "subsystem/lights/LightsSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
 #include "viz/RobotViz.h"
@@ -43,6 +44,7 @@ private:
   VisionSubsystem m_vision;
   IntakeSystem m_intake;
   ShooterSystem m_shooter;
+  LightsSubsystem m_lights;
   RobotViz m_robotViz{};
   frc2::CommandPS5Controller m_driver{0};
   frc2::CommandPS5Controller m_operator{1};
