@@ -58,9 +58,9 @@ private:
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};
 
-  static constexpr units::volt_t kFeedVoltage = 10_V;
-  static constexpr units::volt_t kTopVoltage = 10_V;
-  static constexpr units::volt_t kBottomVoltage = 10_V;
+  static constexpr units::volt_t kFeedVoltage = 12_V;
+  static constexpr units::volt_t kTopVoltage = 6_V;
+  static constexpr units::volt_t kBottomVoltage = 8_V;
   static constexpr units::turns_per_second_t kKickerRPS = 60_tps;
   static constexpr double kDeadband = 0.1;
 

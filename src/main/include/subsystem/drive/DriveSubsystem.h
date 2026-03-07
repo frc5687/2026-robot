@@ -10,6 +10,7 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <pathplanner/lib/config/RobotConfig.h>
 #include <units/acceleration.h>
+#include <units/current.h>
 #include <units/temperature.h>
 
 #include <array>
@@ -116,6 +117,11 @@ private:
   units::radians_per_second_t m_maxAngularSpeed =
       Constants::SwerveDrive::kMaxAngularSpeed;
   pathplanner::RobotConfig m_robotConfig;
+  units::ampere_t m_lastDriveSupplyCurrentLimit{
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto};
+  units::ampere_t m_lastSteerSupplyCurrentLimit{
+      Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto};
+  bool m_hasCurrentLimitConfig{true};
 
   static pathplanner::RobotConfig BuildRobotConfig();
 };

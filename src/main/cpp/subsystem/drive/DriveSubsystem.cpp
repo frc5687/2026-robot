@@ -286,9 +286,18 @@ bool DriveSubsystem::IsAtPose(const frc::Pose2d &pose,
 
 void DriveSubsystem::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
                                      units::ampere_t steerSupplyCurrentLimit) {
+  if (m_hasCurrentLimitConfig &&
+      m_lastDriveSupplyCurrentLimit == driveSupplyCurrentLimit &&
+      m_lastSteerSupplyCurrentLimit == steerSupplyCurrentLimit) {
+    return;
+  }
+
   for (auto &module : m_modules) {
     module->SetCurrentLimits(driveSupplyCurrentLimit, steerSupplyCurrentLimit);
   }
+  m_lastDriveSupplyCurrentLimit = driveSupplyCurrentLimit;
+  m_lastSteerSupplyCurrentLimit = steerSupplyCurrentLimit;
+  m_hasCurrentLimitConfig = true;
 }
 
 void DriveSubsystem::SetAutoCurrentLimits() {
