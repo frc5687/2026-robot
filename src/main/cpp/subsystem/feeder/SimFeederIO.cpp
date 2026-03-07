@@ -1,6 +1,6 @@
 // Team 5687 2026
 
-#include "subsystem/floorroller/SimFloorRollerIO.h"
+#include "subsystem/feeder/SimFeederIO.h"
 
 #include <frc/Timer.h>
 #include <units/math.h>
@@ -9,15 +9,15 @@
 
 #include "Constants.h"
 
-using namespace Constants::FloorRoller;
+using namespace Constants::Feeder;
 
-SimFloorRollerIO::SimFloorRollerIO()
+SimFeederIO::SimFeederIO()
     : m_motorSim(
           frc::LinearSystemId::DCMotorSystem(kMotor, kInertia, kGearRatio),
           kMotor),
       m_pid(PID::kP, 0.0, PID::kD) {}
 
-units::volt_t SimFloorRollerIO::CalculateClosedLoop() {
+units::volt_t SimFeederIO::CalculateClosedLoop() {
   if (m_velocitySetpoint.value() <= 0)
     return 0_V;
 
@@ -30,7 +30,7 @@ units::volt_t SimFloorRollerIO::CalculateClosedLoop() {
   return units::math::max(units::math::min(fb, 12_V), -12_V);
 }
 
-void SimFloorRollerIO::UpdateInputs(FloorRollerIOInputs &inputs) {
+void SimFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   constexpr auto dt = 20_ms;
 
   units::volt_t voltage{0_V};
@@ -59,17 +59,17 @@ void SimFloorRollerIO::UpdateInputs(FloorRollerIOInputs &inputs) {
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
-void SimFloorRollerIO::SetVoltage(units::volt_t voltage) {
+void SimFeederIO::SetVoltage(units::volt_t voltage) {
   m_mode = Mode::kVoltage;
   m_voltageCommand = voltage;
 }
 
-void SimFloorRollerIO::SetVelocity(units::turns_per_second_t rps) {
+void SimFeederIO::SetVelocity(units::turns_per_second_t rps) {
   m_mode = Mode::kVelocity;
   m_velocitySetpoint = rps;
 }
 
-void SimFloorRollerIO::Stop() {
+void SimFeederIO::Stop() {
   m_mode = Mode::kStopped;
   m_voltageCommand = 0_V;
   m_velocitySetpoint = units::turns_per_second_t{0};

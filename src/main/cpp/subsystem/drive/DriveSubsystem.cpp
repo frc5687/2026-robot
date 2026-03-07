@@ -14,6 +14,7 @@
 #include "Constants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
+#include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/ChassisSpeeds.h"
@@ -22,7 +23,6 @@
 #include "pathplanner/lib/config/RobotConfig.h"
 #include "subsystem/drive/PoseEstimator.h"
 #include "units/velocity.h"
-
 
 DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                                std::unique_ptr<ModuleIO> frontRight,
@@ -34,67 +34,41 @@ DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                 std::make_unique<Module>(std::move(frontRight)),
                 std::make_unique<Module>(std::move(backLeft)),
                 std::make_unique<Module>(std::move(backRight))},
-      m_gyro(std::move(gyro)) {
-  pathplanner::ModuleConfig moduleConfig(
-      Constants::SwerveDrive::Module::kWheelRadius,
-      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed,
-      Constants::SwerveDrive::Module::kFrictionCoefficient,
-      Constants::SwerveDrive::Module::kDriveMotor,
-      Constants::SwerveDrive::Module::kDriveGearRatio,
-      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimit, 1.0);
-  m_robotConfig = pathplanner::RobotConfig(
-      Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
-      moduleConfig,
-      std::vector<frc::Translation2d>(
-          Constants::SwerveDrive::kModuleTranslations.begin(),
-          Constants::SwerveDrive::kModuleTranslations.end()));
+      m_gyro(std::move(gyro)), m_robotConfig(BuildRobotConfig()) {
   m_gyro->Reset();
   PoseEstimator::Config config{};
   config.odometryXStdDev = 0.08;       // Trust odometry more on smooth field
   config.baseXYStdDev = 0.15;          // Conservative vision trust
   config.odometryThetaStdDev = 0.0001; // Really trust IMU
   config.baseThetaStdDev = 0.2;        // Dont really trust camera rotations
-  config.singleTagPenalty = 5.5;
+  config.singleTagPenalty = 2.5;
+  config.minConfidence = 0.1;
   m_odometryThread =
       std::make_unique<OdometryThread>(m_modules, m_gyro, config);
   StartOdometryThread();
-  pathplanner::AutoBuilder::configure(
-      [this]() { return GetPose(); }, // Robot pose supplier
-      [this](frc::Pose2d pose) {
-        ResetPose(pose);
-      }, // Method to reset odometry (will be called if your auto has a
-         // starting pose)
-      [this]() {
-        return GetChassisSpeeds();
-      }, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      [this](auto speeds, auto feedforwards) {
-        Drive(speeds);
-      }, // Method that will drive the robot given ROBOT RELATIVE
-         // ChassisSpeeds. Also optionally outputs individual module
-         // feedforwards
-      std::make_shared<
-          pathplanner::PPHolonomicDriveController>( // PPHolonomicController is
-                                                    // the built in path
-                                                    // following controller for
-                                                    // holonomic drive trains
-          pathplanner::PIDConstants(5.0, 0.0,
-                                    0.0),          // Translation PID constants
-          pathplanner::PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-          ),
-      m_robotConfig, // The robot configuration
-      []() {
-        // Boolean supplier that controls when the path will be mirrored for the
-        // red alliance This will flip the path being followed to the red side
-        // of the field. THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
+  pathplanner::AutoBuilder::configure(
+      [this]() { return GetPose(); },
+      [this](frc::Pose2d pose) { ResetPose(pose); },
+      [this]() { return GetChassisSpeeds(); },
+      [this](auto speeds, auto feedforwards) { Drive(speeds); }, // relative
+      std::make_shared<pathplanner::PPHolonomicDriveController>(
+          pathplanner::PIDConstants(
+              Constants::SwerveDrive::PID::Translation::kP,
+              Constants::SwerveDrive::PID::Translation::kI,
+              Constants::SwerveDrive::PID::Translation::kD),
+          pathplanner::PIDConstants(Constants::SwerveDrive::PID::Rotation::kP,
+                                    Constants::SwerveDrive::PID::Rotation::kI,
+                                    Constants::SwerveDrive::PID::Rotation::kD)),
+      m_robotConfig,
+      []() {
         auto alliance = frc::DriverStation::GetAlliance();
         if (alliance) {
           return alliance.value() == frc::DriverStation::Alliance::kRed;
         }
         return false;
       },
-      this // Reference to this subsystem to set requirements
-  );
+      this);
 }
 
 DriveSubsystem::~DriveSubsystem() { StopOdometryThread(); }
@@ -130,11 +104,11 @@ void DriveSubsystem::Drive(const frc::ChassisSpeeds &speeds) {
 void DriveSubsystem::DriveFieldRelative(const frc::ChassisSpeeds &speeds) {
   std::optional<frc::DriverStation::Alliance> alliance =
       frc::DriverStation::GetAlliance();
-  frc::Rotation2d relativeHeading = GetHeading();
+  frc::Rotation2d relativeHeading = GetEstimatedHeading();
 
   if (alliance.has_value() &&
       alliance.value() == frc::DriverStation::Alliance::kRed) {
-    relativeHeading = GetHeading().RotateBy({180_deg});
+    relativeHeading = GetEstimatedHeading().RotateBy({180_deg});
   }
   auto robotRelative =
       frc::ChassisSpeeds::FromFieldRelativeSpeeds(speeds, relativeHeading);
@@ -147,9 +121,9 @@ void DriveSubsystem::SetModuleStates(
   wpi::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
       desaturatedStates = states;
   frc::SwerveDriveKinematics<Constants::SwerveDrive::kModuleCount>::
-      DesaturateWheelSpeeds(&desaturatedStates, 
-      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed
-      );
+      DesaturateWheelSpeeds(
+          &desaturatedStates,
+          Constants::SwerveDrive::Module::kMaxModuleLinearSpeed);
 
   for (size_t i = 0; i < Constants::SwerveDrive::kModuleCount; i++) {
     m_modules[i]->SetDesiredState(desaturatedStates[i]);
@@ -173,13 +147,14 @@ void DriveSubsystem::LockWheels() {
   SetModuleStates(lockStates);
 }
 
-std::pair<units::meters_per_second_t, units::radians_per_second_t> DriveSubsystem::GetMaxSpeeds() const {
+std::pair<units::meters_per_second_t, units::radians_per_second_t>
+DriveSubsystem::GetMaxSpeeds() const {
   return {m_maxLinearSpeed, m_maxAngularSpeed};
 }
 
 frc::Pose2d DriveSubsystem::GetPose() const {
   if (m_odometryThread) {
-    return m_odometryThread->GetOdometryPose();
+    return m_odometryThread->GetEstimatedPose();
   }
   return frc::Pose2d{};
 }
@@ -192,13 +167,19 @@ frc::Rotation2d DriveSubsystem::GetHeading() const {
   return frc::Rotation2d{};
 }
 
+frc::Rotation2d DriveSubsystem::GetEstimatedHeading() const {
+  if (m_odometryThread) {
+    return GetPose().Rotation();
+  }
+  return frc::Rotation2d{};
+}
+
 void DriveSubsystem::ResetHeading(units::degree_t heading) {
   m_gyro->Reset(heading);
 
   // Update pose with new heading
-  // auto currentPose = GetPose();
-  // ResetPose(frc::Pose2d{currentPose.Translation(),
-  // frc::Rotation2d{heading}});
+  auto currentPose = GetPose();
+  ResetPose(frc::Pose2d{currentPose.Translation(), frc::Rotation2d{heading}});
 }
 
 frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds() const {
@@ -210,7 +191,8 @@ frc::ChassisSpeeds DriveSubsystem::GetChassisSpeeds() const {
 
 frc::ChassisSpeeds DriveSubsystem::GetFieldRelativeSpeeds() const {
   auto robotSpeeds = GetChassisSpeeds();
-  return frc::ChassisSpeeds::FromRobotRelativeSpeeds(robotSpeeds, GetHeading());
+  return frc::ChassisSpeeds::FromRobotRelativeSpeeds(robotSpeeds,
+                                                     GetEstimatedHeading());
 }
 
 std::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
@@ -302,6 +284,69 @@ bool DriveSubsystem::IsAtPose(const frc::Pose2d &pose,
   return distance < tolerance;
 }
 
+void DriveSubsystem::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                                     units::ampere_t steerSupplyCurrentLimit) {
+  if (m_hasCurrentLimitConfig &&
+      m_lastDriveSupplyCurrentLimit == driveSupplyCurrentLimit &&
+      m_lastSteerSupplyCurrentLimit == steerSupplyCurrentLimit) {
+    return;
+  }
+
+  for (auto &module : m_modules) {
+    module->SetCurrentLimits(driveSupplyCurrentLimit, steerSupplyCurrentLimit);
+  }
+  m_lastDriveSupplyCurrentLimit = driveSupplyCurrentLimit;
+  m_lastSteerSupplyCurrentLimit = steerSupplyCurrentLimit;
+  m_hasCurrentLimitConfig = true;
+}
+
+void DriveSubsystem::SetAutoCurrentLimits() {
+  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
+                   Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
+}
+
+void DriveSubsystem::SetTeleopCurrentLimits() {
+  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitTeleop,
+                   Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitTeleop);
+}
+
+frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
+
+  pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
+    3.0_mps, 4.0_mps_sq,
+    540_deg_per_s, 720_deg_per_s_sq);
+
+  frc::Translation2d esttranslation = currentPose.Translation();
+  double currentDegrees = currentPose.Rotation().Degrees().value();
+
+  // Normalize to [-180, 180] and snap to nearest cardinal (0 or 180)
+  double normalizedDeg = std::fmod(currentDegrees + 180.0, 360.0);
+  if (normalizedDeg < 0) normalizedDeg += 360.0;
+  normalizedDeg -= 180.0;
+  frc::Rotation2d goalRotation = (std::abs(normalizedDeg) < 90.0)
+    ? frc::Rotation2d(0_deg)
+    : frc::Rotation2d(180_deg);
+
+  frc::Pose2d goalPose = currentPose; // default: pathfind to self
+
+  bool topHalf    = esttranslation.Y() > Constants::Field::kFieldWidth / 2.0;
+  bool bottomHalf = !topHalf;
+  double x = esttranslation.X().value();
+  double L = Constants::Field::kFieldLength.value();
+
+  if      (topHalf    && x > L * 0.25 && x < L * 0.50) goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopBlue.Translation(),    goalRotation);
+  else if (topHalf    &&                  x < L * 0.25) goalPose = frc::Pose2d(Constants::Field::Trench::OutsideTopBlue.Translation(),   goalRotation);
+  else if (bottomHalf && x > L * 0.25 && x < L * 0.50) goalPose = frc::Pose2d(Constants::Field::Trench::InsideBottomBlue.Translation(), goalRotation);
+  else if (bottomHalf &&                  x < L * 0.25) goalPose = frc::Pose2d(Constants::Field::Trench::OutsideBottomBlue.Translation(),goalRotation);
+  else if (topHalf    && x > L * 0.50 && x < L * 0.75) goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopRed.Translation(),     goalRotation);
+  else if (topHalf    && x > L * 0.75)                  goalPose = frc::Pose2d(Constants::Field::Trench::OutsideTopRed.Translation(),    goalRotation);
+  else if (bottomHalf && x > L * 0.50 && x < L * 0.75) goalPose = frc::Pose2d(Constants::Field::Trench::InsideBottomRed.Translation(),  goalRotation);
+  else if (bottomHalf && x > L * 0.75)                  goalPose = frc::Pose2d(Constants::Field::Trench::OutsideBottomRed.Translation(), goalRotation);
+  else goalPose = currentPose;
+  return pathplanner::AutoBuilder::pathfindToPose(goalPose, constraints, 1.0_mps);
+}
+
+
 // This is handled by the odometry thread
 void DriveSubsystem::UpdateInputs() {
   if (m_odometryThread) {
@@ -331,4 +376,20 @@ void DriveSubsystem::LogTelemetry() {
       std::all_of(connectionStatus.begin(), connectionStatus.end(),
                   [](bool connected) { return connected; });
   Log("AllModulesConnected", allConnected);
+}
+
+pathplanner::RobotConfig DriveSubsystem::BuildRobotConfig() {
+  pathplanner::ModuleConfig moduleConfig(
+      Constants::SwerveDrive::Module::kWheelRadius,
+      Constants::SwerveDrive::Module::kMaxModuleLinearSpeed,
+      Constants::SwerveDrive::Module::kFrictionCoefficient,
+      Constants::SwerveDrive::Module::kDriveMotor,
+      Constants::SwerveDrive::Module::kDriveGearRatio,
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitTeleop, 1.0);
+  return pathplanner::RobotConfig(
+      Constants::SwerveDrive::kMass, Constants::SwerveDrive::kMomentOfInertia,
+      moduleConfig,
+      std::vector<frc::Translation2d>(
+          Constants::SwerveDrive::kModuleTranslations.begin(),
+          Constants::SwerveDrive::kModuleTranslations.end()));
 }

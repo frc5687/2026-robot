@@ -8,14 +8,14 @@
 #include <frc/system/plant/LinearSystemId.h>
 
 #include "Constants.h"
-#include "FloorRollerIO.h"
+#include "FeederIO.h"
 
-class SimFloorRollerIO : public FloorRollerIO {
+class SimFeederIO : public FeederIO {
 public:
-  SimFloorRollerIO();
-  ~SimFloorRollerIO() override = default;
+  SimFeederIO();
+  ~SimFeederIO() override = default;
 
-  void UpdateInputs(FloorRollerIOInputs &inputs) override;
+  void UpdateInputs(FeederIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
   void SetVelocity(units::turns_per_second_t rps) override;
   void Stop() override;

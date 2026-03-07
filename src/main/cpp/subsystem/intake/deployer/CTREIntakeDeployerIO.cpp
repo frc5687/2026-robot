@@ -19,6 +19,7 @@ CTREIntakeDeployerIO::CTREIntakeDeployerIO(const CANDevice &motor)
       m_criticalSignals{&m_positionSignal, &m_velocitySignal, &m_voltageSignal,
                         &m_statorSignal},
       m_batchedSignals{&m_supplySignal} {
+  m_motor.SetPosition(0.0_tr);
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -35,9 +36,9 @@ void CTREIntakeDeployerIO::ConfigureDevices() {
   m_config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
   m_config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kForwardSoftLimit;
-  m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+  m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
   m_config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kReverseSoftLimit;
-  m_config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+  m_config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
 
   ConfigureClosedLoop();
   m_motor.GetConfigurator().Apply(m_config);
@@ -88,6 +89,6 @@ void CTREIntakeDeployerIO::SetVoltage(units::volt_t voltage) {
   m_motor.SetControl(m_voltageRequest.WithOutput(voltage));
 }
 
-void CTREIntakeDeployerIO::ZeroPosition() { m_motor.SetPosition(0_tr); }
+void CTREIntakeDeployerIO::ZeroPosition() { m_motor.SetPosition(7.564_tr); }
 
 void CTREIntakeDeployerIO::Stop() { m_motor.SetControl(m_neutralRequest); }

@@ -8,7 +8,7 @@
 #include <units/time.h>
 #include <units/voltage.h>
 
-struct FloorRollerIOInputs {
+struct FeederIOInputs {
   units::turn_t motorPosition{0_tr};
   units::turns_per_second_t motorVelocity{0_tps};
 
@@ -19,11 +19,11 @@ struct FloorRollerIOInputs {
   units::second_t timestamp{0_s};
 };
 
-class FloorRollerIO {
+class FeederIO {
 public:
-  virtual ~FloorRollerIO() = default;
+  virtual ~FeederIO() = default;
 
-  virtual void UpdateInputs(FloorRollerIOInputs &inputs) = 0;
+  virtual void UpdateInputs(FeederIOInputs &inputs) = 0;
 
   virtual void SetVoltage(units::volt_t voltage) = 0;
   virtual void SetVelocity(units::turns_per_second_t rps) = 0;

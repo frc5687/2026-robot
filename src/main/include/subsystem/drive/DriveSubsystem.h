@@ -10,15 +10,16 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <pathplanner/lib/config/RobotConfig.h>
 #include <units/acceleration.h>
+#include <units/current.h>
 #include <units/temperature.h>
 
 #include <array>
 #include <memory>
-#include <vector>
 
 #include "Constants.h"
 #include "GyroIO.h"
 #include "OdometryThread.h"
+#include "frc2/command/CommandPtr.h"
 #include "module/Module.h"
 #include "subsystem/LoggedSubsystem.h"
 #include "units/angular_velocity.h"
@@ -45,6 +46,7 @@ public:
 
   frc::Pose2d GetPose() const;
   frc::Rotation2d GetHeading() const;
+  frc::Rotation2d GetEstimatedHeading() const;
   void ResetHeading(units::degree_t heading = 0_deg);
 
   // State information
@@ -54,7 +56,8 @@ public:
   GetModuleStates() const;
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
   GetModulePositions() const;
-  std::pair<units::meters_per_second_t, units::radians_per_second_t> GetMaxSpeeds() const;
+  std::pair<units::meters_per_second_t, units::radians_per_second_t>
+  GetMaxSpeeds() const;
 
   // Threaded odometry control
   void StartOdometryThread();
@@ -66,10 +69,16 @@ public:
   units::second_t GetOdometryLoopTime() const;
   size_t GetOdometrySuccessRate() const;
 
-  void SetMaxSpeeds(units::meters_per_second_t linear = Constants::SwerveDrive::kMaxLinearSpeed,
-                    units::radians_per_second_t angular = Constants::SwerveDrive::kMaxAngularSpeed);
+  void SetMaxSpeeds(units::meters_per_second_t linear =
+                        Constants::SwerveDrive::kMaxLinearSpeed,
+                    units::radians_per_second_t angular =
+                        Constants::SwerveDrive::kMaxAngularSpeed);
   void SetBrakeMode(bool brake);
   void ConfigureClosedLoop();
+  void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                       units::ampere_t steerSupplyCurrentLimit);
+  void SetAutoCurrentLimits();
+  void SetTeleopCurrentLimits();
   bool IsAtPose(const frc::Pose2d &pose,
                 units::meter_t tolerance = 0.1_m) const;
   std::array<bool, Constants::SwerveDrive::kModuleCount>
@@ -81,6 +90,7 @@ public:
     return m_odometryThread;
   }
 
+  frc2::CommandPtr GetPathCommand(frc::Pose2d currentPose);
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;
@@ -90,7 +100,6 @@ private:
   std::array<T, Constants::SwerveDrive::kModuleCount>
   GetModuleData(T (Module::*getter)() const) const;
 
-  std::vector<std::unique_ptr<Module>> m_test;
   std::array<std::unique_ptr<Module>, Constants::SwerveDrive::kModuleCount>
       m_modules;
   std::unique_ptr<GyroIO> m_gyro;
@@ -99,12 +108,20 @@ private:
   frc::SwerveDriveKinematics<Constants::SwerveDrive::kModuleCount> m_kinematics{
       Constants::SwerveDrive::kModuleTranslations};
 
-  OdometryData m_cachedOdometry; // Cached once in UpdateInputs, reused in LogTelemetry
+  OdometryData
+      m_cachedOdometry; // Cached once in UpdateInputs, reused in LogTelemetry
   std::array<frc::SwerveModuleState, Constants::SwerveDrive::kModuleCount>
       m_desiredStates;
   units::meters_per_second_t m_maxLinearSpeed =
       Constants::SwerveDrive::kMaxLinearSpeed;
   units::radians_per_second_t m_maxAngularSpeed =
       Constants::SwerveDrive::kMaxAngularSpeed;
-  pathplanner::RobotConfig m_robotConfig{};
+  pathplanner::RobotConfig m_robotConfig;
+  units::ampere_t m_lastDriveSupplyCurrentLimit{
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto};
+  units::ampere_t m_lastSteerSupplyCurrentLimit{
+      Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto};
+  bool m_hasCurrentLimitConfig{true};
+
+  static pathplanner::RobotConfig BuildRobotConfig();
 };

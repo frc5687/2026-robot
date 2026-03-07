@@ -1,0 +1,132 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.042781740370898,
+        "y": 5.4647218259629105
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.124136947218259,
+        "y": 5.387089871611984
+      },
+      "isLocked": false,
+      "linkedName": "Depot1-2Lazy"
+    },
+    {
+      "anchor": {
+        "x": 0.6879457917261056,
+        "y": 5.244764621968616
+      },
+      "prevControl": {
+        "x": 0.6639482531967478,
+        "y": 4.284863080794274
+      },
+      "nextControl": {
+        "x": 0.700884450784593,
+        "y": 5.76231098430813
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.6879457917261056,
+        "y": 6.331611982881598
+      },
+      "prevControl": {
+        "x": 0.6361911554921535,
+        "y": 5.943452211126963
+      },
+      "nextControl": {
+        "x": 0.7439604104983923,
+        "y": 6.751721623673743
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.042781740370898,
+        "y": 5.4647218259629105
+      },
+      "prevControl": {
+        "x": 2.2017689015708943,
+        "y": 5.956390870192117
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Depot2-3Lazy"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -55.61965527615507
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -47.619687920912206
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints ZoneDepot",
+      "minWaypointRelativePos": 0.7454422687373539,
+      "maxWaypointRelativePos": 2.1,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.1296421336934533,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 2.082376772451027,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -41.82016987907474
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -42.78795799795166
+  },
+  "useDefaultConstraints": true
+}

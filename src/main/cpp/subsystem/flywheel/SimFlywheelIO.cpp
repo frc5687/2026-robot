@@ -90,9 +90,9 @@ void SimFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   inputs.leaderSupplyCurrent = m_flywheel.GetCurrentDraw();
 
   const auto followerCurrent = m_flywheel.GetCurrentDraw() / 3.0;
-  inputs.follower1StatorCurrent = followerCurrent;
-  inputs.follower2StatorCurrent = followerCurrent;
-  inputs.follower3StatorCurrent = followerCurrent;
+  inputs.follower1SupplyCurrent = followerCurrent;
+  inputs.follower2SupplyCurrent = followerCurrent;
+  inputs.follower3SupplyCurrent = followerCurrent;
 
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }

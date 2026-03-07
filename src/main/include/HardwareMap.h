@@ -19,11 +19,11 @@ namespace TalonFX {
 inline constexpr CANDevice FrontLeftDrive{5, Bus::kDriveTrain};
 inline constexpr CANDevice FrontLeftSteer{4, Bus::kDriveTrain};
 
-inline constexpr CANDevice FrontRightDrive{3, Bus::kDriveTrain};
-inline constexpr CANDevice FrontRightSteer{2, Bus::kDriveTrain};
+inline constexpr CANDevice FrontRightDrive{7, Bus::kDriveTrain};
+inline constexpr CANDevice FrontRightSteer{6, Bus::kDriveTrain};
 
-inline constexpr CANDevice BackLeftDrive{7, Bus::kDriveTrain};
-inline constexpr CANDevice BackLeftSteer{6, Bus::kDriveTrain};
+inline constexpr CANDevice BackLeftDrive{3, Bus::kDriveTrain};
+inline constexpr CANDevice BackLeftSteer{2, Bus::kDriveTrain};
 
 inline constexpr CANDevice BackRightDrive{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightSteer{0, Bus::kDriveTrain};
@@ -36,8 +36,8 @@ inline constexpr CANDevice RightBottomFollowerFlywheel{21, Bus::kShooter};
 inline constexpr CANDevice LeftLeaderFlywheel{22, Bus::kShooter};
 inline constexpr CANDevice LeftFollowerFlywheel{23, Bus::kShooter};
 
-inline constexpr CANDevice FloorRollerLeader{24, Bus::kShooter};
-inline constexpr CANDevice FloorRollerFollower{25, Bus::kShooter};
+inline constexpr CANDevice FeederLeader{24, Bus::kShooter};
+inline constexpr CANDevice FeederFollower{25, Bus::kShooter};
 
 inline constexpr CANDevice KickerLeader{27, Bus::kShooter};   // left
 inline constexpr CANDevice KickerFollower{26, Bus::kShooter}; // right
@@ -53,17 +53,18 @@ inline constexpr CANDevice IntakeBottomRoller{13, Bus::kDriveTrain};
 
 namespace CANCoder {
 inline constexpr CANDevice FrontLeftEncoder{2, Bus::kDriveTrain};
-inline constexpr CANDevice FrontRightEncoder{1, Bus::kDriveTrain};
-inline constexpr CANDevice BackLeftEncoder{3, Bus::kDriveTrain};
+inline constexpr CANDevice FrontRightEncoder{3, Bus::kDriveTrain};
+inline constexpr CANDevice BackLeftEncoder{1, Bus::kDriveTrain};
 inline constexpr CANDevice BackRightEncoder{0, Bus::kDriveTrain};
-
-inline constexpr CANDevice HoodEncoder{0, Bus::kShooter};
 } // namespace CANCoder
 
 namespace Pidgeon2 {
 inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
 } // namespace Pidgeon2
 
+namespace CANdle {
+    inline constexpr CANDevice CANdle{0, Bus::kRio};
+}
 } // namespace CAN
 
 } // namespace HardwareMap

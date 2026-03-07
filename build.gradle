@@ -178,3 +178,7 @@ tasks.register("setupCompileCommands") {
         }
     }
 }
+
+tasks.named("build") {
+    finalizedBy("setupCompileCommands")
+}

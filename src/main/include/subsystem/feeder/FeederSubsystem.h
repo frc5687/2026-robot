@@ -9,25 +9,25 @@
 #include <memory>
 
 #include "subsystem/LoggedSubsystem.h"
-#include "subsystem/floorroller/FloorRollerIO.h"
-#include "subsystem/floorroller/FloorRollerState.h"
+#include "subsystem/feeder/FeederIO.h"
+#include "subsystem/feeder/FeederState.h"
 
-class FloorRollerSubsystem : public LoggedSubsystem {
+class FeederSubsystem : public LoggedSubsystem {
 public:
-  explicit FloorRollerSubsystem(std::unique_ptr<FloorRollerIO> io);
+  explicit FeederSubsystem(std::unique_ptr<FeederIO> io);
 
   void SetVoltage(units::volt_t voltage);
   void SetVelocity(units::turns_per_second_t rps);
   void Stop();
 
-  const FloorRollerState &GetState() const { return m_state; }
+  const FeederState &GetState() const { return m_state; }
 
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;
 
 private:
-  std::unique_ptr<FloorRollerIO> m_io;
-  FloorRollerIOInputs m_inputs{};
-  FloorRollerState m_state{};
+  std::unique_ptr<FeederIO> m_io;
+  FeederIOInputs m_inputs{};
+  FeederState m_state{};
 };

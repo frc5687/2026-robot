@@ -7,20 +7,20 @@
 
 #include "utils/Utils.h"
 
-struct FloorRollerState {
+struct FeederState {
   units::second_t timestamp{0_s};
   units::turns_per_second_t velocity{0_tps};
 
-  FloorRollerState Extrapolate(units::second_t dt) const {
-    FloorRollerState future = *this;
+  FeederState Extrapolate(units::second_t dt) const {
+    FeederState future = *this;
     future.timestamp = timestamp + dt;
     future.velocity = velocity;
     return future;
   }
 
-  static FloorRollerState Interpolate(const FloorRollerState &start,
-                                      const FloorRollerState &end, double t) {
-    FloorRollerState interpolated;
+  static FeederState Interpolate(const FeederState &start,
+                                 const FeederState &end, double t) {
+    FeederState interpolated;
     interpolated.timestamp = Lerp(start.timestamp, end.timestamp, t);
     interpolated.velocity = Lerp(start.velocity, end.velocity, t);
     return interpolated;

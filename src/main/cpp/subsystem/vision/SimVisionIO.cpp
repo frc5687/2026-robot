@@ -50,11 +50,9 @@ void SimVisionIO::UpdateInputs(VisionIOInputs &inputs) {
   for (auto &[name, cam] : m_cams) {
     Camera::VisionResult res = cam->GetLatestResult();
 
-    if (const AprilTagObservation *best = BestTag(res.tags)) {
-      inputs.cameraTagObservations.erase(name);
-      inputs.cameraTagObservations.emplace(name, *best);
-    } else {
-      inputs.cameraTagObservations.erase(name);
+    inputs.cameraTagObservations.erase(name);
+    if (!res.tags.empty()) {
+      inputs.cameraTagObservations.emplace(name, std::move(res.tags));
     }
 
     if (res.poseEstimate) {

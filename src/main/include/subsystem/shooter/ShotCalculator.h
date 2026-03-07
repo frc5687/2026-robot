@@ -14,16 +14,16 @@
 #include "utils/InterpolatingTreeMap.h"
 
 struct ShotConfig {
-  frc::Transform2d robotToLauncher{{-0.114_m, 0.191_m}, frc::Rotation2d{0_rad}};
+  frc::Transform2d robotToLauncher{{0.15_m, 0_m}, frc::Rotation2d{0_rad}};
   frc::Translation2d targetXY{
       Constants::Field::Hub::kInnerCenterPoint.ToTranslation2d()};
   units::second_t totalLatency{0.06_s};
   int maxAimIterations = 5;
   double convergenceThresholdMeters = 0.003;
 
-  units::radian_t driveAngleTolerance{0.035_rad}; // ~2 deg
-  units::radian_t hoodTolerance{0.017_rad};       // ~1 deg
-  double flywheelToleranceFrac = 0.05;            // 5 %
+  units::radian_t driveAngleTolerance{0.06_rad}; // ~2 deg
+  units::radian_t hoodTolerance{0.017_rad};      // ~1 deg
+  double flywheelToleranceFrac = 0.03;           // 3 %
 
   double minDistanceMeters = 1.34;
   double maxDistanceMeters = 5.60;

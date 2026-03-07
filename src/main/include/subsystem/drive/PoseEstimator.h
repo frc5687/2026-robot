@@ -26,9 +26,16 @@ public:
     double baseXYStdDev{0.1};
     double baseThetaStdDev{0.05};
     double singleTagPenalty{2.0};
+    double singleTagThetaScale{0.75};
     double distancePenaltyRate{0.3};
-    double confidenceThreshold{0.8};
-    double confidencePenaltyRate{3.0};
+    double distancePenaltyThreshold{3.0};
+    double distanceThetaScale{0.6};
+    double ambiguityThreshold{0.2};
+    double ambiguityPenaltyRate{2.0};
+    double minXYStdDev{0.02};
+    double maxXYStdDev{3.0};
+    double minThetaStdDev{0.01};
+    double maxThetaStdDev{1.5};
 
     double maxVisionDistance{6.0};
     double maxTimestampAge{0.5};
@@ -90,6 +97,12 @@ private:
 
   size_t m_processedCount{0};
   size_t m_rejectedCount{0};
+  size_t m_totalReceived{0};
+  size_t m_rejectNoTags{0};
+  size_t m_rejectTimestamp{0};
+  size_t m_rejectConfidence{0};
+  size_t m_rejectOutOfField{0};
+  size_t m_rejectNoInterpolation{0};
   std::atomic<units::second_t> m_lastVisionTime{0_s};
 
   static constexpr double kMinX = -1.0;

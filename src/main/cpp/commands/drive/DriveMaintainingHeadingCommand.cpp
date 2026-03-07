@@ -6,10 +6,11 @@
 #include <frc/kinematics/ChassisSpeeds.h>
 
 #include <cmath>
+#include <functional>
+#include <iostream>
 #include <numbers>
 
 #include "Constants.h"
-#include "Eigen/src/Core/util/Macros.h"
 #include "frc/DriverStation.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
@@ -17,10 +18,11 @@
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
     DriveSubsystem *driveSubsystem, std::function<double()> throttle,
     std::function<double()> strafe, std::function<double()> turn,
-    bool enableSlewRate)
+    std::function<bool()> headingFlag, bool enableSlewRate)
     : m_driveSubsystem(driveSubsystem), m_throttleSupplier(throttle),
       m_strafeSupplier(strafe), m_turnSupplier(turn),
-      m_enableSlewRate(enableSlewRate), m_joystickLastTouched(-1.0) {
+      m_enableSlewRate(enableSlewRate), m_joystickLastTouched(-1.0),
+      m_headingFlag(headingFlag) {
   AddRequirements(driveSubsystem);
   SetName("Drive Maintaining Heading");
 
@@ -89,6 +91,11 @@ void DriveMaintainingHeadingCommand::Execute() {
 
   units::radians_per_second_t rotVelocity;
 
+  if (m_headingFlag) {
+    m_headingSetpoint = std::nullopt;
+    m_headingController.Reset();
+  }
+
   if (useManualRotation) {
     rotVelocity = turnInput * maxAngularSpeed;
     m_headingSetpoint = std::nullopt; // Clear heading setpoint
@@ -99,7 +106,8 @@ void DriveMaintainingHeadingCommand::Execute() {
       m_headingController.Reset();
     }
 
-    rotVelocity = CalculateHeadingCorrection(heading, m_headingSetpoint.value());
+    rotVelocity =
+        CalculateHeadingCorrection(heading, m_headingSetpoint.value());
   }
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});

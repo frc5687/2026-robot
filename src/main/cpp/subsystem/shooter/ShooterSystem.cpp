@@ -25,11 +25,13 @@ void ShooterSystem::Update() {
   case ShooterState::TRACKING: {
     auto alliance = frc::DriverStation::GetAlliance();
     auto solution = m_shotCalculator.Calculate(
-        frc::Timer::GetFPGATimestamp(), alliance == frc::DriverStation::kRed);
+        frc::Timer::GetFPGATimestamp(),
+        alliance == frc::DriverStation::Alliance::kRed);
     ShooterSetpoint setpoint;
     setpoint.driveAngle = solution.driveAngle;
     setpoint.hoodAngle = solution.hoodAngle;
-    setpoint.flywheelSpeed = units::revolutions_per_minute_t{solution.flywheelSpeed};
+    setpoint.flywheelSpeed =
+        units::revolutions_per_minute_t{solution.flywheelSpeed};
 
     SetSetpoint(setpoint);
   } break;
@@ -42,4 +44,8 @@ void ShooterSystem::Update() {
   }
 }
 
-void ShooterSystem::LogTelemetry() {}
+void ShooterSystem::LogTelemetry() {
+  // THese are to avoid warning for not used atm
+  Log("Flywheel At Setpoint", m_flywheel.AtSetpoint());
+  Log("Hood Angle", m_hood.GetPosition().value());
+}

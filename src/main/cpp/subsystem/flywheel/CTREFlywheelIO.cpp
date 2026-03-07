@@ -23,16 +23,16 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leader,
       m_leaderStatorCurrentSignal(m_leader.GetStatorCurrent()),
       m_leaderSupplyCurrentSignal(m_leader.GetSupplyCurrent()),
 
-      m_follower1StatorCurrentSignal(m_follower1.GetStatorCurrent()),
-      m_follower2StatorCurrentSignal(m_follower2.GetStatorCurrent()),
-      m_follower3StatorCurrentSignal(m_follower3.GetStatorCurrent()),
+      m_follower1SupplyCurrentSignal(m_follower1.GetSupplyCurrent()),
+      m_follower2SupplyCurrentSignal(m_follower2.GetSupplyCurrent()),
+      m_follower3SupplyCurrentSignal(m_follower3.GetSupplyCurrent()),
 
-      m_criticalSignals{&m_leaderVelocitySignal, &m_leaderPositionSignal,
-                        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
-                        &m_leaderSupplyCurrentSignal},
-      m_diagnosticSignals{&m_follower1StatorCurrentSignal,
-                          &m_follower2StatorCurrentSignal,
-                          &m_follower3StatorCurrentSignal} {
+      m_signals{
+        &m_leaderVelocitySignal, &m_leaderPositionSignal,
+        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
+        &m_leaderSupplyCurrentSignal,
+        &m_follower1SupplyCurrentSignal,
+        &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -84,8 +84,6 @@ void CTREFlywheelIO::ConfigureClosedLoop() {
   m_leaderConfig.Slot0.kP = PID::kP;
   m_leaderConfig.Slot0.kI = PID::kI;
   m_leaderConfig.Slot0.kD = PID::kD;
-  m_leaderConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod =
-      kClosedLoopRampPeriod;
   m_velocityRequest.UpdateFreqHz = 1000_Hz;
 }
 
@@ -96,9 +94,9 @@ void CTREFlywheelIO::ConfigureSignalFrequencies() {
   m_leaderStatorCurrentSignal.SetUpdateFrequency(50_Hz);
   m_leaderSupplyCurrentSignal.SetUpdateFrequency(50_Hz);
 
-  m_follower1StatorCurrentSignal.SetUpdateFrequency(50_Hz);
-  m_follower2StatorCurrentSignal.SetUpdateFrequency(50_Hz);
-  m_follower3StatorCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower1SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower2SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower3SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
 
   m_leader.OptimizeBusUtilization();
   m_follower1.OptimizeBusUtilization();
@@ -107,8 +105,7 @@ void CTREFlywheelIO::ConfigureSignalFrequencies() {
 }
 
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
-  BaseStatusSignal::RefreshAll(m_criticalSignals);
-  BaseStatusSignal::RefreshAll(m_diagnosticSignals);
+  BaseStatusSignal::RefreshAll(m_signals);
 
   inputs.leaderMotorPosition = m_leaderPositionSignal.GetValue();
   inputs.leaderMotorVelocity = m_leaderVelocitySignal.GetValue();
@@ -116,9 +113,9 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   inputs.leaderStatorCurrent = m_leaderStatorCurrentSignal.GetValue();
   inputs.leaderSupplyCurrent = m_leaderSupplyCurrentSignal.GetValue();
 
-  inputs.follower1StatorCurrent = m_follower1StatorCurrentSignal.GetValue();
-  inputs.follower2StatorCurrent = m_follower2StatorCurrentSignal.GetValue();
-  inputs.follower3StatorCurrent = m_follower3StatorCurrentSignal.GetValue();
+  inputs.follower1SupplyCurrent = m_follower1SupplyCurrentSignal.GetValue();
+  inputs.follower2SupplyCurrent = m_follower2SupplyCurrentSignal.GetValue();
+  inputs.follower3SupplyCurrent = m_follower3SupplyCurrentSignal.GetValue();
 
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 

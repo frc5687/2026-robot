@@ -10,36 +10,19 @@
 using namespace Constants::Hood;
 using namespace ctre::phoenix6;
 
-CTREHoodIO::CTREHoodIO(const CANDevice &motor, const CANDevice &encoder)
-    : m_motor(motor.id, motor.bus), m_encoder(encoder.id, encoder.bus),
-      m_positionSignal(m_motor.GetPosition()),
+CTREHoodIO::CTREHoodIO(const CANDevice &motor)
+    : m_motor(motor.id, motor.bus), m_positionSignal(m_motor.GetPosition()),
       m_velocitySignal(m_motor.GetVelocity()),
       m_voltageSignal(m_motor.GetMotorVoltage()),
       m_statorSignal(m_motor.GetStatorCurrent()),
       m_supplySignal(m_motor.GetSupplyCurrent()),
-      m_encoderAbsPositionSignal(m_encoder.GetAbsolutePosition()),
       m_criticalSignals{&m_positionSignal, &m_velocitySignal, &m_voltageSignal,
-                        &m_statorSignal, &m_encoderAbsPositionSignal},
+                        &m_statorSignal},
       m_batchedSignals{&m_supplySignal} {
-  ConfigureEncoder();
   ConfigureDevices();
   ConfigureSignalFrequencies();
 
-  m_encoderAbsPositionSignal.WaitForUpdate(0.1_s);
-  // ABS encoder is not 1:1 and can fall out of zones so not using
-  // units::turn_t absPos = m_encoderAbsPositionSignal.GetValue();
   m_motor.SetPosition(0_tr);
-}
-
-void CTREHoodIO::ConfigureEncoder() {
-  configs::CANcoderConfiguration encoderConfig{};
-  encoderConfig.MagnetSensor.SensorDirection =
-      kEncoderInverted
-          ? signals::SensorDirectionValue::Clockwise_Positive
-          : signals::SensorDirectionValue::CounterClockwise_Positive;
-  encoderConfig.MagnetSensor.MagnetOffset = kEncoderMagnetOffset;
-  encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1.0_tr;
-  m_encoder.GetConfigurator().Apply(encoderConfig);
 }
 
 void CTREHoodIO::ConfigureDevices() {
@@ -83,10 +66,8 @@ void CTREHoodIO::ConfigureSignalFrequencies() {
   m_voltageSignal.SetUpdateFrequency(100_Hz);
   m_statorSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
-  m_encoderAbsPositionSignal.SetUpdateFrequency(100_Hz);
 
   m_motor.OptimizeBusUtilization();
-  m_encoder.OptimizeBusUtilization();
 }
 
 void CTREHoodIO::UpdateInputs(HoodIOInputs &inputs) {
@@ -98,7 +79,6 @@ void CTREHoodIO::UpdateInputs(HoodIOInputs &inputs) {
   inputs.appliedVolts = m_voltageSignal.GetValue();
   inputs.statorCurrent = m_statorSignal.GetValue();
   inputs.supplyCurrent = m_supplySignal.GetValue();
-  inputs.encoderAbsolutePosition = m_encoderAbsPositionSignal.GetValue();
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 

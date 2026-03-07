@@ -13,13 +13,15 @@ IntakeDeployerSubsystem::IntakeDeployerSubsystem(
     : LoggedSubsystem("IntakeDeployer"), m_io(std::move(io)) {}
 
 static units::turn_t ExtensionToMotorTurns(units::meter_t extension) {
-  return units::turn_t{extension.value() /
-                       Constants::IntakeDeployer::kRotationToMeter.value() *
-                       Constants::IntakeDeployer::kGearRatio};
+  return units::turn_t{extension.value() / kMetersPerMotorRotation};
 }
 
 void IntakeDeployerSubsystem::Deploy() {
   m_io->SetPosition(ExtensionToMotorTurns(kDeployedExtension));
+}
+
+void IntakeDeployerSubsystem::RetractMid() {
+  m_io->SetPosition(ExtensionToMotorTurns(kMidExtension));
 }
 
 void IntakeDeployerSubsystem::Retract() {
@@ -31,8 +33,8 @@ void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {
 }
 
 units::meter_t IntakeDeployerSubsystem::GetPosition() const {
-  return units::meter_t{(m_inputs.motorPosition / kGearRatio).value() *
-                        kRotationToMeter.value()};
+  return units::meter_t{m_inputs.motorPosition.value() *
+                        kMetersPerMotorRotation};
 }
 
 void IntakeDeployerSubsystem::SetVoltage(units::volt_t voltage) {

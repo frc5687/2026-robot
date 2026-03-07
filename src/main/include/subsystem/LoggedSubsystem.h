@@ -63,8 +63,8 @@ protected:
    */
   template <typename T> void Log(const std::string &key, const T &value) {
     std::array<char, 128> buf;
-    std::size_t prefixLen = m_prefix.size();
-    std::size_t totalLen = prefixLen + key.size();
+    size_t prefixLen = m_prefix.size();
+    size_t totalLen = prefixLen + key.size();
     char *ptr = buf.data();
     std::string overflow;
     if (totalLen >= buf.size()) [[unlikely]] {

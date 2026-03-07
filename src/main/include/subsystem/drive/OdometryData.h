@@ -14,7 +14,7 @@
 #include "utils/Utils.h"
 
 struct OdometryData {
-  frc::Pose2d odometryPose{}; // Raw odometry pose
+  frc::Pose2d odometryPose{};  // Raw odometry pose
   frc::Pose2d estimatedPose{}; // This is the pose from estimator
   std::array<frc::SwerveModulePosition, Constants::SwerveDrive::kModuleCount>
       modulePositions{};
@@ -39,8 +39,9 @@ struct OdometryData {
 
     future.estimatedPose = estimatedPose.Exp(odometryDelta);
     future.gyroAngle = gyroAngle + frc::Rotation2d(gyroRate * dt);
-    future.estimatedPose =
-        frc::Pose2d{{future.estimatedPose.Translation()}, {future.gyroAngle}};
+    // future.estimatedPose =
+    //     frc::Pose2d{{future.estimatedPose.Translation()},
+    //     {future.gyroAngle}};
     for (size_t i = 0; i < 4; i++) {
       future.modulePositions[i].distance = moduleStates[i].speed * dt;
       future.modulePositions[i].angle = moduleStates[i].angle;

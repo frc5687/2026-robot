@@ -94,6 +94,4 @@ private:
   double m_counteractGain;
   double m_aggressiveAccelMultiplier;
   double m_smoothingFactor;
-
-  bool m_isAlgae;
 };

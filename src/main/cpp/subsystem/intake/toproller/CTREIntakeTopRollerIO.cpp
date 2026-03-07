@@ -42,6 +42,8 @@ void CTREIntakeTopRollerIO::ConfigureDevices() {
   followerConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
   followerConfig.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
   followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+  followerConfig.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
+  followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
   m_follower.GetConfigurator().Apply(followerConfig);
 
   m_follower.SetControl(

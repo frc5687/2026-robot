@@ -2,8 +2,6 @@
 
 #include "subsystem/drive/module/Module.h"
 
-#include <fmt/format.h>
-
 #include <string>
 #include <utility>
 
@@ -12,11 +10,16 @@
 
 Module::Module(std::unique_ptr<ModuleIO> io)
     : m_io(std::move(io)), m_position(m_io->GetModuleConfig().modulePosition),
-      m_name(ModulePositionToString(m_position)) {}
+      m_name(ModulePositionToString(m_position)),
+      m_logPrefix("Module/" + m_name + "/") {}
 
 void Module::Periodic() {
+  auto now = frc::Timer::GetFPGATimestamp();
   m_io->UpdateInputs(m_inputs, m_isSignalsBatched);
-  LogState();
+  if (now - m_lastLogTime >= Constants::kLogPeriod) {
+    LogState();
+    m_lastLogTime = now;
+  }
 }
 
 void Module::SetDesiredState(const frc::SwerveModuleState &state) {
@@ -61,6 +64,11 @@ void Module::SetBrakeMode(bool brake) { m_io->SetBrakeMode(brake); }
 
 void Module::ConfigureClosedLoop() { m_io->ConfigureClosedLoop(); }
 
+void Module::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
+                             units::ampere_t steerSupplyCurrentLimit) {
+  m_io->SetCurrentLimits(driveSupplyCurrentLimit, steerSupplyCurrentLimit);
+}
+
 units::ampere_t Module::GetCurrentDraw() const {
   return units::ampere_t{
       m_currentFilter.Calculate(m_inputs.driveCurrentDraw.value())};
@@ -76,30 +84,29 @@ bool Module::ShouldOptimize(const frc::SwerveModuleState &desired) const {
 }
 
 void Module::LogState() {
-  const std::string prefix = fmt::format("Module/{}/", m_name);
   auto &logger = Logger::Instance();
 
-  logger.Log(prefix + "Velocity", m_inputs.driveVelocity.value());
-  logger.Log(prefix + "Position", m_inputs.drivePosition.value());
-  logger.Log(prefix + "Angle", m_inputs.steerAngle);
-  logger.Log(prefix + "SteerTurns", m_inputs.steerPosition.value());
-  logger.Log(prefix + "CurrentState", GetState());
-  logger.Log(prefix + "DesiredState", m_desiredState);
-  logger.Log(prefix + "OptimizedState", m_optimizedState);
-  logger.Log(prefix + "DriveCurrent", GetCurrentDraw().value());
-  logger.Log(prefix + "DriveTorque", GetDriveTorque().value());
-  logger.Log(prefix + "DriveForce",
+  logger.Log(m_logPrefix + "Velocity", m_inputs.driveVelocity.value());
+  logger.Log(m_logPrefix + "Position", m_inputs.drivePosition.value());
+  logger.Log(m_logPrefix + "Angle", m_inputs.steerAngle);
+  logger.Log(m_logPrefix + "SteerTurns", m_inputs.steerPosition.value());
+  logger.Log(m_logPrefix + "CurrentState", GetState());
+  logger.Log(m_logPrefix + "DesiredState", m_desiredState);
+  logger.Log(m_logPrefix + "OptimizedState", m_optimizedState);
+  logger.Log(m_logPrefix + "DriveCurrent", GetCurrentDraw().value());
+  logger.Log(m_logPrefix + "DriveTorque", GetDriveTorque().value());
+  logger.Log(m_logPrefix + "DriveForce",
              (GetDriveTorque() / Constants::SwerveDrive::Module::kWheelRadius)
                  .value());
-  logger.Log(prefix + "DriveVoltage", m_inputs.driveAppliedVolts.value());
-  logger.Log(prefix + "SteerVoltage", m_inputs.steerAppliedVolts.value());
-  logger.Log(prefix + "DriveTemp", m_inputs.driveTemperature.value());
-  logger.Log(prefix + "SteerTemp", m_inputs.steerTemperature.value());
-  logger.Log(prefix + "Connected", IsConnected());
+  logger.Log(m_logPrefix + "DriveVoltage", m_inputs.driveAppliedVolts.value());
+  logger.Log(m_logPrefix + "SteerVoltage", m_inputs.steerAppliedVolts.value());
+  logger.Log(m_logPrefix + "DriveTemp", m_inputs.driveTemperature.value());
+  logger.Log(m_logPrefix + "SteerTemp", m_inputs.steerTemperature.value());
+  logger.Log(m_logPrefix + "Connected", IsConnected());
 
   const auto velocityError = m_desiredState.speed - GetState().speed;
   const auto angleError =
       (m_optimizedState.angle - m_inputs.steerAngle).Radians();
-  logger.Log(prefix + "VelocityError", velocityError.value());
-  logger.Log(prefix + "AngleError", angleError.value());
+  logger.Log(m_logPrefix + "VelocityError", velocityError.value());
+  logger.Log(m_logPrefix + "AngleError", angleError.value());
 }

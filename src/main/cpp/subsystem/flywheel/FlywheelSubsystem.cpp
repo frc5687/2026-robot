@@ -2,7 +2,9 @@
 
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 
+#include <algorithm>
 #include <units/math.h>
+#include <frc/Timer.h>
 
 #include <numbers>
 
@@ -22,8 +24,39 @@ FlywheelSubsystem::FlywheelSubsystem(std::unique_ptr<FlywheelIO> io)
                     this, "Flywheel"}} {}
 
 void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {
+  auto now = units::second_t{frc::Timer::GetFPGATimestamp().value()};
   m_desiredRPM = desiredRPM;
-  m_io->SetMotorVelocity(MechanismRPMToMotorRPS(desiredRPM));
+
+  const auto deltaRPM = units::math::abs(desiredRPM - m_commandedRPM);
+  const bool spinup =
+      units::math::abs(desiredRPM) > units::math::abs(m_commandedRPM);
+  const bool shouldRamp =
+      spinup && deltaRPM > Constants::Flywheel::kSpinupRampThreshold &&
+      Constants::Flywheel::kSpinupRampDuration > 0_s;
+
+  if (!shouldRamp) {
+    m_targetRPM = desiredRPM;
+    m_rampStartRPM = desiredRPM;
+    m_commandedRPM = desiredRPM;
+    m_rampStartTime = now;
+  } else {
+    if (units::math::abs(desiredRPM - m_targetRPM) >
+        Constants::Flywheel::kSpinupRetargetTolerance) {
+      m_rampStartRPM = m_commandedRPM;
+      m_targetRPM = desiredRPM;
+      m_rampStartTime = now;
+    }
+
+    auto elapsed = now - m_rampStartTime;
+    double progress = std::clamp(
+        elapsed.value() / Constants::Flywheel::kSpinupRampDuration.value(), 0.0,
+        1.0);
+    m_commandedRPM = units::revolutions_per_minute_t{
+        m_rampStartRPM.value() +
+        (m_targetRPM.value() - m_rampStartRPM.value()) * progress};
+  }
+
+  m_io->SetMotorVelocity(MechanismRPMToMotorRPS(m_commandedRPM));
 }
 
 bool FlywheelSubsystem::AtSetpoint() const {
@@ -66,6 +99,7 @@ void FlywheelSubsystem::LogTelemetry() {
   Log("Leader/RawRPM",
       MotorRPSToMechanismRPM(m_inputs.leaderMotorVelocity).value());
   Log("Leader/SetpointRPM", m_desiredRPM.value());
+  Log("Leader/CommandedSetpointRPM", m_commandedRPM.value());
   Log("Leader/ErrorRPM", (m_desiredRPM - m_filteredRPM).value());
 
   Log("Leader/VelocityRadPerSec", m_state.velocity.value());
@@ -75,9 +109,9 @@ void FlywheelSubsystem::LogTelemetry() {
   Log("Leader/StatorCurrent", m_inputs.leaderStatorCurrent.value());
   Log("Leader/SupplyCurrent", m_inputs.leaderSupplyCurrent.value());
 
-  Log("Follower1/StatorCurrent", m_inputs.follower1StatorCurrent.value());
-  Log("Follower2/StatorCurrent", m_inputs.follower2StatorCurrent.value());
-  Log("Follower3/StatorCurrent", m_inputs.follower3StatorCurrent.value());
+  Log("Follower1/SupplyCurrent", m_inputs.follower1SupplyCurrent.value());
+  Log("Follower2/SupplyCurrent", m_inputs.follower2SupplyCurrent.value());
+  Log("Follower3/SupplyCurrent", m_inputs.follower3SupplyCurrent.value());
 
   Log("AtSetpoint", AtSetpoint());
 }

@@ -15,9 +15,9 @@ struct FlywheelIOInputs {
   units::ampere_t leaderStatorCurrent{0_A};
   units::ampere_t leaderSupplyCurrent{0_A};
 
-  units::ampere_t follower1StatorCurrent{0_A};
-  units::ampere_t follower2StatorCurrent{0_A};
-  units::ampere_t follower3StatorCurrent{0_A};
+  units::ampere_t follower1SupplyCurrent{0_A};
+  units::ampere_t follower2SupplyCurrent{0_A};
+  units::ampere_t follower3SupplyCurrent{0_A};
 
   units::second_t timestamp{0_s};
 };
