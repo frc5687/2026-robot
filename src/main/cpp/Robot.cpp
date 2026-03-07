@@ -17,6 +17,7 @@
 
 #include <ctre/phoenix6/SignalLogger.hpp>
 
+#include "frc/RobotController.h"
 #include "subsystem/CoordinatedSystemManager.h"
 #include "utils/MatchTracker.h"
 
@@ -24,6 +25,7 @@ Robot::Robot() {
   frc::LiveWindow::DisableAllTelemetry();
   ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::DriverStation::SilenceJoystickConnectionWarning(true);
+  frc::RobotController::SetBrownoutVoltage(6.0_V);
 
   if (!frc::Notifier::SetHALThreadPriority(true, 40)) {
     wpi::errs() << "Failed to set HAL notifier thread priority\n";

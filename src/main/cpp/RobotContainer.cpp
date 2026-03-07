@@ -278,11 +278,11 @@ void RobotContainer::ConfigureBindings() {
           .IgnoringDisable(true));
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
 
-  m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
-                                             &m_hood, &m_intakeBottomRoller,
-                                             &m_intakeDeployer, 1000_rpm,
-                                             60_tps, 10_deg)
-                              .ToPtr());
+  //m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
+  //                                           &m_hood, &m_intakeBottomRoller,
+  //                                           &m_intakeDeployer, 1000_rpm,
+  //                                           60_tps, 10_deg)
+  //                            .ToPtr());
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand() {
