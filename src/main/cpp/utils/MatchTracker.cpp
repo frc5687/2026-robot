@@ -173,7 +173,7 @@ bool MatchTracker::CanAllianceScore(frc::DriverStation::Alliance alliance) const
   case MatchPhase::Shift4:
     return activeAlliance.has_value() && activeAlliance.value() == alliance;
   case MatchPhase::Endgame:
-    return true;
+    return false;
   case MatchPhase::Transition:
   case MatchPhase::Disabled:
   case MatchPhase::Test:

@@ -212,7 +212,7 @@ inline constexpr bool kFollower2Opposed = true;
 inline constexpr bool kFollower3Opposed = true;
 
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 30_A;
 inline constexpr bool kEnableStatorCurrent = true;
 inline constexpr bool kEnableSupplyCurrent = true;
 
