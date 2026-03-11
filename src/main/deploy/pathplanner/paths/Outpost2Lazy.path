@@ -105,7 +105,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Outpost1-2Lazy"
+      "linkedName": "Outpost2-3Lazy"
     }
   ],
   "rotationTargets": [
@@ -134,9 +134,9 @@
     {
       "name": "Trench",
       "minWaypointRelativePos": 0.6644159351789438,
-      "maxWaypointRelativePos": 2.9169480081026076,
+      "maxWaypointRelativePos": 2.2325581395349228,
       "constraints": {
-        "maxVelocity": 2.0,
+        "maxVelocity": 2.5,
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -149,7 +149,7 @@
       "minWaypointRelativePos": 5.347738014854826,
       "maxWaypointRelativePos": 5.898717083051951,
       "constraints": {
-        "maxVelocity": 2.0,
+        "maxVelocity": 2.25,
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -162,7 +162,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.06482106684674008,
+      "waypointRelativePos": 1.7850313408430236,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
