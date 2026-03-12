@@ -266,6 +266,11 @@ void RobotContainer::ConfigureBindings() {
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})).AlongWith(
       Run([this] { m_intakeDeployer.RetractMid(); }, {&m_intakeDeployer})));
 
+  m_driver.L1().WhileTrue(
+    frc2::cmd::Defer([this]() {
+        return m_drive.SeekEdgeCommand(
+            RobotState::Instance().GetDriveState(frc::Timer::GetFPGATimestamp()).estimatedPose);
+    }, {&m_drive}));
 
     /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 

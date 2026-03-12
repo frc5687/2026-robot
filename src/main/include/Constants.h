@@ -484,6 +484,22 @@ namespace Trench{
     inline constexpr frc::Pose2d OutsideBottomRed{10_m, 0.5_m, 0_deg};
 } // namespace Field
 
+namespace Zones{
+    inline constexpr frc::Pose2d BottomLeftBlue{0_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d BottomRightBlue{4_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d TopLeftBlue{0_m, 8.07_m, 0_deg};
+    inline constexpr frc::Pose2d TopRightBlue{4_m, 8.07_m, 0_deg};
+
+    inline constexpr frc::Pose2d BottomLeftNeutral{5.73_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d BottomRightNeutral{11.318_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d TopLeftNeutral{5.73_m, 8.07_m, 0_deg};
+    inline constexpr frc::Pose2d TopRightNeutral{11.318_m, 8.07_m, 0_deg};
+
+    inline constexpr frc::Pose2d BottomLeftRed{12.563_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d BottomRightRed{16.54_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d TopLeftRed{12.563_m, 8.07_m, 0_deg};
+    inline constexpr frc::Pose2d TopRightRed{16.54_m, 8.07_m, 0_deg};
+}
 } // namespace Field
 
 } // namespace Constants
