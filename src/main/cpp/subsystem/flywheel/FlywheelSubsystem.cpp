@@ -113,6 +113,19 @@ void FlywheelSubsystem::LogTelemetry() {
   Log("Follower2/SupplyCurrent", m_inputs.follower2SupplyCurrent.value());
   Log("Follower3/SupplyCurrent", m_inputs.follower3SupplyCurrent.value());
 
+  Log("Follower1/StatorCurrent", m_inputs.follower1StatorCurrent.value());
+  Log("Follower2/StatorCurrent", m_inputs.follower2StatorCurrent.value());
+  Log("Follower3/StatorCurrent", m_inputs.follower3StatorCurrent.value());
+
+  Log("Follower1/AppliedVolts", m_inputs.follower1AppliedVolts.value());
+  Log("Follower2/AppliedVolts", m_inputs.follower2AppliedVolts.value());
+  Log("Follower3/AppliedVolts", m_inputs.follower3AppliedVolts.value());
+
+  Log("Follower1/MotorVelocity", m_inputs.follower1MotorVelocity.value());
+  Log("Follower2/MotorVelocity", m_inputs.follower2MotorVelocity.value());
+  Log("Follower3/MotorVelocity", m_inputs.follower3MotorVelocity.value());
+
+
   Log("AtSetpoint", AtSetpoint());
 }
 

@@ -26,13 +26,27 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leader,
       m_follower1SupplyCurrentSignal(m_follower1.GetSupplyCurrent()),
       m_follower2SupplyCurrentSignal(m_follower2.GetSupplyCurrent()),
       m_follower3SupplyCurrentSignal(m_follower3.GetSupplyCurrent()),
+  
+      m_follower1StatorCurrentSignal(m_follower1.GetStatorCurrent()),
+      m_follower2StatorCurrentSignal(m_follower2.GetStatorCurrent()),
+      m_follower3StatorCurrentSignal(m_follower3.GetStatorCurrent()),
+
+      m_follower1VelocitySignal(m_follower1.GetVelocity()),
+      m_follower2VelocitySignal(m_follower2.GetVelocity()),
+      m_follower3VelocitySignal(m_follower3.GetVelocity()),
+
+      m_follower1VoltageSignal(m_follower1.GetMotorVoltage()),
+      m_follower2VoltageSignal(m_follower2.GetMotorVoltage()),
+      m_follower3VoltageSignal(m_follower3.GetMotorVoltage()),
 
       m_signals{
         &m_leaderVelocitySignal, &m_leaderPositionSignal,
         &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
         &m_leaderSupplyCurrentSignal,
         &m_follower1SupplyCurrentSignal,
-        &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal} {
+        &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal,
+      &m_follower1StatorCurrentSignal,
+        &m_follower2StatorCurrentSignal, &m_follower3StatorCurrentSignal, &m_follower1VelocitySignal, &m_follower2VelocitySignal, &m_follower3VelocitySignal, &m_follower1VoltageSignal, &m_follower2VoltageSignal, &m_follower3VoltageSignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -98,6 +112,15 @@ void CTREFlywheelIO::ConfigureSignalFrequencies() {
   m_follower2SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
   m_follower3SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
 
+  m_follower1StatorCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower2StatorCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower3StatorCurrentSignal.SetUpdateFrequency(50_Hz);
+
+
+  m_follower1VelocitySignal.SetUpdateFrequency(100_Hz);
+  m_follower2VelocitySignal.SetUpdateFrequency(100_Hz);
+  m_follower3VelocitySignal.SetUpdateFrequency(100_Hz);
+
   m_leader.OptimizeBusUtilization();
   m_follower1.OptimizeBusUtilization();
   m_follower2.OptimizeBusUtilization();
@@ -106,7 +129,7 @@ void CTREFlywheelIO::ConfigureSignalFrequencies() {
 
 void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_signals);
-
+  
   inputs.leaderMotorPosition = m_leaderPositionSignal.GetValue();
   inputs.leaderMotorVelocity = m_leaderVelocitySignal.GetValue();
   inputs.leaderAppliedVolts = m_leaderVoltageSignal.GetValue();
@@ -117,6 +140,19 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   inputs.follower2SupplyCurrent = m_follower2SupplyCurrentSignal.GetValue();
   inputs.follower3SupplyCurrent = m_follower3SupplyCurrentSignal.GetValue();
 
+  inputs.follower1StatorCurrent = m_follower1StatorCurrentSignal.GetValue();
+  inputs.follower2StatorCurrent = m_follower2StatorCurrentSignal.GetValue();
+  inputs.follower3StatorCurrent = m_follower3StatorCurrentSignal.GetValue();
+
+  inputs.follower1MotorVelocity = m_follower1VelocitySignal.GetValue();
+  inputs.follower2MotorVelocity = m_follower2VelocitySignal.GetValue();
+  inputs.follower3MotorVelocity = m_follower3VelocitySignal.GetValue();
+
+  inputs.follower1AppliedVolts = m_follower1VoltageSignal.GetValue();
+  inputs.follower2AppliedVolts = m_follower2VoltageSignal.GetValue();
+  inputs.follower3AppliedVolts = m_follower3VoltageSignal.GetValue();
+
+
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 
   if (m_characterizing) {
@@ -124,7 +160,8 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   } else if (m_setpoint.value() <= 0) {
     m_leader.SetControl(m_neutralRequest);
   } else {
-    m_leader.SetControl(m_velocityRequest.WithVelocity(m_setpoint).WithSlot(0));
+    m_leader.SetControl(
+      m_velocityRequest.WithVelocity(m_setpoint).WithSlot(0).WithEnableFOC(false));
   }
 }
 

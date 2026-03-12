@@ -24,6 +24,7 @@
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/SimpleShootCommand.h"
 #include "frc/Timer.h"
+#include "frc2/command/sysid/SysIdRoutine.h"
 #include "utils/MatchTracker.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
 #include "subsystem/drive/PigeonIO.h"
@@ -277,6 +278,11 @@ void RobotContainer::ConfigureBindings() {
           [] { MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(false); })
           .IgnoringDisable(true));
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
+
+  // m_debugger.Cross().OnTrue(m_flywheel.SysIdDynamic(frc2::sysid::Direction::kForward));
+  // m_debugger.Circle().OnTrue(m_flywheel.SysIdDynamic(frc2::sysid::Direction::kReverse));
+  // m_debugger.Triangle().OnTrue(m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kForward));
+  // m_debugger.Square().OnTrue(m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kReverse));
 
   //m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
   //                                           &m_hood, &m_intakeBottomRoller,
