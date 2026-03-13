@@ -91,7 +91,7 @@ public:
   }
 
   frc2::CommandPtr GetPathCommand(frc::Pose2d currentPose);
-  frc2::CommandPtr SeekEdgeCommand(frc::Pose2d currentPose);
+  frc::Pose2d SeekEdge(frc::Pose2d currentPose);
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;

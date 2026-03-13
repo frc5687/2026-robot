@@ -499,6 +499,10 @@ namespace Zones{
     inline constexpr frc::Pose2d BottomRightRed{16.54_m, 0_m, 0_deg};
     inline constexpr frc::Pose2d TopLeftRed{12.563_m, 8.07_m, 0_deg};
     inline constexpr frc::Pose2d TopRightRed{16.54_m, 8.07_m, 0_deg};
+
+    inline constexpr std::array<frc::Pose2d,12>kZones={BottomLeftBlue,BottomRightBlue,TopLeftBlue,TopRightBlue,
+                                                        BottomLeftNeutral,BottomRightNeutral,TopLeftNeutral,TopRightNeutral
+                                                        BottomLeftRed,BottomRightRed,TopLeftRed,TopRightRed}
 }
 } // namespace Field
 

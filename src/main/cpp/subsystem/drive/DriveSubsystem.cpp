@@ -346,7 +346,7 @@ frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
   return pathplanner::AutoBuilder::pathfindToPose(goalPose, constraints, 1.0_mps);
 }
 
-frc2::CommandPtr DriveSubsystem::SeekEdgeCommand(frc::Pose2d currentPose){
+frc::Pose2d DriveSubsystem::SeekEdge(frc::Pose2d currentPose){
 
   pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
     2.0_mps, 4.0_mps_sq,
@@ -371,19 +371,23 @@ frc2::CommandPtr DriveSubsystem::SeekEdgeCommand(frc::Pose2d currentPose){
                     && Constants::Field::Zones::BottomLeftNeutral.Y() < currentPose.Translation().Y() && currentPose.Translation().Y() < Constants::Field::Zones::TopRightNeutral.Y();
   bool redZone = Constants::Field::Zones::BottomLeftRed.X() < currentPose.Translation().X() && currentPose.Translation().X() < Constants::Field::Zones::TopRightRed.X() 
                     && Constants::Field::Zones::BottomLeftRed.Y() < currentPose.Translation().Y() && currentPose.Translation().Y() < Constants::Field::Zones::TopRightRed.Y();
-
   
-  if(blueZone){
-    goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopBlue.X(), currentPose.Y(),goalRotation);
-  }
-  else if(neutralZone){
+  units::meter_t lowestDistance = 1000_m;
+  for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
+        bool checkX = std::abs(currentPose.Translation().X()-checkedPose.X()) < lowestDistance;
+        bool checkY = std::abs(currentPose.Translation().Y()-checkedPose.Y()) < lowestDistance;
 
+        if (checkY){
+          goalPose = checkedPose;
+          lowestDistance = checkedPose.Y();
+        }
+        else if (checkX){
+          goalPose = checkedPose;
+          lowestDistance = checkedPose.X();
+        }
   }
-  else if(redZone){
 
-  }
-
-  return pathplanner::AutoBuilder::pathfindToPose(goalPose, constraints, 1.0_mps);
+  return goalPose;
 }
 
 
