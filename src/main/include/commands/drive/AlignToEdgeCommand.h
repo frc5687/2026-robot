@@ -18,8 +18,6 @@ class AlignToEdgeCommand
     : public frc2::CommandHelper<frc2::Command, AlignToEdgeCommand> {
 public:
     AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
-                        frc::Pose2d targetPose,
-                        std::string desiredEdge,
                         std::function<double()> throttle,
                         std::function<double()> strafe,
                         double constraintFactor = 1.0,
@@ -32,11 +30,11 @@ public:
 
 private:
     DriveSubsystem* m_driveSubsystem;
-    frc::Pose2d m_targetPose;
-    std::string m_desiredEdge;
     std::function<double()> m_throttleSupplier;
     std::function<double()> m_strafeSupplier;
     bool m_enableSlewRate;
+
+    frc::Pose2d m_targetPose;
 
     frc::ProfiledPIDController<units::meters> m_driveController;
     frc::ProfiledPIDController<units::radians> m_thetaController;

@@ -346,50 +346,6 @@ frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
   return pathplanner::AutoBuilder::pathfindToPose(goalPose, constraints, 1.0_mps);
 }
 
-frc::Pose2d DriveSubsystem::SeekEdge(frc::Pose2d currentPose){
-
-  pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
-    2.0_mps, 4.0_mps_sq,
-    540_deg_per_s, 720_deg_per_s_sq);
-
-  double currentDegrees = currentPose.Rotation().Degrees().value();
-
-  // Normalize to [-180, 180] and snap to nearest cardinal (0 or 180)
-  double normalizedDeg = std::fmod(currentDegrees + 180.0, 360.0);
-  if (normalizedDeg < 0) normalizedDeg += 360.0;
-  normalizedDeg -= 180.0;
-  frc::Rotation2d goalRotation = (std::abs(normalizedDeg) < 90.0)
-    ? frc::Rotation2d(0_deg)
-    : frc::Rotation2d(180_deg);
-
-  frc::Pose2d goalPose = currentPose; // default: pathfind to self
-
-  bool isTopHalf = currentPose.Translation().Y() > Constants::Field::kFieldWidth / 2.0;
-  bool blueZone = Constants::Field::Zones::BottomLeftBlue.X() < currentPose.Translation().X() && currentPose.Translation().X() < Constants::Field::Zones::TopRightBlue.X() 
-                    && Constants::Field::Zones::BottomLeftBlue.Y() < currentPose.Translation().Y() && currentPose.Translation().Y() < Constants::Field::Zones::TopRightBlue.Y();
-  bool neutralZone = Constants::Field::Zones::BottomLeftNeutral.X() < currentPose.Translation().X() && currentPose.Translation().X() < Constants::Field::Zones::TopRightNeutral.X() 
-                    && Constants::Field::Zones::BottomLeftNeutral.Y() < currentPose.Translation().Y() && currentPose.Translation().Y() < Constants::Field::Zones::TopRightNeutral.Y();
-  bool redZone = Constants::Field::Zones::BottomLeftRed.X() < currentPose.Translation().X() && currentPose.Translation().X() < Constants::Field::Zones::TopRightRed.X() 
-                    && Constants::Field::Zones::BottomLeftRed.Y() < currentPose.Translation().Y() && currentPose.Translation().Y() < Constants::Field::Zones::TopRightRed.Y();
-  
-  units::meter_t lowestDistance = 1000_m;
-  for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
-        bool checkX = std::abs(currentPose.Translation().X()-checkedPose.X()) < lowestDistance;
-        bool checkY = std::abs(currentPose.Translation().Y()-checkedPose.Y()) < lowestDistance;
-
-        if (checkY){
-          goalPose = checkedPose;
-          lowestDistance = checkedPose.Y();
-        }
-        else if (checkX){
-          goalPose = checkedPose;
-          lowestDistance = checkedPose.X();
-        }
-  }
-
-  return goalPose;
-}
-
 
 // This is handled by the odometry thread
 void DriveSubsystem::UpdateInputs() {

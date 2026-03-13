@@ -17,16 +17,12 @@ static constexpr double kMaxTranslationalAccel = 3.0; // m/s²
 static constexpr double kMaxAngularAccel = 10.0;       // rad/s²
 
 AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
-                                            frc::Pose2d targetPose,
-                                            std::string desiredEdge,
                                             std::function<double()> throttle,
                                             std::function<double()> strafe,
                                             double constraintFactor,
                                             bool enableSlewRate)
                                             
         : m_driveSubsystem(driveSubsystem),
-        m_targetPose(targetPose),
-        m_desiredEdge(desiredEdge),
         m_throttleSupplier(throttle),
         m_strafeSupplier(strafe),
         m_enableSlewRate(enableSlewRate),
@@ -62,10 +58,64 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
 }
 
 void AlignToEdgeCommand::Initialize() {
+}
+
+void AlignToEdgeCommand::Execute() {
+
+    frc::ChassisSpeeds DriveSubsystem::GetFieldRelativeSpeeds() const {
+    auto robotSpeeds = GetChassisSpeeds();
+    return frc::ChassisSpeeds::FromRobotRelativeSpeeds(robotSpeeds,
+                                                        GetEstimatedHeading());
+    }
+
     frc::Pose2d currentPose = m_driveSubsystem->GetPose();
 
+    frc::Pose2d leftIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft);
+    frc::Pose2d rightIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeRight);
+
+    double lowestDistance = 100;
+    bool leftCloser;
+
+    for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
+            double checkedX1 = (leftIntake.X()-checkedPose.X())/1_m;
+            double checkedY1 = (leftIntake.Y()-checkedPose.Y())/1_m;
+
+            bool checkX = std::fabs(checkedX1) < lowestDistance;
+            bool checkY = std::fabs(checkedY1) < lowestDistance;
+
+            if (checkY){
+            m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
+            lowestDistance = checkedPose.Y()/1_m;
+            leftCloser = true;
+            }
+            else if (checkX){
+            m_targetPose = {checkedPose.X(), currentPose.Y(), currentPose.Rotation()};
+            lowestDistance = checkedPose.X()/1_m;
+            leftCloser = true;
+            }
+        }
+
+    for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
+            double checkedX2 = (rightIntake.X()-checkedPose.X())/1_m;
+            double checkedY2 = (rightIntake.Y()-checkedPose.Y())/1_m;
+
+            bool checkX = std::fabs(checkedX2) < lowestDistance;
+            bool checkY = std::fabs(checkedY2) < lowestDistance;
+
+            if (checkY){
+            m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
+            lowestDistance = checkedPose.Y()/1_m;
+            leftCloser = false;
+            }
+            else if (checkX){
+            m_targetPose = {checkedPose.X(), currentPose.Y(), currentPose.Rotation()};
+            lowestDistance = checkedPose.X()/1_m;
+            leftCloser = false;
+            }
+        }
+
     double currentDistance =
-        currentPose.Translation().Distance(m_targetPose.Translation()).value();
+    currentPose.Translation().Distance(m_targetPose.Translation()).value();
 
     frc::ChassisSpeeds fieldSpeeds = m_driveSubsystem->GetFieldRelativeSpeeds();
 
@@ -74,7 +124,7 @@ void AlignToEdgeCommand::Initialize() {
         units::meter_t{fieldSpeeds.vy.value()}};
 
     frc::Rotation2d toTargetAngle =
-        (m_targetPose.Translation() - currentPose.Translation()).Angle();
+    (m_targetPose.Translation() - currentPose.Translation()).Angle();
 
     frc::Translation2d rotatedVelocity = fieldVelocity.RotateBy(-toTargetAngle);
     double initialVelocity = std::min(0.0, -rotatedVelocity.X().value());
@@ -84,24 +134,19 @@ void AlignToEdgeCommand::Initialize() {
 
     m_thetaController.Reset(currentPose.Rotation().Radians(),
                             m_driveSubsystem->GetChassisSpeeds().omega);
-}
 
-void AlignToEdgeCommand::Execute() {
-    frc::Pose2d currentPose = m_driveSubsystem->GetPose();
 
     double throttle = m_throttleSupplier();
     double strafe = m_strafeSupplier();
 
-    throttle = ApplyDeadband(throttle, Constants::kJoystickDeadband);
-    strafe = ApplyDeadband(strafe, Constants::kJoystickDeadband);
+    throttle = frc::ApplyDeadband(throttle, Constants::kJoystickDeadband);
+    strafe = frc::ApplyDeadband(strafe, Constants::kJoystickDeadband);
 
     if (m_enableSlewRate) {
     throttle = m_xLimiter.Calculate(throttle);
     strafe = m_yLimiter.Calculate(strafe);
     }
 
-    double currentDistance =
-        currentPose.Translation().Distance(m_targetPose.Translation()).value();
     m_driveErrorAbs = currentDistance;
 
     double ffScaler = std::clamp(

@@ -445,6 +445,14 @@ inline constexpr frc::Transform3d kRobotToTurretRight{
     frc::Translation3d{units::meter_t{-0.114}, units::meter_t{-0.191},
                        units::meter_t{0.372}},
     frc::Rotation3d{0_rad, 0_rad, 0_rad}};
+
+inline constexpr frc::Transform2d kRobotToIntakeLeft{
+    frc::Translation2d{units::meter_t{-0.59055}, units::meter_t{0.381}},
+    frc::Rotation2d{0_rad}};
+
+inline constexpr frc::Transform2d kRobotToIntakeRight{
+    frc::Translation2d{units::meter_t{-0.59055}, units::meter_t{-0.381}},
+    frc::Rotation2d{0_rad}};
 } // namespace Geometry
 
 namespace Field {
@@ -486,23 +494,17 @@ namespace Trench{
 
 namespace Zones{
     inline constexpr frc::Pose2d BottomLeftBlue{0_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d BottomRightBlue{4_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d TopLeftBlue{0_m, 8.07_m, 0_deg};
     inline constexpr frc::Pose2d TopRightBlue{4_m, 8.07_m, 0_deg};
 
     inline constexpr frc::Pose2d BottomLeftNeutral{5.73_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d BottomRightNeutral{11.318_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d TopLeftNeutral{5.73_m, 8.07_m, 0_deg};
     inline constexpr frc::Pose2d TopRightNeutral{11.318_m, 8.07_m, 0_deg};
 
     inline constexpr frc::Pose2d BottomLeftRed{12.563_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d BottomRightRed{16.54_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d TopLeftRed{12.563_m, 8.07_m, 0_deg};
     inline constexpr frc::Pose2d TopRightRed{16.54_m, 8.07_m, 0_deg};
 
-    inline constexpr std::array<frc::Pose2d,12>kZones={BottomLeftBlue,BottomRightBlue,TopLeftBlue,TopRightBlue,
-                                                        BottomLeftNeutral,BottomRightNeutral,TopLeftNeutral,TopRightNeutral
-                                                        BottomLeftRed,BottomRightRed,TopLeftRed,TopRightRed}
+    inline constexpr std::array<frc::Pose2d,6>kZones={BottomLeftBlue,TopRightBlue,
+                                                        BottomLeftNeutral,TopRightNeutral,
+                                                        BottomLeftRed,TopRightRed};
 }
 } // namespace Field
 
