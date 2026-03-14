@@ -1,0 +1,193 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.2432530120481924,
+        "y": 2.865734939759036
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7077951807228917,
+        "y": 0.9315301204819277
+      },
+      "isLocked": false,
+      "linkedName": "Andrew's Outpost1-2"
+    },
+    {
+      "anchor": {
+        "x": 4.128397590361446,
+        "y": 0.6255542168674697
+      },
+      "prevControl": {
+        "x": 3.48366265060241,
+        "y": 0.6255542168674698
+      },
+      "nextControl": {
+        "x": 4.785515653743817,
+        "y": 0.6255542168674697
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.691060240963855,
+        "y": 0.6255542168674697
+      },
+      "prevControl": {
+        "x": 5.441364516141262,
+        "y": 0.6132235637898107
+      },
+      "nextControl": {
+        "x": 6.576204819277108,
+        "y": 0.669265060240964
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.051674698795181,
+        "y": 5.302614457831326
+      },
+      "prevControl": {
+        "x": 6.1607767097500545,
+        "y": 3.245262251253745
+      },
+      "nextControl": {
+        "x": 5.975180722891565,
+        "y": 6.745072289156626
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.6529277108433735,
+        "y": 7.433518072289157
+      },
+      "prevControl": {
+        "x": 6.718190708758138,
+        "y": 7.454170702268306
+      },
+      "nextControl": {
+        "x": 2.467385542168674,
+        "y": 7.411662650602409
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.133975903614458,
+        "y": 5.302614457831326
+      },
+      "prevControl": {
+        "x": 2.685939759036144,
+        "y": 6.559301204819277
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 1.397181027296451
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 1.380354073444452
+    },
+    {
+      "waypointRelativePos": 2.141078838174265,
+      "rotationDegrees": -90.35692493598539
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 3.431535269709451,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 4.269709543568396,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Trench",
+      "minWaypointRelativePos": 0.6312655086848626,
+      "maxWaypointRelativePos": 1.6397022332505675,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Trench2",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 1.9414392059552448,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 4.114143920595475,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -40.91438322002516
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 40.29794457668378
+  },
+  "useDefaultConstraints": true
+}

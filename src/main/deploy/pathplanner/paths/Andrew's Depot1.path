@@ -1,0 +1,93 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.489012048192771,
+        "y": 7.466301204819277
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.450421686746989,
+        "y": 7.44444578313253
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.876602409638554,
+        "y": 2.756457831325301
+      },
+      "prevControl": {
+        "x": 7.789180722891565,
+        "y": 7.324240963855422
+      },
+      "nextControl": {
+        "x": 7.881386222577827,
+        "y": 2.5065036052482825
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.2869638554216865,
+        "y": 5.291686746987953
+      },
+      "prevControl": {
+        "x": 7.363,
+        "y": 6.6904337349397585
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Andrew's Depot 1-2"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 111.98080935883642
+    },
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 90.00000627607842
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Bump",
+      "minWaypointRelativePos": 1.661538461538398,
+      "maxWaypointRelativePos": 1.9275434243175478,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 6.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -41.72951207681647
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
