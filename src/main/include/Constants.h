@@ -63,7 +63,7 @@ inline constexpr units::ampere_t kDriveSlipCurrent =
 // the wheels
 inline constexpr units::ampere_t kDriveSupplyCurrentLimitAuto = 40_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimitAuto = 20_A;
-inline constexpr units::ampere_t kDriveSupplyCurrentLimitTeleop = 20_A;
+inline constexpr units::ampere_t kDriveSupplyCurrentLimitTeleop = 30_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimitTeleop = 20_A;
 inline constexpr units::ampere_t kDriveSupplyCurrentLimit =
     kDriveSupplyCurrentLimitTeleop;
@@ -218,9 +218,9 @@ inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
 constexpr double kS = 0.38034;  //< Static friction (V)
-constexpr double kV = 0.11366;  //< Velocity FF (V / motor-RPS)
+constexpr double kV = 0.11;  //< Velocity FF (V / motor-RPS)
 constexpr double kA = 0.012734; //< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.0;      //< Proportional (V / motor-RPS error)
+constexpr double kP = 0.5;      //< Proportional (V / motor-RPS error)
 constexpr double kI = 0.0;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID

@@ -80,11 +80,11 @@ void CTREKickerIO::UpdateInputs(KickerIOInputs &inputs) {
 }
 
 void CTREKickerIO::SetVoltage(units::volt_t voltage) {
-  m_leader.SetControl(m_voltageRequest.WithOutput(voltage));
+  m_leader.SetControl(m_voltageRequest.WithOutput(voltage).WithEnableFOC(false));
 }
 
 void CTREKickerIO::SetVelocity(units::turns_per_second_t rps) {
-  m_leader.SetControl(m_velocityRequest.WithVelocity(rps).WithSlot(0));
+  m_leader.SetControl(m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(false));
 }
 
 void CTREKickerIO::Stop() { m_leader.SetControl(m_neutralRequest); }

@@ -70,11 +70,11 @@ void CTREIntakeBottomRollerIO::UpdateInputs(
 }
 
 void CTREIntakeBottomRollerIO::SetVoltage(units::volt_t voltage) {
-  m_motor.SetControl(m_voltageRequest.WithOutput(voltage));
+  m_motor.SetControl(m_voltageRequest.WithOutput(voltage).WithEnableFOC(false));
 }
 
 void CTREIntakeBottomRollerIO::SetVelocity(units::turns_per_second_t rps) {
-  m_motor.SetControl(m_velocityRequest.WithVelocity(rps).WithSlot(0));
+  m_motor.SetControl(m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(false));
 }
 
 void CTREIntakeBottomRollerIO::Stop() { m_motor.SetControl(m_neutralRequest); }
