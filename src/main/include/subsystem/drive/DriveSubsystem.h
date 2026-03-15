@@ -44,6 +44,7 @@ public:
   void Stop();
   void LockWheels();
 
+
   frc::Pose2d GetPose() const;
   frc::Rotation2d GetHeading() const;
   frc::Rotation2d GetEstimatedHeading() const;
@@ -78,6 +79,7 @@ public:
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
                        units::ampere_t steerSupplyCurrentLimit);
   void SetAutoCurrentLimits();
+
   void SetTeleopCurrentLimits();
   bool IsAtPose(const frc::Pose2d &pose,
                 units::meter_t tolerance = 0.1_m) const;

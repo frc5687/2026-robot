@@ -15,6 +15,7 @@ TeleopDrive::TeleopDrive(DriveSubsystem *driveSubsystem,
     : m_driveSubsystem(driveSubsystem), m_xStrafe(xStrafe), m_yStrafe(yStrafe),
       m_turn(turn), m_enableSlewRate(enableSlewRate) {
   AddRequirements(driveSubsystem);
+  
 }
 
 void TeleopDrive::Initialize() {

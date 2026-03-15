@@ -16,6 +16,7 @@
 #include "HardwareMap.h"
 #include "RobotState.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "commands/drive/AlignToEdgeCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
 #include "commands/intake/StopIntakeCommand.h"
@@ -267,13 +268,10 @@ void RobotContainer::ConfigureBindings() {
       Run([this] { m_intakeDeployer.RetractMid(); }, {&m_intakeDeployer})));
 
   m_driver.L1().WhileTrue(
-    frc2::cmd::Defer([this]() {
-        return m_drive.AlignToEdgeCommand(&m_drive,
-                                        [this] { return -m_driver.GetLeftY(); },
-                                        [this] { return -m_driver.GetLeftX(); },
-                                        .7,
-                                        true);
-                                        }, {&m_drive}));
+          AlignToEdgeCommand(&m_drive,
+                              [this] { return -m_driver.GetLeftY(); },
+                              [this] { return -m_driver.GetLeftX(); })
+                              .ToPtr());
 
     /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 

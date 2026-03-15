@@ -11,6 +11,8 @@
 #include <units/angular_velocity.h>
 #include <units/length.h>
 #include <units/velocity.h>
+#include <frc/filter/SlewRateLimiter.h>
+#include <frc/kinematics/ChassisSpeeds.h>
 
 #include "subsystem/drive/DriveSubsystem.h"
 
@@ -38,6 +40,9 @@ private:
 
     frc::ProfiledPIDController<units::meters> m_driveController;
     frc::ProfiledPIDController<units::radians> m_thetaController;
+
+    frc::SlewRateLimiter<units::scalar> m_xLimiter{3.0 / 1_s};
+    frc::SlewRateLimiter<units::scalar> m_yLimiter{3.0 / 1_s};
 
     double m_driveErrorAbs{0.0};
     double m_thetaErrorAbs{0.0};
