@@ -67,40 +67,53 @@ void AlignToEdgeCommand::Execute() {
     frc::Pose2d leftIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft);
     frc::Pose2d rightIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeRight);
 
+    Logger::Instance().Log("AlignToEdge/leftIntakePose", leftIntake);
+    Logger::Instance().Log("AlignToEdge/rightIntakePose", rightIntake);
+
     units::meter_t lowestDistance = 1000_m;
     bool useX = true;
 
-    for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {            
-            bool checkX = units::math::abs(leftIntake.X()-checkedPose.X()) < lowestDistance;
-            bool checkY = units::math::abs(leftIntake.Y()-checkedPose.Y()) < lowestDistance;
+    for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
+            units::meter_t xABSDistance = units::math::abs(leftIntake.X()-checkedPose.X());
+            units::meter_t yABSDistance = units::math::abs(leftIntake.Y()-checkedPose.Y());
+            bool checkX =  xABSDistance < lowestDistance;
+            bool checkY =  yABSDistance < lowestDistance;
 
             if (checkY){
             m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
-            lowestDistance = checkedPose.Y();
+            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
+            lowestDistance = yABSDistance;
             useX = false;
             }
-            else if (checkX){
+            if (checkX){
             m_targetPose = {checkedPose.X(), currentPose.Y(), currentPose.Rotation()};
-            lowestDistance = checkedPose.X();
+            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
+            lowestDistance = xABSDistance;
             useX = true;
             }
         }
 
     for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
-            bool checkX = units::math::abs(rightIntake.X()-checkedPose.X()) < lowestDistance;
-            bool checkY = units::math::abs(rightIntake.Y()-checkedPose.Y()) < lowestDistance;
+            units::meter_t xABSDistance = units::math::abs(rightIntake.X()-checkedPose.X());
+            units::meter_t yABSDistance = units::math::abs(rightIntake.Y()-checkedPose.Y());
+            bool checkX = xABSDistance < lowestDistance;
+            bool checkY = yABSDistance < lowestDistance;
 
             if (checkY){
             m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
-            lowestDistance = checkedPose.Y();
+            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
+            lowestDistance = yABSDistance;
             useX = false;
             }
-            else if (checkX){
+            if (checkX){
             m_targetPose = {checkedPose.X(), currentPose.Y(), currentPose.Rotation()};
-            lowestDistance = checkedPose.X();
+            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
+            lowestDistance = xABSDistance;
             useX = true;
             }
         }
+    
+
 
     double currentDistance =
     currentPose.Translation().Distance(m_targetPose.Translation()).value();
@@ -111,11 +124,8 @@ void AlignToEdgeCommand::Execute() {
         units::meter_t{fieldSpeeds.vx.value()},
         units::meter_t{fieldSpeeds.vy.value()}};
 
-
-    m_driveController.Reset(units::meter_t{currentDistance});
-
     frc::Rotation2d awayFromTargetAngle =
-        (currentPose.Rotation());
+        (currentPose.Translation() - m_targetPose.Translation()).Angle();
 
     double throttle = m_throttleSupplier();
     double strafe = m_strafeSupplier();
@@ -138,6 +148,8 @@ void AlignToEdgeCommand::Execute() {
             (kFfMaxRadius - kFfMinRadius).value(),
         0.0, 1.0);
 
+    m_driveController.SetGoal(units::meter_t{currentDistance});
+
     double driveVelocityScalar =
         m_driveController.GetSetpoint().velocity.value() * ffScaler +
         m_driveController.Calculate(units::meter_t{currentDistance}, 0_m);
@@ -157,14 +169,21 @@ void AlignToEdgeCommand::Execute() {
 
     if(useX){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        xVelocity, vy, units::radians_per_second_t{0},
+        vx, yVelocity, units::radians_per_second_t{0},
         currentPose.Rotation());
     }
     else{
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        vx, yVelocity, units::radians_per_second_t{0},
+        xVelocity, vy, units::radians_per_second_t{0},
         currentPose.Rotation());
     }
+    Logger::Instance().Log("AlignToEdge/currentDistance", currentDistance);
+    Logger::Instance().Log("AlignToEdge/robotSpeeds", robotSpeeds);
+    Logger::Instance().Log("AlignToEdge/driveErrorAbs", m_driveErrorAbs);
+    Logger::Instance().Log("AlignToEdge/thetaErrorAbs", m_thetaErrorAbs);
+    Logger::Instance().Log("AlignToEdge/ffScaler", ffScaler);
+    Logger::Instance().Log("AlignToEdge/driveVelocityScalar",
+                           driveVelocityScalar);
 
     m_driveSubsystem->Drive(robotSpeeds);
 }
@@ -174,5 +193,5 @@ void AlignToEdgeCommand::End(bool interrupted) {
 }
 
 bool AlignToEdgeCommand::IsFinished() {
-    return true;
+    return false;
 }
