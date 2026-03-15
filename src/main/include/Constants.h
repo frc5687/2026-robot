@@ -496,15 +496,19 @@ namespace Zones{
     inline constexpr frc::Pose2d BottomLeftBlue{0_m, 0_m, 0_deg};
     inline constexpr frc::Pose2d TopRightBlue{4_m, 8.07_m, 0_deg};
 
-    inline constexpr frc::Pose2d BottomLeftNeutral{5.73_m, 0_m, 0_deg};
+    inline constexpr frc::Pose2d BottomLeftNeutral{5.2225_m, 0_m, 0_deg};
     inline constexpr frc::Pose2d TopRightNeutral{11.318_m, 8.07_m, 0_deg};
 
     inline constexpr frc::Pose2d BottomLeftRed{12.563_m, 0_m, 0_deg};
     inline constexpr frc::Pose2d TopRightRed{16.54_m, 8.07_m, 0_deg};
 
-    inline constexpr std::array<frc::Pose2d,6>kZones={BottomLeftBlue,TopRightBlue,
-                                                        BottomLeftNeutral,TopRightNeutral,
-                                                        BottomLeftRed,TopRightRed};
+    inline constexpr frc::Pose2d BottomLeftBlueBump{4.0286_m, 1.2659_m, 0_deg};
+    inline constexpr frc::Pose2d TopRightBlueBump{5.2225_m, 6.80339_m, 0_deg};
+
+    inline constexpr frc::Pose2d BottomLeftRedBump{11.318_m, 1.2659_m, 0_deg};
+    inline constexpr frc::Pose2d TopRightRedBump{16.54_m, 6.80339_m, 0_deg};
+
+    inline constexpr std::array<frc::Pose2d,6>kZones={BottomLeftBlue, TopRightRed, BottomLeftBlueBump, TopRightBlueBump, BottomLeftRedBump, TopRightRedBump};
 }
 } // namespace Field
 
