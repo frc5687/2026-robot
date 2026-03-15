@@ -10,7 +10,8 @@
 #include <cmath>
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
@@ -18,15 +19,14 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
                            IntakeTopRollerSubsystem *topRoller,
                            IntakeBottomRollerSubsystem *bottomRoller,
-                           FeederSubsystem *feeder, KickerSubsystem *kicker,
+                           FeederSubsystem *feeder,
                            IntakeDeployerSubsystem *deployer,
                            std::function<double()> throttle,
                            std::function<double()> strafe)
     : m_drive(drive), m_flywheel(flywheel), m_hood(hood),
       m_topRoller(topRoller), m_bottomRoller(bottomRoller), m_feeder(feeder),
-      m_kicker(kicker), m_deployer(deployer), m_throttle(throttle),
-      m_strafe(strafe) {
-  AddRequirements({drive, flywheel, hood, feeder, kicker, deployer});
+      m_deployer(deployer), m_throttle(throttle), m_strafe(strafe) {
+  AddRequirements({drive, flywheel, hood, feeder, deployer});
   SetName("ShootCommand");
   m_headingController.EnableContinuousInput(-std::numbers::pi,
                                             std::numbers::pi);
@@ -92,13 +92,13 @@ void ShootCommand::Execute() {
   }
 
   if (solution.ready) {
-    m_feeder->SetVoltage(kFeedVoltage);
+    //m_feeder->SetVoltage(kFeedVoltage);
+    m_feeder->SetVelocity(60_tps);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
-    m_kicker->SetVelocity(kKickerRPS);
+    m_feeder->SetVelocity(kKickerRPS);
   } else {
     m_feeder->Stop();
-    m_kicker->Stop();
   }
 }
 
@@ -108,7 +108,6 @@ void ShootCommand::End(bool interrupted) {
   m_topRoller->Stop();
   m_bottomRoller->Stop();
   m_feeder->Stop();
-  m_kicker->Stop();
   m_deployer->RetractMid();
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();

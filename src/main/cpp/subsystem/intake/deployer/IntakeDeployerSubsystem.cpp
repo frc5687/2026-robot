@@ -4,7 +4,7 @@
 
 #include <units/math.h>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeDeployer;
 

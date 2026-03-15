@@ -10,7 +10,7 @@
 #include <memory>
 #include <mutex>
 
-#include "Constants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/PoseEstimator.h"

@@ -7,14 +7,11 @@
 #include <units/voltage.h>
 
 #include "subsystem/feeder/FeederSubsystem.h"
-#include "subsystem/kicker/KickerSubsystem.h"
 
 class ClearFeeder 
     : public frc2::CommandHelper<frc2::Command, ClearFeeder> {
 public:
-  ClearFeeder(KickerSubsystem *kicker,
-                     FeederSubsystem* feeder
-                    );
+  ClearFeeder(FeederSubsystem* feeder);
 
   void Initialize() override;
   void Execute() override;
@@ -22,9 +19,7 @@ public:
   bool IsFinished() override;
 
 private:
-  KickerSubsystem *m_kicker;
   FeederSubsystem *m_feeder;
 
   static constexpr units::volt_t kFeederVoltage = -6_V;
-  static constexpr units::volt_t kKickerVoltage = -6_V;
 };

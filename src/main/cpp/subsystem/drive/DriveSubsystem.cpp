@@ -11,7 +11,8 @@
 #include <utility>
 #include <vector>
 
-#include "Constants.h"
+#include "subsystem/vision/FieldConstants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"

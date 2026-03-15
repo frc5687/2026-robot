@@ -2,8 +2,6 @@
 
 #include "subsystem/intake/IntakeSystem.h"
 
-#include "Constants.h"
-
 IntakeSystem::IntakeSystem(IntakeDeployerSubsystem &deployer,
                            IntakeTopRollerSubsystem &topRoller,
                            IntakeBottomRollerSubsystem &bottomRoller)

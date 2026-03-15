@@ -9,20 +9,20 @@
 #include <units/time.h>
 #include <units/voltage.h>
 
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
-#include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
 
 class AutoShootCommand
     : public frc2::CommandHelper<frc2::Command, AutoShootCommand> {
 public:
   AutoShootCommand(FlywheelSubsystem *flywheel, HoodSubsystem *hood,
-                   FeederSubsystem *feeder, KickerSubsystem *kicker,
+                   FeederSubsystem *feeder,
                    IntakeTopRollerSubsystem *topRoller,
                    IntakeBottomRollerSubsystem *bottomRoller,
                    IntakeDeployerSubsystem *deployer);
@@ -36,7 +36,6 @@ private:
   FlywheelSubsystem *m_flywheel;
   HoodSubsystem *m_hood;
   FeederSubsystem *m_feeder;
-  KickerSubsystem *m_kicker;
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   IntakeDeployerSubsystem *m_deployer;

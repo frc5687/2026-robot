@@ -14,14 +14,13 @@
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
-#include "subsystem/kicker/KickerSubsystem.h"
 #include "utils/TunableDouble.h"
 
 class SimpleShootCommand
     : public frc2::CommandHelper<frc2::Command, SimpleShootCommand> {
 public:
-  SimpleShootCommand(FlywheelSubsystem *flywheel, KickerSubsystem *kicker,
-                     FeederSubsystem *feeder, HoodSubsystem *hood,
+  SimpleShootCommand(FlywheelSubsystem *flywheel, FeederSubsystem *feeder,
+                     HoodSubsystem *hood,
                      IntakeBottomRollerSubsystem *bottomRoller,
                      IntakeDeployerSubsystem *deployer,
                      units::revolutions_per_minute_t flywheelRPM,
@@ -35,7 +34,6 @@ public:
 
 private:
   FlywheelSubsystem *m_flywheel;
-  KickerSubsystem *m_kicker;
   FeederSubsystem *m_feeder;
   HoodSubsystem *m_hood;
   IntakeBottomRollerSubsystem *m_bottomRoller;

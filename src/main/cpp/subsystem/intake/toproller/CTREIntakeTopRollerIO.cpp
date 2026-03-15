@@ -4,7 +4,7 @@
 
 #include <frc/Timer.h>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeTopRoller;
 using namespace ctre::phoenix6;

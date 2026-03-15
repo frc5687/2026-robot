@@ -14,7 +14,7 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 #include "FlywheelIO.h"
 #include "utils/CANDevice.h"
 

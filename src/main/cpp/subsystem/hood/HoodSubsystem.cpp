@@ -6,7 +6,7 @@
 
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/hood/HoodConstants.h"
 #include "RobotState.h"
 
 using namespace Constants::Hood;

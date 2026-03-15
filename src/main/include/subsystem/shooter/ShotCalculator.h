@@ -10,7 +10,7 @@
 #include <units/length.h>
 #include <units/time.h>
 
-#include "Constants.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "utils/InterpolatingTreeMap.h"
 
 struct ShotConfig {

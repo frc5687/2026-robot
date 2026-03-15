@@ -16,7 +16,8 @@
 
 class CTREFeederIO : public FeederIO {
 public:
-  CTREFeederIO(const CANDevice &leader, const CANDevice &follower);
+  CTREFeederIO(const CANDevice &leader, const CANDevice &follower1,
+               const CANDevice &follower2, const CANDevice &follower3);
 
   void UpdateInputs(FeederIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
@@ -25,7 +26,9 @@ public:
 
 private:
   ctre::phoenix6::hardware::TalonFX m_leader;
-  ctre::phoenix6::hardware::TalonFX m_follower;
+  ctre::phoenix6::hardware::TalonFX m_follower1;
+  ctre::phoenix6::hardware::TalonFX m_follower2;
+  ctre::phoenix6::hardware::TalonFX m_follower3;
 
   ctre::phoenix6::StatusSignal<units::turn_t> &m_positionSignal;
   ctre::phoenix6::StatusSignal<units::turns_per_second_t> &m_velocitySignal;
@@ -43,6 +46,8 @@ private:
   ctre::phoenix6::configs::TalonFXConfiguration m_leaderConfig{};
 
   void ConfigureDevices();
+  void ConfigureFollower(ctre::phoenix6::hardware::TalonFX &follower,
+                        int leaderDeviceId, bool opposeLeader);
   void ConfigureClosedLoop();
   void ConfigureSignalFrequencies();
 };

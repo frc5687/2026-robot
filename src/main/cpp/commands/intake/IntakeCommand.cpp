@@ -2,6 +2,8 @@
 
 #include "commands/intake/IntakeCommand.h"
 #include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/drive/DriveSubsystem.h"
 
 IntakeCommand::IntakeCommand(

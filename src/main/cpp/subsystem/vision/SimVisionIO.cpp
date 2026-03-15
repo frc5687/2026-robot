@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "Constants.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "subsystem/vision/Camera.h"
 #include "subsystem/vision/SimulatedPhotonVisionCamera.h"
 #include "subsystem/vision/VisionConstants.h"

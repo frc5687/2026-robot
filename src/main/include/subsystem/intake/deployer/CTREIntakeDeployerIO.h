@@ -10,7 +10,7 @@
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 #include "IntakeDeployerIO.h"
 #include "utils/CANDevice.h"
 

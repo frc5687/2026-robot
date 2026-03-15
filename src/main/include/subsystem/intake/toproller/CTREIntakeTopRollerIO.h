@@ -11,7 +11,7 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 #include "IntakeTopRollerIO.h"
 #include "utils/CANDevice.h"
 

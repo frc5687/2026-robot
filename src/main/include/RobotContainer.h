@@ -17,7 +17,6 @@
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
-#include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/lights/LightsSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
@@ -39,7 +38,6 @@ private:
   FlywheelSubsystem m_flywheel;
   HoodSubsystem m_hood;
   FeederSubsystem m_feeder;
-  KickerSubsystem m_kicker;
   IntakeDeployerSubsystem m_intakeDeployer;
   IntakeTopRollerSubsystem m_intakeTopRoller;
   IntakeBottomRollerSubsystem m_intakeBottomRoller;

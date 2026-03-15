@@ -30,7 +30,7 @@ private:
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
 
-  static constexpr units::volt_t kTopRollerVoltage = 7_V;
-  static constexpr units::volt_t kBottomRollerVoltage = 7_V;
+  static constexpr units::volt_t kTopRollerVoltage = 10_V;
+  static constexpr units::volt_t kBottomRollerVoltage = 10_V;
   static constexpr units::volt_t kFeederVoltage = 8_V;
 };

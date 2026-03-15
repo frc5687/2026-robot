@@ -102,7 +102,7 @@ std::span<const frc::Pose2d> GetZones(bool isValidForBump) {
 EdgeParams CalculateEdge(const frc::Pose2d& intakePose, bool isValidForBump, const frc::Transform2d& intakeTransform){
     frc::Pose2d targetPose;
     frc::Pose2d foundEdge;
-    bool useXAxis;
+    bool useXAxis = false;
     
         auto Zones = GetZones(isValidForBump);
 
@@ -111,8 +111,8 @@ EdgeParams CalculateEdge(const frc::Pose2d& intakePose, bool isValidForBump, con
 
         units::meter_t lowestDistance = 1000_m;
 
-        units::meter_t XLowestDistance;
-        units::meter_t YLowestDistance;
+        units::meter_t XLowestDistance = 1000_m;
+        units::meter_t YLowestDistance = 1000_m;
 
         for (frc::Pose2d checkedPose: Zones) {
             units::meter_t xABSDistance = units::math::abs(intakePose.X()-checkedPose.X());

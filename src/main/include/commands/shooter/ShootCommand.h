@@ -19,7 +19,6 @@
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
-#include "subsystem/kicker/KickerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
 
 class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
@@ -27,7 +26,7 @@ public:
   ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                HoodSubsystem *hood, IntakeTopRollerSubsystem *topRoller,
                IntakeBottomRollerSubsystem *bottomRoller,
-               FeederSubsystem *feeder, KickerSubsystem *kicker,
+               FeederSubsystem *feeder,
                IntakeDeployerSubsystem *deployer,
                std::function<double()> throttle,
                std::function<double()> strafe);
@@ -44,7 +43,6 @@ private:
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   FeederSubsystem *m_feeder;
-  KickerSubsystem *m_kicker;
   IntakeDeployerSubsystem *m_deployer;
 
   std::function<double()> m_throttle;

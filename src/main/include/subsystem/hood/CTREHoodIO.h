@@ -11,7 +11,7 @@
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "Constants.h"
+#include "subsystem/hood/HoodConstants.h"
 #include "HoodIO.h"
 #include "utils/CANDevice.h"
 
