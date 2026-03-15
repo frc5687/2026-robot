@@ -12,7 +12,7 @@
 #include <units/time.h>
 #include <units/voltage.h>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 #include "FlywheelIO.h"
 
 class SimFlywheelIO : public FlywheelIO {

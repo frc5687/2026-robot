@@ -4,13 +4,17 @@
 
 #include <frc/Timer.h>
 
-#include "Constants.h"
+#include "subsystem/feeder/FeederConstants.h"
 
 using namespace Constants::Feeder;
 using namespace ctre::phoenix6;
 
-CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
-    : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
+CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower1,
+                           const CANDevice &follower2,
+                           const CANDevice &follower3)
+    : m_leader(leader.id, leader.bus), m_follower1(follower1.id, follower1.bus),
+      m_follower2(follower2.id, follower2.bus),
+      m_follower3(follower3.id, follower3.bus),
       m_positionSignal(m_leader.GetPosition()),
       m_velocitySignal(m_leader.GetVelocity()),
       m_voltageSignal(m_leader.GetMotorVoltage()),
@@ -37,14 +41,10 @@ void CTREFeederIO::ConfigureDevices() {
   ConfigureClosedLoop();
   m_leader.GetConfigurator().Apply(m_leaderConfig);
 
-  configs::TalonFXConfiguration followerConfig{};
-  followerConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
-  followerConfig.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
-  followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-  m_follower.GetConfigurator().Apply(followerConfig);
-
-  m_follower.SetControl(
-      controls::Follower{m_leader.GetDeviceID(), kFollowerOpposed});
+  int leaderId = m_leader.GetDeviceID();
+  ConfigureFollower(m_follower1, leaderId, kFollower1Opposed);
+  ConfigureFollower(m_follower2, leaderId, kFollower2Opposed);
+  ConfigureFollower(m_follower3, leaderId, kFollower3Opposed);
 }
 
 void CTREFeederIO::ConfigureClosedLoop() {
@@ -56,6 +56,21 @@ void CTREFeederIO::ConfigureClosedLoop() {
   m_leaderConfig.Slot0.kD = PID::kD;
 }
 
+void CTREFeederIO::ConfigureFollower(
+    ctre::phoenix6::hardware::TalonFX &follower, int leaderDeviceId,
+    bool opposeLeader) {
+  ctre::phoenix6::configs::TalonFXConfiguration followerConfig{};
+  followerConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
+
+  followerConfig.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
+  followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+  followerConfig.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
+  followerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+  follower.GetConfigurator().Apply(followerConfig);
+  follower.SetControl(controls::Follower{leaderDeviceId, opposeLeader});
+}
+
 void CTREFeederIO::ConfigureSignalFrequencies() {
   m_positionSignal.SetUpdateFrequency(100_Hz);
   m_velocitySignal.SetUpdateFrequency(100_Hz);
@@ -64,7 +79,9 @@ void CTREFeederIO::ConfigureSignalFrequencies() {
   m_supplySignal.SetUpdateFrequency(50_Hz);
 
   m_leader.OptimizeBusUtilization();
-  m_follower.OptimizeBusUtilization();
+  m_follower1.OptimizeBusUtilization();
+  m_follower2.OptimizeBusUtilization();
+  m_follower3.OptimizeBusUtilization();
 }
 
 void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {

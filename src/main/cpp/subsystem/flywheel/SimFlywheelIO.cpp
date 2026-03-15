@@ -7,7 +7,7 @@
 
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 
 SimFlywheelIO::SimMotor::SimMotor(const frc::LinearSystem<1, 1, 1> &plant,
                                   const frc::DCMotor &motor, double gearRatio,

@@ -7,7 +7,7 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "Constants.h"
+#include "subsystem/feeder/FeederConstants.h"
 #include "FeederIO.h"
 
 class SimFeederIO : public FeederIO {

@@ -8,7 +8,7 @@
 
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 #include "RobotState.h"
 #include "frc2/command/sysid/SysIdRoutine.h"
 

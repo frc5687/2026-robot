@@ -4,7 +4,7 @@
 
 #include <frc/Timer.h>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 
 using namespace Constants::Flywheel;
 using namespace ctre::phoenix6;
@@ -124,7 +124,7 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   } else if (m_setpoint.value() <= 0) {
     m_leader.SetControl(m_neutralRequest);
   } else {
-    m_leader.SetControl(m_velocityRequest.WithVelocity(m_setpoint).WithSlot(0));
+    m_leader.SetControl(m_velocityRequest.WithVelocity(m_setpoint).WithSlot(0).WithEnableFOC(false));
   }
 }
 

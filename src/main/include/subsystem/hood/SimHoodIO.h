@@ -6,7 +6,7 @@
 #include <frc/simulation/SingleJointedArmSim.h>
 #include <frc/system/plant/DCMotor.h>
 
-#include "Constants.h"
+#include "subsystem/hood/HoodConstants.h"
 #include "HoodIO.h"
 
 class SimHoodIO : public HoodIO {

@@ -5,7 +5,7 @@
 #include <frc/Timer.h>
 #include <units/angular_acceleration.h>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeDeployer;
 using namespace ctre::phoenix6;

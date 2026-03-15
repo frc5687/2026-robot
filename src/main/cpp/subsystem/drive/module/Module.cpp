@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "Constants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "utils/Logger.h"
 
 Module::Module(std::unique_ptr<ModuleIO> io)

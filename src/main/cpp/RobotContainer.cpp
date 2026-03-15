@@ -43,8 +43,6 @@
 #include "subsystem/intake/deployer/SimIntakeDeployerIO.h"
 #include "subsystem/intake/toproller/CTREIntakeTopRollerIO.h"
 #include "subsystem/intake/toproller/SimIntakeTopRollerIO.h"
-#include "subsystem/kicker/CTREKickerIO.h"
-#include "subsystem/kicker/SimKickerIO.h"
 #include "subsystem/lights/CTRELightsIO.h"
 #include "subsystem/lights/LightsIO.h"
 #include "subsystem/vision/LimelightCamera.h"
@@ -90,16 +88,9 @@ std::unique_ptr<FeederIO> MakeFeederIO() {
   }
   return std::make_unique<CTREFeederIO>(
       HardwareMap::CAN::TalonFX::FeederLeader,
-      HardwareMap::CAN::TalonFX::FeederFollower);
-}
-
-std::unique_ptr<KickerIO> MakeKickerIO() {
-  if (frc::RobotBase::IsSimulation()) {
-    return std::make_unique<SimKickerIO>();
-  }
-  return std::make_unique<CTREKickerIO>(
-      HardwareMap::CAN::TalonFX::KickerLeader,
-      HardwareMap::CAN::TalonFX::KickerFollower);
+      HardwareMap::CAN::TalonFX::FeederFollower,
+      HardwareMap::CAN::TalonFX::FeederFollower2,
+      HardwareMap::CAN::TalonFX::FeederFollower3);
 }
 
 std::unique_ptr<IntakeDeployerIO> MakeIntakeDeployerIO() {
@@ -165,9 +156,9 @@ RobotContainer::RobotContainer()
                            {HardwareMap::CAN::TalonFX::BackRightDrive,
                             HardwareMap::CAN::TalonFX::BackRightSteer,
                             HardwareMap::CAN::CANCoder::BackRightEncoder}),
-              MakeGyroIO()},
+      MakeGyroIO()},
       m_flywheel{MakeFlywheelIO()}, m_hood{MakeHoodIO()},
-      m_feeder{MakeFeederIO()}, m_kicker{MakeKickerIO()},
+      m_feeder{MakeFeederIO()},
       m_intakeDeployer{MakeIntakeDeployerIO()},
       m_intakeTopRoller{MakeIntakeTopRollerIO()},
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
@@ -186,7 +177,7 @@ void RobotContainer::Periodic() { m_robotViz.Update(); }
 
 void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
-      "AutoShoot", AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_kicker,
+      "AutoShoot", AutoShootCommand(&m_flywheel, &m_hood, &m_feeder,
                                 &m_intakeTopRoller, &m_intakeBottomRoller,
                                 &m_intakeDeployer)
                    .ToPtr());
@@ -194,7 +185,7 @@ void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
       "Shoot", ShootCommand(&m_drive, &m_flywheel, &m_hood,
                               &m_intakeTopRoller, &m_intakeBottomRoller,
-                              &m_feeder, &m_kicker, &m_intakeDeployer,
+                              &m_feeder, &m_intakeDeployer,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
                               .ToPtr());
@@ -238,7 +229,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.R2().WhileTrue(ShootCommand(
                               &m_drive, &m_flywheel, &m_hood,
                               &m_intakeTopRoller, &m_intakeBottomRoller,
-                              &m_feeder, &m_kicker, &m_intakeDeployer,
+                              &m_feeder, &m_intakeDeployer,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
                               .ToPtr());
@@ -249,7 +240,7 @@ void RobotContainer::ConfigureBindings() {
                                                  &m_feeder
                                                 )
                                   .ToPtr());
-  //m_driver.R1().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
+  //m_driver.R1().WhileTrue(SimpleShootCommand(&m_flywheel, &m_feeder,
   //                                           &m_hood, &m_intakeBottomRoller,
   //                                           &m_intakeDeployer, 1000_rpm,
   //                                           60_tps, 10_deg)
@@ -278,7 +269,7 @@ void RobotContainer::ConfigureBindings() {
           .IgnoringDisable(true));
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
 
-  //m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_kicker, &m_feeder,
+  //m_debugger.Cross().WhileTrue(SimpleShootCommand(&m_flywheel, &m_feeder,
   //                                           &m_hood, &m_intakeBottomRoller,
   //                                           &m_intakeDeployer, 1000_rpm,
   //                                           60_tps, 10_deg)

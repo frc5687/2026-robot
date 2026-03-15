@@ -9,13 +9,13 @@
 #include <units/voltage.h>
 
 struct FeederIOInputs {
+  // These are from the leader
   units::turn_t motorPosition{0_tr};
   units::turns_per_second_t motorVelocity{0_tps};
 
   units::volt_t appliedVolts{0_V};
   units::ampere_t statorCurrent{0_A};
   units::ampere_t supplyCurrent{0_A};
-
   units::second_t timestamp{0_s};
 };
 

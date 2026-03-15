@@ -7,7 +7,7 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 #include "IntakeTopRollerIO.h"
 
 class SimIntakeTopRollerIO : public IntakeTopRollerIO {

@@ -5,7 +5,7 @@
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
 
-#include "Constants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "GyroIO.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "units/angle.h"

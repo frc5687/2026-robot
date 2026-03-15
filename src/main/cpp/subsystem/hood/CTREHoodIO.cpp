@@ -5,7 +5,7 @@
 #include <frc/Timer.h>
 #include <units/angular_acceleration.h>
 
-#include "Constants.h"
+#include "subsystem/hood/HoodConstants.h"
 
 using namespace Constants::Hood;
 using namespace ctre::phoenix6;

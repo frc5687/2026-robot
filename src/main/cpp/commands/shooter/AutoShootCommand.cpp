@@ -6,6 +6,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
 
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
 #include "RobotState.h"
@@ -14,14 +15,13 @@
 
 AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
                                    HoodSubsystem *hood, FeederSubsystem *feeder,
-                                   KickerSubsystem *kicker,
                                    IntakeTopRollerSubsystem *topRoller,
                                    IntakeBottomRollerSubsystem *bottomRoller,
                                    IntakeDeployerSubsystem *deployer)
-    : m_flywheel(flywheel), m_hood(hood), m_feeder(feeder), m_kicker(kicker),
+    : m_flywheel(flywheel), m_hood(hood), m_feeder(feeder),
       m_topRoller(topRoller), m_bottomRoller(bottomRoller),
       m_deployer(deployer) {
-  AddRequirements({flywheel, hood, feeder, kicker, deployer});
+  AddRequirements({flywheel, hood, feeder, deployer});
   SetName("AutoShootCommand");
 }
 
@@ -80,10 +80,9 @@ void AutoShootCommand::Execute() {
     m_feeder->SetVoltage(kFeedVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
-    m_kicker->SetVelocity(kKickerRPS);
+    m_feeder->SetVelocity(kKickerRPS);
   } else {
     m_feeder->Stop();
-    m_kicker->Stop();
   }
 }
 
@@ -93,7 +92,6 @@ void AutoShootCommand::End(bool interrupted) {
   m_topRoller->Stop();
   m_bottomRoller->Stop();
   m_feeder->Stop();
-  m_kicker->Stop();
   m_deployer->RetractMid();
 
   pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();

@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "Constants.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "subsystem/vision/Camera.h"
 #include "utils/vision/AprilTagObservation.h"
 

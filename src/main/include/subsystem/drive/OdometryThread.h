@@ -15,7 +15,7 @@
 
 #include <ctre/phoenix6/StatusSignal.hpp>
 
-#include "Constants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "GyroIO.h"
 #include "OdometryData.h"
 #include "PoseEstimator.h"

@@ -5,7 +5,6 @@
 #include <array>
 
 #include <string>
-#include "Constants.h"
 #include "LightsIO.h"
 #include "ctre/phoenix6/controls/ControlRequest.hpp"
 #include "ctre/phoenix6/controls/SolidColor.hpp"
