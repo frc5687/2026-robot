@@ -9,12 +9,14 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <vector>
 
 #include "Constants.h"
 #include "utils/Logger.h"
 
 static constexpr double kMaxTranslationalAccel = 3.0; // m/s²
 static constexpr double kMaxAngularAccel = 10.0;       // rad/s²
+
 
 AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
                                             std::function<double()> throttle,
@@ -58,6 +60,19 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
 }
 
 void AlignToEdgeCommand::Initialize() {
+        frc::Pose2d currentPose = m_driveSubsystem->GetPose();
+
+    double currentDistance =
+        currentPose.Translation().Distance(m_targetPose.Translation()).value();
+
+    frc::ChassisSpeeds fieldSpeeds = m_driveSubsystem->GetFieldRelativeSpeeds();
+
+    frc::Translation2d fieldVelocity{
+        units::meter_t{fieldSpeeds.vx.value()},
+        units::meter_t{fieldSpeeds.vy.value()}};
+
+    m_thetaController.Reset(currentPose.Rotation().Radians(),
+                            m_driveSubsystem->GetChassisSpeeds().omega);
 }
 
 void AlignToEdgeCommand::Execute() {
@@ -75,13 +90,53 @@ void AlignToEdgeCommand::Execute() {
     bool faceBlue;
     bool faceDepot;
 
+
     frc::Rotation2d angleToFaceWall;
 
-    for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
+    double maxHubSnap = 3.5;
+
+    double leftIntakeDistanceFromRedHub = leftIntake.Translation().Distance(Constants::Field::Zones::RedHub.Translation()).value();
+    double rightIntakeDistanceFromRedHub = rightIntake.Translation().Distance(Constants::Field::Zones::RedHub.Translation()).value();
+    bool isValidForRedBump = (leftIntakeDistanceFromRedHub < maxHubSnap) && (rightIntakeDistanceFromRedHub < maxHubSnap);
+
+    double leftIntakeDistanceFromBlueHub = leftIntake.Translation().Distance(Constants::Field::Zones::BlueHub.Translation()).value();
+    double rightIntakeDistanceFromBlueHub = rightIntake.Translation().Distance(Constants::Field::Zones::BlueHub.Translation()).value();
+    bool isValidForBlueBump = (leftIntakeDistanceFromBlueHub < maxHubSnap) && (rightIntakeDistanceFromBlueHub < maxHubSnap);
+
+    Logger::Instance().Log("AlignToEdge/leftIntakeDistanceFromRedHub", leftIntakeDistanceFromRedHub);
+    Logger::Instance().Log("AlignToEdge/isValidForBlueBump", isValidForBlueBump);
+    Logger::Instance().Log("AlignToEdge/isValidForRedBump", isValidForRedBump);
+
+    bool isValidForBump = isValidForRedBump || isValidForBlueBump;
+        std::vector<frc::Pose2d> Zones = {  {0_m, 0_m, 0_deg},
+                                            {0_m, 0_m, 0_deg},
+                                            {0_m, 0_m, 0_deg},
+                                            {0_m, 0_m, 0_deg},
+                                            {0_m, 0_m, 0_deg},
+                                            {0_m, 0_m, 0_deg}};
+    if(!isValidForBump){
+        Zones = {Constants::Field::Zones::BottomLeftBlue, 
+                Constants::Field::Zones::TopRightRed,
+                {0_m, 0_m, 0_deg},
+                {0_m, 0_m, 0_deg},
+                {0_m, 0_m, 0_deg},
+                {0_m, 0_m, 0_deg}};
+    } 
+    else{
+        Zones = {Constants::Field::Zones::BottomLeftBlue, 
+                Constants::Field::Zones::TopRightRed, 
+                Constants::Field::Zones::BottomLeftBlueBump, 
+                Constants::Field::Zones::TopRightBlueBump, 
+                Constants::Field::Zones::BottomLeftRedBump, 
+                Constants::Field::Zones::TopRightRedBump};
+    }
+    Logger::Instance().Log("AlignToEdge/isValidForBump", isValidForBump);
+
+    for (frc::Pose2d checkedPose: Zones) {
             units::meter_t xABSDistance = units::math::abs(leftIntake.X()-checkedPose.X());
             units::meter_t yABSDistance = units::math::abs(leftIntake.Y()-checkedPose.Y());
             bool checkX =  xABSDistance < lowestDistance;
-            bool checkY =  yABSDistance < lowestDistance;
+            bool checkY =  yABSDistance < lowestDistance && !isValidForBump;
 
             if (checkY){
             m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
@@ -103,11 +158,11 @@ void AlignToEdgeCommand::Execute() {
             }
         }
 
-    for (frc::Pose2d checkedPose: Constants::Field::Zones::kZones) {
+    for (frc::Pose2d checkedPose: Zones) {
             units::meter_t xABSDistance = units::math::abs(rightIntake.X()-checkedPose.X());
             units::meter_t yABSDistance = units::math::abs(rightIntake.Y()-checkedPose.Y());
             bool checkX = xABSDistance < lowestDistance;
-            bool checkY = yABSDistance < lowestDistance;
+            bool checkY = yABSDistance < lowestDistance && !isValidForBump;
 
             if (checkY){
             m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
@@ -128,7 +183,7 @@ void AlignToEdgeCommand::Execute() {
             useX = true;
             }
         }
-    
+
     double throttle = m_throttleSupplier();
     double strafe = m_strafeSupplier();
 
@@ -177,10 +232,8 @@ void AlignToEdgeCommand::Execute() {
         yInput = m_yLimiter.Calculate(yInput);
     }
 
-    double angleOffFactor = 1 / units::math::abs((currentPose.Rotation().Radians() - m_targetPose.Rotation().Radians())/ 1_rad);
-
-    auto xVelocity = xInput * Constants::SwerveDrive::kMaxLinearSpeed*angleOffFactor;
-    auto yVelocity = yInput * Constants::SwerveDrive::kMaxLinearSpeed*angleOffFactor;
+    auto xVelocity = xInput * Constants::SwerveDrive::kMaxLinearSpeed;
+    auto yVelocity = yInput * Constants::SwerveDrive::kMaxLinearSpeed;
 
     m_driveErrorAbs = currentDistance;
 
