@@ -5,6 +5,7 @@
 #include <frc/MathUtil.h>
 #include <frc/Timer.h>
 #include <frc/kinematics/ChassisSpeeds.h>
+#include "frc/DriverStation.h"
 
 #include <algorithm>
 #include <cmath>
@@ -62,8 +63,6 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
 void AlignToEdgeCommand::Initialize() {
         frc::Pose2d currentPose = m_driveSubsystem->GetPose();
 
-    double currentDistance =
-        currentPose.Translation().Distance(m_targetPose.Translation()).value();
 
     frc::ChassisSpeeds fieldSpeeds = m_driveSubsystem->GetFieldRelativeSpeeds();
 
@@ -75,12 +74,22 @@ void AlignToEdgeCommand::Initialize() {
                             m_driveSubsystem->GetChassisSpeeds().omega);
 }
 
+bool IsOnField(frc::Pose2d intake){
+    bool isOnFieldX = (intake.X() > Constants::Field::Zones::BottomLeftBlue.X()) && (intake.X() < Constants::Field::Zones::TopRightRed.X());
+    bool isOnFieldY = (intake.Y() > Constants::Field::Zones::BottomLeftBlue.Y()) && (intake.Y() < Constants::Field::Zones::TopRightRed.Y());
+    bool isValid = isOnFieldX && isOnFieldY;
+    return isValid;
+}
+
 void AlignToEdgeCommand::Execute() {
 
     frc::Pose2d currentPose = m_driveSubsystem->GetPose();
 
-    frc::Pose2d leftIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft);
-    frc::Pose2d rightIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeRight);
+    frc::Pose2d leftOffset = {-0.59055_m, 3.81_m, 0_deg};
+    frc::Pose2d rightOffset = {-0.59055_m, -3.81_m, 0_deg};
+
+    frc::Pose2d leftIntake = currentPose;
+    frc::Pose2d rightIntake = currentPose;
 
     Logger::Instance().Log("AlignToEdge/leftIntakePose", leftIntake);
     Logger::Instance().Log("AlignToEdge/rightIntakePose", rightIntake);
@@ -89,7 +98,6 @@ void AlignToEdgeCommand::Execute() {
     bool useX = true;
     bool faceBlue;
     bool faceDepot;
-
 
     frc::Rotation2d angleToFaceWall;
 
@@ -103,17 +111,20 @@ void AlignToEdgeCommand::Execute() {
     double rightIntakeDistanceFromBlueHub = rightIntake.Translation().Distance(Constants::Field::Zones::BlueHub.Translation()).value();
     bool isValidForBlueBump = (leftIntakeDistanceFromBlueHub < maxHubSnap) && (rightIntakeDistanceFromBlueHub < maxHubSnap);
 
+    bool isValidForBump = isValidForRedBump || isValidForBlueBump;
+
+    bool poseOnField = (IsOnField(rightIntake)) && (IsOnField(leftIntake));
+    Logger::Instance().Log("AlignToEdge/poseOnField", poseOnField);
     Logger::Instance().Log("AlignToEdge/leftIntakeDistanceFromRedHub", leftIntakeDistanceFromRedHub);
     Logger::Instance().Log("AlignToEdge/isValidForBlueBump", isValidForBlueBump);
     Logger::Instance().Log("AlignToEdge/isValidForRedBump", isValidForRedBump);
 
-    bool isValidForBump = isValidForRedBump || isValidForBlueBump;
-        std::vector<frc::Pose2d> Zones = {  {0_m, 0_m, 0_deg},
-                                            {0_m, 0_m, 0_deg},
-                                            {0_m, 0_m, 0_deg},
-                                            {0_m, 0_m, 0_deg},
-                                            {0_m, 0_m, 0_deg},
-                                            {0_m, 0_m, 0_deg}};
+    std::vector<frc::Pose2d> Zones = {  {0_m, 0_m, 0_deg},
+                                        {0_m, 0_m, 0_deg},
+                                        {0_m, 0_m, 0_deg},
+                                        {0_m, 0_m, 0_deg},
+                                        {0_m, 0_m, 0_deg},
+                                        {0_m, 0_m, 0_deg}};
     if(!isValidForBump){
         Zones = {Constants::Field::Zones::BottomLeftBlue, 
                 Constants::Field::Zones::TopRightRed,
@@ -131,7 +142,7 @@ void AlignToEdgeCommand::Execute() {
                 Constants::Field::Zones::TopRightRedBump};
     }
     Logger::Instance().Log("AlignToEdge/isValidForBump", isValidForBump);
-
+    frc::Pose2d cachedCheckedPose{};
     for (frc::Pose2d checkedPose: Zones) {
             units::meter_t xABSDistance = units::math::abs(leftIntake.X()-checkedPose.X());
             units::meter_t yABSDistance = units::math::abs(leftIntake.Y()-checkedPose.Y());
@@ -139,19 +150,19 @@ void AlignToEdgeCommand::Execute() {
             bool checkY =  yABSDistance < lowestDistance && !isValidForBump;
 
             if (checkY){
-            m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
-            faceDepot = m_targetPose.Y() < currentPose.Y();
+            m_targetPose = {leftIntake.X(), checkedPose.Y(), leftIntake.Rotation()};
+            faceDepot = m_targetPose.Y() < leftIntake.Y();
             faceBlue = false;
-            Logger::Instance().Log("AlignToEdge/targetPoseBeforeTransform", m_targetPose);
+            cachedCheckedPose = m_targetPose;
             m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
             lowestDistance = yABSDistance;
             useX = false;
             }
             if (checkX){
-            m_targetPose = {checkedPose.X(), currentPose.Y(), currentPose.Rotation()};
-            faceBlue = m_targetPose.X() < currentPose.X();
+            m_targetPose = {checkedPose.X(), leftIntake.Y(), leftIntake.Rotation()};
+            faceBlue = m_targetPose.X() < leftIntake.X();
             faceDepot = false;
-            Logger::Instance().Log("AlignToEdge/targetPoseBeforeTransform", m_targetPose);
+            cachedCheckedPose = m_targetPose;
             m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
             lowestDistance = xABSDistance;
             useX = true;
@@ -165,30 +176,36 @@ void AlignToEdgeCommand::Execute() {
             bool checkY = yABSDistance < lowestDistance && !isValidForBump;
 
             if (checkY){
-            m_targetPose = {currentPose.X(), checkedPose.Y(), currentPose.Rotation()};
-            faceDepot = m_targetPose.Y() < currentPose.Y();
+            m_targetPose = {rightIntake.X(), checkedPose.Y(), rightIntake.Rotation()};
+            faceDepot = m_targetPose.Y() < rightIntake.Y();
             faceBlue = false;
-            Logger::Instance().Log("AlignToEdge/targetPoseBeforeTransform", m_targetPose);
+            cachedCheckedPose = m_targetPose;
             m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
             lowestDistance = yABSDistance;
             useX = false;
             }
             if (checkX){
-            m_targetPose = {checkedPose.X(), currentPose.Y(), currentPose.Rotation()};
-            faceBlue = m_targetPose.X() < currentPose.X();
+            m_targetPose = {checkedPose.X(), rightIntake.Y(), rightIntake.Rotation()};
+            faceBlue = m_targetPose.X() < rightIntake.X();
             faceDepot = false;
-            Logger::Instance().Log("AlignToEdge/targetPoseBeforeTransform", m_targetPose);
+            cachedCheckedPose = m_targetPose;
             m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
             lowestDistance = xABSDistance;
             useX = true;
             }
         }
 
+        
+        Logger::Instance().Log("AlignToEdge/targetPoseBeforeTransform", cachedCheckedPose);
+
     double throttle = m_throttleSupplier();
     double strafe = m_strafeSupplier();
 
     double xInput = frc::ApplyDeadband(throttle, Constants::kJoystickDeadband);
     double yInput = frc::ApplyDeadband(strafe, Constants::kJoystickDeadband);
+
+    Logger::Instance().Log("AlignToEdge/xInput", xInput);
+    Logger::Instance().Log("AlignToEdge/yInput", yInput);
 
     bool movingBlue = xInput > 0 && !useX;
     bool movingDepot = yInput > 0 && useX;
@@ -227,9 +244,18 @@ void AlignToEdgeCommand::Execute() {
     frc::Rotation2d awayFromTargetAngle =
         (currentPose.Translation() - m_targetPose.Translation()).Angle();
 
+    double flipInput = 1;
+
+    std::optional<frc::DriverStation::Alliance> alliance =
+      frc::DriverStation::GetAlliance();
+
+    if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
+        flipInput = -1;
+    }
+
     if (m_enableSlewRate) {
-        xInput = m_xLimiter.Calculate(xInput);
-        yInput = m_yLimiter.Calculate(yInput);
+        xInput = flipInput*m_xLimiter.Calculate(xInput);
+        yInput = flipInput*m_yLimiter.Calculate(yInput);
     }
 
     auto xVelocity = xInput * Constants::SwerveDrive::kMaxLinearSpeed;
@@ -273,12 +299,12 @@ void AlignToEdgeCommand::Execute() {
 
     if(useX){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        vx, -yVelocity, units::radians_per_second_t{thetaVelocity},
+        vx, yVelocity, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
     }
     else{
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        -xVelocity, vy, units::radians_per_second_t{thetaVelocity},
+        xVelocity, vy, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
     }
     Logger::Instance().Log("AlignToEdge/movingBlue", movingBlue);

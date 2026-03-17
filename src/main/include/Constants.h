@@ -163,7 +163,7 @@ inline constexpr units::kilogram_square_meter_t kMomentOfInertia =
 inline constexpr double kDriveMotorEfficiency = 0.90;
 inline constexpr units::meters_per_second_t kMaxLinearSpeed =
     Module::kMaxModuleLinearSpeed * kDriveMotorEfficiency;
-inline constexpr units::radians_per_second_t kMaxAngularSpeed = 10_rad_per_s;
+inline constexpr units::radians_per_second_t kMaxAngularSpeed = 20_rad_per_s;
 
 namespace Odometry {
 inline constexpr size_t kSignalsPerModule = 5;
