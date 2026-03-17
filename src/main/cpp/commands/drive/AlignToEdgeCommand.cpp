@@ -88,14 +88,14 @@ void AlignToEdgeCommand::Execute() {
     frc::Pose2d leftOffset = {-0.59055_m, 3.81_m, 0_deg};
     frc::Pose2d rightOffset = {-0.59055_m, -3.81_m, 0_deg};
 
-    frc::Pose2d leftIntake = currentPose;
-    frc::Pose2d rightIntake = currentPose;
+    frc::Pose2d leftIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft);
+    frc::Pose2d rightIntake = currentPose.TransformBy(Constants::Geometry::kRobotToIntakeRight);
 
     Logger::Instance().Log("AlignToEdge/leftIntakePose", leftIntake);
     Logger::Instance().Log("AlignToEdge/rightIntakePose", rightIntake);
 
     units::meter_t lowestDistance = 1000_m;
-    bool useX = true;
+    bool useX =false;
     bool faceBlue;
     bool faceDepot;
 
@@ -119,12 +119,8 @@ void AlignToEdgeCommand::Execute() {
     Logger::Instance().Log("AlignToEdge/isValidForBlueBump", isValidForBlueBump);
     Logger::Instance().Log("AlignToEdge/isValidForRedBump", isValidForRedBump);
 
-    std::vector<frc::Pose2d> Zones = {  {0_m, 0_m, 0_deg},
-                                        {0_m, 0_m, 0_deg},
-                                        {0_m, 0_m, 0_deg},
-                                        {0_m, 0_m, 0_deg},
-                                        {0_m, 0_m, 0_deg},
-                                        {0_m, 0_m, 0_deg}};
+    std::vector<frc::Pose2d> Zones;
+    
     if(!isValidForBump){
         Zones = {Constants::Field::Zones::BottomLeftBlue, 
                 Constants::Field::Zones::TopRightRed,
@@ -142,19 +138,24 @@ void AlignToEdgeCommand::Execute() {
                 Constants::Field::Zones::TopRightRedBump};
     }
     Logger::Instance().Log("AlignToEdge/isValidForBump", isValidForBump);
+
+    if(currentPose.X() > 6_m && currentPose.Y() > 5_m){
+        Logger::Instance().Log("AlignToEdge/larry", isValidForBump);
+    }
+
     frc::Pose2d cachedCheckedPose{};
     for (frc::Pose2d checkedPose: Zones) {
             units::meter_t xABSDistance = units::math::abs(leftIntake.X()-checkedPose.X());
             units::meter_t yABSDistance = units::math::abs(leftIntake.Y()-checkedPose.Y());
             bool checkX =  xABSDistance < lowestDistance;
-            bool checkY =  yABSDistance < lowestDistance && !isValidForBump;
+            bool checkY =  yABSDistance < lowestDistance;// && !isValidForBump;
 
             if (checkY){
             m_targetPose = {leftIntake.X(), checkedPose.Y(), leftIntake.Rotation()};
             faceDepot = m_targetPose.Y() < leftIntake.Y();
             faceBlue = false;
             cachedCheckedPose = m_targetPose;
-            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
+            //m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
             lowestDistance = yABSDistance;
             useX = false;
             }
@@ -163,7 +164,7 @@ void AlignToEdgeCommand::Execute() {
             faceBlue = m_targetPose.X() < leftIntake.X();
             faceDepot = false;
             cachedCheckedPose = m_targetPose;
-            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
+            //m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeLeft.Inverse());
             lowestDistance = xABSDistance;
             useX = true;
             }
@@ -173,14 +174,14 @@ void AlignToEdgeCommand::Execute() {
             units::meter_t xABSDistance = units::math::abs(rightIntake.X()-checkedPose.X());
             units::meter_t yABSDistance = units::math::abs(rightIntake.Y()-checkedPose.Y());
             bool checkX = xABSDistance < lowestDistance;
-            bool checkY = yABSDistance < lowestDistance && !isValidForBump;
+            bool checkY = yABSDistance < lowestDistance; //&& !isValidForBump;
 
             if (checkY){
             m_targetPose = {rightIntake.X(), checkedPose.Y(), rightIntake.Rotation()};
             faceDepot = m_targetPose.Y() < rightIntake.Y();
             faceBlue = false;
             cachedCheckedPose = m_targetPose;
-            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
+            //m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
             lowestDistance = yABSDistance;
             useX = false;
             }
@@ -189,7 +190,7 @@ void AlignToEdgeCommand::Execute() {
             faceBlue = m_targetPose.X() < rightIntake.X();
             faceDepot = false;
             cachedCheckedPose = m_targetPose;
-            m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
+            //m_targetPose = m_targetPose.TransformBy(Constants::Geometry::kRobotToIntakeRight.Inverse());
             lowestDistance = xABSDistance;
             useX = true;
             }
@@ -197,6 +198,7 @@ void AlignToEdgeCommand::Execute() {
 
         
         Logger::Instance().Log("AlignToEdge/targetPoseBeforeTransform", cachedCheckedPose);
+        Logger::Instance().Log("AlignToEdge/useX", useX);
 
     double throttle = m_throttleSupplier();
     double strafe = m_strafeSupplier();
@@ -210,25 +212,24 @@ void AlignToEdgeCommand::Execute() {
     bool movingBlue = xInput > 0 && !useX;
     bool movingDepot = yInput > 0 && useX;
 
-    units::degree_t wallOffset = 60_deg;
+    // units::degree_t wallOffset = 60_deg;
 
-    if(faceBlue && useX){
-        angleToFaceWall = (movingDepot) ? (0_deg + (wallOffset*yInput)) : (0_deg + (wallOffset*yInput));
-    }
-    else if(!faceBlue && useX){
-        angleToFaceWall = (movingDepot) ? (180_deg - wallOffset*yInput) : (180_deg - wallOffset*yInput);
-    }
-    if(faceDepot && !useX){
-        angleToFaceWall = (movingBlue) ? (90_deg - wallOffset*xInput) : (90_deg - wallOffset*xInput);
-    }
-    else if(!faceDepot && !useX){
-        angleToFaceWall = (movingBlue) ? (-90_deg + wallOffset*xInput) : (-90_deg + wallOffset*xInput);
-    }
+    // if(faceBlue && useX){
+    //     angleToFaceWall = (movingDepot) ? (0_deg + (wallOffset*yInput)) : (0_deg + (wallOffset*yInput));
+    // }
+    // else if(!faceBlue && useX){
+    //     angleToFaceWall = (movingDepot) ? (180_deg - wallOffset*yInput) : (180_deg - wallOffset*yInput);
+    // }
+    // if(faceDepot && !useX){
+    //     angleToFaceWall = (movingBlue) ? (90_deg - wallOffset*xInput) : (90_deg - wallOffset*xInput);
+    // }
+    // else if(!faceDepot && !useX){
+    //     angleToFaceWall = (movingBlue) ? (-90_deg + wallOffset*xInput) : (-90_deg + wallOffset*xInput);
+    // }
 
     Logger::Instance().Log("AlignToEdge/angleToFaceWall", angleToFaceWall);
     Logger::Instance().Log("AlignToEdge/yInput", yInput);
     Logger::Instance().Log("AlignToEdge/xInput", xInput);
-    Logger::Instance().Log("AlignToEdge/useX", useX);
 
     m_targetPose = {m_targetPose.X(), m_targetPose.Y(), {angleToFaceWall}};
 
@@ -297,16 +298,23 @@ void AlignToEdgeCommand::Execute() {
 
     frc::ChassisSpeeds robotSpeeds;
 
-    if(useX){
+    // if(useX){
+    //     robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+    //     vx, yVelocity, units::radians_per_second_t{thetaVelocity},
+    //     currentPose.Rotation());
+    // }
+    // else{
+    //     robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+    //     xVelocity, vy, units::radians_per_second_t{thetaVelocity},
+    //     currentPose.Rotation());
+    // }
+    
+
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        vx, yVelocity, units::radians_per_second_t{thetaVelocity},
+        xVelocity, yVelocity, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
-    }
-    else{
-        robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        xVelocity, vy, units::radians_per_second_t{thetaVelocity},
-        currentPose.Rotation());
-    }
+    
+
     Logger::Instance().Log("AlignToEdge/movingBlue", movingBlue);
     Logger::Instance().Log("AlignToEdge/faceBlue", faceBlue);
     Logger::Instance().Log("AlignToEdge/faceDepot", faceDepot);
