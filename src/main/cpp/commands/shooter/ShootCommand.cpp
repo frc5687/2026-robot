@@ -38,8 +38,8 @@ void ShootCommand::Initialize() {
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
   m_deployer->RetractMid();
-  m_deployerExtended = false;
-  m_pulseStartTime = frc::Timer::GetFPGATimestamp();
+  m_shootingBurstActive = false;
+  m_shootBurstStartTime = 0_s;
 }
 
 void ShootCommand::Execute() {
@@ -75,28 +75,22 @@ void ShootCommand::Execute() {
   m_drive->DriveFieldRelative(
       frc::ChassisSpeeds{xVel, yVel, units::radians_per_second_t{rotOutput}});
 
-  auto elapsed = now - m_pulseStartTime;
-
-  if (m_deployerExtended) {
-    if (elapsed >= Constants::IntakeDeployer::kPulseExtendDuration) {
-      m_deployer->RetractMid();
-      m_deployerExtended = false;
-      m_pulseStartTime = now;
+  if (solution.ready) {
+    if (!m_shootingBurstActive) {
+      m_shootingBurstActive = true;
+      m_shootBurstStartTime = now;
+    } else if (now - m_shootBurstStartTime >= kShootHoldDuration) {
+      m_shootingBurstActive = false;
     }
   } else {
-    if (elapsed >= Constants::IntakeDeployer::kPulseRetractDuration) {
-      m_deployer->Deploy();
-      m_deployerExtended = true;
-      m_pulseStartTime = now;
-    }
+    m_shootingBurstActive = false;
   }
 
-  if (solution.ready) {
-    //m_feeder->SetVoltage(kFeedVoltage);
-    m_feeder->SetVelocity(60_tps);
+  if (m_shootingBurstActive) {
+    m_feeder->SetVoltage(kFeedVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
-    m_feeder->SetVelocity(kKickerRPS);
+    //m_feeder->SetVelocity(kFeederRPS);
   } else {
     m_feeder->Stop();
   }
@@ -109,6 +103,8 @@ void ShootCommand::End(bool interrupted) {
   m_bottomRoller->Stop();
   m_feeder->Stop();
   m_deployer->RetractMid();
+  m_shootingBurstActive = false;
+  m_shootBurstStartTime = 0_s;
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }

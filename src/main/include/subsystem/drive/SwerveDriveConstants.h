@@ -48,6 +48,7 @@ inline constexpr frc::DCMotor kSteerMotor = frc::DCMotor::KrakenX44FOC();
 // v = (ω_motor / reduction) * r
 inline constexpr units::meters_per_second_t kMaxModuleLinearSpeed =
     ((kDriveMotor.freeSpeed / kDriveGearRatio) * kWheelRadius) / 1_rad;
+inline constexpr double test = kMaxModuleLinearSpeed.value();
 
 inline constexpr units::ampere_t kDriveSlipCurrent =
     80_A; // TODO: Tune, this is the max stator current to prevent sliping of
@@ -137,7 +138,7 @@ inline constexpr std::array<units::turn_t, 4> kEncoderOffsets{
     -0.216064453125_tr + 0.5_tr, // FL
     -0.132324421875_tr+ 0.5_tr, // FR
     +0.32421875_tr+ 0.5_tr, // BL
-    +0.099609375_tr+ 0.5_tr// BR
+    +0.012939453125_tr + 0.5_tr // BR
 };
 
 /*

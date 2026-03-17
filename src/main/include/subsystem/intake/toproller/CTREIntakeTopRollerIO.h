@@ -33,9 +33,11 @@ private:
   ctre::phoenix6::StatusSignal<units::volt_t> &m_voltageSignal;
   ctre::phoenix6::StatusSignal<units::ampere_t> &m_statorSignal;
   ctre::phoenix6::StatusSignal<units::ampere_t> &m_supplySignal;
+  ctre::phoenix6::StatusSignal<units::ampere_t> &m_followerStatorSignal;
+  ctre::phoenix6::StatusSignal<units::ampere_t> &m_followerSupplySignal;
 
-  std::array<ctre::phoenix6::BaseStatusSignal *, 4> m_criticalSignals;
-  std::array<ctre::phoenix6::BaseStatusSignal *, 1> m_batchedSignals;
+  std::array<ctre::phoenix6::BaseStatusSignal *, 5> m_criticalSignals;
+  std::array<ctre::phoenix6::BaseStatusSignal *, 2> m_batchedSignals;
 
   ctre::phoenix6::controls::VelocityVoltage m_velocityRequest{0_tps};
   ctre::phoenix6::controls::VoltageOut m_voltageRequest{0_V};

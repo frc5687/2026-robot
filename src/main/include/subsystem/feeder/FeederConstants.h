@@ -23,15 +23,15 @@ inline constexpr bool kFollower2Opposed = true;
 inline constexpr bool kFollower3Opposed = false;
 
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 30_A;
 
 namespace PID {
-inline constexpr double kP = 1.0;
+inline constexpr double kP = 0.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
-inline constexpr double kV = 0.0;
-inline constexpr double kS = 0.0;
-inline constexpr double kA = 0.0;
+inline constexpr double kV = 0.12571;
+inline constexpr double kS = 0.4096;
+inline constexpr double kA = 0.0027735;
 } // namespace PID
 
 inline constexpr double kGearRatio = (42.0 / 9.0);

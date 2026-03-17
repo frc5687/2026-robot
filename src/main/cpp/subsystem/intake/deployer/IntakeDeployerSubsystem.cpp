@@ -68,4 +68,6 @@ void IntakeDeployerSubsystem::LogTelemetry() {
   Log("ExtensionMeters", GetPosition().value());
   Log("IsDeployed", IsDeployed());
   Log("IsRetracted", IsRetracted());
+  Log("Current/Leader/Stator", m_inputs.statorCurrent.value());
+  Log("Current/Leader/Supply", m_inputs.supplyCurrent.value());
 }

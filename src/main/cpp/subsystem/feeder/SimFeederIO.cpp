@@ -56,6 +56,12 @@ void SimFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.appliedVolts = voltage;
   inputs.statorCurrent = m_motorSim.GetCurrentDraw();
   inputs.supplyCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower1StatorCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower1SupplyCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower2StatorCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower2SupplyCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower3StatorCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower3SupplyCurrent = m_motorSim.GetCurrentDraw();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 

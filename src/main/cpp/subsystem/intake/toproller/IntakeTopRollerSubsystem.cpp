@@ -24,4 +24,10 @@ void IntakeTopRollerSubsystem::LogTelemetry() {
   Log("AppliedVolts", m_inputs.appliedVolts.value());
   Log("StatorCurrent", m_inputs.statorCurrent.value());
   Log("SupplyCurrent", m_inputs.supplyCurrent.value());
+  Log("Current/Stator", m_inputs.statorCurrent.value());
+  Log("Current/Supply", m_inputs.supplyCurrent.value());
+  Log("Current/Leader/Stator", m_inputs.statorCurrent.value());
+  Log("Current/Leader/Supply", m_inputs.supplyCurrent.value());
+  Log("Current/Follower1/Stator", m_inputs.followerStatorCurrent.value());
+  Log("Current/Follower1/Supply", m_inputs.followerSupplyCurrent.value());
 }
