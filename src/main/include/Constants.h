@@ -512,7 +512,7 @@ namespace Zones{
     inline constexpr frc::Pose2d RedHub{11.915394_m, 4.034663_m, 0_deg};
 
     inline constexpr std::array<frc::Pose2d,2>kZonesExcludingBumps={BottomLeftBlue, TopRightRed};
-    inline constexpr std::array<frc::Pose2d,6>kZonesIndlucingBumps={BottomLeftBlue, TopRightRed, BottomLeftBlueBump, TopRightBlueBump, BottomLeftRedBump, TopRightRedBump};
+    inline constexpr std::array<frc::Pose2d,4>kZonesIncludingBumps={BottomLeftBlueBump, TopRightBlueBump, BottomLeftRedBump, TopRightRedBump};
 }
 } // namespace Field
 

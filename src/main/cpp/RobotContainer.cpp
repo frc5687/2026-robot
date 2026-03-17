@@ -267,7 +267,7 @@ void RobotContainer::ConfigureBindings() {
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood})).AlongWith(
       Run([this] { m_intakeDeployer.RetractMid(); }, {&m_intakeDeployer})));
 
-  m_driver.L1().WhileTrue(
+  m_driver.Circle().WhileTrue(
           AlignToEdgeCommand(&m_drive,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
