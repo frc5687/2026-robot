@@ -56,6 +56,8 @@ void SimIntakeTopRollerIO::UpdateInputs(IntakeTopRollerIOInputs &inputs) {
   inputs.appliedVolts = voltage;
   inputs.statorCurrent = m_motorSim.GetCurrentDraw();
   inputs.supplyCurrent = m_motorSim.GetCurrentDraw();
+  inputs.followerStatorCurrent = m_motorSim.GetCurrentDraw();
+  inputs.followerSupplyCurrent = m_motorSim.GetCurrentDraw();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 

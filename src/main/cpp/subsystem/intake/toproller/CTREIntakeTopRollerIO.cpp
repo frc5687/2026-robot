@@ -17,9 +17,11 @@ CTREIntakeTopRollerIO::CTREIntakeTopRollerIO(const CANDevice &leader,
       m_voltageSignal(m_leader.GetMotorVoltage()),
       m_statorSignal(m_leader.GetStatorCurrent()),
       m_supplySignal(m_leader.GetSupplyCurrent()),
+      m_followerStatorSignal(m_follower.GetStatorCurrent()),
+      m_followerSupplySignal(m_follower.GetSupplyCurrent()),
       m_criticalSignals{&m_positionSignal, &m_velocitySignal, &m_voltageSignal,
-                        &m_statorSignal},
-      m_batchedSignals{&m_supplySignal} {
+                        &m_statorSignal, &m_followerStatorSignal},
+      m_batchedSignals{&m_supplySignal, &m_followerSupplySignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -64,7 +66,9 @@ void CTREIntakeTopRollerIO::ConfigureSignalFrequencies() {
   m_velocitySignal.SetUpdateFrequency(100_Hz);
   m_voltageSignal.SetUpdateFrequency(100_Hz);
   m_statorSignal.SetUpdateFrequency(100_Hz);
+  m_followerStatorSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
+  m_followerSupplySignal.SetUpdateFrequency(50_Hz);
 
   m_leader.OptimizeBusUtilization();
   m_follower.OptimizeBusUtilization();
@@ -79,6 +83,8 @@ void CTREIntakeTopRollerIO::UpdateInputs(IntakeTopRollerIOInputs &inputs) {
   inputs.appliedVolts = m_voltageSignal.GetValue();
   inputs.statorCurrent = m_statorSignal.GetValue();
   inputs.supplyCurrent = m_supplySignal.GetValue();
+  inputs.followerStatorCurrent = m_followerStatorSignal.GetValue();
+  inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 

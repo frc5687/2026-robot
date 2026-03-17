@@ -37,6 +37,7 @@ inline constexpr units::turn_t kReverseSoftLimit = -0.5_tr; // TODO
 //
 inline constexpr units::second_t kPulseExtendDuration = 0.5_s;
 inline constexpr units::second_t kPulseRetractDuration = 0.5_s;
+inline constexpr units::second_t kShootDeployerSettleDuration = 0.5_s;
 
 namespace PID {
 inline constexpr double kP = 35.0;
@@ -81,7 +82,7 @@ inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(1);
 inline constexpr double kGearRatio = 3.0 / 1.0;
 inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
 
-inline constexpr bool kInverted = true;
+inline constexpr bool kInverted = false;
 inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
 
@@ -96,4 +97,3 @@ inline constexpr double kA = 0.0;
 } // namespace IntakeBottomRoller
 
 } // namespace Constants
-

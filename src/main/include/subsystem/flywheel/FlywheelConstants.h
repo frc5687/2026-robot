@@ -15,7 +15,7 @@ namespace Constants {
 
 namespace Flywheel {
 
-inline constexpr double kGearRatio = (51.0 / 24.0);
+inline constexpr double kGearRatio = (50.0 / 36.0) * (51.0/30.0);
 
 // 4 motors total: 1 leader + 3 followers
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(4);
@@ -39,10 +39,10 @@ inline constexpr bool kEnableStatorCurrent = true;
 inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
-constexpr double kS = 0.36796;  //< Static friction (V)
-constexpr double kV = 0.12525;  //< Velocity FF (V / motor-RPS)
-constexpr double kA = 0.015443; //< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.5;      //< Proportional (V / motor-RPS error)
+constexpr double kS = 0.30498;  //< Static friction (V)
+constexpr double kV = 0.11;  //< Velocity FF (V / motor-RPS)
+constexpr double kA = 0.012131; //< Acceleration FF (V / motor-RPS²)
+constexpr double kP = 0.8;      //< Proportional (V / motor-RPS error)
 constexpr double kI = 0.0;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
