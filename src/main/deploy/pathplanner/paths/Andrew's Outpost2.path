@@ -72,7 +72,7 @@
         "y": 7.454170702268306
       },
       "nextControl": {
-        "x": 2.467385542168674,
+        "x": 2.4673855421686737,
         "y": 7.411662650602409
       },
       "isLocked": false,
@@ -134,10 +134,10 @@
     },
     {
       "name": "Trench2",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0,
+      "minWaypointRelativePos": 3.637717121588098,
+      "maxWaypointRelativePos": 4.1538461538461595,
       "constraints": {
-        "maxVelocity": 3.6,
+        "maxVelocity": 2.0,
         "maxAcceleration": 6.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
