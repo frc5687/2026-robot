@@ -17,6 +17,7 @@
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Transform2d.h"
 #include "units/angle.h"
+#include "units/length.h"
 #include "utils/Logger.h"
 
 static constexpr double kMaxTranslationalAccel = 2.0; // m/s²
@@ -227,26 +228,35 @@ void AlignToEdgeCommand::Execute() {
         flipInput = -1;
     }
     units::angle::degree_t angleOffset = 70_deg;
+    double wallOffsetWhenNormal = 0;
 
     switch(direction){
         case 1: //east
             angleToFaceWall = 180_deg + yInput*angleOffset * flipInput;
+            wallOffsetWhenNormal = 1 - abs(yInput);
             break;
         
         case 2: //west
             angleToFaceWall = 0_deg - yInput*angleOffset * flipInput;
+            wallOffsetWhenNormal = 1 - abs(yInput);
             break;
 
         case 3: //north
             angleToFaceWall = 270_deg - xInput*angleOffset * flipInput;
+            wallOffsetWhenNormal = 1 - abs(xInput);
             break;
 
         case 4: //south
             angleToFaceWall = 90_deg + xInput*angleOffset * flipInput;
+            wallOffsetWhenNormal = 1 - abs(xInput);
             break;
     }
-
-
+    Logger::Instance().Log("AlignToEdge/beforeWallTransformTargetPose", Edge.targetPose);
+    frc::Transform2d kRobotToIntakeWallSpacing{
+    frc::Translation2d{units::meter_t{.15*wallOffsetWhenNormal}, units::meter_t{0}},
+    frc::Rotation2d{0_rad}};
+    
+    Edge.targetPose = Edge.targetPose.TransformBy(kRobotToIntakeWallSpacing);
     Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(), angleToFaceWall};
 
     units::angle::degree_t normalizedAngle = (currentPose.Rotation().Degrees().value() < 0) ? currentPose.Rotation().Degrees() + 360_deg : currentPose.Rotation().Degrees();
@@ -312,26 +322,23 @@ void AlignToEdgeCommand::Execute() {
         thetaVelocity = 0.0;
     }
     frc::ChassisSpeeds robotSpeeds;
-    int thingy;
     if(Edge.useXAxis && isAngleValid){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
         vx, yVelocity, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
-        thingy = 1;
     }
     else if (isAngleValid){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
         xVelocity, vy, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
-        thingy = 2;
     }else{
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
         xVelocity, yVelocity, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
-        thingy = 3;
     }
 
-    Logger::Instance().Log("AlignToEdge/thingy", thingy);
+    
+    Logger::Instance().Log("AlignToEdge/wallOffsetWhenNormal", wallOffsetWhenNormal);
     Logger::Instance().Log("AlignToEdge/angleDifference", angleDifference.value());
     Logger::Instance().Log("AlignToEdge/normalizedAngle", normalizedAngle.value());
     Logger::Instance().Log("AlignToEdge/normalizedDesiredAngle", normalizedDesiredAngle.value());
