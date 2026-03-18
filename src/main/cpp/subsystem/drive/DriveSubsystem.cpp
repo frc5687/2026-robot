@@ -2,17 +2,23 @@
 
 #include "subsystem/drive/DriveSubsystem.h"
 
+#include <cstddef>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
 #include <algorithm>
 #include <memory>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
+#include "frc/Errors.h"
+#include "frc2/command/CommandPtr.h"
+#include "pathplanner/lib/path/PathPlannerPath.h"
 #include "subsystem/vision/FieldConstants.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
+#include "subsystem/drive/PathConstants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"
@@ -23,7 +29,9 @@
 #include "pathplanner/lib/config/ModuleConfig.h"
 #include "pathplanner/lib/config/RobotConfig.h"
 #include "subsystem/drive/PoseEstimator.h"
+#include "units/angle.h"
 #include "units/velocity.h"
+#include "wpi/raw_ostream.h"
 #include <units/math.h>
 
 DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
@@ -331,40 +339,78 @@ void DriveSubsystem::SetTeleopCurrentLimits() {
                    Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitTeleop);
 }
 
-frc2::CommandPtr DriveSubsystem::GetPathCommand(frc::Pose2d currentPose){
+frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
 
   pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
-    3.0_mps, 4.0_mps_sq,
+    3.6_mps, 4.0_mps_sq,
     540_deg_per_s, 720_deg_per_s_sq);
 
   frc::Translation2d esttranslation = currentPose.Translation();
-  double currentDegrees = currentPose.Rotation().Degrees().value();
+  // double currentDegrees = currentPose.Rotation().Degrees().value();
 
   // Normalize to [-180, 180] and snap to nearest cardinal (0 or 180)
-  double normalizedDeg = std::fmod(currentDegrees + 180.0, 360.0);
-  if (normalizedDeg < 0) normalizedDeg += 360.0;
-  normalizedDeg -= 180.0;
-  frc::Rotation2d goalRotation = (std::abs(normalizedDeg) < 90.0)
-    ? frc::Rotation2d(0_deg)
-    : frc::Rotation2d(180_deg);
-
-  frc::Pose2d goalPose = currentPose; // default: pathfind to self
+  // double normalizedDeg = std::fmod(currentDegrees + 180.0, 360.0);
+  // if (normalizedDeg < 0) normalizedDeg += 360.0;
+  // normalizedDeg -= 180.0;
+  // frc::Rotation2d goalRotation = (std::abs(normalizedDeg) < 90.0)
+  //   ? frc::Rotation2d(0_deg)
+  //   : frc::Rotation2d(180_deg);
 
   bool topHalf    = esttranslation.Y() > Constants::Field::kFieldWidth / 2.0;
   bool bottomHalf = !topHalf;
   double x = esttranslation.X().value();
   double L = Constants::Field::kFieldLength.value();
+  bool isRed = false;
 
-  if      (topHalf    && x > L * 0.25 && x < L * 0.50) goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopBlue.Translation(),    goalRotation);
-  else if (topHalf    &&                  x < L * 0.25) goalPose = frc::Pose2d(Constants::Field::Trench::OutsideTopBlue.Translation(),   goalRotation);
-  else if (bottomHalf && x > L * 0.25 && x < L * 0.50) goalPose = frc::Pose2d(Constants::Field::Trench::InsideBottomBlue.Translation(), goalRotation);
-  else if (bottomHalf &&                  x < L * 0.25) goalPose = frc::Pose2d(Constants::Field::Trench::OutsideBottomBlue.Translation(),goalRotation);
-  else if (topHalf    && x > L * 0.50 && x < L * 0.75) goalPose = frc::Pose2d(Constants::Field::Trench::InsideTopRed.Translation(),     goalRotation);
-  else if (topHalf    && x > L * 0.75)                  goalPose = frc::Pose2d(Constants::Field::Trench::OutsideTopRed.Translation(),    goalRotation);
-  else if (bottomHalf && x > L * 0.50 && x < L * 0.75) goalPose = frc::Pose2d(Constants::Field::Trench::InsideBottomRed.Translation(),  goalRotation);
-  else if (bottomHalf && x > L * 0.75)                  goalPose = frc::Pose2d(Constants::Field::Trench::OutsideBottomRed.Translation(), goalRotation);
-  else goalPose = currentPose;
-  return pathplanner::AutoBuilder::pathfindToPose(goalPose, constraints, 1.0_mps);
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToTopBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue");
+  std::shared_ptr<pathplanner::PathPlannerPath> topToMiddleBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle");
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToBottomBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")->mirrorPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> bottomToMiddleBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")->mirrorPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToTopRed = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")->mirrorPath()->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> topToMiddleRed = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")->mirrorPath()->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToBottomRed = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> bottomToMiddleRed = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")->flipPath();
+
+
+    std::optional<frc::DriverStation::Alliance> alliance =
+    frc::DriverStation::GetAlliance();
+    if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
+        middleToTopBlue->flipPath();
+        topToMiddleBlue->flipPath();
+        middleToBottomBlue->flipPath();
+        bottomToMiddleBlue->flipPath();
+        middleToTopRed->flipPath();
+        topToMiddleRed->flipPath();
+        middleToBottomRed->flipPath();
+        bottomToMiddleRed->flipPath();
+    }
+
+    auto goalPath = middleToTopBlue;
+    auto followGoalPath = pathplanner::AutoBuilder::pathfindToPose(currentPose, constraints, 1.0_mps);
+  int currentCase;
+
+  if      (topHalf    && x > L * 0.25 && x < L * 0.50){currentCase=1; goalPath = middleToTopBlue;}
+  else if (topHalf    &&                  x < L * 0.25){currentCase=2; goalPath = topToMiddleBlue;}
+  else if (bottomHalf && x > L * 0.25 && x < L * 0.50){currentCase=3; goalPath = middleToBottomBlue;}
+  else if (bottomHalf &&                  x < L * 0.25){currentCase=4; goalPath = bottomToMiddleBlue;}
+  else if (topHalf    && x > L * 0.50 && x < L * 0.75){currentCase=5; goalPath = middleToTopRed;}
+  else if (topHalf    && x > L * 0.75)                {currentCase=6; goalPath = topToMiddleRed;}
+  else if (bottomHalf && x > L * 0.50 && x < L * 0.75){currentCase=7; goalPath = middleToBottomRed;}
+  else if (bottomHalf && x > L * 0.75)                {currentCase=8; goalPath = bottomToMiddleRed;}
+  else{currentCase=9; }
+  
+  if(currentCase < 9 && isRed){
+    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
+  }
+  else if(currentCase < 9 && !isRed){
+    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
+  }else{
+    followGoalPath = pathplanner::AutoBuilder::pathfindToPose(currentPose, constraints, 1.0_mps);
+  }
+
+  Logger::Instance().Log("DriveThroughTrench/currentCase", currentCase);
+
+  return followGoalPath;
 }
 
 

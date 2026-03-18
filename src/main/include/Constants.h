@@ -4,6 +4,7 @@
 #include "frc/geometry/Transform3d.h"
 #include <units/time.h>
 #include <units/voltage.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 
 namespace Constants {
 

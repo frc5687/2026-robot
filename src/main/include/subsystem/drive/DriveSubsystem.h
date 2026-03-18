@@ -95,7 +95,7 @@ public:
     return m_odometryThread;
   }
 
-  frc2::CommandPtr GetPathCommand(frc::Pose2d currentPose);
+  frc2::CommandPtr GetTrenchPathCommand(frc::Pose2d currentPose);
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;

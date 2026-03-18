@@ -297,7 +297,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.Cross().WhileTrue(
       frc2::cmd::Defer(
           [this]() {
-            return m_drive.GetPathCommand(
+            return m_drive.GetTrenchPathCommand(
                 RobotState::Instance()
                     .GetDriveState(frc::Timer::GetFPGATimestamp())
                     .estimatedPose);
