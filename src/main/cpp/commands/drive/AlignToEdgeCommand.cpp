@@ -104,51 +104,51 @@ EdgeParams CalculateEdge(const frc::Pose2d& intakePose, bool isValidForBump, con
     frc::Pose2d foundEdge;
     bool useXAxis = false;
     
-        auto Zones = GetZones(isValidForBump);
+    auto Zones = GetZones(isValidForBump);
 
-        std::vector<frc::Pose2d> loggedZones(Zones.begin(), Zones.end());
-        Logger::Instance().Log("AlignToEdge/Zones", loggedZones);
+    std::vector<frc::Pose2d> loggedZones(Zones.begin(), Zones.end());
+    Logger::Instance().Log("AlignToEdge/Zones", loggedZones);
 
-        units::meter_t lowestDistance = 1000_m;
+    units::meter_t lowestDistance = 1000_m;
 
-        units::meter_t XLowestDistance = 1000_m;
-        units::meter_t YLowestDistance = 1000_m;
+    units::meter_t XLowestDistance = 1000_m;
+    units::meter_t YLowestDistance = 1000_m;
 
-        for (frc::Pose2d checkedPose: Zones) {
-            units::meter_t xABSDistance = units::math::abs(intakePose.X()-checkedPose.X());
-            units::meter_t yABSDistance = units::math::abs(intakePose.Y()-checkedPose.Y());
+    for (frc::Pose2d checkedPose: Zones) {
+        units::meter_t xABSDistance = units::math::abs(intakePose.X()-checkedPose.X());
+        units::meter_t yABSDistance = units::math::abs(intakePose.Y()-checkedPose.Y());
 
-            bool checkX =  xABSDistance < lowestDistance;
+        bool checkX =  xABSDistance < lowestDistance;
 
-            if (checkX){
-            targetPose = {checkedPose.X(), intakePose.Y(), intakePose.Rotation()};
-            lowestDistance = xABSDistance;
-            useXAxis = true;
-            }
-
-            bool checkY =  yABSDistance < lowestDistance && !isValidForBump;
-
-            XLowestDistance = xABSDistance;
-            YLowestDistance = yABSDistance;
-
-            if (checkY){
-            targetPose = {intakePose.X(), checkedPose.Y(), intakePose.Rotation()};
-            lowestDistance = yABSDistance;
-            useXAxis = false;
-            }
-
+        if (checkX){
+        targetPose = {checkedPose.X(), intakePose.Y(), intakePose.Rotation()};
+        lowestDistance = xABSDistance;
+        useXAxis = true;
         }
-        foundEdge = targetPose; 
-        targetPose = targetPose.TransformBy(intakeTransform.Inverse());
 
-    return {
-        .targetPose = targetPose,
-        .useXAxis = useXAxis,
-        .minDistance = lowestDistance,
-        .xMinDistance = XLowestDistance,
-        .yMinDistance = YLowestDistance,
-        .foundEdge = foundEdge
-    };
+        bool checkY =  yABSDistance < lowestDistance && !isValidForBump;
+
+        XLowestDistance = xABSDistance;
+        YLowestDistance = yABSDistance;
+
+        if (checkY){
+        targetPose = {intakePose.X(), checkedPose.Y(), intakePose.Rotation()};
+        lowestDistance = yABSDistance;
+        useXAxis = false;
+        }
+
+    }
+    foundEdge = targetPose; 
+    targetPose = targetPose.TransformBy(intakeTransform.Inverse());
+
+return {
+    .targetPose = targetPose,
+    .useXAxis = useXAxis,
+    .minDistance = lowestDistance,
+    .xMinDistance = XLowestDistance,
+    .yMinDistance = YLowestDistance,
+    .foundEdge = foundEdge
+};
 }
 
 int EdgeDirection(frc::Pose2d currentPose, frc::Pose2d foundEdge, bool useXAxis){

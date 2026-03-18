@@ -99,6 +99,5 @@ namespace Zones{
     inline constexpr std::array<frc::Pose2d,4>kZonesIncludingBumps={BottomLeftBlueBump, TopRightBlueBump, BottomLeftRedBump, TopRightRedBump};
 }
 } // namespace Field
-
 } // namespace Constants
 
