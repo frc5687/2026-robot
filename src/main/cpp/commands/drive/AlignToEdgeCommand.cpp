@@ -263,8 +263,10 @@ void AlignToEdgeCommand::Execute() {
     units::angle::degree_t normalizedDesiredAngle = (Edge.targetPose.Rotation().Degrees().value() < 0) ? Edge.targetPose.Rotation().Degrees() + 360_deg : Edge.targetPose.Rotation().Degrees();
 
     units::angle::degree_t angleTolerance = 30_deg;
+    units::angle::degree_t angleWayOffTolerance = 160_deg;
     units::angle::degree_t angleDifference = currentPose.Rotation().RelativeTo(Edge.targetPose.Rotation()).Degrees();
     bool isAngleValid = angleTolerance > units::math::abs(angleDifference);
+    bool isAngleWayOff = angleWayOffTolerance < units::math::abs(angleDifference);
 
     double currentDistance =
     currentPose.Translation().Distance(Edge.targetPose.Translation()).value();
@@ -331,9 +333,14 @@ void AlignToEdgeCommand::Execute() {
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
         xVelocity, vy, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
-    }else{
+    }else if (!isAngleValid && isAngleWayOff){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        xVelocity, yVelocity, units::radians_per_second_t{thetaVelocity},
+        xVelocity, yVelocity, units::radians_per_second_t{0},
+        currentPose.Rotation());
+    }
+    else if (!isAngleValid && !isAngleWayOff){
+        robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+        vx, vy, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
     }
 
