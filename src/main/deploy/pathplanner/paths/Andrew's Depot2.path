@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 4.6419999999999995,
-        "y": 0.5599879518072293
+        "x": 4.70756626506024,
+        "y": 2.516048192771084
       },
       "prevControl": {
-        "x": 7.371010879090998,
-        "y": 0.5231094264141072
+        "x": 6.543421686746988,
+        "y": 2.472337349397591
       },
       "nextControl": {
-        "x": 3.024698795180723,
-        "y": 0.5818433734939766
+        "x": 3.7893135665236106,
+        "y": 2.537911352260051
       },
       "isLocked": false,
       "linkedName": null
@@ -52,12 +52,12 @@
         "y": 2.822024096385543
       },
       "prevControl": {
-        "x": 2.2816144578313255,
-        "y": 0.8550361445783139
+        "x": 3.3634578313253014,
+        "y": 2.5925421686746986
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Andrew's Depot 2-3"
     }
   ],
   "rotationTargets": [
@@ -71,14 +71,37 @@
     },
     {
       "waypointRelativePos": 1.7053941908713433,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 2,
-      "rotationDegrees": 0.0
+      "rotationDegrees": 43.067
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.7895781637717085,
+      "maxWaypointRelativePos": 2.24813895781638,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.09230769230769129,
+      "maxWaypointRelativePos": 0.45558312655087135,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
