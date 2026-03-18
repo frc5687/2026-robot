@@ -3,6 +3,8 @@
 #pragma once
 
 #include <units/angle.h>
+#include <units/current.h>
+#include <units/power.h>
 #include <units/voltage.h>
 
 #include <memory>
@@ -24,6 +26,8 @@ public:
   bool IsAtPosition(units::radian_t target) const;
 
   HoodState GetHoodState() const;
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
 protected:
   void UpdateInputs() override;

@@ -37,8 +37,9 @@ void ShootCommand::Initialize() {
   m_headingController.Reset();
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
-  m_deployer->RetractMid();
   m_shootingBurstActive = false;
+  m_hasRetractedDeployer = false;
+  m_shootSequenceActive = false;
   m_shootBurstStartTime = 0_s;
 }
 
@@ -75,15 +76,20 @@ void ShootCommand::Execute() {
   m_drive->DriveFieldRelative(
       frc::ChassisSpeeds{xVel, yVel, units::radians_per_second_t{rotOutput}});
 
-  if (solution.ready) {
-    if (!m_shootingBurstActive) {
-      m_shootingBurstActive = true;
-      m_shootBurstStartTime = now;
-    } else if (now - m_shootBurstStartTime >= kShootHoldDuration) {
-      m_shootingBurstActive = false;
+  if (!m_shootSequenceActive && solution.ready) {
+    m_shootSequenceActive = true;
+    m_shootBurstStartTime = now;
+    m_shootingBurstActive = true;
+    m_hasRetractedDeployer = false;
+  }
+
+  if (m_shootSequenceActive) {
+    m_shootingBurstActive = true;
+    if (!m_hasRetractedDeployer &&
+        now - m_shootBurstStartTime >= kDeployerRetractDelay) {
+      m_deployer->RetractMid();
+      m_hasRetractedDeployer = true;
     }
-  } else {
-    m_shootingBurstActive = false;
   }
 
   if (m_shootingBurstActive) {
@@ -104,6 +110,8 @@ void ShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_deployer->RetractMid();
   m_shootingBurstActive = false;
+  m_hasRetractedDeployer = false;
+  m_shootSequenceActive = false;
   m_shootBurstStartTime = 0_s;
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();

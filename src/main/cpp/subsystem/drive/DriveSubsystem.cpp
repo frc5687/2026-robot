@@ -24,6 +24,7 @@
 #include "pathplanner/lib/config/RobotConfig.h"
 #include "subsystem/drive/PoseEstimator.h"
 #include "units/velocity.h"
+#include <units/math.h>
 
 DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                                std::unique_ptr<ModuleIO> frontRight,
@@ -146,6 +147,25 @@ void DriveSubsystem::LockWheels() {
                  frc::SwerveModuleState{0_mps, frc::Rotation2d{-45_deg}},
                  frc::SwerveModuleState{0_mps, frc::Rotation2d{45_deg}}};
   SetModuleStates(lockStates);
+}
+
+units::ampere_t DriveSubsystem::GetElectricalCurrentDraw() const {
+  units::ampere_t totalCurrent{};
+  for (const auto &module : m_modules) {
+    totalCurrent += module->GetCurrentDraw();
+  }
+  return totalCurrent;
+}
+
+units::watt_t DriveSubsystem::GetElectricalPowerDraw() const {
+  units::watt_t totalPower{0.0};
+  for (const auto &module : m_modules) {
+    const auto &inputs = module->GetInputs();
+    totalPower +=
+        units::math::abs(inputs.driveCurrentDraw) * inputs.driveAppliedVolts +
+        units::math::abs(inputs.steerCurrentDraw) * inputs.steerAppliedVolts;
+  }
+  return totalPower;
 }
 
 std::pair<units::meters_per_second_t, units::radians_per_second_t>

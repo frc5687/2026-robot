@@ -70,6 +70,8 @@ void SimModuleIO::UpdateInputs(ModuleIOInputs &inputs, bool IsBatched) {
   inputs.steerAppliedVolts = m_steerAppliedVolts;
   inputs.driveCurrentDraw =
       units::ampere_t{std::abs(m_driveSim.GetCurrentDraw().value())};
+  inputs.steerCurrentDraw =
+      units::ampere_t{std::abs(m_steerSim.GetCurrentDraw().value())};
   inputs.driveTorque = m_driveSim.GetTorque();
   inputs.driveTemperature = 25_degC;
   inputs.steerTemperature = 25_degC;

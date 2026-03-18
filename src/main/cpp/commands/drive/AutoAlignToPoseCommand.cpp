@@ -124,7 +124,7 @@ void AutoAlignToPoseCommand::Execute() {
     m_driveSubsystem->Drive(robotSpeeds);
 
     Logger::Instance().Log("AutoAlignToPose/currentPose", currentPose);
-    Logger::Instance().Log("AutoAlignToPose/targetPose",m_targetPose);
+    Logger::Instance().Log("AutoAlignToPose/targetPose", m_targetPose);
     Logger::Instance().Log("AutoAlignToPose/driveErrorAbs", m_driveErrorAbs);
     Logger::Instance().Log("AutoAlignToPose/thetaErrorAbs", m_thetaErrorAbs);
     Logger::Instance().Log("AutoAlignToPose/ffScaler", ffScaler);

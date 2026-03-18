@@ -18,6 +18,7 @@ inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kMass * kRadius * kRadius;
 
 inline constexpr bool kLeaderInverted = false;
+inline constexpr bool kEnableFOC = false;
 inline constexpr bool kFollower1Opposed = true;
 inline constexpr bool kFollower2Opposed = true;
 inline constexpr bool kFollower3Opposed = false;
@@ -39,4 +40,3 @@ inline constexpr double kGearRatio = (42.0 / 9.0);
 } // namespace Feeder
 
 } // namespace Constants
-

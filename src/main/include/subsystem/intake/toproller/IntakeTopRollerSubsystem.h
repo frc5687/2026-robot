@@ -3,6 +3,8 @@
 #pragma once
 
 #include <units/angular_velocity.h>
+#include <units/current.h>
+#include <units/power.h>
 #include <units/voltage.h>
 
 #include <memory>
@@ -17,6 +19,8 @@ public:
   void SetVoltage(units::volt_t voltage);
   void SetVelocity(units::turns_per_second_t rps);
   void Stop();
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
 protected:
   void UpdateInputs() override;

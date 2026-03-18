@@ -57,11 +57,13 @@ private:
   static constexpr units::volt_t kFeedVoltage = 6_V;
   static constexpr units::volt_t kTopVoltage = 6_V;
   static constexpr units::volt_t kBottomVoltage = 6_V;
-  static constexpr units::second_t kShootHoldDuration = 1_s;
+  static constexpr units::second_t kDeployerRetractDelay = 1_s;
   static constexpr units::turns_per_second_t kFeederRPS = 60_tps;
   static constexpr double kDeadband = 0.1;
 
   bool m_shootingBurstActive{false};
+  bool m_shootSequenceActive{false};
+  bool m_hasRetractedDeployer{false};
   units::second_t m_shootBurstStartTime{0_s};
 
   double ApplyDeadband(double value, double deadband);

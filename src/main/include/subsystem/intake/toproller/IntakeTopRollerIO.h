@@ -17,6 +17,7 @@ struct IntakeTopRollerIOInputs {
   units::ampere_t supplyCurrent{0_A};
   units::ampere_t followerStatorCurrent{0_A};
   units::ampere_t followerSupplyCurrent{0_A};
+  units::volt_t followerAppliedVolts{0_V};
 
   units::second_t timestamp{0_s};
 };
