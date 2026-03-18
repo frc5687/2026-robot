@@ -25,7 +25,7 @@ inline constexpr units::meter_t kPinionRadius =
     0.5_in; // TODO: set to actual pinion pitch radius
 inline constexpr units::meter_t kPinionCircumference =
     kPinionRadius * 2.0 * std::numbers::pi_v<double>;
-inline constexpr double kMetersPerMotorRotation = 0.29 / 7.192;
+inline constexpr double kMetersPerMotorRotation = 0.283 / 7.192;
 // kPinionCircumference.value() / kGearRatio;
 
 inline constexpr units::meter_t kRetractedExtension = 0_m;
