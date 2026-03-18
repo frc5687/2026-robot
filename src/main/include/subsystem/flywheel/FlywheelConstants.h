@@ -28,6 +28,7 @@ inline constexpr units::kilogram_square_meter_t kInertia =
     75.0 * 1.0_lb * 1.0_in * 1.0_in;
 
 inline constexpr bool kLeaderInverted = true;
+inline constexpr bool kEnableFOC = false;
 
 inline constexpr bool kFollower1Opposed = false;
 inline constexpr bool kFollower2Opposed = true;
@@ -71,4 +72,3 @@ constexpr units::revolutions_per_minute_t kAnticipationBoostRPM{200_rpm};
 } // namespace Flywheel
 
 } // namespace Constants
-

@@ -71,8 +71,9 @@ void Module::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
 }
 
 units::ampere_t Module::GetCurrentDraw() const {
-  return units::ampere_t{
-      m_currentFilter.Calculate(m_inputs.driveCurrentDraw.value())};
+  const auto totalCurrent = units::math::abs(m_inputs.driveCurrentDraw) +
+                           units::math::abs(m_inputs.steerCurrentDraw);
+  return units::ampere_t{m_currentFilter.Calculate(totalCurrent.value())};
 }
 
 bool Module::IsConnected() const {
@@ -95,6 +96,8 @@ void Module::LogState() {
   logger.Log(m_logPrefix + "DesiredState", m_desiredState);
   logger.Log(m_logPrefix + "OptimizedState", m_optimizedState);
   logger.Log(m_logPrefix + "DriveCurrent", GetCurrentDraw().value());
+  logger.Log(m_logPrefix + "DriveMotorCurrent", m_inputs.driveCurrentDraw.value());
+  logger.Log(m_logPrefix + "SteerCurrent", m_inputs.steerCurrentDraw.value());
   logger.Log(m_logPrefix + "DriveTorque", GetDriveTorque().value());
   logger.Log(m_logPrefix + "DriveForce",
              (GetDriveTorque() / Constants::SwerveDrive::Module::kWheelRadius)

@@ -23,6 +23,7 @@ inline constexpr units::radian_t kMaxAngle =
     units::radian_t{2.0 * std::numbers::pi};
 
 inline constexpr bool kInverted = false;
+inline constexpr bool kEnableFOC = false;
 inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
 
@@ -56,4 +57,3 @@ inline constexpr double kAcceleration = 80.0;   // rps/s
 } // namespace Hood
 
 } // namespace Constants
-

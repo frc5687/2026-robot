@@ -22,6 +22,7 @@ CTREModuleIO::CTREModuleIO(const DeviceIDs &ids, const ModuleConfig &config)
       m_driveTempSignal(m_driveMotor.GetDeviceTemp()),
       m_steerPositionSignal(m_steerMotor.GetPosition()),
       m_steerVelocitySignal(m_steerMotor.GetVelocity()),
+      m_steerCurrentSignal(m_steerMotor.GetSupplyCurrent()),
       m_steerVoltageSignal(m_steerMotor.GetMotorVoltage()),
       m_steerTempSignal(m_steerMotor.GetDeviceTemp()),
       m_encoderPositionSignal(m_encoder.GetAbsolutePosition()),
@@ -31,7 +32,8 @@ CTREModuleIO::CTREModuleIO(const DeviceIDs &ids, const ModuleConfig &config)
       m_batchedSignals{
           &m_driveCurrentSignal, &m_driveTorqueCurrentSignal,
           &m_driveVoltageSignal, &m_driveTempSignal,
-          &m_steerVoltageSignal, &m_steerTempSignal,
+          &m_steerCurrentSignal, &m_steerVoltageSignal,
+          &m_steerTempSignal,
       } {
   ConfigureDevices();
   ConfigureSignalFrequencies();
@@ -119,6 +121,7 @@ void CTREModuleIO::UpdateInputs(ModuleIOInputs &inputs, bool isBatched) {
   inputs.steerPosition = steerTurnsWrapped;
 
   inputs.driveCurrentDraw = m_driveCurrentSignal.GetValue();
+  inputs.steerCurrentDraw = m_steerCurrentSignal.GetValue();
   inputs.driveTorque =
       kDriveMotor.Torque(m_driveTorqueCurrentSignal.GetValue());
   inputs.driveAppliedVolts = m_driveVoltageSignal.GetValue();
@@ -212,6 +215,7 @@ void CTREModuleIO::ConfigureSignalFrequencies() {
   m_driveVelocitySignal.SetUpdateFrequency(250_Hz);
   m_drivePositionSignal.SetUpdateFrequency(250_Hz);
   m_driveCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_steerCurrentSignal.SetUpdateFrequency(50_Hz);
   m_driveVoltageSignal.SetUpdateFrequency(50_Hz);
   m_driveTempSignal.SetUpdateFrequency(4_Hz);
 

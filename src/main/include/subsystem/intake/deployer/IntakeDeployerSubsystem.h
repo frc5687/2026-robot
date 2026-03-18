@@ -5,6 +5,8 @@
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
+#include <units/current.h>
+#include <units/power.h>
 #include <units/voltage.h>
 
 #include <memory>
@@ -29,6 +31,8 @@ public:
   units::meter_t GetPosition() const;
   bool IsDeployed() const;
   bool IsRetracted() const;
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
 protected:
   void UpdateInputs() override;

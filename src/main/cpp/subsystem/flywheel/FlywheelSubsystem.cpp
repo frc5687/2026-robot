@@ -3,8 +3,8 @@
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 
 #include <algorithm>
-#include <units/math.h>
 #include <frc/Timer.h>
+#include <units/math.h>
 
 #include <numbers>
 
@@ -95,6 +95,18 @@ void FlywheelSubsystem::UpdateInputs() {
 }
 
 void FlywheelSubsystem::LogTelemetry() {
+  const auto leaderPower =
+      units::math::abs(m_inputs.leaderSupplyCurrent) * m_inputs.leaderAppliedVolts;
+  const auto follower1Power =
+      units::math::abs(m_inputs.follower1SupplyCurrent) *
+      m_inputs.follower1AppliedVolts;
+  const auto follower2Power =
+      units::math::abs(m_inputs.follower2SupplyCurrent) *
+      m_inputs.follower2AppliedVolts;
+  const auto follower3Power =
+      units::math::abs(m_inputs.follower3SupplyCurrent) *
+      m_inputs.follower3AppliedVolts;
+
   Log("Leader/FilteredRPM", m_filteredRPM.value());
   Log("Leader/RawRPM",
       MotorRPSToMechanismRPM(m_inputs.leaderMotorVelocity).value());
@@ -106,14 +118,47 @@ void FlywheelSubsystem::LogTelemetry() {
   Log("Leader/AccelRadPerSecSq", m_state.acceleration.value());
 
   Log("Leader/AppliedVolts", m_inputs.leaderAppliedVolts.value());
-  Log("Leader/StatorCurrent", m_inputs.leaderStatorCurrent.value());
-  Log("Leader/SupplyCurrent", m_inputs.leaderSupplyCurrent.value());
+  Log("Current/Leader/Supply", m_inputs.leaderSupplyCurrent.value());
+  Log("Current/Leader/Stator", m_inputs.leaderStatorCurrent.value());
+  Log("Voltage/Leader/Applied", m_inputs.leaderAppliedVolts.value());
+  Log("Power/Leader", leaderPower.value());
 
-  Log("Follower1/SupplyCurrent", m_inputs.follower1SupplyCurrent.value());
-  Log("Follower2/SupplyCurrent", m_inputs.follower2SupplyCurrent.value());
-  Log("Follower3/SupplyCurrent", m_inputs.follower3SupplyCurrent.value());
+  Log("Current/Follower1/Supply", m_inputs.follower1SupplyCurrent.value());
+  Log("Current/Follower2/Supply", m_inputs.follower2SupplyCurrent.value());
+  Log("Current/Follower3/Supply", m_inputs.follower3SupplyCurrent.value());
+  Log("Voltage/Follower1/Applied", m_inputs.follower1AppliedVolts.value());
+  Log("Voltage/Follower2/Applied", m_inputs.follower2AppliedVolts.value());
+  Log("Voltage/Follower3/Applied", m_inputs.follower3AppliedVolts.value());
+  Log("Power/Follower1", follower1Power.value());
+  Log("Power/Follower2", follower2Power.value());
+  Log("Power/Follower3", follower3Power.value());
+
+  Log("Current/Total/Supply", GetElectricalCurrentDraw().value());
+  Log("Power/Total", (leaderPower + follower1Power + follower2Power +
+                      follower3Power)
+                          .value());
 
   Log("AtSetpoint", AtSetpoint());
+}
+
+units::ampere_t FlywheelSubsystem::GetElectricalCurrentDraw() const {
+  return m_inputs.leaderSupplyCurrent + m_inputs.follower1SupplyCurrent +
+         m_inputs.follower2SupplyCurrent + m_inputs.follower3SupplyCurrent;
+}
+
+units::watt_t FlywheelSubsystem::GetElectricalPowerDraw() const {
+  const auto leaderPower = units::math::abs(m_inputs.leaderSupplyCurrent) *
+                          m_inputs.leaderAppliedVolts;
+  const auto follower1Power =
+      units::math::abs(m_inputs.follower1SupplyCurrent) *
+      m_inputs.follower1AppliedVolts;
+  const auto follower2Power =
+      units::math::abs(m_inputs.follower2SupplyCurrent) *
+      m_inputs.follower2AppliedVolts;
+  const auto follower3Power =
+      units::math::abs(m_inputs.follower3SupplyCurrent) *
+      m_inputs.follower3AppliedVolts;
+  return leaderPower + follower1Power + follower2Power + follower3Power;
 }
 
 void FlywheelSubsystem::UpdateFlywheelState(

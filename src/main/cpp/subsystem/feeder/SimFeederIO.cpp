@@ -56,6 +56,9 @@ void SimFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.appliedVolts = voltage;
   inputs.statorCurrent = m_motorSim.GetCurrentDraw();
   inputs.supplyCurrent = m_motorSim.GetCurrentDraw();
+  inputs.follower1AppliedVolts = voltage;
+  inputs.follower2AppliedVolts = voltage;
+  inputs.follower3AppliedVolts = voltage;
   inputs.follower1StatorCurrent = m_motorSim.GetCurrentDraw();
   inputs.follower1SupplyCurrent = m_motorSim.GetCurrentDraw();
   inputs.follower2StatorCurrent = m_motorSim.GetCurrentDraw();

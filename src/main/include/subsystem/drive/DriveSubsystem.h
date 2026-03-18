@@ -11,6 +11,7 @@
 #include <pathplanner/lib/config/RobotConfig.h>
 #include <units/acceleration.h>
 #include <units/current.h>
+#include <units/power.h>
 #include <units/temperature.h>
 
 #include <array>
@@ -43,6 +44,8 @@ public:
 
   void Stop();
   void LockWheels();
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
   frc::Pose2d GetPose() const;
   frc::Rotation2d GetHeading() const;

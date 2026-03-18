@@ -8,7 +8,9 @@
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
+#include <units/current.h>
 #include <units/length.h>
+#include <units/power.h>
 #include <units/voltage.h>
 
 #include <memory>
@@ -166,11 +168,57 @@ RobotContainer::RobotContainer()
   ConfigureAutoCommands();
   ConfigureBindings();
 
-  m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+      m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
+
+  m_batteryLogger.RegisterSubsystem(
+      "Drive", [this] { return m_drive.GetElectricalCurrentDraw(); },
+      [this] { return m_drive.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "Flywheel", [this] { return m_flywheel.GetElectricalCurrentDraw(); },
+      [this] { return m_flywheel.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "Hood", [this] { return m_hood.GetElectricalCurrentDraw(); },
+      [this] { return m_hood.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "Feeder", [this] { return m_feeder.GetElectricalCurrentDraw(); },
+      [this] { return m_feeder.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "IntakeDeployer",
+      [this] { return m_intakeDeployer.GetElectricalCurrentDraw(); },
+      [this] { return m_intakeDeployer.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "IntakeTopRoller",
+      [this] { return m_intakeTopRoller.GetElectricalCurrentDraw(); },
+      [this] { return m_intakeTopRoller.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "IntakeBottomRoller",
+      [this] { return m_intakeBottomRoller.GetElectricalCurrentDraw(); },
+      [this] { return m_intakeBottomRoller.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterAggregateGroup("Intake", [this] {
+      return m_intakeTopRoller.GetElectricalCurrentDraw() +
+             m_intakeBottomRoller.GetElectricalCurrentDraw() +
+             m_intakeDeployer.GetElectricalCurrentDraw();
+    },
+    [this] {
+      return m_intakeTopRoller.GetElectricalPowerDraw() +
+             m_intakeBottomRoller.GetElectricalPowerDraw() +
+             m_intakeDeployer.GetElectricalPowerDraw();
+    });
+  m_batteryLogger.RegisterAggregateGroup("Shooter", [this] {
+      return m_flywheel.GetElectricalCurrentDraw() +
+             m_hood.GetElectricalCurrentDraw();
+    },
+    [this] {
+      return m_flywheel.GetElectricalPowerDraw() +
+             m_hood.GetElectricalPowerDraw();
+    });
 }
 
-void RobotContainer::Periodic() { m_robotViz.Update(); }
+void RobotContainer::Periodic() {
+  m_batteryLogger.Update();
+  m_robotViz.Update();
+}
 
 void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(

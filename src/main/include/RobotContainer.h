@@ -20,6 +20,7 @@
 #include "subsystem/lights/LightsSubsystem.h"
 #include "subsystem/shooter/ShooterSystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
+#include "utils/SubsystemBatteryLogger.h"
 #include "viz/RobotViz.h"
 
 class RobotContainer {
@@ -50,4 +51,5 @@ private:
   frc2::CommandPS5Controller m_operator{1};
   // frc2::CommandPS5Controller m_debugger{3};
   frc::SendableChooser<frc2::Command *> m_autoChooser;
+  SubsystemBatteryLogger m_batteryLogger;
 };

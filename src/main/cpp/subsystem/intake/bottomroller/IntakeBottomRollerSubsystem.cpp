@@ -2,6 +2,8 @@
 
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 
+#include <units/math.h>
+
 IntakeBottomRollerSubsystem::IntakeBottomRollerSubsystem(
     std::unique_ptr<IntakeBottomRollerIO> io)
     : LoggedSubsystem("IntakeBottomRoller"), m_io(std::move(io)) {}
@@ -24,10 +26,13 @@ void IntakeBottomRollerSubsystem::LogTelemetry() {
   Log("Velocity", m_inputs.motorVelocity.value());
   Log("Position", m_inputs.motorPosition.value());
   Log("AppliedVolts", m_inputs.appliedVolts.value());
-  Log("StatorCurrent", m_inputs.statorCurrent.value());
-  Log("SupplyCurrent", m_inputs.supplyCurrent.value());
-  Log("Current/Stator", m_inputs.statorCurrent.value());
-  Log("Current/Supply", m_inputs.supplyCurrent.value());
-  Log("Current/Leader/Stator", m_inputs.statorCurrent.value());
   Log("Current/Leader/Supply", m_inputs.supplyCurrent.value());
+}
+
+units::ampere_t IntakeBottomRollerSubsystem::GetElectricalCurrentDraw() const {
+  return m_inputs.supplyCurrent;
+}
+
+units::watt_t IntakeBottomRollerSubsystem::GetElectricalPowerDraw() const {
+  return units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
 }
