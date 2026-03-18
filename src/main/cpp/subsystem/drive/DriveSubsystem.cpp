@@ -18,7 +18,6 @@
 #include "pathplanner/lib/path/PathPlannerPath.h"
 #include "subsystem/vision/FieldConstants.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
-#include "subsystem/drive/PathConstants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"
@@ -375,14 +374,7 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
     std::optional<frc::DriverStation::Alliance> alliance =
     frc::DriverStation::GetAlliance();
     if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
-        middleToTopBlue->flipPath();
-        topToMiddleBlue->flipPath();
-        middleToBottomBlue->flipPath();
-        bottomToMiddleBlue->flipPath();
-        middleToTopRed->flipPath();
-        topToMiddleRed->flipPath();
-        middleToBottomRed->flipPath();
-        bottomToMiddleRed->flipPath();
+      isRed = true;
     }
 
     auto goalPath = middleToTopBlue;
@@ -399,11 +391,11 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
   else if (bottomHalf && x > L * 0.75)                {currentCase=8; goalPath = bottomToMiddleRed;}
   else{currentCase=9; }
   
-  if(currentCase < 9 && isRed){
-    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
+  if(currentCase < 9 && isRed && goalPath != nullptr){
+    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
   }
-  else if(currentCase < 9 && !isRed){
-    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
+  else if(currentCase < 9 && !isRed && goalPath != nullptr){
+    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
   }else{
     followGoalPath = pathplanner::AutoBuilder::pathfindToPose(currentPose, constraints, 1.0_mps);
   }
