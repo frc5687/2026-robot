@@ -30,7 +30,7 @@ inline constexpr double kMetersPerMotorRotation = 0.283 / 7.192;
 
 inline constexpr units::meter_t kRetractedExtension = 0_m;
 inline constexpr units::meter_t kMidExtension = 0.18_m;
-inline constexpr units::meter_t kDeployedExtension = 0.305_m; // 0.29
+inline constexpr units::meter_t kDeployedExtension = 0.292_m; // 0.29
 inline constexpr units::meter_t kExtensionTolerance = 0.005_m;
 
 inline constexpr units::turn_t kForwardSoftLimit = 10.5_tr; // TODO

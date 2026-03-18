@@ -17,7 +17,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.5
+                  "waitTime": 3.9
                 }
               },
               {
@@ -42,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 3.8
                 }
               },
               {
@@ -52,6 +52,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost3Lazy"
           }
         }
       ]
