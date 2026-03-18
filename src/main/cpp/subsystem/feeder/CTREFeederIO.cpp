@@ -128,7 +128,7 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
 }
 
 void CTREFeederIO::SetVoltage(units::volt_t voltage) {
-  m_leader.SetControl(m_voltageRequest.WithOutput(voltage));
+  m_leader.SetControl(m_voltageRequest.WithOutput(voltage).WithEnableFOC(kEnableFOC));
 }
 
 void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {

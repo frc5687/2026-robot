@@ -217,24 +217,35 @@ void AlignToEdgeCommand::Execute() {
 
     int direction = EdgeDirection(currentPose, Edge.foundEdge, Edge.useXAxis);
 
+
+    double flipInput = 1;
+
+    std::optional<frc::DriverStation::Alliance> alliance =
+      frc::DriverStation::GetAlliance();
+
+    if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
+        flipInput = -1;
+    }
     units::angle::degree_t angleOffset = 70_deg;
+
     switch(direction){
         case 1: //east
-            angleToFaceWall = 180_deg - yInput*angleOffset;
+            angleToFaceWall = 180_deg + yInput*angleOffset * flipInput;
             break;
         
         case 2: //west
-            angleToFaceWall = 0_deg + yInput*angleOffset;
+            angleToFaceWall = 0_deg - yInput*angleOffset * flipInput;
             break;
 
         case 3: //north
-            angleToFaceWall = 270_deg + xInput*angleOffset;
+            angleToFaceWall = 270_deg - xInput*angleOffset * flipInput;
             break;
 
         case 4: //south
-            angleToFaceWall = 90_deg - xInput*angleOffset;
+            angleToFaceWall = 90_deg + xInput*angleOffset * flipInput;
             break;
     }
+
 
     Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(), angleToFaceWall};
 
@@ -257,14 +268,6 @@ void AlignToEdgeCommand::Execute() {
     frc::Rotation2d awayFromTargetAngle =
         (currentPose.Translation() - Edge.targetPose.Translation()).Angle();
 
-    double flipInput = 1;
-
-    std::optional<frc::DriverStation::Alliance> alliance =
-      frc::DriverStation::GetAlliance();
-
-    if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
-        flipInput = -1;
-    }
 
     if (m_enableSlewRate) {
         xInput = flipInput*m_xLimiter.Calculate(xInput);

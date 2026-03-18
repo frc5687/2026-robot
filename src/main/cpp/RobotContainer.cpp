@@ -307,11 +307,15 @@ void RobotContainer::ConfigureBindings() {
           .AlongWith(Run([this] { m_intakeDeployer.RetractMid(); },
                          {&m_intakeDeployer})));
 
-  m_driver.Circle().WhileTrue(
+  m_driver.L1().WhileTrue(
           AlignToEdgeCommand(&m_drive,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
-                              .ToPtr());
+                              .ToPtr().AlongWith(
+        IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
+                              &m_intakeBottomRoller)
+                    .ToPtr()
+        ));
 
     /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 

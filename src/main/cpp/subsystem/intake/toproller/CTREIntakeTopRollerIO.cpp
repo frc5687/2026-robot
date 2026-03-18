@@ -93,7 +93,7 @@ void CTREIntakeTopRollerIO::UpdateInputs(IntakeTopRollerIOInputs &inputs) {
 }
 
 void CTREIntakeTopRollerIO::SetVoltage(units::volt_t voltage) {
-  m_leader.SetControl(m_voltageRequest.WithOutput(voltage));
+  m_leader.SetControl(m_voltageRequest.WithOutput(voltage).WithEnableFOC(kEnableFOC));
 }
 
 void CTREIntakeTopRollerIO::SetVelocity(units::turns_per_second_t rps) {
