@@ -134,7 +134,7 @@
     {
       "name": "Trench",
       "minWaypointRelativePos": 0.6644159351789438,
-      "maxWaypointRelativePos": 2.2325581395349228,
+      "maxWaypointRelativePos": 1.3126266036462035,
       "constraints": {
         "maxVelocity": 2.5,
         "maxAcceleration": 2.0,

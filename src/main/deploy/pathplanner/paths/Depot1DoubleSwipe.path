@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 8.425263908701854,
-        "y": 7.211440798858773
+        "x": 8.153552068473608,
+        "y": 7.250256776034237
       },
       "prevControl": {
-        "x": 8.0519437943523,
-        "y": 7.584760913208329
+        "x": 7.780231954124053,
+        "y": 7.623576890383792
       },
       "nextControl": {
-        "x": 8.903994293865907,
-        "y": 6.732710413694722
+        "x": 8.63228245363766,
+        "y": 6.771526390870186
       },
       "isLocked": false,
       "linkedName": null
@@ -93,10 +93,10 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 2.7008777852802384,
-      "maxWaypointRelativePos": 3.889264010803505,
+      "minWaypointRelativePos": 3.100607697501663,
+      "maxWaypointRelativePos": 3.8244429439567793,
       "constraints": {
-        "maxVelocity": 1.5,
+        "maxVelocity": 2.25,
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,

@@ -32,11 +32,11 @@ inline constexpr frc::Transform3d kRobotToTurretRight{
     frc::Rotation3d{0_rad, 0_rad, 0_rad}};
 
 inline constexpr frc::Transform2d kRobotToIntakeLeft{
-    frc::Translation2d{units::meter_t{-0.68}, units::meter_t{0.47}},
+    frc::Translation2d{units::meter_t{-0.63}, units::meter_t{0.42}},
     frc::Rotation2d{0_rad}};
 
 inline constexpr frc::Transform2d kRobotToIntakeRight{
-    frc::Translation2d{units::meter_t{-0.68}, units::meter_t{-0.47}},
+    frc::Translation2d{units::meter_t{-0.63}, units::meter_t{-0.42}},
     frc::Rotation2d{0_rad}};
 
 } // namespace Geometry
