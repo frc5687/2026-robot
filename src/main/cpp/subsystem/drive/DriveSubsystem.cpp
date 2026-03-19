@@ -395,7 +395,7 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
     followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
   }
   else if(currentCase < 9 && !isRed && goalPath != nullptr){
-    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
+    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
   }else{
     followGoalPath = pathplanner::AutoBuilder::pathfindToPose(currentPose, constraints, 1.0_mps);
   }

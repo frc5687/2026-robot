@@ -171,12 +171,12 @@ inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting =
 
 namespace PID {
 namespace Translation {
-inline constexpr double kP = 2.5;
+inline constexpr double kP = 3.5;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace Translation
 namespace Rotation {
-inline constexpr double kP = 4;
+inline constexpr double kP = 6.5;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace Rotation
