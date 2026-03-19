@@ -378,7 +378,7 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
     }
 
     auto goalPath = middleToTopBlue;
-    auto followGoalPath = pathplanner::AutoBuilder::pathfindToPose(currentPose, constraints, 1.0_mps);
+    frc2::CommandPtr followGoalPath = Run([](){});
   int currentCase;
 
   if      (topHalf    && x > L * 0.25 && x < L * 0.50){currentCase=1; goalPath = middleToTopBlue;}
@@ -397,7 +397,7 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
   else if(currentCase < 9 && !isRed && goalPath != nullptr){
     followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
   }else{
-    followGoalPath = pathplanner::AutoBuilder::pathfindToPose(currentPose, constraints, 1.0_mps);
+    followGoalPath = Run([](){});
   }
 
   Logger::Instance().Log("DriveThroughTrench/currentCase", currentCase);
