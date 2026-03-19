@@ -30,6 +30,7 @@
 #include "subsystem/drive/PoseEstimator.h"
 #include "units/angle.h"
 #include "units/velocity.h"
+#include "wpi/FunctionExtras.h"
 #include "wpi/raw_ostream.h"
 #include <units/math.h>
 
@@ -390,19 +391,18 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
   else if (bottomHalf && x > L * 0.50 && x < L * 0.75){currentCase=7; goalPath = middleToBottomRed;}
   else if (bottomHalf && x > L * 0.75)                {currentCase=8; goalPath = bottomToMiddleRed;}
   else{currentCase=9; }
-  
-  if(currentCase < 9 && isRed && goalPath != nullptr){
-    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
-  }
-  else if(currentCase < 9 && !isRed && goalPath != nullptr){
-    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
-  }else{
-    followGoalPath = Run([](){});
-  }
 
-  Logger::Instance().Log("DriveThroughTrench/currentCase", currentCase);
-
-  return followGoalPath;
+    Logger::Instance().Log("DriveThroughTrench/currentCase", currentCase);
+    if(currentCase < 9 && isRed && goalPath != nullptr){
+      followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
+    }
+    else if(currentCase < 9 && !isRed && goalPath != nullptr){
+      followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
+    }
+    else{
+      return Run([](){});
+    }
+    return followGoalPath;
 }
 
 
