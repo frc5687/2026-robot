@@ -27,7 +27,10 @@ m_candle.GetConfigurator().Apply(m_ledConfigs);
 
 void CTRELightsIO::UpdateInputs(LightsIOInputs &inputs) {
     m_debouncedBlink = m_debouncer.Calculate(m_blinkOn);
-    m_alliance = frc::DriverStation::GetAlliance().value();
+    auto alliance = frc::DriverStation::GetAlliance();
+    if (alliance.has_value()) {
+        m_alliance = alliance.value();
+    }
     m_debouncedBlink ? SetBlinkColor(GetActiveColor()) : SetSolidColor(GetActiveColor());
 }
 
