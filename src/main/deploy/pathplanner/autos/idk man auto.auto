@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost 1A"
+            "pathName": "idk man"
           }
         },
         {
@@ -17,9 +17,15 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Outpost 2A"
+            "pathName": "Copy of idk man"
           }
         },
         {
