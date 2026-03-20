@@ -18,9 +18,10 @@
 #include "frc/geometry/Transform2d.h"
 #include "units/angle.h"
 #include "units/length.h"
+#include "units/velocity.h"
 #include "utils/Logger.h"
 
-static constexpr double kMaxTranslationalAccel = 2.0; // m/s²
+static constexpr double kMaxTranslationalAccel = 3.6; // m/s²
 static constexpr double kMaxAngularAccel = 20.0;       // rad/s²
 
 
@@ -45,7 +46,7 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
               units::meters_per_second_squared_t{kMaxTranslationalAccel *
                                                  constraintFactor}}),
       m_thetaController(
-          Constants::SwerveDrive::PID::Rotation::kP,
+          4.0,
           0.0,
           0.0,
           frc::TrapezoidProfile<units::radians>::Constraints{
@@ -227,31 +228,64 @@ void AlignToEdgeCommand::Execute() {
     if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
         flipInput = -1;
     }
+    double clampedYInput = yInput;
+    double clampedXInput = xInput;
+    bool clampedInputUsed = false;
+
+    if(yInput<0){
+        clampedYInput = -1;
+        clampedInputUsed = true;
+    }
+    else if(yInput>0){
+        clampedYInput = 1;
+        clampedInputUsed = true;
+    }
+
+    if(xInput<0){
+        clampedXInput = -1;
+        clampedInputUsed = true;
+    }
+    else if(xInput>0){
+        clampedXInput = 1;
+        clampedInputUsed = true;
+    }
+
     units::angle::degree_t angleOffset = 70_deg;
     double wallOffsetWhenNormal = 0;
 
     switch(direction){
         case 1: //east
-            angleToFaceWall = 180_deg + yInput*angleOffset * flipInput;
-            wallOffsetWhenNormal = 1 - abs(yInput);
+            angleToFaceWall = 180_deg + clampedYInput*angleOffset * flipInput;
             break;
         
         case 2: //west
-            angleToFaceWall = 0_deg - yInput*angleOffset * flipInput;
-            wallOffsetWhenNormal = 1 - abs(yInput);
+            angleToFaceWall = 0_deg - clampedYInput*angleOffset * flipInput;
             break;
 
         case 3: //north
-            angleToFaceWall = 270_deg - xInput*angleOffset * flipInput;
-            wallOffsetWhenNormal = 1 - abs(xInput);
+            angleToFaceWall = 270_deg - clampedXInput*angleOffset * flipInput;
             break;
 
         case 4: //south
-            angleToFaceWall = 90_deg + xInput*angleOffset * flipInput;
-            wallOffsetWhenNormal = 1 - abs(xInput);
+            angleToFaceWall = 90_deg + clampedXInput*angleOffset * flipInput;
             break;
     }
-    Logger::Instance().Log("AlignToEdge/beforeWallTransformTargetPose", Edge.targetPose);
+    frc::Pose2d tempPose = {Edge.targetPose.X(), Edge.targetPose.Y(), angleToFaceWall};
+
+    units::angle::degree_t angleTolerance = 5_deg;
+    units::angle::degree_t angleWayOffTolerance = 160_deg;
+    units::angle::degree_t angleDifference = currentPose.Rotation().RelativeTo(tempPose.Rotation()).Degrees();
+    bool isAngleValid = angleTolerance > units::math::abs(angleDifference);
+    bool isAngleWayOff = angleWayOffTolerance < units::math::abs(angleDifference);
+
+    Logger::Instance().Log("AlignToEdge/beforeWallTransformTargetPose", tempPose);
+
+    if(!isAngleValid || !clampedInputUsed){
+        wallOffsetWhenNormal = 1;
+    }else{
+        wallOffsetWhenNormal = 0;
+    }
+
     frc::Transform2d kRobotToIntakeWallSpacing{
     frc::Translation2d{units::meter_t{.15*wallOffsetWhenNormal}, units::meter_t{0}},
     frc::Rotation2d{0_rad}};
@@ -261,12 +295,6 @@ void AlignToEdgeCommand::Execute() {
 
     units::angle::degree_t normalizedAngle = (currentPose.Rotation().Degrees().value() < 0) ? currentPose.Rotation().Degrees() + 360_deg : currentPose.Rotation().Degrees();
     units::angle::degree_t normalizedDesiredAngle = (Edge.targetPose.Rotation().Degrees().value() < 0) ? Edge.targetPose.Rotation().Degrees() + 360_deg : Edge.targetPose.Rotation().Degrees();
-
-    units::angle::degree_t angleTolerance = 30_deg;
-    units::angle::degree_t angleWayOffTolerance = 160_deg;
-    units::angle::degree_t angleDifference = currentPose.Rotation().RelativeTo(Edge.targetPose.Rotation()).Degrees();
-    bool isAngleValid = angleTolerance > units::math::abs(angleDifference);
-    bool isAngleWayOff = angleWayOffTolerance < units::math::abs(angleDifference);
 
     double currentDistance =
     currentPose.Translation().Distance(Edge.targetPose.Translation()).value();
@@ -286,7 +314,7 @@ void AlignToEdgeCommand::Execute() {
         yInput = flipInput*m_yLimiter.Calculate(yInput);
     }
 
-    double inputVelocityLimit = .5;
+    double inputVelocityLimit = .65;
     auto xVelocity = xInput * Constants::SwerveDrive::kMaxLinearSpeed * inputVelocityLimit;
     auto yVelocity = yInput * Constants::SwerveDrive::kMaxLinearSpeed * inputVelocityLimit;
 
@@ -329,7 +357,7 @@ void AlignToEdgeCommand::Execute() {
         vx, yVelocity, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
     }
-    else if (isAngleValid){
+    else if (!Edge.useXAxis && isAngleValid){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
         xVelocity, vy, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());
@@ -338,7 +366,12 @@ void AlignToEdgeCommand::Execute() {
         xVelocity, yVelocity, units::radians_per_second_t{0},
         currentPose.Rotation());
     }
-    else if (!isAngleValid && !isAngleWayOff){
+    else if (Edge.useXAxis && !isAngleValid && !isAngleWayOff){
+        robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+        vx, vy, units::radians_per_second_t{thetaVelocity},
+        currentPose.Rotation());
+    }
+    else if (!Edge.useXAxis && !isAngleValid && !isAngleWayOff){
         robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
         vx, vy, units::radians_per_second_t{thetaVelocity},
         currentPose.Rotation());

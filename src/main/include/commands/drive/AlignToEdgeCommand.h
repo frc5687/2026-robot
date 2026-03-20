@@ -22,7 +22,7 @@ public:
     AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
                         std::function<double()> throttle,
                         std::function<double()> strafe,
-                        double constraintFactor = .6,
+                        double constraintFactor = .8,
                         bool enableSlewRate = true);
 
     void Initialize() override;
