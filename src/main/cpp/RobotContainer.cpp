@@ -294,20 +294,20 @@ void RobotContainer::ConfigureBindings() {
   m_driver.POVLeft().OnFalse(RunOnce(
       [this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
 
-  m_driver.Cross().WhileTrue(
-      frc2::cmd::Defer(
-          [this]() {
-            return m_drive.GetTrenchPathCommand(
-                RobotState::Instance()
-                    .GetDriveState(frc::Timer::GetFPGATimestamp())
-                    .estimatedPose);
-          },
-          {&m_drive})
-          .AlongWith(Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}))
-          .AlongWith(Run([this] { m_intakeDeployer.RetractMid(); },
-                         {&m_intakeDeployer})));
+  // m_driver.Cross().WhileTrue(
+  //     frc2::cmd::Defer(
+  //         [this]() {
+  //           return m_drive.GetTrenchPathCommand(
+  //               RobotState::Instance()
+  //                   .GetDriveState(frc::Timer::GetFPGATimestamp())
+  //                   .estimatedPose);
+  //         },
+  //         {&m_drive})
+  //         .AlongWith(Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}))
+  //         .AlongWith(Run([this] { m_intakeDeployer.RetractMid(); },
+  //                        {&m_intakeDeployer})));
 
-  m_driver.Circle().WhileTrue(
+  m_driver.L1().WhileTrue(
           AlignToEdgeCommand(&m_drive,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })

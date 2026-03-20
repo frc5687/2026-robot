@@ -9,53 +9,32 @@
       "prevControl": null,
       "nextControl": {
         "x": 2.175891583452211,
-        "y": 1.4796148359486463
+        "y": 1.4796148359486465
       },
       "isLocked": false,
       "linkedName": "Outpost2-3Lazy"
     },
     {
       "anchor": {
-        "x": 3.9873038516405135,
-        "y": 0.6515406562054205
+        "x": 4.543666191155491,
+        "y": 0.5868473609129818
       },
       "prevControl": {
-        "x": 2.4994361006742363,
-        "y": 0.6713788928849685
-      },
-      "nextControl": {
-        "x": 4.957703281027103,
-        "y": 0.6386019971469341
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 5.656390870185448,
-        "y": 0.6903566333808839
-      },
-      "prevControl": {
-        "x": 5.242353780313837,
-        "y": 0.6515406562054182
+        "x": 2.4605420827389435,
+        "y": 0.7809272467903
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 1.322621564482026,
+      "waypointRelativePos": 0.65,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -75,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -164.29136217098412
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,

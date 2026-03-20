@@ -25,12 +25,14 @@ inline constexpr units::meter_t kPinionRadius =
     0.5_in; // TODO: set to actual pinion pitch radius
 inline constexpr units::meter_t kPinionCircumference =
     kPinionRadius * 2.0 * std::numbers::pi_v<double>;
-inline constexpr double kMetersPerMotorRotation = 0.283 / 7.192;
 // kPinionCircumference.value() / kGearRatio;
 
 inline constexpr units::meter_t kRetractedExtension = 0_m;
 inline constexpr units::meter_t kMidExtension = 0.18_m;
-inline constexpr units::meter_t kDeployedExtension = 0.292_m; // 0.29
+inline constexpr units::meter_t kDeployedExtension = 0.298_m; // 0.29
+inline constexpr units::turn_t kDeployedMotorRotations = 6.97_tr;
+inline constexpr double kMetersPerMotorRotation = 0.3 / kDeployedMotorRotations.value();
+
 inline constexpr units::meter_t kExtensionTolerance = 0.005_m;
 
 inline constexpr units::turn_t kForwardSoftLimit = 10.5_tr; // TODO
@@ -63,7 +65,7 @@ inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(2);
 inline constexpr double kGearRatio = 2.0 / 1.0;
 inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
 
-inline constexpr bool kLeaderInverted = true;
+inline constexpr bool kLeaderInverted = false;
 inline constexpr bool kFollowerOpposed = true;
 inline constexpr bool kEnableFOC = false;
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
