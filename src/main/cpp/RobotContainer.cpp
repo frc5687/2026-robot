@@ -254,8 +254,8 @@ void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
   using frc2::cmd::RunOnce;
 
-  m_flywheel.SetDefaultCommand(
-      ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
+  //m_flywheel.SetDefaultCommand(
+  //    ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_drive.SetDefaultCommand(DriveMaintainingHeadingCommand(
       &m_drive, [this] { return -m_driver.GetLeftY(); },
@@ -318,6 +318,10 @@ void RobotContainer::ConfigureBindings() {
         ));
 
     /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
+
+  m_operator.R2().OnTrue(
+    ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr()
+  );
 
   m_operator.R1().OnTrue(
       RunOnce([] {

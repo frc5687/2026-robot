@@ -24,10 +24,10 @@ void ShotCalculatedSpinUpCommand::Execute() {
     return;
   }
 
-  if (!MatchTracker::Instance().ShouldPrespinForAlliance(*alliance)) {
-    m_flywheel->SetRPM(0_rpm);
-    return;
-  }
+ // if (!MatchTracker::Instance().ShouldPrespinForAlliance(*alliance)) {
+ //   m_flywheel->SetRPM(0_rpm);
+ //   return;
+ // }
 
   auto solution =
       m_shotCalculator.Calculate(frc::Timer::GetFPGATimestamp(),

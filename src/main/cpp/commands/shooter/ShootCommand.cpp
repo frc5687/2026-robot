@@ -103,7 +103,7 @@ void ShootCommand::Execute() {
 }
 
 void ShootCommand::End(bool interrupted) {
-  //m_flywheel->SetRPM(0_rpm);
+  m_flywheel->SetRPM(0_rpm);
   m_hood->SetPosition(0_rad);
   m_topRoller->Stop();
   m_bottomRoller->Stop();
