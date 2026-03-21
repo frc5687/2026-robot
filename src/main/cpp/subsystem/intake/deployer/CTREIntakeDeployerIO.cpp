@@ -25,7 +25,7 @@ CTREIntakeDeployerIO::CTREIntakeDeployerIO(const CANDevice &motor)
 }
 
 void CTREIntakeDeployerIO::ConfigureDevices() {
-  m_config.MotorOutput.NeutralMode = signals::NeutralModeValue::Brake;
+  m_config.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
   m_config.MotorOutput.Inverted =
       kInverted ? signals::InvertedValue::Clockwise_Positive
                 : signals::InvertedValue::CounterClockwise_Positive;
