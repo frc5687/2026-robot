@@ -251,7 +251,7 @@ void AlignToEdgeCommand::Execute() {
     }
 
     units::angle::degree_t angleOffset = 70_deg;
-    double wallOffsetWhenNormal = 0;
+    double wallOffsetWhenTurning = 0;
 
     switch(direction){
         case 1: //east
@@ -280,21 +280,20 @@ void AlignToEdgeCommand::Execute() {
 
     Logger::Instance().Log("AlignToEdge/beforeWallTransformTargetPose", tempPose);
 
-    if(!isAngleValid || !clampedInputUsed){
-        wallOffsetWhenNormal = 1;
-    }else{
-        wallOffsetWhenNormal = 0;
-    }
-
     frc::Transform2d kRobotToIntakeWallSpacing{
-    frc::Translation2d{units::meter_t{.15*wallOffsetWhenNormal}, units::meter_t{0}},
+    frc::Translation2d{units::meter_t{.15*wallOffsetWhenTurning}, units::meter_t{0}},
     frc::Rotation2d{0_rad}};
-    
-    Edge.targetPose = Edge.targetPose.TransformBy(kRobotToIntakeWallSpacing);
-    Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(), angleToFaceWall};
 
-    units::angle::degree_t normalizedAngle = (currentPose.Rotation().Degrees().value() < 0) ? currentPose.Rotation().Degrees() + 360_deg : currentPose.Rotation().Degrees();
-    units::angle::degree_t normalizedDesiredAngle = (Edge.targetPose.Rotation().Degrees().value() < 0) ? Edge.targetPose.Rotation().Degrees() + 360_deg : Edge.targetPose.Rotation().Degrees();
+    if(!isAngleValid){
+        Edge.targetPose = Edge.targetPose.TransformBy(kRobotToIntakeWallSpacing);
+    }
+    
+    if(clampedInputUsed){
+      Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(), angleToFaceWall};
+    }
+    else{
+        Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(), currentPose.Rotation()};
+    }
 
     double currentDistance =
     currentPose.Translation().Distance(Edge.targetPose.Translation()).value();
@@ -378,10 +377,7 @@ void AlignToEdgeCommand::Execute() {
     }
 
     
-    Logger::Instance().Log("AlignToEdge/wallOffsetWhenNormal", wallOffsetWhenNormal);
     Logger::Instance().Log("AlignToEdge/angleDifference", angleDifference.value());
-    Logger::Instance().Log("AlignToEdge/normalizedAngle", normalizedAngle.value());
-    Logger::Instance().Log("AlignToEdge/normalizedDesiredAngle", normalizedDesiredAngle.value());
     Logger::Instance().Log("AlignToEdge/isAngleValid", isAngleValid);
     Logger::Instance().Log("AlignToEdge/poseOnField", poseOnField);
     Logger::Instance().Log("AlignToEdge/leftIntakeDistanceFromRedHub", leftIntakeDistanceFromRedHub);
