@@ -165,7 +165,7 @@ RobotContainer::RobotContainer()
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
       m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
       m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
-      m_shooter{m_flywheel, m_hood}, m_lights{MakeLightsIO()} {
+      m_shooter{m_flywheel, m_hood} {
   ConfigureAutoCommands();
   ConfigureBindings();
 
