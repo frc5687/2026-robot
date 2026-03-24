@@ -2,6 +2,7 @@
 
 #include "subsystem/drive/DriveSubsystem.h"
 
+#include <cmath>
 #include <cstddef>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
@@ -405,6 +406,11 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
     return followGoalPath;
 }
 
+frc::Rotation2d DriveSubsystem::GetIntakeRotationTarget(){
+  auto robotSpeed = GetFieldRelativeSpeeds();  
+  double angle =  atan2(robotSpeed.vy.value(), robotSpeed.vx.value());
+  return frc::Rotation2d(units::angle::radian_t{angle});
+}
 
 // This is handled by the odometry thread
 void DriveSubsystem::UpdateInputs() {

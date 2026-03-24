@@ -17,6 +17,7 @@
 #include <array>
 #include <memory>
 
+#include "frc/geometry/Rotation2d.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
 #include "GyroIO.h"
 #include "OdometryThread.h"
@@ -96,6 +97,8 @@ public:
   }
 
   frc2::CommandPtr GetTrenchPathCommand(frc::Pose2d currentPose);
+
+  frc::Rotation2d GetIntakeRotationTarget();
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;
