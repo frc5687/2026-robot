@@ -36,7 +36,7 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
         m_strafeSupplier(strafe),
         m_enableSlewRate(enableSlewRate),
         m_driveController(
-          Constants::SwerveDrive::PID::Translation::kP,
+          3.0,
           0.0,
           0.0,
           frc::TrapezoidProfile<units::meters>::Constraints{
@@ -46,7 +46,7 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem* driveSubsystem,
               units::meters_per_second_squared_t{kMaxTranslationalAccel *
                                                  constraintFactor}}),
       m_thetaController(
-          4.0,
+          5.0,
           0.0,
           0.0,
           frc::TrapezoidProfile<units::radians>::Constraints{
@@ -272,7 +272,7 @@ void AlignToEdgeCommand::Execute() {
     }
     frc::Pose2d tempPose = {Edge.targetPose.X(), Edge.targetPose.Y(), angleToFaceWall};
 
-    units::angle::degree_t angleTolerance = 5_deg;
+    units::angle::degree_t angleTolerance = 10_deg;
     units::angle::degree_t angleWayOffTolerance = 160_deg;
     units::angle::degree_t angleDifference = currentPose.Rotation().RelativeTo(tempPose.Rotation()).Degrees();
     bool isAngleValid = angleTolerance > units::math::abs(angleDifference);
