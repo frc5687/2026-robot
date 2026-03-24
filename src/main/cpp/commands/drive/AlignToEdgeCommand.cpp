@@ -313,7 +313,7 @@ void AlignToEdgeCommand::Execute() {
         yInput = flipInput*m_yLimiter.Calculate(yInput);
     }
 
-    double inputVelocityLimit = .65;
+    double inputVelocityLimit = .85;
     auto xVelocity = xInput * Constants::SwerveDrive::kMaxLinearSpeed * inputVelocityLimit;
     auto yVelocity = yInput * Constants::SwerveDrive::kMaxLinearSpeed * inputVelocityLimit;
 

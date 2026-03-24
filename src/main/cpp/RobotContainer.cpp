@@ -19,6 +19,7 @@
 #include "RobotState.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/drive/AlignToEdgeCommand.h"
+#include "commands/drive/SlowModeCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
 #include "commands/intake/StopIntakeCommand.h"
@@ -294,18 +295,22 @@ void RobotContainer::ConfigureBindings() {
   m_driver.POVLeft().OnFalse(RunOnce(
       [this] { m_intakeDeployer.ZeroPosition(); }, {&m_intakeDeployer}));
 
-  // m_driver.Cross().WhileTrue(
-  //     frc2::cmd::Defer(
-  //         [this]() {
-  //           return m_drive.GetTrenchPathCommand(
-  //               RobotState::Instance()
-  //                   .GetDriveState(frc::Timer::GetFPGATimestamp())
-  //                   .estimatedPose);
-  //         },
-  //         {&m_drive})
-  //         .AlongWith(Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}))
-  //         .AlongWith(Run([this] { m_intakeDeployer.RetractMid(); },
-  //                        {&m_intakeDeployer})));
+  m_driver.Cross().WhileTrue(
+      frc2::cmd::Defer(
+          [this]() {
+            return m_drive.GetTrenchPathCommand(
+                RobotState::Instance()
+                    .GetDriveState(frc::Timer::GetFPGATimestamp())
+                    .estimatedPose);
+          },
+          {&m_drive})
+          .AlongWith(Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}))
+          .AlongWith(Run([this] { m_intakeDeployer.RetractMid(); },
+                         {&m_intakeDeployer})));
+
+  m_driver.Square().ToggleOnTrue(
+          SlowModeCommand(&m_drive)
+                              .ToPtr());
 
   m_driver.L1().WhileTrue(
           AlignToEdgeCommand(&m_drive,

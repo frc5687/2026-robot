@@ -18,7 +18,7 @@ IntakeCommand::IntakeCommand(
 }
 
 void IntakeCommand::Initialize() { 
-  m_drive->SetMaxSpeeds(3.0_mps);
+  //m_drive->SetMaxSpeeds(3.0_mps);
   m_deployer->Deploy(); }
 
 void IntakeCommand::Execute() {
