@@ -25,6 +25,7 @@ public:
                                  std::function<double()> strafe,
                                  std::function<double()> turn,
                                  std::function<bool()> reset,
+                                 std::function<bool()> intakeFlag,
                                  bool enableSlewRate = true);
 
   void Initialize() override;
@@ -44,6 +45,7 @@ private:
   std::optional<frc::Rotation2d> m_headingSetpoint;
   double m_joystickLastTouched;
   std::function<double()> m_headingFlag;
+  std::function<double()> m_intakeFlag;
 
   // We are currently just limiting the joysticks, not the MPS of robot
   // If we want to later, change to MPS and limit velocity not joysticks input

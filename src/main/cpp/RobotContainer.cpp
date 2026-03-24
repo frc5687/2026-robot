@@ -262,7 +262,8 @@ void RobotContainer::ConfigureBindings() {
       &m_drive, [this] { return -m_driver.GetLeftY(); },
       [this] { return -m_driver.GetLeftX(); },
       [this] { return -m_driver.GetRightX() * 0.5; },
-      [this] { return m_driver.Options().Get(); }, true));
+      [this] { return m_driver.Options().Get(); },
+      [this] { return m_driver.Circle().Get(); }, true));
 
   m_driver.POVUp().WhileTrue(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));

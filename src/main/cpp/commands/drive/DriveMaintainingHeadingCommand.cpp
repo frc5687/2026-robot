@@ -19,11 +19,12 @@
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
     DriveSubsystem *driveSubsystem, std::function<double()> throttle,
     std::function<double()> strafe, std::function<double()> turn,
-    std::function<bool()> headingFlag, bool enableSlewRate)
+    std::function<bool()> headingFlag, std::function<bool()> intakeFlag, bool enableSlewRate)
     : m_driveSubsystem(driveSubsystem), m_throttleSupplier(throttle),
       m_strafeSupplier(strafe), m_turnSupplier(turn),
       m_enableSlewRate(enableSlewRate), m_joystickLastTouched(-1.0),
-      m_headingFlag(headingFlag) {
+      m_headingFlag(headingFlag),
+      m_intakeFlag(intakeFlag) {
   AddRequirements(driveSubsystem);
   SetName("Drive Maintaining Heading");
 
@@ -92,7 +93,7 @@ void DriveMaintainingHeadingCommand::Execute() {
 
   units::radians_per_second_t rotVelocity;
 
-  if (m_headingFlag) {
+  if (m_headingFlag()) {
     m_headingSetpoint = std::nullopt;
     m_headingController.Reset();
   }
@@ -107,8 +108,12 @@ void DriveMaintainingHeadingCommand::Execute() {
       m_headingController.Reset();
     }
 
+    if(m_intakeFlag()){
+      m_headingSetpoint = m_driveSubsystem->GetIntakeRotationTarget().RotateBy(180_deg);
+    }
     rotVelocity =
         CalculateHeadingCorrection(heading, m_headingSetpoint.value());
+    
   }
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});
