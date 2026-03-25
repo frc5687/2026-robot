@@ -169,7 +169,7 @@ tasks.register("setupCompileCommands") {
         } else if (OperatingSystem.current().isMacOsX()) {
             filePath = "build/TargetedCompileCommands/osxuniversalrelease"
         } else if (OperatingSystem.current().isLinux()) {
-            // Todo:
+            filePath = "build/TargetedCompileCommands/linuxx86-64debug"
         }
 
         copy {
