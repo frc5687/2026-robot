@@ -18,7 +18,7 @@ class AutoAlignToPoseCommand
     : public frc2::CommandHelper<frc2::Command, AutoAlignToPoseCommand> {
 public:
     AutoAlignToPoseCommand(DriveSubsystem* driveSubsystem,
-                           frc::Pose2d targetPose,
+                           std::function<frc::Pose2d()> targetPoseFunction,
                            double constraintFactor = 1.0);
 
     void Initialize() override;
@@ -28,7 +28,7 @@ public:
 
 private:
     DriveSubsystem* m_driveSubsystem;
-    frc::Pose2d m_targetPose;
+    std::function<frc::Pose2d()> m_targetPoseFunction;
 
     frc::ProfiledPIDController<units::meters> m_driveController;
     frc::ProfiledPIDController<units::radians> m_thetaController;

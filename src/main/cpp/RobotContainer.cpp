@@ -18,6 +18,7 @@
 #include "HardwareMap.h"
 #include "RobotState.h"
 #include "commands/drive/AlignToEdgeCommand.h"
+#include "commands/drive/DriveThroughTrenchCommand.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/drive/SlowModeCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
@@ -303,10 +304,7 @@ void RobotContainer::ConfigureBindings() {
   m_driver.Cross().WhileTrue(
       frc2::cmd::Defer(
           [this]() {
-            return m_drive.GetTrenchPathCommand(
-                RobotState::Instance()
-                    .GetDriveState(frc::Timer::GetFPGATimestamp())
-                    .estimatedPose);
+              return DriveThroughTrenchCommand::Create(&m_drive, 0.3_m);
           },
           {&m_drive})
           .AlongWith(Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}))
