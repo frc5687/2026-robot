@@ -17,9 +17,9 @@ static constexpr double kMaxTranslationalAccel = 3.0; // m/s²
 static constexpr double kMaxAngularAccel = 10.0;      // rad/s²
 
 AutoAlignToPoseCommand::AutoAlignToPoseCommand(DriveSubsystem *driveSubsystem,
-                                               frc::Pose2d targetPose,
+                                               std::function<frc::Pose2d()> targetPoseFunction,
                                                double constraintFactor)
-    : m_driveSubsystem(driveSubsystem), m_targetPose(targetPose),
+    : m_driveSubsystem(driveSubsystem), m_targetPoseFunction(targetPoseFunction),
       m_driveController(
           Constants::SwerveDrive::PID::Translation::kP, 0.0, 0.0,
           frc::TrapezoidProfile<units::meters>::Constraints{
@@ -48,9 +48,10 @@ AutoAlignToPoseCommand::AutoAlignToPoseCommand(DriveSubsystem *driveSubsystem,
 
 void AutoAlignToPoseCommand::Initialize() {
   frc::Pose2d currentPose = m_driveSubsystem->GetPose();
+  frc::Pose2d targetPose = m_targetPoseFunction();
 
   double currentDistance =
-      currentPose.Translation().Distance(m_targetPose.Translation()).value();
+      currentPose.Translation().Distance(targetPose.Translation()).value();
 
   frc::ChassisSpeeds fieldSpeeds = m_driveSubsystem->GetFieldRelativeSpeeds();
 
@@ -58,7 +59,7 @@ void AutoAlignToPoseCommand::Initialize() {
                                    units::meter_t{fieldSpeeds.vy.value()}};
 
   frc::Rotation2d toTargetAngle =
-      (m_targetPose.Translation() - currentPose.Translation()).Angle();
+      (targetPose.Translation() - currentPose.Translation()).Angle();
 
   frc::Translation2d rotatedVelocity = fieldVelocity.RotateBy(-toTargetAngle);
   double initialVelocity = std::min(0.0, -rotatedVelocity.X().value());
@@ -72,9 +73,10 @@ void AutoAlignToPoseCommand::Initialize() {
 
 void AutoAlignToPoseCommand::Execute() {
   frc::Pose2d currentPose = m_driveSubsystem->GetPose();
+  frc::Pose2d targetPose = m_targetPoseFunction();
 
   double currentDistance =
-      currentPose.Translation().Distance(m_targetPose.Translation()).value();
+      currentPose.Translation().Distance(targetPose.Translation()).value();
   m_driveErrorAbs = currentDistance;
 
   double ffScaler = std::clamp((currentDistance - kFfMinRadius.value()) /
@@ -92,17 +94,17 @@ void AutoAlignToPoseCommand::Execute() {
   double thetaVelocity =
       m_thetaController.GetSetpoint().velocity.value() * ffScaler +
       m_thetaController.Calculate(currentPose.Rotation().Radians(),
-                                  m_targetPose.Rotation().Radians());
+                                  targetPose.Rotation().Radians());
 
   m_thetaErrorAbs = std::abs(
-      (currentPose.Rotation() - m_targetPose.Rotation()).Radians().value());
+      (currentPose.Rotation() - targetPose.Rotation()).Radians().value());
 
   if (m_thetaErrorAbs < m_thetaController.GetPositionTolerance()) {
     thetaVelocity = 0.0;
   }
 
   frc::Rotation2d awayFromTargetAngle =
-      (currentPose.Translation() - m_targetPose.Translation()).Angle();
+      (currentPose.Translation() - targetPose.Translation()).Angle();
 
   units::meters_per_second_t vx{driveVelocityScalar *
                                 awayFromTargetAngle.Cos()};
@@ -116,7 +118,7 @@ void AutoAlignToPoseCommand::Execute() {
   m_driveSubsystem->Drive(robotSpeeds);
 
   Logger::Instance().Log("AutoAlignToPose/currentPose", currentPose);
-  Logger::Instance().Log("AutoAlignToPose/targetPose", m_targetPose);
+  Logger::Instance().Log("AutoAlignToPose/targetPose", targetPose);
   Logger::Instance().Log("AutoAlignToPose/driveErrorAbs", m_driveErrorAbs);
   Logger::Instance().Log("AutoAlignToPose/thetaErrorAbs", m_thetaErrorAbs);
   Logger::Instance().Log("AutoAlignToPose/ffScaler", ffScaler);
