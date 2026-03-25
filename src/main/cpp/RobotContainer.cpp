@@ -16,7 +16,6 @@
 #include <memory>
 
 #include "HardwareMap.h"
-#include "RobotState.h"
 #include "commands/drive/AlignToEdgeCommand.h"
 #include "commands/drive/DriveThroughTrenchCommand.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
@@ -27,8 +26,6 @@
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/ShotCalculatedSpinUpCommand.h"
-#include "commands/shooter/SimpleShootCommand.h"
-#include "frc/Timer.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/SimGyroIO.h"
