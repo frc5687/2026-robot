@@ -13,6 +13,7 @@
 #include "Constants.h"
 #include "frc/DriverStation.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
+#include "units/angle.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
 
@@ -109,8 +110,8 @@ void DriveMaintainingHeadingCommand::Execute() {
     }
 
     if (m_intakeFlag()) {
-      m_headingSetpoint =
-          m_driveSubsystem->GetIntakeRotationTarget().RotateBy(180_deg);
+      auto angle = atan2(strafe, throttle);
+      m_headingSetpoint = frc::Rotation2d(units::radian_t{angle});
     }
     rotVelocity =
         CalculateHeadingCorrection(heading, m_headingSetpoint.value());
