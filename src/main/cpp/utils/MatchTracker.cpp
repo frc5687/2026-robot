@@ -53,7 +53,8 @@ void MatchTracker::UpdateAllianceState() {
 }
 
 units::second_t MatchTracker::GetMatchElapsed() const {
-  if (m_forcedMode == MatchPhase::Disabled || m_forcedMode == MatchPhase::Test) {
+  if (m_forcedMode == MatchPhase::Disabled ||
+      m_forcedMode == MatchPhase::Test) {
     return m_matchOffset;
   }
 
@@ -69,30 +70,38 @@ units::second_t MatchTracker::GetPhaseRemaining() const {
   const auto elapsed = GetMatchElapsed();
 
   switch (GetMatchPhase()) {
-    case MatchPhase::Autonomous:
-      return units::math::max(0_s, kAutoDuration - elapsed);
+  case MatchPhase::Autonomous:
+    return units::math::max(0_s, kAutoDuration - elapsed);
 
-    case MatchPhase::Transition:
-      return units::math::max(0_s, (kAutoDuration + kTransitionDuration) - elapsed);
+  case MatchPhase::Transition:
+    return units::math::max(0_s,
+                            (kAutoDuration + kTransitionDuration) - elapsed);
 
-    case MatchPhase::Shift1:
-      return units::math::max(0_s, (kAutoDuration + kTransitionDuration+ kShiftDuration) - elapsed);
+  case MatchPhase::Shift1:
+    return units::math::max(
+        0_s, (kAutoDuration + kTransitionDuration + kShiftDuration) - elapsed);
 
-    case MatchPhase::Shift2:
-      return units::math::max(0_s, (kAutoDuration + kTransitionDuration+ 2 * kShiftDuration) - elapsed);
+  case MatchPhase::Shift2:
+    return units::math::max(
+        0_s,
+        (kAutoDuration + kTransitionDuration + 2 * kShiftDuration) - elapsed);
 
-    case MatchPhase::Shift3:
-      return units::math::max(0_s, (kAutoDuration+ kTransitionDuration + 3 * kShiftDuration) - elapsed);
+  case MatchPhase::Shift3:
+    return units::math::max(
+        0_s,
+        (kAutoDuration + kTransitionDuration + 3 * kShiftDuration) - elapsed);
 
-    case MatchPhase::Shift4:
-      return units::math::max(0_s, (kAutoDuration + kTransitionDuration+ 4 * kShiftDuration) - elapsed);
+  case MatchPhase::Shift4:
+    return units::math::max(
+        0_s,
+        (kAutoDuration + kTransitionDuration + 4 * kShiftDuration) - elapsed);
 
-    case MatchPhase::Endgame:
-      return units::math::max(0_s, kTotalMatchDuration - elapsed);
+  case MatchPhase::Endgame:
+    return units::math::max(0_s, kTotalMatchDuration - elapsed);
 
-    case MatchPhase::Disabled:
-    case MatchPhase::Test:
-      return 0_s;
+  case MatchPhase::Disabled:
+  case MatchPhase::Test:
+    return 0_s;
   }
 
   return 0_s;
@@ -111,12 +120,10 @@ MatchTracker::GetCurrentAlliance() const {
   return m_currentAlliance;
 }
 
-void MatchTracker::SetAutoWinnerFromCurrentAlliance(
-    bool currentAllianceWon) {
-  auto alliance =
-      m_currentAlliance.has_value()
-          ? m_currentAlliance
-          : frc::DriverStation::GetAlliance();
+void MatchTracker::SetAutoWinnerFromCurrentAlliance(bool currentAllianceWon) {
+  auto alliance = m_currentAlliance.has_value()
+                      ? m_currentAlliance
+                      : frc::DriverStation::GetAlliance();
 
   if (!alliance.has_value()) {
     return;
@@ -128,15 +135,17 @@ void MatchTracker::SetAutoWinnerFromCurrentAlliance(
   }
 
   m_autoWinner = (*alliance == frc::DriverStation::Alliance::kRed
-                     ? frc::DriverStation::Alliance::kBlue
-                     : frc::DriverStation::Alliance::kRed);
+                      ? frc::DriverStation::Alliance::kBlue
+                      : frc::DriverStation::Alliance::kRed);
 }
 
-std::optional<frc::DriverStation::Alliance> MatchTracker::GetAutoWinner() const {
+std::optional<frc::DriverStation::Alliance>
+MatchTracker::GetAutoWinner() const {
   return m_autoWinner;
 }
 
-std::optional<frc::DriverStation::Alliance> MatchTracker::GetActiveAlliance() const {
+std::optional<frc::DriverStation::Alliance>
+MatchTracker::GetActiveAlliance() const {
   return GetActiveAllianceForPhase(GetMatchPhase());
 }
 
@@ -161,7 +170,8 @@ std::string MatchTracker::GetCurrentShootingAlliance() const {
   return "None";
 }
 
-bool MatchTracker::CanAllianceScore(frc::DriverStation::Alliance alliance) const {
+bool MatchTracker::CanAllianceScore(
+    frc::DriverStation::Alliance alliance) const {
   auto activeAlliance = GetActiveAlliance();
 
   switch (GetMatchPhase()) {
@@ -191,8 +201,8 @@ bool MatchTracker::ShouldPrespinForAlliance(
   auto futureElapsed =
       units::math::min(GetMatchElapsed() + leadTime, kTotalMatchDuration);
   MatchPhase futurePhase = GetMatchPhaseAt(futureElapsed);
-  if (futurePhase == MatchPhase::Endgame || futurePhase == MatchPhase::Disabled ||
-      futurePhase == MatchPhase::Test) {
+  if (futurePhase == MatchPhase::Endgame ||
+      futurePhase == MatchPhase::Disabled || futurePhase == MatchPhase::Test) {
     return false;
   }
 
@@ -202,7 +212,8 @@ bool MatchTracker::ShouldPrespinForAlliance(
 
 MatchTracker::MatchPhase
 MatchTracker::GetMatchPhaseAt(units::second_t elapsed) const {
-  if (m_forcedMode == MatchPhase::Disabled || m_forcedMode == MatchPhase::Test) {
+  if (m_forcedMode == MatchPhase::Disabled ||
+      m_forcedMode == MatchPhase::Test) {
     return m_forcedMode;
   }
 
@@ -331,25 +342,27 @@ void MatchTracker::LogState(units::second_t timestamp) {
                          GetPhaseRemaining().value());
   Logger::Instance().Log("MatchTracker/MatchPhase",
                          MatchPhaseToString(GetMatchPhase()));
-  Logger::Instance().Log(
-      "MatchTracker/CurrentAlliance",
-      currentAlliance.has_value() ? MatchAllianceToString(*currentAlliance) : "None");
+  Logger::Instance().Log("MatchTracker/CurrentAlliance",
+                         currentAlliance.has_value()
+                             ? MatchAllianceToString(*currentAlliance)
+                             : "None");
   Logger::Instance().Log(
       "MatchTracker/AutoWinner",
       autoWinner.has_value() ? MatchAllianceToString(*autoWinner) : "None");
-  Logger::Instance().Log(
-      "MatchTracker/ActiveAlliance",
-      activeAlliance.has_value() ? MatchAllianceToString(*activeAlliance) : "None");
+  Logger::Instance().Log("MatchTracker/ActiveAlliance",
+                         activeAlliance.has_value()
+                             ? MatchAllianceToString(*activeAlliance)
+                             : "None");
   Logger::Instance().Log("MatchTracker/CurrentShootingAlliance",
                          GetCurrentShootingAlliance());
   Logger::Instance().Log("MatchTracker/ScoringEnabled/Red",
                          CanAllianceScore(frc::DriverStation::Alliance::kRed));
   Logger::Instance().Log("MatchTracker/ScoringEnabled/Blue",
                          CanAllianceScore(frc::DriverStation::Alliance::kBlue));
-  Logger::Instance().Log("MatchTracker/PrespinEnabled/Red",
-                         ShouldPrespinForAlliance(
-                             frc::DriverStation::Alliance::kRed));
-  Logger::Instance().Log("MatchTracker/PrespinEnabled/Blue",
-                         ShouldPrespinForAlliance(
-                             frc::DriverStation::Alliance::kBlue));
+  Logger::Instance().Log(
+      "MatchTracker/PrespinEnabled/Red",
+      ShouldPrespinForAlliance(frc::DriverStation::Alliance::kRed));
+  Logger::Instance().Log(
+      "MatchTracker/PrespinEnabled/Blue",
+      ShouldPrespinForAlliance(frc::DriverStation::Alliance::kBlue));
 }

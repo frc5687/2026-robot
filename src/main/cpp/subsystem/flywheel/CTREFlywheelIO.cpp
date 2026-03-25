@@ -31,13 +31,12 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leader,
       m_follower3VoltageSignal(m_follower3.GetMotorVoltage()),
 
       m_signals{
-        &m_leaderVelocitySignal, &m_leaderPositionSignal,
-        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
-        &m_leaderSupplyCurrentSignal,
-        &m_follower1SupplyCurrentSignal,
-        &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal,
-        &m_follower1VoltageSignal, &m_follower2VoltageSignal,
-        &m_follower3VoltageSignal} {
+          &m_leaderVelocitySignal,         &m_leaderPositionSignal,
+          &m_leaderVoltageSignal,          &m_leaderStatorCurrentSignal,
+          &m_leaderSupplyCurrentSignal,    &m_follower1SupplyCurrentSignal,
+          &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal,
+          &m_follower1VoltageSignal,       &m_follower2VoltageSignal,
+          &m_follower3VoltageSignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }

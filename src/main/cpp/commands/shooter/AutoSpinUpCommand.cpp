@@ -5,22 +5,16 @@
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
 
-
 AutoSpinUpCommand::AutoSpinUpCommand(FlywheelSubsystem *flywheel)
-    : m_flywheel(flywheel){
+    : m_flywheel(flywheel) {
   AddRequirements(flywheel);
   SetName("AutoSpinUpCommand");
 }
 
-void AutoSpinUpCommand::Initialize() {
- 
-}
+void AutoSpinUpCommand::Initialize() {}
 
-void AutoSpinUpCommand::Execute() {
-  m_flywheel->SetRPM(1100_rpm);
-}
+void AutoSpinUpCommand::Execute() { m_flywheel->SetRPM(1100_rpm); }
 
-void AutoSpinUpCommand::End(bool interrupted) {
-}
+void AutoSpinUpCommand::End(bool interrupted) {}
 
 bool AutoSpinUpCommand::IsFinished() { return false; }

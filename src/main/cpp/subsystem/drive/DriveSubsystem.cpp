@@ -2,38 +2,38 @@
 
 #include "subsystem/drive/DriveSubsystem.h"
 
-#include <cmath>
-#include <cstddef>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <units/math.h>
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
 #include <memory>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
-#include "frc/Errors.h"
-#include "frc2/command/CommandPtr.h"
-#include "pathplanner/lib/path/PathPlannerPath.h"
-#include "subsystem/vision/FieldConstants.h"
-#include "subsystem/drive/SwerveDriveConstants.h"
 #include "RobotState.h"
 #include "frc/DriverStation.h"
+#include "frc/Errors.h"
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "frc/kinematics/ChassisSpeeds.h"
 #include "frc/kinematics/SwerveModuleState.h"
+#include "frc2/command/CommandPtr.h"
 #include "pathplanner/lib/config/ModuleConfig.h"
 #include "pathplanner/lib/config/RobotConfig.h"
+#include "pathplanner/lib/path/PathPlannerPath.h"
 #include "subsystem/drive/PoseEstimator.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "units/angle.h"
 #include "units/velocity.h"
 #include "wpi/FunctionExtras.h"
 #include "wpi/raw_ostream.h"
-#include <units/math.h>
 
 DriveSubsystem::DriveSubsystem(std::unique_ptr<ModuleIO> frontLeft,
                                std::unique_ptr<ModuleIO> frontRight,
@@ -315,7 +315,7 @@ bool DriveSubsystem::IsAtPose(const frc::Pose2d &pose,
 }
 
 void DriveSubsystem::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                                     units::ampere_t steerSupplyCurrentLimit) {
+                                      units::ampere_t steerSupplyCurrentLimit) {
   if (m_hasCurrentLimitConfig &&
       m_lastDriveSupplyCurrentLimit == driveSupplyCurrentLimit &&
       m_lastSteerSupplyCurrentLimit == steerSupplyCurrentLimit) {
@@ -331,20 +331,21 @@ void DriveSubsystem::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
 }
 
 void DriveSubsystem::SetAutoCurrentLimits() {
-  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
-                   Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
+  SetCurrentLimits(
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
+      Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
 }
 
 void DriveSubsystem::SetTeleopCurrentLimits() {
-  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitTeleop,
-                   Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitTeleop);
+  SetCurrentLimits(
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitTeleop,
+      Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitTeleop);
 }
 
-frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
+frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose) {
 
   pathplanner::PathConstraints constraints = pathplanner::PathConstraints(
-    3.6_mps, 4.0_mps_sq,
-    540_deg_per_s, 720_deg_per_s_sq);
+      3.6_mps, 4.0_mps_sq, 540_deg_per_s, 720_deg_per_s_sq);
 
   frc::Translation2d esttranslation = currentPose.Translation();
   // double currentDegrees = currentPose.Rotation().Degrees().value();
@@ -357,58 +358,92 @@ frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose){
   //   ? frc::Rotation2d(0_deg)
   //   : frc::Rotation2d(180_deg);
 
-  bool topHalf    = esttranslation.Y() > Constants::Field::kFieldWidth / 2.0;
+  bool topHalf = esttranslation.Y() > Constants::Field::kFieldWidth / 2.0;
   bool bottomHalf = !topHalf;
   double x = esttranslation.X().value();
   double L = Constants::Field::kFieldLength.value();
   bool isRed = false;
 
-  std::shared_ptr<pathplanner::PathPlannerPath> middleToTopBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue");
-  std::shared_ptr<pathplanner::PathPlannerPath> topToMiddleBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle");
-  std::shared_ptr<pathplanner::PathPlannerPath> middleToBottomBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")->mirrorPath();
-  std::shared_ptr<pathplanner::PathPlannerPath> bottomToMiddleBlue = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")->mirrorPath();
-  std::shared_ptr<pathplanner::PathPlannerPath> middleToTopRed = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")->mirrorPath()->flipPath();
-  std::shared_ptr<pathplanner::PathPlannerPath> topToMiddleRed = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")->mirrorPath()->flipPath();
-  std::shared_ptr<pathplanner::PathPlannerPath> middleToBottomRed = pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")->flipPath();
-  std::shared_ptr<pathplanner::PathPlannerPath> bottomToMiddleRed = pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToTopBlue =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue");
+  std::shared_ptr<pathplanner::PathPlannerPath> topToMiddleBlue =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle");
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToBottomBlue =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")
+          ->mirrorPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> bottomToMiddleBlue =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")
+          ->mirrorPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToTopRed =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")
+          ->mirrorPath()
+          ->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> topToMiddleRed =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")
+          ->mirrorPath()
+          ->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> middleToBottomRed =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Middle To Top Blue")
+          ->flipPath();
+  std::shared_ptr<pathplanner::PathPlannerPath> bottomToMiddleRed =
+      pathplanner::PathPlannerPath::fromPathFile("Trench Top Blue To Middle")
+          ->flipPath();
 
+  std::optional<frc::DriverStation::Alliance> alliance =
+      frc::DriverStation::GetAlliance();
+  if (alliance.has_value() &&
+      alliance.value() == frc::DriverStation::Alliance::kRed) {
+    isRed = true;
+  }
 
-    std::optional<frc::DriverStation::Alliance> alliance =
-    frc::DriverStation::GetAlliance();
-    if (alliance.has_value() && alliance.value() == frc::DriverStation::Alliance::kRed) {
-      isRed = true;
-    }
-
-    auto goalPath = middleToTopBlue;
-    frc2::CommandPtr followGoalPath = Run([](){});
+  auto goalPath = middleToTopBlue;
+  frc2::CommandPtr followGoalPath = Run([]() {});
   int currentCase;
 
-  if      (topHalf    && x > L * 0.25 && x < L * 0.50){currentCase=1; goalPath = middleToTopBlue;}
-  else if (topHalf    &&                  x < L * 0.25){currentCase=2; goalPath = topToMiddleBlue;}
-  else if (bottomHalf && x > L * 0.25 && x < L * 0.50){currentCase=3; goalPath = middleToBottomBlue;}
-  else if (bottomHalf &&                  x < L * 0.25){currentCase=4; goalPath = bottomToMiddleBlue;}
-  else if (topHalf    && x > L * 0.50 && x < L * 0.75){currentCase=5; goalPath = middleToTopRed;}
-  else if (topHalf    && x > L * 0.75)                {currentCase=6; goalPath = topToMiddleRed;}
-  else if (bottomHalf && x > L * 0.50 && x < L * 0.75){currentCase=7; goalPath = middleToBottomRed;}
-  else if (bottomHalf && x > L * 0.75)                {currentCase=8; goalPath = bottomToMiddleRed;}
-  else{currentCase=9; }
+  if (topHalf && x > L * 0.25 && x < L * 0.50) {
+    currentCase = 1;
+    goalPath = middleToTopBlue;
+  } else if (topHalf && x < L * 0.25) {
+    currentCase = 2;
+    goalPath = topToMiddleBlue;
+  } else if (bottomHalf && x > L * 0.25 && x < L * 0.50) {
+    currentCase = 3;
+    goalPath = middleToBottomBlue;
+  } else if (bottomHalf && x < L * 0.25) {
+    currentCase = 4;
+    goalPath = bottomToMiddleBlue;
+  } else if (topHalf && x > L * 0.50 && x < L * 0.75) {
+    currentCase = 5;
+    goalPath = middleToTopRed;
+  } else if (topHalf && x > L * 0.75) {
+    currentCase = 6;
+    goalPath = topToMiddleRed;
+  } else if (bottomHalf && x > L * 0.50 && x < L * 0.75) {
+    currentCase = 7;
+    goalPath = middleToBottomRed;
+  } else if (bottomHalf && x > L * 0.75) {
+    currentCase = 8;
+    goalPath = bottomToMiddleRed;
+  } else {
+    currentCase = 9;
+  }
 
-    Logger::Instance().Log("DriveThroughTrench/currentCase", currentCase);
-    if(currentCase < 9 && isRed && goalPath != nullptr){
-      followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath->flipPath(),constraints);
-    }
-    else if(currentCase < 9 && !isRed && goalPath != nullptr){
-      followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath,constraints);
-    }
-    else{
-      return Run([](){});
-    }
-    return followGoalPath;
+  Logger::Instance().Log("DriveThroughTrench/currentCase", currentCase);
+  if (currentCase < 9 && isRed && goalPath != nullptr) {
+    followGoalPath = pathplanner::AutoBuilder::pathfindThenFollowPath(
+        goalPath->flipPath(), constraints);
+  } else if (currentCase < 9 && !isRed && goalPath != nullptr) {
+    followGoalPath =
+        pathplanner::AutoBuilder::pathfindThenFollowPath(goalPath, constraints);
+  } else {
+    return Run([]() {});
+  }
+  return followGoalPath;
 }
 
-frc::Rotation2d DriveSubsystem::GetIntakeRotationTarget(){
-  auto robotSpeed = GetFieldRelativeSpeeds();  
-  double angle =  atan2(robotSpeed.vy.value(), robotSpeed.vx.value());
+frc::Rotation2d DriveSubsystem::GetIntakeRotationTarget() {
+  auto robotSpeed = GetFieldRelativeSpeeds();
+  double angle = std::atan2(robotSpeed.vy.value(), robotSpeed.vx.value());
   return frc::Rotation2d(units::angle::radian_t{angle});
 }
 

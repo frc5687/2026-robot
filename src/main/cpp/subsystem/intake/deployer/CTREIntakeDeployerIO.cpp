@@ -82,9 +82,9 @@ void CTREIntakeDeployerIO::UpdateInputs(IntakeDeployerIOInputs &inputs) {
 }
 
 void CTREIntakeDeployerIO::SetPosition(units::turn_t position) {
-  m_motor.SetControl(m_positionRequest.WithPosition(position)
-                         .WithSlot(0)
-                         .WithEnableFOC(kEnableFOC));
+  m_motor.SetControl(
+      m_positionRequest.WithPosition(position).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
 }
 
 void CTREIntakeDeployerIO::SetVoltage(units::volt_t voltage) {

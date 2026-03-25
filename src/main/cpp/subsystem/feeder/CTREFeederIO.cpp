@@ -29,11 +29,11 @@ CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower1,
       m_follower1VoltageSignal(m_follower1.GetMotorVoltage()),
       m_follower2VoltageSignal(m_follower2.GetMotorVoltage()),
       m_follower3VoltageSignal(m_follower3.GetMotorVoltage()),
-      m_criticalSignals{&m_positionSignal, &m_velocitySignal, &m_voltageSignal,
-                        &m_statorSignal, &m_follower1StatorSignal,
-                        &m_follower2StatorSignal, &m_follower3StatorSignal,
-                        &m_follower1VoltageSignal, &m_follower2VoltageSignal,
-                        &m_follower3VoltageSignal},
+      m_criticalSignals{&m_positionSignal,         &m_velocitySignal,
+                        &m_voltageSignal,          &m_statorSignal,
+                        &m_follower1StatorSignal,  &m_follower2StatorSignal,
+                        &m_follower3StatorSignal,  &m_follower1VoltageSignal,
+                        &m_follower2VoltageSignal, &m_follower3VoltageSignal},
       m_batchedSignals{&m_supplySignal, &m_follower1SupplySignal,
                        &m_follower2SupplySignal, &m_follower3SupplySignal} {
   ConfigureDevices();
@@ -128,13 +128,14 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
 }
 
 void CTREFeederIO::SetVoltage(units::volt_t voltage) {
-  m_leader.SetControl(m_voltageRequest.WithOutput(voltage).WithEnableFOC(kEnableFOC));
+  m_leader.SetControl(
+      m_voltageRequest.WithOutput(voltage).WithEnableFOC(kEnableFOC));
 }
 
 void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {
-  m_leader.SetControl(m_velocityRequest.WithVelocity(rps)
-                          .WithSlot(0)
-                          .WithEnableFOC(kEnableFOC));
+  m_leader.SetControl(
+      m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
 }
 
 void CTREFeederIO::Stop() { m_leader.SetControl(m_neutralRequest); }

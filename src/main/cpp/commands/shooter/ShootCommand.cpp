@@ -10,8 +10,8 @@
 #include <cmath>
 #include <numbers>
 
-#include "subsystem/intake/IntakeConstants.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
+#include "subsystem/intake/IntakeConstants.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
@@ -96,7 +96,7 @@ void ShootCommand::Execute() {
     m_feeder->SetVoltage(kFeedVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
-    //m_feeder->SetVelocity(kFeederRPS);
+    // m_feeder->SetVelocity(kFeederRPS);
   } else {
     m_feeder->Stop();
   }

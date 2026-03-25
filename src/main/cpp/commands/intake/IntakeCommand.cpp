@@ -1,14 +1,14 @@
 // Team 5687 2026
 
 #include "commands/intake/IntakeCommand.h"
-#include "Constants.h"
-#include "subsystem/intake/IntakeConstants.h"
-#include "subsystem/drive/SwerveDriveConstants.h"
-#include "subsystem/drive/DriveSubsystem.h"
 
-IntakeCommand::IntakeCommand(
-  DriveSubsystem *drive,
-  IntakeDeployerSubsystem *deployer,
+#include "Constants.h"
+#include "subsystem/drive/DriveSubsystem.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
+#include "subsystem/intake/IntakeConstants.h"
+
+IntakeCommand::IntakeCommand(DriveSubsystem *drive,
+                             IntakeDeployerSubsystem *deployer,
                              IntakeTopRollerSubsystem *topRoller,
                              IntakeBottomRollerSubsystem *bottomRoller)
     : m_drive(drive), m_deployer(deployer), m_topRoller(topRoller),
@@ -17,9 +17,10 @@ IntakeCommand::IntakeCommand(
   SetName("IntakeCommand");
 }
 
-void IntakeCommand::Initialize() { 
-  //m_drive->SetMaxSpeeds(3.0_mps);
-  m_deployer->Deploy(); }
+void IntakeCommand::Initialize() {
+  // m_drive->SetMaxSpeeds(3.0_mps);
+  m_deployer->Deploy();
+}
 
 void IntakeCommand::Execute() {
   m_deployer->Deploy();

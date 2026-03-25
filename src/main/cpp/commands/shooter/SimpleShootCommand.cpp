@@ -20,8 +20,10 @@ SimpleShootCommand::SimpleShootCommand(
       m_tunableFlywheelRPM("SimpleShoot", "FlywheelRPM", flywheelRPM.value()),
       m_tunableKickerRPS("SimpleShoot", "KickerRPM", kickerRPS.value()),
       m_tunableHoodAngle("SimpleShoot", "HoodAngleDeg", hoodAngle.value()),
-      m_tunableBottomVoltage("SimpleShoot", "BottomVoltage", kBottomVoltage.value()),
-      m_tunableFeederVoltage("SimpleShoot", "FeederVoltage", kFeederVoltage.value()) {
+      m_tunableBottomVoltage("SimpleShoot", "BottomVoltage",
+                             kBottomVoltage.value()),
+      m_tunableFeederVoltage("SimpleShoot", "FeederVoltage",
+                             kFeederVoltage.value()) {
   AddRequirements({flywheel, feeder, deployer});
   SetName("SimpleShootCommand");
 }
@@ -69,9 +71,10 @@ void SimpleShootCommand::Execute() {
     }
   }
 
-  if (m_tunableFeederVoltage.HasChanged() || m_tunableBottomVoltage.HasChanged()) {
-        m_feederVolts = units::volt_t{m_tunableFeederVoltage.Get()};
-        m_bottomVolts = units::volt_t{m_tunableBottomVoltage.Get()};
+  if (m_tunableFeederVoltage.HasChanged() ||
+      m_tunableBottomVoltage.HasChanged()) {
+    m_feederVolts = units::volt_t{m_tunableFeederVoltage.Get()};
+    m_bottomVolts = units::volt_t{m_tunableBottomVoltage.Get()};
   }
 
   if (m_flywheel->AtSetpoint()) {

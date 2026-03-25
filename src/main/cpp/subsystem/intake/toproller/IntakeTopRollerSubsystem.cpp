@@ -33,10 +33,9 @@ units::ampere_t IntakeTopRollerSubsystem::GetElectricalCurrentDraw() const {
 }
 
 units::watt_t IntakeTopRollerSubsystem::GetElectricalPowerDraw() const {
-  const auto leaderPower = units::math::abs(m_inputs.supplyCurrent) *
-                          m_inputs.appliedVolts;
-  const auto followerPower =
-      units::math::abs(m_inputs.followerSupplyCurrent) *
-      m_inputs.followerAppliedVolts;
+  const auto leaderPower =
+      units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
+  const auto followerPower = units::math::abs(m_inputs.followerSupplyCurrent) *
+                             m_inputs.followerAppliedVolts;
   return leaderPower + followerPower;
 }

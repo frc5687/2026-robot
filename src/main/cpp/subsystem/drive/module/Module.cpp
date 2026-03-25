@@ -66,13 +66,13 @@ void Module::SetBrakeMode(bool brake) { m_io->SetBrakeMode(brake); }
 void Module::ConfigureClosedLoop() { m_io->ConfigureClosedLoop(); }
 
 void Module::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                             units::ampere_t steerSupplyCurrentLimit) {
+                              units::ampere_t steerSupplyCurrentLimit) {
   m_io->SetCurrentLimits(driveSupplyCurrentLimit, steerSupplyCurrentLimit);
 }
 
 units::ampere_t Module::GetCurrentDraw() const {
   const auto totalCurrent = units::math::abs(m_inputs.driveCurrentDraw) +
-                           units::math::abs(m_inputs.steerCurrentDraw);
+                            units::math::abs(m_inputs.steerCurrentDraw);
   return units::ampere_t{m_currentFilter.Calculate(totalCurrent.value())};
 }
 
@@ -96,7 +96,8 @@ void Module::LogState() {
   logger.Log(m_logPrefix + "DesiredState", m_desiredState);
   logger.Log(m_logPrefix + "OptimizedState", m_optimizedState);
   logger.Log(m_logPrefix + "DriveCurrent", GetCurrentDraw().value());
-  logger.Log(m_logPrefix + "DriveMotorCurrent", m_inputs.driveCurrentDraw.value());
+  logger.Log(m_logPrefix + "DriveMotorCurrent",
+             m_inputs.driveCurrentDraw.value());
   logger.Log(m_logPrefix + "SteerCurrent", m_inputs.steerCurrentDraw.value());
   logger.Log(m_logPrefix + "DriveTorque", GetDriveTorque().value());
   logger.Log(m_logPrefix + "DriveForce",

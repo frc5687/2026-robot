@@ -105,7 +105,7 @@ void SimModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
 }
 
 void SimModuleIO::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                                  units::ampere_t steerSupplyCurrentLimit) {
+                                   units::ampere_t steerSupplyCurrentLimit) {
   (void)driveSupplyCurrentLimit;
   (void)steerSupplyCurrentLimit;
 }

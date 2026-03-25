@@ -4,20 +4,20 @@
 
 #include <units/math.h>
 
-void SubsystemBatteryLogger::RegisterSubsystem(
-    std::string name, CurrentProvider currentProvider,
-    PowerProvider powerProvider) {
-  m_subsystems.push_back(TrackedSubsystem{
-      std::move(name), std::move(currentProvider), std::move(powerProvider),
-      units::joule_t{0.0}});
+void SubsystemBatteryLogger::RegisterSubsystem(std::string name,
+                                               CurrentProvider currentProvider,
+                                               PowerProvider powerProvider) {
+  m_subsystems.push_back(
+      TrackedSubsystem{std::move(name), std::move(currentProvider),
+                       std::move(powerProvider), units::joule_t{0.0}});
 }
 
 void SubsystemBatteryLogger::RegisterAggregateGroup(
     std::string name, CurrentProvider currentProvider,
     PowerProvider powerProvider) {
-  m_aggregateGroups.push_back(TrackedSubsystem{
-      std::move(name), std::move(currentProvider), std::move(powerProvider),
-      units::joule_t{0.0}});
+  m_aggregateGroups.push_back(
+      TrackedSubsystem{std::move(name), std::move(currentProvider),
+                       std::move(powerProvider), units::joule_t{0.0}});
 }
 
 void SubsystemBatteryLogger::Update() {
@@ -61,8 +61,7 @@ void SubsystemBatteryLogger::Update() {
 
         Logger::Instance().Log("Power/" + group.name + "/Current",
                                current.value());
-        Logger::Instance().Log("Power/" + group.name + "/Power",
-                               power.value());
+        Logger::Instance().Log("Power/" + group.name + "/Power", power.value());
         Logger::Instance().Log("Power/" + group.name + "/EnergyWattHours",
                                accumulatedWh.value());
       }

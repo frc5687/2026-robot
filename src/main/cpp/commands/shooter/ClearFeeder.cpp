@@ -9,12 +9,8 @@ ClearFeeder::ClearFeeder(FeederSubsystem *feeder) : m_feeder(feeder) {
 
 void ClearFeeder::Initialize() {}
 
-void ClearFeeder::Execute() {
-  m_feeder->SetVoltage(kFeederVoltage);
-}
+void ClearFeeder::Execute() { m_feeder->SetVoltage(kFeederVoltage); }
 
-void ClearFeeder::End(bool interrupted) {
-  m_feeder->Stop();
-}
+void ClearFeeder::End(bool interrupted) { m_feeder->Stop(); }
 
 bool ClearFeeder::IsFinished() { return false; }

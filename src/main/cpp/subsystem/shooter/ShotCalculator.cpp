@@ -5,8 +5,8 @@
 #include <cmath>
 #include <numbers>
 
-#include "subsystem/vision/FieldConstants.h"
 #include "RobotState.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "utils/Logger.h"
 
 ShotCalculator::ShotCalculator() {
@@ -17,25 +17,25 @@ ShotCalculator::ShotCalculator() {
   // 13 feet, 1520 rpm, 60 rps, 12 deg
   // 16 feet, 1650 rpm, 60 rps, 19 deg
 
-  //3/4/26
-
+  // 3/4/26
 
   std::vector<std::pair<double, double>> hoodMap{
-      {1.52, 1.0}, {2.13, 5}, {3.048, 10.0}, {3.66, 15.0}, {4.2672, 16.0}, {4.88, 14.0}, {5.49, 18.0}
-  };
+      {1.52, 1.0},    {2.13, 5},    {3.048, 10.0}, {3.66, 15.0},
+      {4.2672, 16.0}, {4.88, 14.0}, {5.49, 18.0}};
 
   m_hoodAngleMap.InsertValues(hoodMap);
 
   // TODO: Make this use units
 
   std::vector<std::pair<double, double>> flyMap{
-      {1.52, 1150}, {2.13, 1250}, {3.048, 1400}, {3.66, 1425}, {4.2672, 1500}, {4.88, 1570}, {5.49, 1650.0}
-  };
+      {1.52, 1150},   {2.13, 1250}, {3.048, 1400}, {3.66, 1425},
+      {4.2672, 1500}, {4.88, 1570}, {5.49, 1650.0}};
 
   m_flywheelMap.InsertValues(flyMap);
 
   std::vector<std::pair<double, double>> tofMap{
-      {1.52, 1.2}, {2.13, 1.2}, {3.048, 1.2}, {3.66, 1.2}, {4.2672, 1.25},{4.88, 1.3}, {5.49, 1.5}};
+      {1.52, 1.2},    {2.13, 1.2}, {3.048, 1.2}, {3.66, 1.2},
+      {4.2672, 1.25}, {4.88, 1.3}, {5.49, 1.5}};
   m_tofMap.InsertValues(tofMap);
 }
 

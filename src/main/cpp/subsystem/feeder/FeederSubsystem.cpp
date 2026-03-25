@@ -87,8 +87,7 @@ void FeederSubsystem::LogTelemetry() {
   Log("Power/Follower3", follower3Power.value());
   Log("Current/Total/Supply", GetElectricalCurrentDraw().value());
   Log("Power/Total",
-      (leaderPower + follower1Power + follower2Power + follower3Power)
-          .value());
+      (leaderPower + follower1Power + follower2Power + follower3Power).value());
 }
 
 units::ampere_t FeederSubsystem::GetElectricalCurrentDraw() const {
@@ -97,8 +96,8 @@ units::ampere_t FeederSubsystem::GetElectricalCurrentDraw() const {
 }
 
 units::watt_t FeederSubsystem::GetElectricalPowerDraw() const {
-  const auto leaderPower = units::math::abs(m_inputs.supplyCurrent) *
-                          m_inputs.appliedVolts;
+  const auto leaderPower =
+      units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
   const auto follower1Power =
       units::math::abs(m_inputs.follower1SupplyCurrent) *
       m_inputs.follower1AppliedVolts;

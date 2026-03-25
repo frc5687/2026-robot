@@ -1,6 +1,7 @@
 // Team 5687 2026
 
 #include "commands/intake/EjectIntakeCommand.h"
+
 #include "subsystem/feeder/FeederSubsystem.h"
 
 EjectIntakeCommand::EjectIntakeCommand(

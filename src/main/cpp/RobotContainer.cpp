@@ -17,8 +17,8 @@
 
 #include "HardwareMap.h"
 #include "RobotState.h"
-#include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/drive/AlignToEdgeCommand.h"
+#include "commands/drive/DriveMaintainingHeadingCommand.h"
 #include "commands/drive/SlowModeCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
@@ -170,7 +170,7 @@ RobotContainer::RobotContainer()
   ConfigureAutoCommands();
   ConfigureBindings();
 
-      m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+  m_autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
 
   m_batteryLogger.RegisterSubsystem(
@@ -197,24 +197,28 @@ RobotContainer::RobotContainer()
       "IntakeBottomRoller",
       [this] { return m_intakeBottomRoller.GetElectricalCurrentDraw(); },
       [this] { return m_intakeBottomRoller.GetElectricalPowerDraw(); });
-  m_batteryLogger.RegisterAggregateGroup("Intake", [this] {
-      return m_intakeTopRoller.GetElectricalCurrentDraw() +
-             m_intakeBottomRoller.GetElectricalCurrentDraw() +
-             m_intakeDeployer.GetElectricalCurrentDraw();
-    },
-    [this] {
-      return m_intakeTopRoller.GetElectricalPowerDraw() +
-             m_intakeBottomRoller.GetElectricalPowerDraw() +
-             m_intakeDeployer.GetElectricalPowerDraw();
-    });
-  m_batteryLogger.RegisterAggregateGroup("Shooter", [this] {
-      return m_flywheel.GetElectricalCurrentDraw() +
-             m_hood.GetElectricalCurrentDraw();
-    },
-    [this] {
-      return m_flywheel.GetElectricalPowerDraw() +
-             m_hood.GetElectricalPowerDraw();
-    });
+  m_batteryLogger.RegisterAggregateGroup(
+      "Intake",
+      [this] {
+        return m_intakeTopRoller.GetElectricalCurrentDraw() +
+               m_intakeBottomRoller.GetElectricalCurrentDraw() +
+               m_intakeDeployer.GetElectricalCurrentDraw();
+      },
+      [this] {
+        return m_intakeTopRoller.GetElectricalPowerDraw() +
+               m_intakeBottomRoller.GetElectricalPowerDraw() +
+               m_intakeDeployer.GetElectricalPowerDraw();
+      });
+  m_batteryLogger.RegisterAggregateGroup(
+      "Shooter",
+      [this] {
+        return m_flywheel.GetElectricalCurrentDraw() +
+               m_hood.GetElectricalCurrentDraw();
+      },
+      [this] {
+        return m_flywheel.GetElectricalPowerDraw() +
+               m_hood.GetElectricalPowerDraw();
+      });
 }
 
 void RobotContainer::Periodic() {
@@ -255,8 +259,8 @@ void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
   using frc2::cmd::RunOnce;
 
-  //m_flywheel.SetDefaultCommand(
-  //    ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
+  // m_flywheel.SetDefaultCommand(
+  //     ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_drive.SetDefaultCommand(DriveMaintainingHeadingCommand(
       &m_drive, [this] { return -m_driver.GetLeftY(); },
@@ -309,25 +313,20 @@ void RobotContainer::ConfigureBindings() {
           .AlongWith(Run([this] { m_intakeDeployer.RetractMid(); },
                          {&m_intakeDeployer})));
 
-  m_driver.Square().ToggleOnTrue(
-          SlowModeCommand(&m_drive)
-                              .ToPtr());
+  m_driver.Square().ToggleOnTrue(SlowModeCommand(&m_drive).ToPtr());
 
   m_driver.L1().WhileTrue(
-          AlignToEdgeCommand(&m_drive,
-                              [this] { return -m_driver.GetLeftY(); },
-                              [this] { return -m_driver.GetLeftX(); })
-                              .ToPtr().AlongWith(
-        IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
-                              &m_intakeBottomRoller)
-                    .ToPtr()
-        ));
+      AlignToEdgeCommand(
+          &m_drive, [this] { return -m_driver.GetLeftY(); },
+          [this] { return -m_driver.GetLeftX(); })
+          .ToPtr()
+          .AlongWith(IntakeCommand(&m_drive, &m_intakeDeployer,
+                                   &m_intakeTopRoller, &m_intakeBottomRoller)
+                         .ToPtr()));
 
-    /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
+  /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
-  m_operator.R2().OnTrue(
-    ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr()
-  );
+  m_operator.R2().OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_operator.R1().OnTrue(
       RunOnce([] {

@@ -2,15 +2,15 @@
 
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 
-#include <algorithm>
 #include <frc/Timer.h>
 #include <units/math.h>
 
+#include <algorithm>
 #include <numbers>
 
-#include "subsystem/flywheel/FlywheelConstants.h"
 #include "RobotState.h"
 #include "frc2/command/sysid/SysIdRoutine.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 
 using namespace frc2::sysid;
 
@@ -77,10 +77,10 @@ void FlywheelSubsystem::SysIdDrive(units::volt_t voltage) {
 }
 
 void FlywheelSubsystem::SysIdLog(frc::sysid::SysIdRoutineLog *log) {
-  //log->Motor("flywheel-leader")
-  //    .voltage(m_inputs.leaderAppliedVolts)
-  //    .position(m_inputs.leaderMotorPosition)
-  //    .velocity(m_inputs.leaderMotorVelocity);
+  // log->Motor("flywheel-leader")
+  //     .voltage(m_inputs.leaderAppliedVolts)
+  //     .position(m_inputs.leaderMotorPosition)
+  //     .velocity(m_inputs.leaderMotorVelocity);
 }
 
 void FlywheelSubsystem::UpdateInputs() {
@@ -95,8 +95,8 @@ void FlywheelSubsystem::UpdateInputs() {
 }
 
 void FlywheelSubsystem::LogTelemetry() {
-  const auto leaderPower =
-      units::math::abs(m_inputs.leaderSupplyCurrent) * m_inputs.leaderAppliedVolts;
+  const auto leaderPower = units::math::abs(m_inputs.leaderSupplyCurrent) *
+                           m_inputs.leaderAppliedVolts;
   const auto follower1Power =
       units::math::abs(m_inputs.follower1SupplyCurrent) *
       m_inputs.follower1AppliedVolts;
@@ -134,9 +134,8 @@ void FlywheelSubsystem::LogTelemetry() {
   Log("Power/Follower3", follower3Power.value());
 
   Log("Current/Total/Supply", GetElectricalCurrentDraw().value());
-  Log("Power/Total", (leaderPower + follower1Power + follower2Power +
-                      follower3Power)
-                          .value());
+  Log("Power/Total",
+      (leaderPower + follower1Power + follower2Power + follower3Power).value());
 
   Log("AtSetpoint", AtSetpoint());
 }
@@ -148,7 +147,7 @@ units::ampere_t FlywheelSubsystem::GetElectricalCurrentDraw() const {
 
 units::watt_t FlywheelSubsystem::GetElectricalPowerDraw() const {
   const auto leaderPower = units::math::abs(m_inputs.leaderSupplyCurrent) *
-                          m_inputs.leaderAppliedVolts;
+                           m_inputs.leaderAppliedVolts;
   const auto follower1Power =
       units::math::abs(m_inputs.follower1SupplyCurrent) *
       m_inputs.follower1AppliedVolts;

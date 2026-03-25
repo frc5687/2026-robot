@@ -83,8 +83,9 @@ void CTREHoodIO::UpdateInputs(HoodIOInputs &inputs) {
 }
 
 void CTREHoodIO::SetPosition(units::turn_t position) {
-  m_motor.SetControl(m_positionRequest.WithPosition(position).WithSlot(0).WithEnableFOC(
-      kEnableFOC));
+  m_motor.SetControl(
+      m_positionRequest.WithPosition(position).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
 }
 
 void CTREHoodIO::SetVoltage(units::volt_t voltage) {

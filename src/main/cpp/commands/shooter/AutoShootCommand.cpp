@@ -2,16 +2,14 @@
 
 #include "commands/shooter/AutoShootCommand.h"
 
-#include <units/angular_velocity.h>
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
-
-#include "subsystem/drive/SwerveDriveConstants.h"
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <units/angular_velocity.h>
 
 #include "RobotState.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
-
 
 AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
                                    HoodSubsystem *hood, FeederSubsystem *feeder,
@@ -29,13 +27,11 @@ void AutoShootCommand::Initialize() {
   m_deployer->RetractMid();
   m_deployerExtended = false;
   m_pulseStartTime = frc::Timer::GetFPGATimestamp();
-  pathplanner::PPHolonomicDriveController::overrideRotationFeedback([this]() {
-    return m_rotationFeedback;
-  });
+  pathplanner::PPHolonomicDriveController::overrideRotationFeedback(
+      [this]() { return m_rotationFeedback; });
 }
 
 void AutoShootCommand::Execute() {
-
 
   auto now = frc::Timer::GetFPGATimestamp();
   auto alliance = frc::DriverStation::GetAlliance();
@@ -49,8 +45,9 @@ void AutoShootCommand::Execute() {
   auto elapsed = now - m_pulseStartTime;
 
   double rotOutput =
-      m_headingController.Calculate(RobotState::Instance().GetDriveState(now).estimatedPose
-                                        .Rotation()
+      m_headingController.Calculate(RobotState::Instance()
+                                        .GetDriveState(now)
+                                        .estimatedPose.Rotation()
                                         .Radians()
                                         .value(),
                                     solution.driveAngle.Radians().value());
@@ -59,8 +56,6 @@ void AutoShootCommand::Execute() {
                  Constants::SwerveDrive::kMaxAngularSpeed.value());
 
   m_rotationFeedback = units::radians_per_second_t{rotOutput};
-
-
 
   if (m_deployerExtended) {
     if (elapsed >= kPulseExtendDuration) {
