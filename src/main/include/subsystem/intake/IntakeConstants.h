@@ -28,7 +28,7 @@ inline constexpr units::meter_t kPinionCircumference =
 // kPinionCircumference.value() / kGearRatio;
 
 inline constexpr units::meter_t kRetractedExtension = 0_m;
-inline constexpr units::meter_t kMidExtension = 0.18_m;
+inline constexpr units::meter_t kMidExtension = 0.185_m;
 inline constexpr units::meter_t kDeployedExtension = 0.298_m; // 0.29
 inline constexpr units::turn_t kDeployedMotorRotations = 6.97_tr;
 inline constexpr double kMetersPerMotorRotation = 0.3 / kDeployedMotorRotations.value();

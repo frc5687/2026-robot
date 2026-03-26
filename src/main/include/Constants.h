@@ -91,7 +91,7 @@ namespace Zones{
     inline constexpr frc::Pose2d BottomLeftBlueBump{4.0286_m, 1.2659_m, 0_deg};
     inline constexpr frc::Pose2d TopRightBlueBump{5.2225_m, 6.80339_m, 0_deg};
 
-    inline constexpr frc::Pose2d BottomLeftRedBump{11.318_m, 1.2659_m, 0_deg};
+    inline constexpr frc::Pose2d BottomLeftRedBump{11.27_m, 1.2659_m, 0_deg};
     inline constexpr frc::Pose2d TopRightRedBump{12.4968_m, 6.80339_m, 0_deg};
 
     inline constexpr frc::Pose2d BlueHub{4.6228_m, 4.034663_m, 0_deg};

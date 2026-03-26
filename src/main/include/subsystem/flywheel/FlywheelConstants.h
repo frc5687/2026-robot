@@ -40,10 +40,10 @@ inline constexpr bool kEnableStatorCurrent = true;
 inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
-constexpr double kS = 0.30498;  //< Static friction (V)
+constexpr double kS = 0.2664;  //< Static friction (V)
 constexpr double kV = 0.11;  //< Velocity FF (V / motor-RPS)
-constexpr double kA = 0.012131; //< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.8;      //< Proportional (V / motor-RPS error)
+constexpr double kA = 0.011385; //< Acceleration FF (V / motor-RPS²)
+constexpr double kP = 0.3;      //< Proportional (V / motor-RPS error)
 constexpr double kI = 0.0;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID

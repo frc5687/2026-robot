@@ -30,7 +30,7 @@ void IntakeCommand::Execute() {
 
 void IntakeCommand::End(bool interrupted) {
   // m_deployer->RetractMid();
-  m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
+  // m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_topRoller->Stop();
   m_bottomRoller->Stop();
 }

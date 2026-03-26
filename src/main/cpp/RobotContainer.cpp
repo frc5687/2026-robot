@@ -334,17 +334,17 @@ void RobotContainer::ConfigureBindings() {
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
   // m_debugger.Cross().OnTrue(
   //       m_flywheel.SysIdDynamic(frc2::sysid::Direction::kForward)
-  //);
+  // );
   // m_debugger.Circle().OnTrue(
   //       m_flywheel.SysIdDynamic(frc2::sysid::Direction::kReverse)
-  //);
+  // );
   // m_debugger.Triangle().OnTrue(
   //       m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kForward)
-  //);
+  // );
 
   // m_debugger.Square().OnTrue(
   //       m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kReverse)
-  //);
+  // );
 
   // m_debugger.Cross().OnTrue(
   //        m_feeder.SysIdDynamic(frc2::sysid::Direction::kForward)

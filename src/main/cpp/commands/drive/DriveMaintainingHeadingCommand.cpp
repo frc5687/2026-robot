@@ -111,7 +111,7 @@ void DriveMaintainingHeadingCommand::Execute() {
 
     if (m_intakeFlag()) {
       auto angle = atan2(strafe, throttle);
-      m_headingSetpoint = frc::Rotation2d(units::radian_t{angle});
+      m_headingSetpoint = frc::Rotation2d(units::radian_t{angle}).RotateBy(180_deg);
     }
     rotVelocity =
         CalculateHeadingCorrection(heading, m_headingSetpoint.value());
