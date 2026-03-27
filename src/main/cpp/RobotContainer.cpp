@@ -252,6 +252,7 @@ void RobotContainer::ConfigureAutoCommands() {
 
   pathplanner::NamedCommands::registerCommand(
       "SpinUpFlywheel", ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
+
 }
 
 void RobotContainer::ConfigureBindings() {
