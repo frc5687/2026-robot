@@ -13,6 +13,7 @@
 #include <numbers>
 
 #include "subsystem/drive/DriveSubsystem.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
@@ -20,6 +21,7 @@
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
+#include "utils/TunableDouble.h"
 
 class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
 public:
@@ -51,7 +53,7 @@ private:
   ShotCalculator m_shotCalculator;
 
   frc::PIDController m_headingController{
-      Constants::SwerveDrive::PID::Rotation::kP, 0.0, 0.0};
+      Constants::SwerveDrive::Shooting::kAimkP, 0.0, Constants::SwerveDrive::Shooting::kAimkD};
 
 
   static constexpr units::volt_t kFeedVoltage = 6_V;
@@ -65,6 +67,7 @@ private:
   bool m_shootSequenceActive{false};
   bool m_hasRetractedDeployer{false};
   units::second_t m_shootBurstStartTime{0_s};
+  
 
   double ApplyDeadband(double value, double deadband);
 };

@@ -149,6 +149,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
   bool inRange =
       effDist >= m_cfg.minDistanceMeters && effDist <= m_cfg.maxDistanceMeters;
   Logger::Instance().Log("ShotCalculator/driveAngle", driveAngle);
+  Logger::Instance().Log("ShotCalculator/driveOK", driveOK);
   Logger::Instance().Log("ShotCalculator/hoodOK", hoodOK);
   Logger::Instance().Log("ShotCalculator/flywheelOK", flywheelOK);
   Logger::Instance().Log("ShotCalculator/inRange", inRange);

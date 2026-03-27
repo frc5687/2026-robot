@@ -28,7 +28,7 @@ inline constexpr units::kilogram_square_meter_t kInertia =
     75.0 * 1.0_lb * 1.0_in * 1.0_in;
 
 inline constexpr bool kLeaderInverted = true;
-inline constexpr bool kEnableFOC = false;
+inline constexpr bool kEnableFOC = true;
 
 inline constexpr bool kFollower1Opposed = false;
 inline constexpr bool kFollower2Opposed = true;
@@ -41,7 +41,7 @@ inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
 constexpr double kS = 0.2664;  //< Static friction (V)
-constexpr double kV = 0.11;  //< Velocity FF (V / motor-RPS)
+constexpr double kV = 0.12;  //< Velocity FF (V / motor-RPS)
 constexpr double kA = 0.011385; //< Acceleration FF (V / motor-RPS²)
 constexpr double kP = 0.3;      //< Proportional (V / motor-RPS error)
 constexpr double kI = 0.0;      //< Integral

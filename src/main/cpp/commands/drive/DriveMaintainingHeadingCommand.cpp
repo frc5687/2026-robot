@@ -47,7 +47,7 @@ void DriveMaintainingHeadingCommand::Initialize() {
 }
 
 void DriveMaintainingHeadingCommand::Execute() {
-  frc::Rotation2d heading = m_driveSubsystem->GetHeading();
+  frc::Rotation2d heading = m_driveSubsystem->GetEstimatedHeading();
   auto currentSpeeds = m_driveSubsystem->GetChassisSpeeds();
 
   std::optional<frc::DriverStation::Alliance> alliance =
@@ -111,10 +111,16 @@ void DriveMaintainingHeadingCommand::Execute() {
 
     if (m_intakeFlag()) {
       auto angle = atan2(strafe, throttle);
-      m_headingSetpoint = frc::Rotation2d(units::radian_t{angle}).RotateBy(180_deg);
+      m_headingSetpoint = frc::Rotation2d(units::radian_t{angle});
+      if(throttle == 0.0 && strafe == 0.0){
+        m_headingSetpoint = heading;
+      }
     }
     rotVelocity =
         CalculateHeadingCorrection(heading, m_headingSetpoint.value());
+  }
+  if(m_headingSetpoint.has_value()){
+    Logger::Instance().Log("desired heading",m_headingSetpoint.value());
   }
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});

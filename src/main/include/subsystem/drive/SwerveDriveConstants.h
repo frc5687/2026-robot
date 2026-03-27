@@ -167,6 +167,8 @@ inline constexpr size_t kTotalSignals =
 namespace Shooting {
 inline constexpr units::velocity::meters_per_second_t kMaxSpeedsWhileShooting =
     1.5_mps;
+inline constexpr double kAimkP = 10.0;
+inline constexpr double kAimkD = 0.0;
 } // namespace Shooting
 
 namespace PID {
