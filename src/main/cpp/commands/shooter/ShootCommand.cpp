@@ -92,6 +92,10 @@ void ShootCommand::Execute() {
     }
   }
 
+  if(m_drive->GetFieldRelativeSpeeds().vx > 0.25_mps || m_drive->GetFieldRelativeSpeeds().vy > 0.25_mps){
+    m_deployer->Deploy(); //FIXME:: change to restarting timer lol
+  }
+
   if (m_shootingBurstActive) {
     m_feeder->SetVoltage(kFeedVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
