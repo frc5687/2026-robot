@@ -178,7 +178,7 @@ inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace Translation
 namespace Rotation {
-inline constexpr double kP = 4;
+inline constexpr double kP = 10;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace Rotation

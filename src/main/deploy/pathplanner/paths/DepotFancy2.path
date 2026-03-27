@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 4.323708987161198,
-        "y": 7.431398002853067
+        "x": 4.3884022824536375,
+        "y": 7.314950071326677
       },
       "prevControl": {
-        "x": 3.146460129301457,
-        "y": 7.4076151976437785
+        "x": 3.2111534245938964,
+        "y": 7.291167266117388
       },
       "nextControl": {
-        "x": 5.6046362339514975,
-        "y": 7.4572753209700435
+        "x": 5.669329529243937,
+        "y": 7.340827389443653
       },
       "isLocked": false,
       "linkedName": null
@@ -112,16 +112,16 @@
     },
     {
       "anchor": {
-        "x": 0.9557239849064627,
-        "y": 5.4647218259629105
+        "x": 0.7655777460770326,
+        "y": 5.089500713266761
       },
       "prevControl": {
-        "x": 0.9472566344246034,
-        "y": 4.966641599348073
+        "x": 0.7571103955951732,
+        "y": 4.5914204866519235
       },
       "nextControl": {
-        "x": 0.9795704725016385,
-        "y": 6.867458605409997
+        "x": 0.7894242336722084,
+        "y": 6.492237492713848
       },
       "isLocked": false,
       "linkedName": null
@@ -159,7 +159,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 177.7093899573614
+      "rotationDegrees": -93.46822925891716
     },
     {
       "waypointRelativePos": 2,
@@ -197,7 +197,7 @@
   "constraintZones": [
     {
       "name": "Trench",
-      "minWaypointRelativePos": 0.5218837945590994,
+      "minWaypointRelativePos": 0.7778528021606824,
       "maxWaypointRelativePos": 1.1104230182926829,
       "constraints": {
         "maxVelocity": 2.0,
@@ -236,11 +236,24 @@
     },
     {
       "name": "Depot",
-      "minWaypointRelativePos": 6.761623475609754,
-      "maxWaypointRelativePos": 7.91674484052533,
+      "minWaypointRelativePos": 6.636056718433514,
+      "maxWaypointRelativePos": 7.87575962187711,
       "constraints": {
-        "maxVelocity": 1.5,
+        "maxVelocity": 2.5,
         "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.948008102633378,
+      "constraints": {
+        "maxVelocity": 0.6,
+        "maxAcceleration": 4.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -250,6 +263,17 @@
   ],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "AutoShoot",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 0.8993923024983264,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "AutoShoot"
+        }
+      }
+    },
     {
       "name": "Intake",
       "waypointRelativePos": 1.1343686698176894,
@@ -274,12 +298,23 @@
     },
     {
       "name": "AutoShoot",
-      "waypointRelativePos": 5.608423379174855,
+      "waypointRelativePos": 5.906819716407816,
       "endWaypointRelativePos": 6.665506273452157,
       "command": {
         "type": "named",
         "data": {
           "name": "AutoShoot"
+        }
+      }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 7.1951384199864385,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
         }
       }
     }

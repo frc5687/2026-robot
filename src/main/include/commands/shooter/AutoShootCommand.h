@@ -43,7 +43,7 @@ private:
   ShotCalculator m_shotCalculator;
 
   frc::PIDController m_headingController{
-      Constants::SwerveDrive::PID::Rotation::kP, 0.0, 0.0};
+      Constants::SwerveDrive::Shooting::kAimkP, 0.0, 0.0};
 
   units::radians_per_second_t m_rotationFeedback{0_rad_per_s};
 
