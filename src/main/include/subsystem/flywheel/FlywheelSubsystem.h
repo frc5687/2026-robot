@@ -22,6 +22,7 @@ public:
   explicit FlywheelSubsystem(std::unique_ptr<FlywheelIO> io);
 
   void SetRPM(units::revolutions_per_minute_t desiredRPM);
+  void SetVoltage(units::volt_t voltage);
   bool AtSetpoint() const;
 
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);

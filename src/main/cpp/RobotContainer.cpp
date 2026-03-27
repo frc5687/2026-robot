@@ -24,6 +24,7 @@
 #include "commands/intake/IntakeCommand.h"
 #include "commands/intake/StopIntakeCommand.h"
 #include "commands/shooter/AutoShootCommand.h"
+#include "commands/shooter/IndexFeederCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/ShotCalculatedSpinUpCommand.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
@@ -321,6 +322,7 @@ void RobotContainer::ConfigureBindings() {
 
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
+  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_flywheel).ToPtr());
   m_operator.R2().OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_operator.R1().OnTrue(

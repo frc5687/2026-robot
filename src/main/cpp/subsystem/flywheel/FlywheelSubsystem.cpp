@@ -59,6 +59,10 @@ void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {
   m_io->SetMotorVelocity(MechanismRPMToMotorRPS(m_commandedRPM));
 }
 
+void FlywheelSubsystem::SetVoltage(units::volt_t voltage) {
+  m_io->SetVoltage(voltage);
+}
+
 bool FlywheelSubsystem::AtSetpoint() const {
   return units::math::abs(m_filteredRPM - m_desiredRPM) <
          Constants::Flywheel::kAtSetpointTolerance;
