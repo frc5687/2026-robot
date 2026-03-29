@@ -5,6 +5,7 @@
 #include <frc/DriverStation.h>
 
 #include "commands/drive/AutoAlignToPoseCommand.h"
+#include "frc/geometry/Pose2d.h"
 #include "subsystem/vision/FieldConstants.h"
 
 namespace DriveThroughTrenchCommand {
@@ -17,14 +18,12 @@ static void GetTrenchPoses(DriveSubsystem* drive, frc::Pose2d& outsidePose,
     frc::Translation2d pos = drive->GetPose().Translation();
     bool topHalf = pos.Y() > kFieldWidth / 2.0;
 
-    bool isRed = false;
-    auto alliance = frc::DriverStation::GetAlliance();
-    if (alliance.has_value() &&
-        alliance.value() == frc::DriverStation::Alliance::kRed) {
-        isRed = true;
+    bool isRedSide = false;
+    if (pos.X() > kFieldLength/2.0) {
+        isRedSide = true;
     }
 
-    if (!isRed) {
+    if (!isRedSide) {
         if (topHalf) {
             outsidePose = OutsideTopBlue;
             insidePose = InsideTopBlue;
@@ -55,7 +54,7 @@ frc2::CommandPtr Create(DriveSubsystem* driveSubsystem,
     double distToOutside = pos.Distance(outsidePose.Translation()).value();
     double distToInside = pos.Distance(insidePose.Translation()).value();
 
-    frc::Pose2d firstPose = (distToOutside <= distToInside) ? outsidePose : insidePose;
+    frc::Pose2d firstPose = (distToOutside <= distToInside) ? frc::Pose2d{outsidePose.Translation(), insidePose.Rotation()} : frc::Pose2d{insidePose.Translation(), outsidePose.Rotation()};
     frc::Pose2d secondPose = (distToOutside <= distToInside) ? insidePose : outsidePose;
 
     return AutoAlignToPoseCommand(
