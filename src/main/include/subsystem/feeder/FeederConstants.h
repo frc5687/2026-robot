@@ -17,7 +17,7 @@ inline constexpr units::pound_t kMass = 1.5_lb;
 inline constexpr units::kilogram_square_meter_t kInertia =
     0.5 * kMass * kRadius * kRadius;
 
-inline constexpr bool kLeaderInverted = false;
+inline constexpr bool kLeaderInverted = true;
 inline constexpr bool kEnableFOC = true;
 inline constexpr bool kFollowerOpposed = false;
 

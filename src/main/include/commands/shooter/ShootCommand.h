@@ -58,7 +58,7 @@ private:
       Constants::SwerveDrive::Shooting::kAimkP, 0.0, Constants::SwerveDrive::Shooting::kAimkD};
 
 
-  static constexpr units::volt_t kFloorVoltage = 8_V;
+  static constexpr units::volt_t kFloorVoltage = 12_V;
   static constexpr units::volt_t kFeedVoltage = 6_V;
 
   static constexpr units::ampere_t kFeederCurrent = 60_A;
@@ -66,7 +66,7 @@ private:
 
   static constexpr units::volt_t kTopVoltage = 6_V;
   static constexpr units::volt_t kBottomVoltage = 6_V;
-  static constexpr units::second_t kDeployerRetractDelay = 1.4_s;
+  static constexpr units::second_t kDeployerRetractDelay = 0.35_s;
   //static constexpr units::turns_per_second_t kFeederRPS = 60_tps;
   static constexpr double kDeadband = 0.1;
 
