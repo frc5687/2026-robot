@@ -21,6 +21,7 @@ public:
   explicit FeederSubsystem(std::unique_ptr<FeederIO> io);
 
   void SetVoltage(units::volt_t voltage);
+  void SetCurrent(units::ampere_t current);
   void SetVelocity(units::turns_per_second_t rps);
   void Stop();
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);

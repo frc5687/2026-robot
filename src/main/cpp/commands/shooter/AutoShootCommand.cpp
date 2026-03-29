@@ -13,13 +13,14 @@
 
 AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
                                    HoodSubsystem *hood, FeederSubsystem *feeder,
+                                   FloorSubsystem *floor,
                                    IntakeTopRollerSubsystem *topRoller,
                                    IntakeBottomRollerSubsystem *bottomRoller,
                                    IntakeDeployerSubsystem *deployer)
-    : m_flywheel(flywheel), m_hood(hood), m_feeder(feeder),
+    : m_flywheel(flywheel), m_hood(hood), m_feeder(feeder), m_floor(floor),
       m_topRoller(topRoller), m_bottomRoller(bottomRoller),
       m_deployer(deployer) {
-  AddRequirements({flywheel, hood, feeder, deployer});
+  AddRequirements({flywheel, hood, feeder, floor, deployer});
   SetName("AutoShootCommand");
 }
 
@@ -72,11 +73,12 @@ void AutoShootCommand::Execute() {
   }
 
   if (solution.ready) {
-    m_feeder->SetVoltage(kFeedVoltage);
+    m_floor->SetVoltage(kFloorVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
     m_feeder->SetVelocity(kKickerRPS);
   } else {
+    m_floor->Stop();
     m_feeder->Stop();
   }
 }
@@ -87,6 +89,7 @@ void AutoShootCommand::End(bool interrupted) {
   m_topRoller->Stop();
   m_bottomRoller->Stop();
   m_feeder->Stop();
+  m_floor->Stop();
   m_deployer->RetractMid();
 
   pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();

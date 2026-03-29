@@ -10,6 +10,7 @@
 #include <units/voltage.h>
 
 #include "subsystem/feeder/FeederSubsystem.h"
+#include "subsystem/floor/FloorSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
@@ -20,7 +21,7 @@ class SimpleShootCommand
     : public frc2::CommandHelper<frc2::Command, SimpleShootCommand> {
 public:
   SimpleShootCommand(FlywheelSubsystem *flywheel, FeederSubsystem *feeder,
-                     HoodSubsystem *hood,
+                     FloorSubsystem *floor, HoodSubsystem *hood,
                      IntakeBottomRollerSubsystem *bottomRoller,
                      IntakeDeployerSubsystem *deployer,
                      units::revolutions_per_minute_t flywheelRPM,
@@ -35,6 +36,7 @@ public:
 private:
   FlywheelSubsystem *m_flywheel;
   FeederSubsystem *m_feeder;
+  FloorSubsystem *m_floor;
   HoodSubsystem *m_hood;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   IntakeDeployerSubsystem *m_deployer;
@@ -42,17 +44,17 @@ private:
   units::revolutions_per_minute_t m_flywheelRPM;
   units::turns_per_second_t m_kickerRPS;
   units::degree_t m_hoodAngle;
-  units::volt_t m_feederVolts{0_V};
+  units::volt_t m_floorVolts{0_V};
   units::volt_t m_bottomVolts{0_V};
 
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};
 
-  static constexpr units::volt_t kFeederVoltage = 10_V;
+  static constexpr units::volt_t kFloorVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
   TunableDouble m_tunableFlywheelRPM;
   TunableDouble m_tunableKickerRPS;
   TunableDouble m_tunableHoodAngle;
   TunableDouble m_tunableBottomVoltage;
-  TunableDouble m_tunableFeederVoltage;
+  TunableDouble m_tunableFloorVoltage;
 };

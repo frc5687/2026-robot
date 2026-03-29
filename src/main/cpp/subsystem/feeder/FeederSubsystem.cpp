@@ -6,6 +6,7 @@
 #include <units/math.h>
 
 #include "frc2/command/sysid/SysIdRoutine.h"
+#include "units/current.h"
 
 using namespace frc2::sysid;
 
@@ -39,6 +40,9 @@ frc2::CommandPtr FeederSubsystem::SysIdDynamic(Direction direction) {
 void FeederSubsystem::SysIdDrive(units::volt_t voltage) {
   m_io->SetVoltage(voltage);
 }
+void FeederSubsystem::SetCurrent(units::ampere_t current) {
+  m_io->SetCurrent(current);
+}
 
 void FeederSubsystem::SysIdLog(frc::sysid::SysIdRoutineLog *log) {
   // log->Motor("feeder-leader")
@@ -57,56 +61,34 @@ void FeederSubsystem::UpdateInputs() {
 void FeederSubsystem::LogTelemetry() {
   const auto leaderPower =
       units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
-  const auto follower1Power =
-      units::math::abs(m_inputs.follower1SupplyCurrent) *
-      m_inputs.follower1AppliedVolts;
-  const auto follower2Power =
-      units::math::abs(m_inputs.follower2SupplyCurrent) *
-      m_inputs.follower2AppliedVolts;
-  const auto follower3Power =
-      units::math::abs(m_inputs.follower3SupplyCurrent) *
-      m_inputs.follower3AppliedVolts;
+  const auto followerPower =
+      units::math::abs(m_inputs.followerSupplyCurrent) *
+      m_inputs.followerAppliedVolts;
 
   Log("Velocity", m_inputs.motorVelocity.value());
   Log("Position", m_inputs.motorPosition.value());
   Log("AppliedVolts", m_inputs.appliedVolts.value());
   Log("Current/Leader/Stator", m_inputs.statorCurrent.value());
   Log("Current/Leader/Supply", m_inputs.supplyCurrent.value());
-  Log("Current/Follower1/Supply", m_inputs.follower1SupplyCurrent.value());
-  Log("Current/Follower2/Supply", m_inputs.follower2SupplyCurrent.value());
-  Log("Current/Follower3/Supply", m_inputs.follower3SupplyCurrent.value());
-  Log("Current/Follower1/Stator", m_inputs.follower1StatorCurrent.value());
-  Log("Current/Follower2/Stator", m_inputs.follower2StatorCurrent.value());
-  Log("Current/Follower3/Stator", m_inputs.follower3StatorCurrent.value());
-  Log("Voltage/Follower1/Applied", m_inputs.follower1AppliedVolts.value());
-  Log("Voltage/Follower2/Applied", m_inputs.follower2AppliedVolts.value());
-  Log("Voltage/Follower3/Applied", m_inputs.follower3AppliedVolts.value());
+  Log("Current/Follower/Supply", m_inputs.followerSupplyCurrent.value());
+  Log("Current/Follower/Stator", m_inputs.followerStatorCurrent.value());
+  Log("Voltage/Follower/Applied", m_inputs.followerAppliedVolts.value());
   Log("Power/Leader", leaderPower.value());
-  Log("Power/Follower1", follower1Power.value());
-  Log("Power/Follower2", follower2Power.value());
-  Log("Power/Follower3", follower3Power.value());
+  Log("Power/Follower", followerPower.value());
   Log("Current/Total/Supply", GetElectricalCurrentDraw().value());
-  Log("Power/Total",
-      (leaderPower + follower1Power + follower2Power + follower3Power).value());
+  Log("Power/Total", (leaderPower + followerPower).value());
 }
 
 units::ampere_t FeederSubsystem::GetElectricalCurrentDraw() const {
-  return m_inputs.supplyCurrent + m_inputs.follower1SupplyCurrent +
-         m_inputs.follower2SupplyCurrent + m_inputs.follower3SupplyCurrent;
+  return m_inputs.supplyCurrent + m_inputs.followerSupplyCurrent;
 }
 
 units::watt_t FeederSubsystem::GetElectricalPowerDraw() const {
   const auto leaderPower =
       units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
-  const auto follower1Power =
-      units::math::abs(m_inputs.follower1SupplyCurrent) *
-      m_inputs.follower1AppliedVolts;
-  const auto follower2Power =
-      units::math::abs(m_inputs.follower2SupplyCurrent) *
-      m_inputs.follower2AppliedVolts;
-  const auto follower3Power =
-      units::math::abs(m_inputs.follower3SupplyCurrent) *
-      m_inputs.follower3AppliedVolts;
+  const auto followerPower =
+      units::math::abs(m_inputs.followerSupplyCurrent) *
+      m_inputs.followerAppliedVolts;
 
-  return leaderPower + follower1Power + follower2Power + follower3Power;
+  return leaderPower + followerPower;
 }

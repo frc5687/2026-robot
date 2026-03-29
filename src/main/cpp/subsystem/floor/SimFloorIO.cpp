@@ -1,23 +1,23 @@
 // Team 5687 2026
 
-#include "subsystem/feeder/SimFeederIO.h"
+#include "subsystem/floor/SimFloorIO.h"
 
 #include <frc/Timer.h>
 #include <units/math.h>
 
 #include <numbers>
 
-#include "subsystem/feeder/FeederConstants.h"
+#include "subsystem/floor/FloorConstants.h"
 
-using namespace Constants::Feeder;
+using namespace Constants::Floor;
 
-SimFeederIO::SimFeederIO()
+SimFloorIO::SimFloorIO()
     : m_motorSim(
           frc::LinearSystemId::DCMotorSystem(kMotor, kInertia, kGearRatio),
           kMotor),
       m_pid(PID::kP, 0.0, PID::kD) {}
 
-units::volt_t SimFeederIO::CalculateClosedLoop() {
+units::volt_t SimFloorIO::CalculateClosedLoop() {
   if (m_velocitySetpoint.value() <= 0)
     return 0_V;
 
@@ -30,7 +30,7 @@ units::volt_t SimFeederIO::CalculateClosedLoop() {
   return units::math::max(units::math::min(fb, 12_V), -12_V);
 }
 
-void SimFeederIO::UpdateInputs(FeederIOInputs &inputs) {
+void SimFloorIO::UpdateInputs(FloorIOInputs &inputs) {
   constexpr auto dt = 20_ms;
 
   units::volt_t voltage{0_V};
@@ -56,28 +56,20 @@ void SimFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.appliedVolts = voltage;
   inputs.statorCurrent = m_motorSim.GetCurrentDraw();
   inputs.supplyCurrent = m_motorSim.GetCurrentDraw();
-  inputs.followerAppliedVolts = voltage;
-  inputs.followerStatorCurrent = m_motorSim.GetCurrentDraw();
-  inputs.followerSupplyCurrent = m_motorSim.GetCurrentDraw();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
-void SimFeederIO::SetVoltage(units::volt_t voltage) {
+void SimFloorIO::SetVoltage(units::volt_t voltage) {
   m_mode = Mode::kVoltage;
   m_voltageCommand = voltage;
 }
 
-void SimFeederIO::SetCurrent(units::ampere_t current) {
-  m_mode = Mode::kVoltage;
-}
-
-
-void SimFeederIO::SetVelocity(units::turns_per_second_t rps) {
+void SimFloorIO::SetVelocity(units::turns_per_second_t rps) {
   m_mode = Mode::kVelocity;
   m_velocitySetpoint = rps;
 }
 
-void SimFeederIO::Stop() {
+void SimFloorIO::Stop() {
   m_mode = Mode::kStopped;
   m_voltageCommand = 0_V;
   m_velocitySetpoint = units::turns_per_second_t{0};

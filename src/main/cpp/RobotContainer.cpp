@@ -35,6 +35,8 @@
 #include "subsystem/drive/module/SimModuleIO.h"
 #include "subsystem/feeder/CTREFeederIO.h"
 #include "subsystem/feeder/SimFeederIO.h"
+#include "subsystem/floor/CTREFloorIO.h"
+#include "subsystem/floor/SimFloorIO.h"
 #include "subsystem/flywheel/CTREFlywheelIO.h"
 #include "subsystem/flywheel/SimFlywheelIO.h"
 #include "subsystem/hood/CTREHoodIO.h"
@@ -91,9 +93,15 @@ std::unique_ptr<FeederIO> MakeFeederIO() {
   }
   return std::make_unique<CTREFeederIO>(
       HardwareMap::CAN::TalonFX::FeederLeader,
-      HardwareMap::CAN::TalonFX::FeederFollower,
-      HardwareMap::CAN::TalonFX::FeederFollower2,
-      HardwareMap::CAN::TalonFX::FeederFollower3);
+      HardwareMap::CAN::TalonFX::FeederFollower);
+}
+
+std::unique_ptr<FloorIO> MakeFloorIO() {
+  if (frc::RobotBase::IsSimulation()) {
+    return std::make_unique<SimFloorIO>();
+  }
+  return std::make_unique<CTREFloorIO>(
+      HardwareMap::CAN::TalonFX::FloorMotor);
 }
 
 std::unique_ptr<IntakeDeployerIO> MakeIntakeDeployerIO() {
@@ -160,7 +168,8 @@ RobotContainer::RobotContainer()
                             HardwareMap::CAN::CANCoder::BackRightEncoder}),
               MakeGyroIO()},
       m_flywheel{MakeFlywheelIO()}, m_hood{MakeHoodIO()},
-      m_feeder{MakeFeederIO()}, m_intakeDeployer{MakeIntakeDeployerIO()},
+      m_feeder{MakeFeederIO()}, m_floor{MakeFloorIO()},
+      m_intakeDeployer{MakeIntakeDeployerIO()},
       m_intakeTopRoller{MakeIntakeTopRollerIO()},
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
       m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
@@ -184,6 +193,9 @@ RobotContainer::RobotContainer()
   m_batteryLogger.RegisterSubsystem(
       "Feeder", [this] { return m_feeder.GetElectricalCurrentDraw(); },
       [this] { return m_feeder.GetElectricalPowerDraw(); });
+  m_batteryLogger.RegisterSubsystem(
+      "Floor", [this] { return m_floor.GetElectricalCurrentDraw(); },
+      [this] { return m_floor.GetElectricalPowerDraw(); });
   m_batteryLogger.RegisterSubsystem(
       "IntakeDeployer",
       [this] { return m_intakeDeployer.GetElectricalCurrentDraw(); },
@@ -228,21 +240,23 @@ void RobotContainer::Periodic() {
 void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
       "AutoShoot",
-      AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_intakeTopRoller,
-                       &m_intakeBottomRoller, &m_intakeDeployer)
+      AutoShootCommand(&m_flywheel, &m_hood, &m_feeder, &m_floor,
+                       &m_intakeTopRoller, &m_intakeBottomRoller,
+                       &m_intakeDeployer)
           .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
       "Shoot", ShootCommand(
                    &m_drive, &m_flywheel, &m_hood, &m_intakeTopRoller,
-                   &m_intakeBottomRoller, &m_feeder, &m_intakeDeployer,
+                   &m_intakeBottomRoller, &m_feeder, &m_floor,
+                   &m_intakeDeployer,
                    [this] { return -m_driver.GetLeftY(); },
                    [this] { return -m_driver.GetLeftX(); })
                    .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
       "Intake", IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
-                              &m_intakeBottomRoller)
+                              &m_intakeBottomRoller, &m_floor)
                     .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
@@ -274,7 +288,7 @@ void RobotContainer::ConfigureBindings() {
 
   m_driver.L2().WhileTrue(IntakeCommand(&m_drive, &m_intakeDeployer,
                                         &m_intakeTopRoller,
-                                        &m_intakeBottomRoller)
+                                        &m_intakeBottomRoller, &m_floor)
                               .ToPtr());
 
   m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
@@ -282,17 +296,18 @@ void RobotContainer::ConfigureBindings() {
   m_driver.R2().WhileTrue(ShootCommand(
                               &m_drive, &m_flywheel, &m_hood,
                               &m_intakeTopRoller, &m_intakeBottomRoller,
-                              &m_feeder, &m_intakeDeployer,
+                              &m_feeder, &m_floor, &m_intakeDeployer,
                               [this] { return -m_driver.GetLeftY(); },
                               [this] { return -m_driver.GetLeftX(); })
                               .ToPtr());
 
   m_driver.R1().WhileTrue(EjectIntakeCommand(&m_intakeDeployer,
                                              &m_intakeTopRoller,
-                                             &m_intakeBottomRoller, &m_feeder)
+                                             &m_intakeBottomRoller, &m_floor)
                               .ToPtr());
   // m_driver.R1().WhileTrue(SimpleShootCommand(&m_flywheel, &m_feeder,
-  //                                            &m_hood, &m_intakeBottomRoller,
+  //                                            &m_floor, &m_hood,
+  //                                            &m_intakeBottomRoller,
   //                                            &m_intakeDeployer, 1000_rpm,
   //                                            60_tps, 10_deg)
   //                             .ToPtr());
@@ -318,12 +333,13 @@ void RobotContainer::ConfigureBindings() {
           [this] { return -m_driver.GetLeftX(); })
           .ToPtr()
           .AlongWith(IntakeCommand(&m_drive, &m_intakeDeployer,
-                                   &m_intakeTopRoller, &m_intakeBottomRoller)
+                                   &m_intakeTopRoller, &m_intakeBottomRoller,
+                                   &m_floor)
                          .ToPtr()));
 
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
-  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_flywheel).ToPtr());
+  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_floor, &m_flywheel).ToPtr());
   m_operator.R2().OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_operator.R1().OnTrue(

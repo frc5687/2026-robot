@@ -9,33 +9,20 @@
 using namespace Constants::Feeder;
 using namespace ctre::phoenix6;
 
-CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower1,
-                           const CANDevice &follower2,
-                           const CANDevice &follower3)
-    : m_leader(leader.id, leader.bus), m_follower1(follower1.id, follower1.bus),
-      m_follower2(follower2.id, follower2.bus),
-      m_follower3(follower3.id, follower3.bus),
+CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
+    : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
       m_positionSignal(m_leader.GetPosition()),
       m_velocitySignal(m_leader.GetVelocity()),
       m_voltageSignal(m_leader.GetMotorVoltage()),
       m_statorSignal(m_leader.GetStatorCurrent()),
       m_supplySignal(m_leader.GetSupplyCurrent()),
-      m_follower1StatorSignal(m_follower1.GetStatorCurrent()),
-      m_follower1SupplySignal(m_follower1.GetSupplyCurrent()),
-      m_follower2StatorSignal(m_follower2.GetStatorCurrent()),
-      m_follower2SupplySignal(m_follower2.GetSupplyCurrent()),
-      m_follower3StatorSignal(m_follower3.GetStatorCurrent()),
-      m_follower3SupplySignal(m_follower3.GetSupplyCurrent()),
-      m_follower1VoltageSignal(m_follower1.GetMotorVoltage()),
-      m_follower2VoltageSignal(m_follower2.GetMotorVoltage()),
-      m_follower3VoltageSignal(m_follower3.GetMotorVoltage()),
-      m_criticalSignals{&m_positionSignal,         &m_velocitySignal,
-                        &m_voltageSignal,          &m_statorSignal,
-                        &m_follower1StatorSignal,  &m_follower2StatorSignal,
-                        &m_follower3StatorSignal,  &m_follower1VoltageSignal,
-                        &m_follower2VoltageSignal, &m_follower3VoltageSignal},
-      m_batchedSignals{&m_supplySignal, &m_follower1SupplySignal,
-                       &m_follower2SupplySignal, &m_follower3SupplySignal} {
+      m_followerStatorSignal(m_follower.GetStatorCurrent()),
+      m_followerSupplySignal(m_follower.GetSupplyCurrent()),
+      m_followerVoltageSignal(m_follower.GetMotorVoltage()),
+      m_criticalSignals{&m_positionSignal,        &m_velocitySignal,
+                        &m_voltageSignal,         &m_statorSignal,
+                        &m_followerStatorSignal,  &m_followerVoltageSignal},
+      m_batchedSignals{&m_supplySignal, &m_followerSupplySignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -55,9 +42,7 @@ void CTREFeederIO::ConfigureDevices() {
   m_leader.GetConfigurator().Apply(m_leaderConfig);
 
   int leaderId = m_leader.GetDeviceID();
-  ConfigureFollower(m_follower1, leaderId, kFollower1Opposed);
-  ConfigureFollower(m_follower2, leaderId, kFollower2Opposed);
-  ConfigureFollower(m_follower3, leaderId, kFollower3Opposed);
+  ConfigureFollower(m_follower, leaderId, kFollowerOpposed);
 }
 
 void CTREFeederIO::ConfigureClosedLoop() {
@@ -89,21 +74,13 @@ void CTREFeederIO::ConfigureSignalFrequencies() {
   m_velocitySignal.SetUpdateFrequency(100_Hz);
   m_voltageSignal.SetUpdateFrequency(100_Hz);
   m_statorSignal.SetUpdateFrequency(100_Hz);
-  m_follower1StatorSignal.SetUpdateFrequency(100_Hz);
-  m_follower2StatorSignal.SetUpdateFrequency(100_Hz);
-  m_follower3StatorSignal.SetUpdateFrequency(100_Hz);
-  m_follower1VoltageSignal.SetUpdateFrequency(100_Hz);
-  m_follower2VoltageSignal.SetUpdateFrequency(100_Hz);
-  m_follower3VoltageSignal.SetUpdateFrequency(100_Hz);
+  m_followerStatorSignal.SetUpdateFrequency(100_Hz);
+  m_followerVoltageSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
-  m_follower1SupplySignal.SetUpdateFrequency(50_Hz);
-  m_follower2SupplySignal.SetUpdateFrequency(50_Hz);
-  m_follower3SupplySignal.SetUpdateFrequency(50_Hz);
+  m_followerSupplySignal.SetUpdateFrequency(50_Hz);
 
   m_leader.OptimizeBusUtilization();
-  m_follower1.OptimizeBusUtilization();
-  m_follower2.OptimizeBusUtilization();
-  m_follower3.OptimizeBusUtilization();
+  m_follower.OptimizeBusUtilization();
 }
 
 void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
@@ -115,15 +92,9 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.appliedVolts = m_voltageSignal.GetValue();
   inputs.statorCurrent = m_statorSignal.GetValue();
   inputs.supplyCurrent = m_supplySignal.GetValue();
-  inputs.follower1StatorCurrent = m_follower1StatorSignal.GetValue();
-  inputs.follower1SupplyCurrent = m_follower1SupplySignal.GetValue();
-  inputs.follower2StatorCurrent = m_follower2StatorSignal.GetValue();
-  inputs.follower2SupplyCurrent = m_follower2SupplySignal.GetValue();
-  inputs.follower3StatorCurrent = m_follower3StatorSignal.GetValue();
-  inputs.follower3SupplyCurrent = m_follower3SupplySignal.GetValue();
-  inputs.follower1AppliedVolts = m_follower1VoltageSignal.GetValue();
-  inputs.follower2AppliedVolts = m_follower2VoltageSignal.GetValue();
-  inputs.follower3AppliedVolts = m_follower3VoltageSignal.GetValue();
+  inputs.followerStatorCurrent = m_followerStatorSignal.GetValue();
+  inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
+  inputs.followerAppliedVolts = m_followerVoltageSignal.GetValue();
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 
@@ -137,5 +108,10 @@ void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {
       m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(
           kEnableFOC));
 }
+
+void CTREFeederIO::SetCurrent(units::ampere_t current) {
+    m_leader.SetControl(m_currentRequest.WithOutput(current));
+}
+
 
 void CTREFeederIO::Stop() { m_leader.SetControl(m_neutralRequest); }

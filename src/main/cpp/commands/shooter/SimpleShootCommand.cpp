@@ -8,12 +8,12 @@
 #include "units/angular_velocity.h"
 
 SimpleShootCommand::SimpleShootCommand(
-    FlywheelSubsystem *flywheel, FeederSubsystem *feeder, HoodSubsystem *hood,
-    IntakeBottomRollerSubsystem *bottomRoller,
+    FlywheelSubsystem *flywheel, FeederSubsystem *feeder, FloorSubsystem *floor,
+    HoodSubsystem *hood, IntakeBottomRollerSubsystem *bottomRoller,
     IntakeDeployerSubsystem *deployer,
     units::revolutions_per_minute_t flywheelRPM,
     units::turns_per_second_t kickerRPS, units::degree_t hoodAngle)
-    : m_flywheel(flywheel), m_feeder(feeder), m_hood(hood),
+    : m_flywheel(flywheel), m_feeder(feeder), m_floor(floor), m_hood(hood),
       m_bottomRoller(bottomRoller), m_deployer(deployer),
       m_flywheelRPM(flywheelRPM), m_kickerRPS(kickerRPS),
       m_hoodAngle(hoodAngle),
@@ -22,9 +22,9 @@ SimpleShootCommand::SimpleShootCommand(
       m_tunableHoodAngle("SimpleShoot", "HoodAngleDeg", hoodAngle.value()),
       m_tunableBottomVoltage("SimpleShoot", "BottomVoltage",
                              kBottomVoltage.value()),
-      m_tunableFeederVoltage("SimpleShoot", "FeederVoltage",
-                             kFeederVoltage.value()) {
-  AddRequirements({flywheel, feeder, deployer});
+      m_tunableFloorVoltage("SimpleShoot", "FloorVoltage",
+                            kFloorVoltage.value()) {
+  AddRequirements({flywheel, feeder, floor, deployer});
   SetName("SimpleShootCommand");
 }
 
@@ -71,23 +71,24 @@ void SimpleShootCommand::Execute() {
     }
   }
 
-  if (m_tunableFeederVoltage.HasChanged() ||
+  if (m_tunableFloorVoltage.HasChanged() ||
       m_tunableBottomVoltage.HasChanged()) {
-    m_feederVolts = units::volt_t{m_tunableFeederVoltage.Get()};
+    m_floorVolts = units::volt_t{m_tunableFloorVoltage.Get()};
     m_bottomVolts = units::volt_t{m_tunableBottomVoltage.Get()};
   }
 
   if (m_flywheel->AtSetpoint()) {
-    m_feeder->SetVoltage(m_feederVolts);
+    m_floor->SetVoltage(m_floorVolts);
     m_bottomRoller->SetVoltage(m_bottomVolts);
   } else {
-    m_feeder->Stop();
+    m_floor->Stop();
   }
 }
 
 void SimpleShootCommand::End(bool interrupted) {
   m_flywheel->SetRPM(0_rpm);
   m_feeder->Stop();
+  m_floor->Stop();
   m_hood->SetPosition(0_deg);
   m_bottomRoller->Stop();
   m_deployer->RetractMid();

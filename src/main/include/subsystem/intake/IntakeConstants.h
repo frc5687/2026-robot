@@ -86,8 +86,8 @@ inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX44FOC(1);
 inline constexpr double kGearRatio = 3.0 / 1.0;
 inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
 
-inline constexpr bool kInverted = false;
-inline constexpr bool kEnableFOC = false;
+inline constexpr bool kInverted = true;
+inline constexpr bool kEnableFOC = true;
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
 inline constexpr units::ampere_t kSupplyCurrentLimit = 20_A;
 

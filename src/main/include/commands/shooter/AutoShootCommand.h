@@ -11,6 +11,7 @@
 
 #include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/feeder/FeederSubsystem.h"
+#include "subsystem/floor/FloorSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
@@ -22,7 +23,7 @@ class AutoShootCommand
     : public frc2::CommandHelper<frc2::Command, AutoShootCommand> {
 public:
   AutoShootCommand(FlywheelSubsystem *flywheel, HoodSubsystem *hood,
-                   FeederSubsystem *feeder,
+                   FeederSubsystem *feeder, FloorSubsystem *floor,
                    IntakeTopRollerSubsystem *topRoller,
                    IntakeBottomRollerSubsystem *bottomRoller,
                    IntakeDeployerSubsystem *deployer);
@@ -36,6 +37,7 @@ private:
   FlywheelSubsystem *m_flywheel;
   HoodSubsystem *m_hood;
   FeederSubsystem *m_feeder;
+  FloorSubsystem *m_floor;
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   IntakeDeployerSubsystem *m_deployer;
@@ -50,7 +52,7 @@ private:
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};
 
-  static constexpr units::volt_t kFeedVoltage = 8_V;
+  static constexpr units::volt_t kFloorVoltage = 8_V;
   static constexpr units::volt_t kTopVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::turns_per_second_t kKickerRPS = 75_tps;

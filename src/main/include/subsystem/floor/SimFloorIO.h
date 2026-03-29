@@ -7,18 +7,17 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "subsystem/feeder/FeederConstants.h"
-#include "FeederIO.h"
+#include "subsystem/floor/FloorConstants.h"
+#include "FloorIO.h"
 
-class SimFeederIO : public FeederIO {
+class SimFloorIO : public FloorIO {
 public:
-  SimFeederIO();
-  ~SimFeederIO() override = default;
+  SimFloorIO();
+  ~SimFloorIO() override = default;
 
-  void UpdateInputs(FeederIOInputs &inputs) override;
+  void UpdateInputs(FloorIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
   void SetVelocity(units::turns_per_second_t rps) override;
-  void SetCurrent(units::ampere_t current) override;
   void Stop() override;
 
 private:

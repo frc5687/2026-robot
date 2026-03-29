@@ -7,11 +7,12 @@
 #include <units/voltage.h>
 
 #include "subsystem/feeder/FeederSubsystem.h"
+#include "subsystem/floor/FloorSubsystem.h"
 
-class ClearFeeder 
+class ClearFeeder
     : public frc2::CommandHelper<frc2::Command, ClearFeeder> {
 public:
-  ClearFeeder(FeederSubsystem* feeder);
+  ClearFeeder(FeederSubsystem *feeder, FloorSubsystem *floor);
 
   void Initialize() override;
   void Execute() override;
@@ -20,6 +21,8 @@ public:
 
 private:
   FeederSubsystem *m_feeder;
+  FloorSubsystem *m_floor;
 
   static constexpr units::volt_t kFeederVoltage = -6_V;
+  static constexpr units::volt_t kFloorVoltage = -6_V;
 };

@@ -5,9 +5,10 @@
 #include <frc/Timer.h>
 
 IndexFeederCommand::IndexFeederCommand(FeederSubsystem *feeder,
+                                       FloorSubsystem *floor,
                                        FlywheelSubsystem *flywheel)
-    : m_feeder(feeder), m_flywheel(flywheel) {
-  AddRequirements({m_feeder, m_flywheel});
+    : m_feeder(feeder), m_floor(floor), m_flywheel(flywheel) {
+  AddRequirements({m_feeder, m_floor, m_flywheel});
   SetName("IndexFeederCommand");
 }
 
@@ -22,7 +23,7 @@ void IndexFeederCommand::Execute() {
 
   switch (m_state) {
   case State::Indexing:
-    m_feeder->SetVoltage(kFeederIndexVoltage);
+    m_floor->SetVoltage(kFloorIndexVoltage);
     m_flywheel->SetVoltage(kFlywheelReverseVoltage);
 
     if (elapsed >= kIndexDuration) {
@@ -32,7 +33,7 @@ void IndexFeederCommand::Execute() {
     break;
 
   case State::Reversing:
-    m_feeder->SetVoltage(kFeederReverseVoltage);
+    m_floor->SetVoltage(kFloorReverseVoltage);
     m_flywheel->SetVoltage(0_V);
 
     if (elapsed >= kReverseDuration) {
@@ -41,12 +42,13 @@ void IndexFeederCommand::Execute() {
     break;
 
   case State::Done:
-    m_feeder->Stop();
+    m_floor->Stop();
     break;
   }
 }
 
 void IndexFeederCommand::End(bool interrupted) {
+  m_floor->Stop();
   m_feeder->Stop();
   m_flywheel->SetRPM(0_rpm);
 }

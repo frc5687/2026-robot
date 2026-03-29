@@ -19,14 +19,15 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
                            IntakeTopRollerSubsystem *topRoller,
                            IntakeBottomRollerSubsystem *bottomRoller,
-                           FeederSubsystem *feeder,
+                           FeederSubsystem *feeder, FloorSubsystem *floor,
                            IntakeDeployerSubsystem *deployer,
                            std::function<double()> throttle,
                            std::function<double()> strafe)
     : m_drive(drive), m_flywheel(flywheel), m_hood(hood),
       m_topRoller(topRoller), m_bottomRoller(bottomRoller), m_feeder(feeder),
-      m_deployer(deployer), m_throttle(throttle), m_strafe(strafe) {
-  AddRequirements({drive, flywheel, hood, feeder, deployer});
+      m_floor(floor), m_deployer(deployer), m_throttle(throttle),
+      m_strafe(strafe) {
+  AddRequirements({drive, flywheel, hood, feeder, floor, deployer});
   SetName("ShootCommand");
   m_headingController.EnableContinuousInput(-std::numbers::pi,
                                             std::numbers::pi);
@@ -97,11 +98,14 @@ void ShootCommand::Execute() {
   }
 
   if (m_shootingBurstActive) {
-    m_feeder->SetVoltage(kFeedVoltage);
+    m_floor->SetVoltage(kFloorVoltage);
+    //m_feeder->SetVoltage(kFeedVoltage);
+    //m_feeder->SetVelocity(kFeederRPS);
+    m_feeder->SetCurrent(kFeederCurrent);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
-    // m_feeder->SetVelocity(kFeederRPS);
   } else {
+    m_floor->Stop();
     m_feeder->Stop();
   }
 }
@@ -112,6 +116,7 @@ void ShootCommand::End(bool interrupted) {
   m_topRoller->Stop();
   m_bottomRoller->Stop();
   m_feeder->Stop();
+  m_floor->Stop();
   m_deployer->RetractMid();
   m_shootingBurstActive = false;
   m_hasRetractedDeployer = false;

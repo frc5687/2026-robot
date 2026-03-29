@@ -38,8 +38,8 @@ inline constexpr CANDevice LeftFollowerFlywheel{23, Bus::kShooter};
 
 inline constexpr CANDevice FeederLeader{24, Bus::kShooter};
 inline constexpr CANDevice FeederFollower{25, Bus::kShooter};
-inline constexpr CANDevice FeederFollower2{27, Bus::kShooter};
-inline constexpr CANDevice FeederFollower3{26, Bus::kShooter};
+
+inline constexpr CANDevice FloorMotor{29, Bus::kDriveTrain};
 
 inline constexpr CANDevice IntakeDeployer{19, Bus::kDriveTrain};
 

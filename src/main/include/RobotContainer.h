@@ -11,6 +11,7 @@
 #include "frc/smartdashboard/SendableChooser.h"
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/feeder/FeederSubsystem.h"
+#include "subsystem/floor/FloorSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/IntakeSystem.h"
@@ -39,6 +40,7 @@ private:
   FlywheelSubsystem m_flywheel;
   HoodSubsystem m_hood;
   FeederSubsystem m_feeder;
+  FloorSubsystem m_floor;
   IntakeDeployerSubsystem m_intakeDeployer;
   IntakeTopRollerSubsystem m_intakeTopRoller;
   IntakeBottomRollerSubsystem m_intakeBottomRoller;

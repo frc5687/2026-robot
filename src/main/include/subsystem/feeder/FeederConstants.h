@@ -11,7 +11,7 @@ namespace Constants {
 
 namespace Feeder {
 
-inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(4);
+inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(2);
 inline constexpr units::inch_t kRadius = 2_in;
 inline constexpr units::pound_t kMass = 1.5_lb;
 inline constexpr units::kilogram_square_meter_t kInertia =
@@ -19,12 +19,10 @@ inline constexpr units::kilogram_square_meter_t kInertia =
 
 inline constexpr bool kLeaderInverted = false;
 inline constexpr bool kEnableFOC = true;
-inline constexpr bool kFollower1Opposed = true;
-inline constexpr bool kFollower2Opposed = true;
-inline constexpr bool kFollower3Opposed = false;
+inline constexpr bool kFollowerOpposed = false;
 
-inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 30_A;
+inline constexpr units::ampere_t kStatorCurrentLimit = 300_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 300_A;
 
 namespace PID {
 inline constexpr double kP = 0.0;

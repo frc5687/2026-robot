@@ -15,6 +15,7 @@
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/feeder/FeederSubsystem.h"
+#include "subsystem/floor/FloorSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
@@ -28,7 +29,7 @@ public:
   ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                HoodSubsystem *hood, IntakeTopRollerSubsystem *topRoller,
                IntakeBottomRollerSubsystem *bottomRoller,
-               FeederSubsystem *feeder,
+               FeederSubsystem *feeder, FloorSubsystem *floor,
                IntakeDeployerSubsystem *deployer,
                std::function<double()> throttle,
                std::function<double()> strafe);
@@ -45,6 +46,7 @@ private:
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
   FeederSubsystem *m_feeder;
+  FloorSubsystem *m_floor;
   IntakeDeployerSubsystem *m_deployer;
 
   std::function<double()> m_throttle;
@@ -56,18 +58,23 @@ private:
       Constants::SwerveDrive::Shooting::kAimkP, 0.0, Constants::SwerveDrive::Shooting::kAimkD};
 
 
+  static constexpr units::volt_t kFloorVoltage = 8_V;
   static constexpr units::volt_t kFeedVoltage = 6_V;
+
+  static constexpr units::ampere_t kFeederCurrent = 60_A;
+
+
   static constexpr units::volt_t kTopVoltage = 6_V;
   static constexpr units::volt_t kBottomVoltage = 6_V;
   static constexpr units::second_t kDeployerRetractDelay = 1.4_s;
-  static constexpr units::turns_per_second_t kFeederRPS = 60_tps;
+  //static constexpr units::turns_per_second_t kFeederRPS = 60_tps;
   static constexpr double kDeadband = 0.1;
 
   bool m_shootingBurstActive{false};
   bool m_shootSequenceActive{false};
   bool m_hasRetractedDeployer{false};
   units::second_t m_shootBurstStartTime{0_s};
-  
+
 
   double ApplyDeadband(double value, double deadband);
 };
