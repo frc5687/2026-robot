@@ -17,6 +17,7 @@ public:
   explicit FloorSubsystem(std::unique_ptr<FloorIO> io);
 
   void SetVoltage(units::volt_t voltage);
+  void SetCurrent(units::ampere_t current);
   void SetVelocity(units::turns_per_second_t rps);
   void Stop();
   units::ampere_t GetElectricalCurrentDraw() const;

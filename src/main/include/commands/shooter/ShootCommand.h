@@ -10,7 +10,6 @@
 #include <units/voltage.h>
 
 #include <functional>
-#include <numbers>
 
 #include "subsystem/drive/DriveSubsystem.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
@@ -55,26 +54,19 @@ private:
   ShotCalculator m_shotCalculator;
 
   frc::PIDController m_headingController{
-      Constants::SwerveDrive::Shooting::kAimkP, 0.0, Constants::SwerveDrive::Shooting::kAimkD};
+      Constants::SwerveDrive::Shooting::kAimkP, 0.0,
+      Constants::SwerveDrive::Shooting::kAimkD};
 
-
-  static constexpr units::volt_t kFloorVoltage = 12_V;
-  static constexpr units::volt_t kFeedVoltage = 6_V;
-
-  static constexpr units::ampere_t kFeederCurrent = 60_A;
-
-
+  static constexpr units::ampere_t kFloorCurrent = 30_A;
+  static constexpr units::ampere_t kFeederCurrent = 100_A;
   static constexpr units::volt_t kTopVoltage = 6_V;
   static constexpr units::volt_t kBottomVoltage = 6_V;
-  static constexpr units::second_t kDeployerRetractDelay = 0.35_s;
-  //static constexpr units::turns_per_second_t kFeederRPS = 60_tps;
+  static constexpr units::second_t kDeployerRetractDelay = 1.5_s;
   static constexpr double kDeadband = 0.1;
 
-  bool m_shootingBurstActive{false};
   bool m_shootSequenceActive{false};
   bool m_hasRetractedDeployer{false};
   units::second_t m_shootBurstStartTime{0_s};
-
 
   double ApplyDeadband(double value, double deadband);
 };

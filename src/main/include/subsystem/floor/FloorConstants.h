@@ -20,7 +20,7 @@ inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
 inline constexpr bool kInverted = false;
 inline constexpr bool kEnableFOC = true;
 inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 30_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 60_A;
 
 namespace PID {
 inline constexpr double kP = 0.0;

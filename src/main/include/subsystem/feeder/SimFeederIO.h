@@ -19,6 +19,7 @@ public:
   void SetVoltage(units::volt_t voltage) override;
   void SetVelocity(units::turns_per_second_t rps) override;
   void SetCurrent(units::ampere_t current) override;
+  void SetPosition(units::turn_t position) override;
   void Stop() override;
 
 private:

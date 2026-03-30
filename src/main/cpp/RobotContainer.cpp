@@ -22,6 +22,7 @@
 #include "commands/drive/SlowModeCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
+#include "commands/intake/IntakeWithIndexCommand.h"
 #include "commands/intake/StopIntakeCommand.h"
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/IndexFeederCommand.h"
@@ -47,8 +48,6 @@
 #include "subsystem/intake/deployer/SimIntakeDeployerIO.h"
 #include "subsystem/intake/toproller/CTREIntakeTopRollerIO.h"
 #include "subsystem/intake/toproller/SimIntakeTopRollerIO.h"
-#include "subsystem/lights/CTRELightsIO.h"
-#include "subsystem/lights/LightsIO.h"
 #include "subsystem/vision/LimelightCamera.h"
 #include "subsystem/vision/LimelightVisionIO.h"
 #include "subsystem/vision/SimVisionIO.h"
@@ -141,10 +140,6 @@ std::unique_ptr<VisionIO> MakeVisionIO() {
   return std::make_unique<LimelightVisionIO>(std::move(limelights));
 }
 
-std::unique_ptr<LightsIO> MakeLightsIO() {
-  return std::make_unique<CTRELightsIO>(HardwareMap::CAN::CANdle::CANdle);
-}
-
 RobotContainer::RobotContainer()
     : m_drive{MakeModuleIO(ModulePosition::FrontLeft,
                            Constants::SwerveDrive::kEncoderOffsets[0],
@@ -172,9 +167,7 @@ RobotContainer::RobotContainer()
       m_intakeDeployer{MakeIntakeDeployerIO()},
       m_intakeTopRoller{MakeIntakeTopRollerIO()},
       m_intakeBottomRoller{MakeIntakeBottomRollerIO()},
-      m_vision{MakeVisionIO(), m_drive.GetOdometryThread()},
-      m_intake{m_intakeDeployer, m_intakeTopRoller, m_intakeBottomRoller},
-      m_shooter{m_flywheel, m_hood} {
+      m_vision{MakeVisionIO(), m_drive.GetOdometryThread()} {
   ConfigureAutoCommands();
   ConfigureBindings();
 
@@ -286,10 +279,11 @@ void RobotContainer::ConfigureBindings() {
   m_driver.POVUp().WhileTrue(
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));
 
-  m_driver.L2().WhileTrue(IntakeCommand(&m_drive, &m_intakeDeployer,
-                                        &m_intakeTopRoller,
-                                        &m_intakeBottomRoller, &m_floor)
-                              .ToPtr());
+  m_driver.L2().WhileTrue(
+      IntakeCommand(&m_drive, &m_intakeDeployer,
+                                   &m_intakeTopRoller, &m_intakeBottomRoller,
+                                   &m_floor)
+                         .ToPtr());
 
   m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
 

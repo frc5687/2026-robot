@@ -23,9 +23,15 @@ public:
   void SetVoltage(units::volt_t voltage);
   void SetCurrent(units::ampere_t current);
   void SetVelocity(units::turns_per_second_t rps);
+  void SetPosition(units::turn_t position);
   void Stop();
+  units::turn_t GetPosition() const;
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);
   frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction);
+
+  bool NeedsIndexing() const;
+  void SetIndexed();
+  void ClearIndexed();
 
   const FeederState &GetState() const { return m_state; }
   units::ampere_t GetElectricalCurrentDraw() const;
@@ -39,6 +45,7 @@ private:
   std::unique_ptr<FeederIO> m_io;
   FeederIOInputs m_inputs{};
   FeederState m_state{};
+  bool m_needsIndexing{true};
 
   frc2::sysid::SysIdRoutine m_sysIdRoutine;
   void SysIdDrive(units::volt_t voltage);

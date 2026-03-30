@@ -27,7 +27,21 @@ void FeederSubsystem::SetVelocity(units::turns_per_second_t rps) {
   m_io->SetVelocity(rps);
 }
 
+void FeederSubsystem::SetPosition(units::turn_t position) {
+  m_io->SetPosition(position);
+}
+
 void FeederSubsystem::Stop() { m_io->Stop(); }
+
+units::turn_t FeederSubsystem::GetPosition() const {
+  return m_inputs.motorPosition;
+}
+
+bool FeederSubsystem::NeedsIndexing() const { return m_needsIndexing; }
+
+void FeederSubsystem::SetIndexed() { m_needsIndexing = false; }
+
+void FeederSubsystem::ClearIndexed() { m_needsIndexing = true; }
 
 frc2::CommandPtr FeederSubsystem::SysIdQuasistatic(Direction direction) {
   return m_sysIdRoutine.Quasistatic(direction);

@@ -25,6 +25,8 @@ void IntakeCommand::Initialize() {
 
 void IntakeCommand::Execute() {
   m_deployer->Deploy();
+  //m_topRoller->SetCurrent(kTopRollerCurrent);
+  //m_bottomRoller->SetCurrent(kBottomRollerCurrent);
   m_topRoller->SetVoltage(kTopRollerVoltage);
   m_bottomRoller->SetVoltage(kBottomRollerVoltage);
   m_floor->SetVoltage(kFloorVoltage);

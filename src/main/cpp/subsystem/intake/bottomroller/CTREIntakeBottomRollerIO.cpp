@@ -73,6 +73,10 @@ void CTREIntakeBottomRollerIO::SetVoltage(units::volt_t voltage) {
   m_motor.SetControl(m_voltageRequest.WithOutput(voltage));
 }
 
+void CTREIntakeBottomRollerIO::SetCurrent(units::ampere_t current) {
+  m_motor.SetControl(m_currentRequest.WithOutput(current));
+}
+
 void CTREIntakeBottomRollerIO::SetVelocity(units::turns_per_second_t rps) {
   m_motor.SetControl(
       m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(

@@ -24,6 +24,7 @@ void IndexFeederCommand::Execute() {
   switch (m_state) {
   case State::Indexing:
     m_floor->SetVoltage(kFloorIndexVoltage);
+    m_feeder->SetVoltage(kFloorIndexVoltage);
     m_flywheel->SetVoltage(kFlywheelReverseVoltage);
 
     if (elapsed >= kIndexDuration) {
@@ -33,7 +34,8 @@ void IndexFeederCommand::Execute() {
     break;
 
   case State::Reversing:
-    m_floor->SetVoltage(kFloorReverseVoltage);
+    //m_floor->SetVoltage(kFloorReverseVoltage);
+    m_feeder->SetVoltage(kFloorIndexVoltage);
     m_flywheel->SetVoltage(0_V);
 
     if (elapsed >= kReverseDuration) {

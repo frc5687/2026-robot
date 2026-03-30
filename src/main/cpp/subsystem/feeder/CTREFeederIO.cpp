@@ -46,12 +46,19 @@ void CTREFeederIO::ConfigureDevices() {
 }
 
 void CTREFeederIO::ConfigureClosedLoop() {
-  m_leaderConfig.Slot0.kS = PID::kS;
-  m_leaderConfig.Slot0.kV = PID::kV;
-  m_leaderConfig.Slot0.kA = PID::kA;
-  m_leaderConfig.Slot0.kP = PID::kP;
-  m_leaderConfig.Slot0.kI = PID::kI;
-  m_leaderConfig.Slot0.kD = PID::kD;
+  m_leaderConfig.Slot0.kS = VelocityPID::kS;
+  m_leaderConfig.Slot0.kV = VelocityPID::kV;
+  m_leaderConfig.Slot0.kA = VelocityPID::kA;
+  m_leaderConfig.Slot0.kP = VelocityPID::kP;
+  m_leaderConfig.Slot0.kI = VelocityPID::kI;
+  m_leaderConfig.Slot0.kD = VelocityPID::kD;
+
+  m_leaderConfig.Slot1.kS = PositionPID::kS;
+  m_leaderConfig.Slot1.kV = PositionPID::kV;
+  m_leaderConfig.Slot1.kA = PositionPID::kA;
+  m_leaderConfig.Slot1.kP = PositionPID::kP;
+  m_leaderConfig.Slot1.kI = PositionPID::kI;
+  m_leaderConfig.Slot1.kD = PositionPID::kD;
 }
 
 void CTREFeederIO::ConfigureFollower(
@@ -110,8 +117,13 @@ void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {
 }
 
 void CTREFeederIO::SetCurrent(units::ampere_t current) {
-    m_leader.SetControl(m_currentRequest.WithOutput(current));
+  m_leader.SetControl(m_currentRequest.WithOutput(current).WithMaxAbsDutyCycle(1.0));
 }
 
+void CTREFeederIO::SetPosition(units::turn_t position) {
+  m_leader.SetControl(
+      m_positionRequest.WithPosition(position).WithSlot(1).WithEnableFOC(
+          kEnableFOC));
+}
 
 void CTREFeederIO::Stop() { m_leader.SetControl(m_neutralRequest); }

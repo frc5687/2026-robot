@@ -64,6 +64,10 @@ void SimFloorIO::SetVoltage(units::volt_t voltage) {
   m_voltageCommand = voltage;
 }
 
+void SimFloorIO::SetCurrent(units::ampere_t current) {
+  m_mode = Mode::kVoltage;
+}
+
 void SimFloorIO::SetVelocity(units::turns_per_second_t rps) {
   m_mode = Mode::kVelocity;
   m_velocitySetpoint = rps;

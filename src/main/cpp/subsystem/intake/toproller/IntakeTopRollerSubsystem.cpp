@@ -12,6 +12,10 @@ void IntakeTopRollerSubsystem::SetVoltage(units::volt_t voltage) {
   m_io->SetVoltage(voltage);
 }
 
+void IntakeTopRollerSubsystem::SetCurrent(units::ampere_t current) {
+  m_io->SetCurrent(current);
+}
+
 void IntakeTopRollerSubsystem::SetVelocity(units::turns_per_second_t rps) {
   m_io->SetVelocity(rps);
 }

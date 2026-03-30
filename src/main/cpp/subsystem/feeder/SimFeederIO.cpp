@@ -15,7 +15,7 @@ SimFeederIO::SimFeederIO()
     : m_motorSim(
           frc::LinearSystemId::DCMotorSystem(kMotor, kInertia, kGearRatio),
           kMotor),
-      m_pid(PID::kP, 0.0, PID::kD) {}
+      m_pid(VelocityPID::kP, 0.0, VelocityPID::kD) {}
 
 units::volt_t SimFeederIO::CalculateClosedLoop() {
   if (m_velocitySetpoint.value() <= 0)
@@ -67,10 +67,13 @@ void SimFeederIO::SetVoltage(units::volt_t voltage) {
   m_voltageCommand = voltage;
 }
 
-void SimFeederIO::SetCurrent(units::ampere_t current) {
+void SimFeederIO::SetCurrent(units::ampere_t /* current */) {
   m_mode = Mode::kVoltage;
 }
 
+void SimFeederIO::SetPosition(units::turn_t /* position */) {
+  m_mode = Mode::kVoltage;
+}
 
 void SimFeederIO::SetVelocity(units::turns_per_second_t rps) {
   m_mode = Mode::kVelocity;

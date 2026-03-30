@@ -67,6 +67,10 @@ void SimIntakeTopRollerIO::SetVoltage(units::volt_t voltage) {
   m_voltageCommand = voltage;
 }
 
+void SimIntakeTopRollerIO::SetCurrent(units::ampere_t /* current */) {
+  m_mode = Mode::kVoltage;
+}
+
 void SimIntakeTopRollerIO::SetVelocity(units::turns_per_second_t rps) {
   m_mode = Mode::kVelocity;
   m_velocitySetpoint = rps;

@@ -68,6 +68,10 @@ bool FlywheelSubsystem::AtSetpoint() const {
          Constants::Flywheel::kAtSetpointTolerance;
 }
 
+units::revolutions_per_minute_t FlywheelSubsystem::GetFilteredRPM() const {
+  return m_filteredRPM;
+}
+
 frc2::CommandPtr FlywheelSubsystem::SysIdQuasistatic(Direction direction) {
   return m_sysIdRoutine.Quasistatic(direction);
 }

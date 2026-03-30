@@ -18,7 +18,6 @@
 #include <ctre/phoenix6/SignalLogger.hpp>
 
 #include "frc/RobotController.h"
-#include "subsystem/CoordinatedSystemManager.h"
 #include "utils/MatchTracker.h"
 
 Robot::Robot() {
@@ -43,7 +42,6 @@ void Robot::RobotPeriodic() {
 
   frc2::CommandScheduler::GetInstance().Run();
   m_container.Periodic();
-  CoordinatedSystemManager::Instance().UpdateAll();
 
   auto endTime = frc::Timer::GetFPGATimestamp();
   MatchTracker::Instance().LogState(endTime);

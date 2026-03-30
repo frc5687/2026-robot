@@ -24,6 +24,7 @@ public:
   void SetRPM(units::revolutions_per_minute_t desiredRPM);
   void SetVoltage(units::volt_t voltage);
   bool AtSetpoint() const;
+  units::revolutions_per_minute_t GetFilteredRPM() const;
 
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);
   frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction);

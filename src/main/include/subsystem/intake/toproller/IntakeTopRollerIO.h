@@ -29,6 +29,7 @@ public:
   virtual void UpdateInputs(IntakeTopRollerIOInputs &inputs) = 0;
 
   virtual void SetVoltage(units::volt_t voltage) = 0;
+  virtual void SetCurrent(units::ampere_t current) = 0;
   virtual void SetVelocity(units::turns_per_second_t rps) = 0;
   virtual void Stop() = 0;
 };

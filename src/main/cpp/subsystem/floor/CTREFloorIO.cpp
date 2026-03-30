@@ -71,6 +71,10 @@ void CTREFloorIO::SetVoltage(units::volt_t voltage) {
       m_voltageRequest.WithOutput(voltage).WithEnableFOC(kEnableFOC));
 }
 
+void CTREFloorIO::SetCurrent(units::ampere_t current) {
+  m_motor.SetControl(m_currentRequest.WithOutput(current));
+}
+
 void CTREFloorIO::SetVelocity(units::turns_per_second_t rps) {
   m_motor.SetControl(
       m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(

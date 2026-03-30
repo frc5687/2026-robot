@@ -8,6 +8,7 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/controls/Follower.hpp>
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
+#include <ctre/phoenix6/controls/TorqueCurrentFOC.hpp>
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
@@ -21,6 +22,7 @@ public:
 
   void UpdateInputs(IntakeTopRollerIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
+  void SetCurrent(units::ampere_t current) override;
   void SetVelocity(units::turns_per_second_t rps) override;
   void Stop() override;
 
@@ -42,6 +44,7 @@ private:
 
   ctre::phoenix6::controls::VelocityVoltage m_velocityRequest{0_tps};
   ctre::phoenix6::controls::VoltageOut m_voltageRequest{0_V};
+  ctre::phoenix6::controls::TorqueCurrentFOC m_currentRequest{0_A};
   ctre::phoenix6::controls::NeutralOut m_neutralRequest{};
 
   ctre::phoenix6::configs::TalonFXConfiguration m_leaderConfig{};

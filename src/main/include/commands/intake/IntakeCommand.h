@@ -33,5 +33,9 @@ private:
 
   static constexpr units::volt_t kTopRollerVoltage = 8_V;
   static constexpr units::volt_t kBottomRollerVoltage = 10_V;
+
+  static constexpr units::ampere_t kTopRollerCurrent = 60_A;
+  static constexpr units::ampere_t kBottomRollerCurrent = 40_A;
+
   static constexpr units::volt_t kFloorVoltage = 8_V;
 };

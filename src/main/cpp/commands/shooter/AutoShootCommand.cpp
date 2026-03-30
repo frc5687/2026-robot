@@ -73,7 +73,7 @@ void AutoShootCommand::Execute() {
   }
 
   if (solution.ready) {
-    m_floor->SetVoltage(kFloorVoltage);
+    m_floor->SetCurrent(kFloorCurrent);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
     m_feeder->SetVelocity(kKickerRPS);
@@ -91,6 +91,7 @@ void AutoShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
+  m_feeder->ClearIndexed();
 
   pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();
 }

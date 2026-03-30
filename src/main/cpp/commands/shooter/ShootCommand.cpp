@@ -10,10 +10,7 @@
 #include <cmath>
 #include <numbers>
 
-#include "subsystem/drive/SwerveDriveConstants.h"
-#include "subsystem/intake/IntakeConstants.h"
-#include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
-#include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
+#include "utils/Logger.h"
 
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
@@ -38,7 +35,6 @@ void ShootCommand::Initialize() {
   m_headingController.Reset();
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
-  m_shootingBurstActive = false;
   m_hasRetractedDeployer = false;
   m_shootSequenceActive = false;
   m_shootBurstStartTime = 0_s;
@@ -52,7 +48,6 @@ void ShootCommand::Execute() {
   auto solution = m_shotCalculator.Calculate(now, isRed);
 
   m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
-
   m_hood->SetPosition(units::radian_t{solution.hoodAngle});
 
   double throttle = ApplyDeadband(m_throttle(), kDeadband);
@@ -80,12 +75,10 @@ void ShootCommand::Execute() {
   if (!m_shootSequenceActive && solution.ready) {
     m_shootSequenceActive = true;
     m_shootBurstStartTime = now;
-    m_shootingBurstActive = true;
     m_hasRetractedDeployer = false;
   }
 
   if (m_shootSequenceActive) {
-    m_shootingBurstActive = true;
     if (!m_hasRetractedDeployer &&
         now - m_shootBurstStartTime >= kDeployerRetractDelay) {
       m_deployer->RetractMid();
@@ -93,15 +86,24 @@ void ShootCommand::Execute() {
     }
   }
 
-  if(m_drive->GetFieldRelativeSpeeds().vx > 0.25_mps || m_drive->GetFieldRelativeSpeeds().vy > 0.25_mps){
-    m_deployer->Deploy(); //FIXME:: change to restarting timer lol
+  auto speeds = m_drive->GetFieldRelativeSpeeds();
+  if (units::math::abs(speeds.vx) > 0.25_mps ||
+      units::math::abs(speeds.vy) > 0.25_mps) {
+    m_deployer->Deploy(); // FIXME: change to restarting timer
   }
 
-  if (m_shootingBurstActive) {
-    m_floor->SetVoltage(kFloorVoltage);
-    //m_feeder->SetVoltage(kFeedVoltage);
-    //m_feeder->SetVelocity(kFeederRPS);
-    m_feeder->SetCurrent(kFeederCurrent);
+  auto &log = Logger::Instance();
+  log.Log("ShootCommand/ShootSequenceActive", m_shootSequenceActive);
+  log.Log("ShootCommand/SolutionReady", solution.ready);
+  log.Log("ShootCommand/FeederCurrent/Requested", kFeederCurrent.value());
+  log.Log("ShootCommand/FloorCurrent/Requested", kFloorCurrent.value());
+
+  if (m_shootSequenceActive) {
+    //m_floor->SetCurrent(kFloorCurrent);
+    m_floor->SetVoltage(4_V);
+    //m_feeder->SetVoltage(12_V);
+    m_feeder->SetVelocity(80_tps);
+    //m_feeder->SetCurrent(kFeederCurrent);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
   } else {
@@ -118,7 +120,7 @@ void ShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  m_shootingBurstActive = false;
+  m_feeder->ClearIndexed();
   m_hasRetractedDeployer = false;
   m_shootSequenceActive = false;
   m_shootBurstStartTime = 0_s;

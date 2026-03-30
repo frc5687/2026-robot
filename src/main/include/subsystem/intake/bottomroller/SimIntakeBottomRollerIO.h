@@ -17,6 +17,7 @@ public:
 
   void UpdateInputs(IntakeBottomRollerIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
+  void SetCurrent(units::ampere_t current) override;
   void SetVelocity(units::turns_per_second_t rps) override;
   void Stop() override;
 

@@ -14,12 +14,9 @@
 #include "subsystem/floor/FloorSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
-#include "subsystem/intake/IntakeSystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
-#include "subsystem/lights/LightsSubsystem.h"
-#include "subsystem/shooter/ShooterSystem.h"
 #include "subsystem/vision/VisionSubsystem.h"
 #include "utils/SubsystemBatteryLogger.h"
 #include "viz/RobotViz.h"
@@ -45,8 +42,6 @@ private:
   IntakeTopRollerSubsystem m_intakeTopRoller;
   IntakeBottomRollerSubsystem m_intakeBottomRoller;
   VisionSubsystem m_vision;
-  IntakeSystem m_intake;
-  ShooterSystem m_shooter;
   RobotViz m_robotViz{};
   frc2::CommandPS5Controller m_driver{0};
   frc2::CommandPS5Controller m_operator{1};
