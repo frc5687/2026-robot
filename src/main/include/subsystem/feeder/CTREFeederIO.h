@@ -45,8 +45,7 @@ private:
   ctre::phoenix6::StatusSignal<units::volt_t> &m_followerVoltageSignal;
   ctre::phoenix6::StatusSignal<bool> &m_fuelDetected;
 
-  std::array<ctre::phoenix6::BaseStatusSignal *, 7> m_criticalSignals;
-  std::array<ctre::phoenix6::BaseStatusSignal *, 2> m_batchedSignals;
+  std::array<ctre::phoenix6::BaseStatusSignal *, 8> m_signals;
 
   ctre::phoenix6::controls::VelocityVoltage m_velocityRequest{0_tps};
   ctre::phoenix6::controls::PositionVoltage m_positionRequest{0_tr};

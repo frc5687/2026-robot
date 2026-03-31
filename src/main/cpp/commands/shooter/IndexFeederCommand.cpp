@@ -2,57 +2,77 @@
 
 #include "commands/shooter/IndexFeederCommand.h"
 
-#include <frc/Timer.h>
+#include <units/math.h>
 
-IndexFeederCommand::IndexFeederCommand(FeederSubsystem *feeder,
-                                       FloorSubsystem *floor,
-                                       FlywheelSubsystem *flywheel)
-    : m_feeder(feeder), m_floor(floor), m_flywheel(flywheel) {
-  AddRequirements({m_feeder, m_floor, m_flywheel});
+IndexFeederCommand::IndexFeederCommand(FeederSubsystem *feeder)
+    : m_feeder(feeder) {
+  AddRequirements(m_feeder);
   SetName("IndexFeederCommand");
 }
 
 void IndexFeederCommand::Initialize() {
-  m_state = State::Indexing;
-  m_stateStartTime = frc::Timer::GetFPGATimestamp();
+  if (m_feeder->isFuelDetected()) {
+    m_state = State::Done;
+  } else {
+    m_state = State::Feeding;
+  }
+  m_currentCycle = 0;
 }
 
 void IndexFeederCommand::Execute() {
-  auto now = frc::Timer::GetFPGATimestamp();
-  auto elapsed = now - m_stateStartTime;
-
   switch (m_state) {
-  case State::Indexing:
-    m_floor->SetVoltage(kFloorIndexVoltage);
-    m_feeder->SetVoltage(kFloorIndexVoltage);
-    m_flywheel->SetVoltage(kFlywheelReverseVoltage);
+  case State::Feeding:
+    m_feeder->SetVoltage(kFeederFeedVoltage);
 
-    if (elapsed >= kIndexDuration) {
-      m_state = State::Reversing;
-      m_stateStartTime = now;
+    if (m_feeder->isFuelDetected()) {
+      m_currentCycle = 0;
+      m_jogStartPosition = m_feeder->GetPosition();
+      m_feeder->SetPosition(m_jogStartPosition + kJogForwardRotations);
+      m_state = State::JogForward;
     }
     break;
 
-  case State::Reversing:
-    //m_floor->SetVoltage(kFloorReverseVoltage);
-    m_feeder->SetVoltage(kFloorIndexVoltage);
-    m_flywheel->SetVoltage(0_V);
-
-    if (elapsed >= kReverseDuration) {
-      m_state = State::Done;
+  case State::JogForward: {
+    auto traveled =
+        units::math::abs(m_feeder->GetPosition() - m_jogStartPosition);
+    if (traveled >= kJogForwardRotations - 0.25_tr) {
+      bool isFinalCycle = (m_currentCycle + 1 >= kIndexCycles);
+      auto backwardDist = isFinalCycle ? kFinalJogBackwardRotations : kJogBackwardRotations;
+      m_jogStartPosition = m_feeder->GetPosition();
+      m_feeder->SetPosition(m_jogStartPosition - backwardDist);
+      m_state = State::JogBackward;
     }
     break;
+  }
+
+  case State::JogBackward: {
+    bool isFinalCycle = (m_currentCycle + 1 >= kIndexCycles);
+    auto targetDist = isFinalCycle ? kFinalJogBackwardRotations : kJogBackwardRotations;
+    auto traveled =
+        units::math::abs(m_feeder->GetPosition() - m_jogStartPosition);
+    if (traveled >= targetDist - 0.25_tr) {
+      m_currentCycle++;
+      if (m_currentCycle >= kIndexCycles) {
+        m_state = State::Done;
+      } else {
+        m_jogStartPosition = m_feeder->GetPosition();
+        m_feeder->SetPosition(m_jogStartPosition + kJogForwardRotations);
+        m_state = State::JogForward;
+      }
+    }
+    break;
+  }
 
   case State::Done:
-    m_floor->Stop();
     break;
   }
 }
 
 void IndexFeederCommand::End(bool interrupted) {
-  m_floor->Stop();
   m_feeder->Stop();
-  m_flywheel->SetRPM(0_rpm);
+  if (!interrupted) {
+    m_feeder->SetIndexed();
+  }
 }
 
 bool IndexFeederCommand::IsFinished() { return m_state == State::Done; }

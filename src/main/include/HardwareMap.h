@@ -66,7 +66,7 @@ namespace CANdle {
 }
 
 namespace CANRange {
-    inline constexpr CANDevice FeederCANRange{0, Bus::kShooter};
+    inline constexpr CANDevice FeederCANRange{1, Bus::kDriveTrain};
 }
 } // namespace CAN
 

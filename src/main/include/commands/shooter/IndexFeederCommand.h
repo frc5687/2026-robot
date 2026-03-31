@@ -4,18 +4,15 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-#include <units/time.h>
+#include <units/angle.h>
 #include <units/voltage.h>
 
 #include "subsystem/feeder/FeederSubsystem.h"
-#include "subsystem/floor/FloorSubsystem.h"
-#include "subsystem/flywheel/FlywheelSubsystem.h"
 
 class IndexFeederCommand
     : public frc2::CommandHelper<frc2::Command, IndexFeederCommand> {
 public:
-  IndexFeederCommand(FeederSubsystem *feeder, FloorSubsystem *floor,
-                     FlywheelSubsystem *flywheel);
+  IndexFeederCommand(FeederSubsystem *feeder);
 
   void Initialize() override;
   void Execute() override;
@@ -23,18 +20,17 @@ public:
   bool IsFinished() override;
 
 private:
-  enum class State { Indexing, Reversing, Done };
+  enum class State { Feeding, JogForward, JogBackward, Done };
 
   FeederSubsystem *m_feeder;
-  FloorSubsystem *m_floor;
-  FlywheelSubsystem *m_flywheel;
 
-  State m_state{State::Indexing};
-  units::second_t m_stateStartTime{0_s};
+  State m_state{State::Feeding};
+  int m_currentCycle{0};
+  units::turn_t m_jogStartPosition{0_tr};
 
-  static constexpr units::volt_t kFloorIndexVoltage = 3_V;
-  static constexpr units::volt_t kFlywheelReverseVoltage = -1.5_V;
-  static constexpr units::volt_t kFloorReverseVoltage = -2_V;
-  static constexpr units::second_t kIndexDuration = 0.65_s;
-  static constexpr units::second_t kReverseDuration = 0.15_s;
+  static constexpr int kIndexCycles = 3;
+  static constexpr units::volt_t kFeederFeedVoltage = 2_V;
+  static constexpr units::turn_t kJogForwardRotations = 3_tr;
+  static constexpr units::turn_t kJogBackwardRotations = 2_tr;
+  static constexpr units::turn_t kFinalJogBackwardRotations = 4_tr;
 };

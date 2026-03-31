@@ -87,8 +87,6 @@ void ShootCommand::Execute() {
   auto &log = Logger::Instance();
   log.Log("ShootCommand/ShootSequenceActive", m_shootSequenceActive);
   log.Log("ShootCommand/SolutionReady", solution.ready);
-  log.Log("ShootCommand/FeederCurrent/Requested", kFeederCurrent.value());
-  log.Log("ShootCommand/FloorCurrent/Requested", kFloorCurrent.value());
 
   if (m_shootSequenceActive) {
     m_floor->SetVoltage(kFloorVoltage);

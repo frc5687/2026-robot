@@ -26,6 +26,7 @@
 #include "commands/intake/StopIntakeCommand.h"
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/IndexFeederCommand.h"
+#include "commands/shooter/ManualShootCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/ShotCalculatedSpinUpCommand.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
@@ -281,10 +282,11 @@ void RobotContainer::ConfigureBindings() {
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));
 
   m_driver.L2().WhileTrue(
-      IntakeCommand(&m_drive, &m_intakeDeployer,
-                                   &m_intakeTopRoller, &m_intakeBottomRoller,
-                                   &m_floor)
-                         .ToPtr());
+      IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
+                    &m_intakeBottomRoller, &m_floor)
+          .ToPtr()
+          .AlongWith(
+              IndexFeederCommand(&m_feeder).ToPtr()));
 
   m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
 
@@ -334,7 +336,7 @@ void RobotContainer::ConfigureBindings() {
 
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
-  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_floor, &m_flywheel).ToPtr());
+  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder).ToPtr());
   m_operator.R2().OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_operator.R1().OnTrue(
@@ -359,6 +361,12 @@ void RobotContainer::ConfigureBindings() {
   // m_debugger.Square().OnTrue(
   //       m_flywheel.SysIdQuasistatic(frc2::sysid::Direction::kReverse)
   // );
+
+  //m_debugger.Square().WhileTrue(
+  //    ManualShootCommand(&m_flywheel, &m_hood, &m_intakeTopRoller,
+  //                       &m_intakeBottomRoller, &m_feeder, &m_floor,
+  //                       &m_intakeDeployer)
+  //        .ToPtr());
 
   // m_debugger.Cross().OnTrue(
   //        m_feeder.SysIdDynamic(frc2::sysid::Direction::kForward)

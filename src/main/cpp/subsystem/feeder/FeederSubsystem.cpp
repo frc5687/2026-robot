@@ -95,6 +95,7 @@ void FeederSubsystem::LogTelemetry() {
   Log("Power/Follower", followerPower.value());
   Log("Current/Total/Supply", GetElectricalCurrentDraw().value());
   Log("Power/Total", (leaderPower + followerPower).value());
+  Log("isFuelDetected", isFuelDetected());
 }
 
 units::ampere_t FeederSubsystem::GetElectricalCurrentDraw() const {

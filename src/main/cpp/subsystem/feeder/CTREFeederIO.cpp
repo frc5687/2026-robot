@@ -12,7 +12,7 @@ using namespace ctre::phoenix6;
 
 CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower, const CANDevice &canRange)
     : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
-    m_canRange(canRange.id, canRange.bus),
+      m_canRange(canRange.id, canRange.bus),
       m_positionSignal(m_leader.GetPosition()),
       m_velocitySignal(m_leader.GetVelocity()),
       m_voltageSignal(m_leader.GetMotorVoltage()),
@@ -22,10 +22,11 @@ CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower, c
       m_followerSupplySignal(m_follower.GetSupplyCurrent()),
       m_followerVoltageSignal(m_follower.GetMotorVoltage()),
       m_fuelDetected(m_canRange.GetIsDetected()),
-      m_criticalSignals{&m_positionSignal,        &m_velocitySignal,
-                        &m_voltageSignal,         &m_statorSignal,
-                        &m_followerStatorSignal,  &m_followerVoltageSignal, &m_fuelDetected},
-      m_batchedSignals{&m_supplySignal, &m_followerSupplySignal} {
+      m_signals{&m_positionSignal,        &m_velocitySignal,
+                &m_voltageSignal,         &m_statorSignal,
+                &m_supplySignal,          &m_followerStatorSignal,
+                &m_followerSupplySignal,  &m_followerVoltageSignal,
+                } {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -46,17 +47,16 @@ void CTREFeederIO::ConfigureDevices() {
 
   int leaderId = m_leader.GetDeviceID();
   ConfigureFollower(m_follower, leaderId, kFollowerOpposed);
-
   ConfigureCANRange();
 }
 
-void CTREFeederIO::ConfigureCANRange(){
-        m_canRangeConfig.ToFParams.UpdateMode = signals::UpdateModeValue::ShortRange100Hz;
-        m_canRangeConfig.FovParams.FOVRangeX = 7.0_deg; // TODO: tune
-        m_canRangeConfig.FovParams.FOVRangeY = 7.0_deg; // TODO: tune
-        m_canRangeConfig.ProximityParams.ProximityHysteresis = 0.03_m;
-        m_canRangeConfig.ProximityParams.ProximityThreshold = 0.15_m; // TODO: Tune
-        m_canRange.GetConfigurator().Apply(m_canRangeConfig);
+void CTREFeederIO::ConfigureCANRange() {
+  m_canRangeConfig.ToFParams.UpdateMode = signals::UpdateModeValue::ShortRange100Hz;
+  m_canRangeConfig.FovParams.FOVRangeX = 1.0_deg; // TODO: tune
+  m_canRangeConfig.FovParams.FOVRangeY = 1.0_deg; // TODO: tune
+  m_canRangeConfig.ProximityParams.ProximityHysteresis = 0.03_m;
+  m_canRangeConfig.ProximityParams.ProximityThreshold = 0.63_m; // TODO: Tune
+  m_canRange.GetConfigurator().Apply(m_canRangeConfig);
 }
 
 void CTREFeederIO::ConfigureClosedLoop() {
@@ -99,14 +99,17 @@ void CTREFeederIO::ConfigureSignalFrequencies() {
   m_followerVoltageSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
   m_followerSupplySignal.SetUpdateFrequency(50_Hz);
+  m_fuelDetected.SetUpdateFrequency(100_Hz);
 
   m_leader.OptimizeBusUtilization();
   m_follower.OptimizeBusUtilization();
+  m_canRange.OptimizeBusUtilization();
 }
 
 void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
-  BaseStatusSignal::RefreshAll(m_criticalSignals);
-  BaseStatusSignal::RefreshAll(m_batchedSignals);
+  BaseStatusSignal::RefreshAll(m_signals);
+    // different canbus cannot refresh all
+  BaseStatusSignal::RefreshAll(m_fuelDetected);
 
   inputs.motorPosition = m_positionSignal.GetValue();
   inputs.motorVelocity = m_velocitySignal.GetValue();
@@ -116,8 +119,8 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.followerStatorCurrent = m_followerStatorSignal.GetValue();
   inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
   inputs.followerAppliedVolts = m_followerVoltageSignal.GetValue();
-  inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
   inputs.fuelDetected = m_fuelDetected.GetValue();
+  inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 
 void CTREFeederIO::SetVoltage(units::volt_t voltage) {
@@ -126,7 +129,7 @@ void CTREFeederIO::SetVoltage(units::volt_t voltage) {
 }
 
 void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {
-  m_leader.SetControl(
+ m_leader.SetControl(
       m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(
           kEnableFOC));
 }
