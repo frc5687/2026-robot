@@ -17,7 +17,6 @@
 #include "subsystem/floor/FloorSubsystem.h"
 #include "subsystem/flywheel/FlywheelSubsystem.h"
 #include "subsystem/hood/HoodSubsystem.h"
-#include "subsystem/intake/IntakeConstants.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
@@ -58,18 +57,26 @@ private:
       Constants::SwerveDrive::Shooting::kAimkP, 0.0,
       Constants::SwerveDrive::Shooting::kAimkD};
 
+  // Floor
+  static constexpr units::volt_t kFloorVoltage = 8_V;
   static constexpr units::ampere_t kFloorCurrent = 30_A;
+
+  // Feeder
   static constexpr units::ampere_t kFeederCurrent = 100_A;
+  static constexpr units::turns_per_second_t kFeederRPS = 80_tps;
+
+  // Top Roller
   static constexpr units::volt_t kTopVoltage = 6_V;
+  // Bottom Roller
   static constexpr units::volt_t kBottomVoltage = 6_V;
-  static constexpr units::second_t kDeployerRetractDelay = 0.1_s;
+  // Deployer
+  static constexpr units::second_t kDeployerExtendDelay = 0.5_s;
+  static constexpr units::second_t kSlowRetractDuration = 2.0_s;
   static constexpr double kDeadband = 0.1;
 
   bool m_shootSequenceActive{false};
-  bool m_hasRetractedDeployer{false};
-  units::second_t m_lastPullIn{0_s};
-  units::meter_t m_intakePullIn{Constants::IntakeDeployer::kDeployedExtension};
-  units::meter_t m_pullInAmount{0.01_m};
+  bool m_slowRetractStarted{false};
+  units::second_t m_shootSequenceStartTime{0_s};
 
   double ApplyDeadband(double value, double deadband);
 };

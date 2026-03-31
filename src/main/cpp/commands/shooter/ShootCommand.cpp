@@ -10,7 +10,6 @@
 #include <cmath>
 #include <numbers>
 
-#include "subsystem/intake/IntakeConstants.h"
 #include "utils/Logger.h"
 
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
@@ -36,9 +35,8 @@ void ShootCommand::Initialize() {
   m_headingController.Reset();
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
-  m_hasRetractedDeployer = false;
   m_shootSequenceActive = false;
-  m_lastPullIn = 0_s;
+  m_slowRetractStarted = false;
 }
 
 void ShootCommand::Execute() {
@@ -75,22 +73,15 @@ void ShootCommand::Execute() {
 
   if (!m_shootSequenceActive && solution.ready) {
     m_shootSequenceActive = true;
-    m_lastPullIn = now;
-    m_hasRetractedDeployer = false;
+    m_slowRetractStarted = false;
+    m_shootSequenceStartTime = now;
+    m_deployer->FullyExtend();
   }
 
-  if (true) {
-    if (now - m_lastPullIn >= kDeployerRetractDelay) {
-      units::meter_t pullIn = std::clamp(m_deployer->GetPosition() - m_pullInAmount, Constants::IntakeDeployer::kMidExtension, Constants::IntakeDeployer::kDeployedExtension);
-      m_deployer->SetPosition(pullIn);
-     m_lastPullIn = now;
-    }
-  }
-
-  auto speeds = m_drive->GetFieldRelativeSpeeds();
-  if (units::math::abs(speeds.vx) > 0.25_mps ||
-      units::math::abs(speeds.vy) > 0.25_mps) {
-    m_deployer->Deploy(); // FIXME: change to restarting timer
+  if (m_shootSequenceActive && !m_slowRetractStarted &&
+      now - m_shootSequenceStartTime >= kDeployerExtendDelay) {
+    m_slowRetractStarted = true;
+    m_deployer->SlowRetract(kSlowRetractDuration);
   }
 
   auto &log = Logger::Instance();
@@ -100,11 +91,8 @@ void ShootCommand::Execute() {
   log.Log("ShootCommand/FloorCurrent/Requested", kFloorCurrent.value());
 
   if (m_shootSequenceActive) {
-    //m_floor->SetCurrent(kFloorCurrent);
-    m_floor->SetVoltage(4_V);
-    //m_feeder->SetVoltage(12_V);
-    m_feeder->SetVelocity(80_tps);
-    //m_feeder->SetCurrent(kFeederCurrent);
+    m_floor->SetVoltage(kFloorVoltage);
+    m_feeder->SetVelocity(kFeederRPS);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
   } else {
@@ -122,9 +110,8 @@ void ShootCommand::End(bool interrupted) {
   m_floor->Stop();
   m_deployer->RetractMid();
   m_feeder->ClearIndexed();
-  m_hasRetractedDeployer = false;
   m_shootSequenceActive = false;
-  m_lastPullIn = 0_s;
+  m_slowRetractStarted = false;
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }

@@ -7,9 +7,13 @@
 #include <units/length.h>
 #include <units/current.h>
 #include <units/power.h>
+#include <units/time.h>
 #include <units/voltage.h>
 
+#include <optional>
 #include <memory>
+
+#include <frc/Timer.h>
 
 #include "subsystem/LoggedSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerIO.h"
@@ -19,8 +23,14 @@ public:
   explicit IntakeDeployerSubsystem(std::unique_ptr<IntakeDeployerIO> io);
 
   void Deploy();
+  void FullyExtend();
   void RetractMid();
   void Retract();
+
+  // Slowly retracts from current position to mid position over the given duration.
+  void SlowRetract(units::second_t duration);
+  void CancelSlowRetract();
+  bool IsSlowRetracting() const;
 
   // Not tested at all
   void SetPosition(units::meter_t extension);
@@ -41,4 +51,11 @@ protected:
 private:
   std::unique_ptr<IntakeDeployerIO> m_io;
   IntakeDeployerIOInputs m_inputs{};
+
+  struct SlowRetractState {
+    units::meter_t startPosition;
+    units::second_t duration;
+    units::second_t startTime;
+  };
+  std::optional<SlowRetractState> m_slowRetract;
 };

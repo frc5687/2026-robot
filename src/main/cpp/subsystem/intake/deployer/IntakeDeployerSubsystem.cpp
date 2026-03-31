@@ -2,6 +2,7 @@
 
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 
+#include <algorithm>
 #include <units/math.h>
 
 #include "subsystem/intake/IntakeConstants.h"
@@ -16,19 +17,44 @@ static units::turn_t ExtensionToMotorTurns(units::meter_t extension) {
   return units::turn_t{extension.value() / kMetersPerMotorRotation};
 }
 
+void IntakeDeployerSubsystem::FullyExtend() {
+  CancelSlowRetract();
+  m_io->SetPosition(ExtensionToMotorTurns(kFullyExtend));
+}
+
 void IntakeDeployerSubsystem::Deploy() {
+  CancelSlowRetract();
   m_io->SetPosition(ExtensionToMotorTurns(kDeployedExtension));
 }
 
 void IntakeDeployerSubsystem::RetractMid() {
+  CancelSlowRetract();
   m_io->SetPosition(ExtensionToMotorTurns(kMidExtension));
 }
 
 void IntakeDeployerSubsystem::Retract() {
+  CancelSlowRetract();
   m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
 }
 
+void IntakeDeployerSubsystem::SlowRetract(units::second_t duration) {
+  m_slowRetract = SlowRetractState{
+      .startPosition = GetPosition(),
+      .duration = duration,
+      .startTime = units::second_t{frc::Timer::GetFPGATimestamp()},
+  };
+}
+
+void IntakeDeployerSubsystem::CancelSlowRetract() {
+  m_slowRetract.reset();
+}
+
+bool IntakeDeployerSubsystem::IsSlowRetracting() const {
+  return m_slowRetract.has_value();
+}
+
 void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {
+  CancelSlowRetract();
   m_io->SetPosition(ExtensionToMotorTurns(extension));
 }
 
@@ -43,7 +69,10 @@ void IntakeDeployerSubsystem::SetVoltage(units::volt_t voltage) {
 
 void IntakeDeployerSubsystem::ZeroPosition() { m_io->ZeroPosition(); }
 
-void IntakeDeployerSubsystem::Stop() { m_io->Stop(); }
+void IntakeDeployerSubsystem::Stop() {
+  CancelSlowRetract();
+  m_io->Stop();
+}
 
 bool IntakeDeployerSubsystem::IsDeployed() const {
   return units::math::abs(GetPosition() - kDeployedExtension) <
@@ -55,7 +84,24 @@ bool IntakeDeployerSubsystem::IsRetracted() const {
          kExtensionTolerance;
 }
 
-void IntakeDeployerSubsystem::UpdateInputs() { m_io->UpdateInputs(m_inputs); }
+void IntakeDeployerSubsystem::UpdateInputs() {
+  m_io->UpdateInputs(m_inputs);
+
+  if (m_slowRetract) {
+    auto elapsed = units::second_t{frc::Timer::GetFPGATimestamp()} -
+                   m_slowRetract->startTime;
+    double t =
+        std::clamp(static_cast<double>(elapsed / m_slowRetract->duration),
+                   0.0, 1.0);
+    units::meter_t target =
+        m_slowRetract->startPosition * (1.0 - t) + kMidExtension * t;
+    m_io->SetPosition(ExtensionToMotorTurns(target));
+
+    if (t >= 1.0) {
+      m_slowRetract.reset();
+    }
+  }
+}
 
 void IntakeDeployerSubsystem::LogTelemetry() {
   Log("MotorPosition", m_inputs.motorPosition.value());
