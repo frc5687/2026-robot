@@ -58,6 +58,10 @@ void FeederSubsystem::SetCurrent(units::ampere_t current) {
   m_io->SetCurrent(current);
 }
 
+bool FeederSubsystem::isFuelDetected(){
+  return m_inputs.fuelDetected;
+}
+
 void FeederSubsystem::SysIdLog(frc::sysid::SysIdRoutineLog *log) {
   // log->Motor("feeder-leader")
   //     .voltage(m_inputs.appliedVolts)

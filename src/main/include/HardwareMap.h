@@ -64,6 +64,10 @@ inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
 namespace CANdle {
     inline constexpr CANDevice CANdle{0, Bus::kRio};
 }
+
+namespace CANRange {
+    inline constexpr CANDevice FeederCANRange{0, Bus::kShooter};
+}
 } // namespace CAN
 
 } // namespace HardwareMap

@@ -33,6 +33,8 @@ public:
   void SetIndexed();
   void ClearIndexed();
 
+  bool isFuelDetected();
+
   const FeederState &GetState() const { return m_state; }
   units::ampere_t GetElectricalCurrentDraw() const;
   units::watt_t GetElectricalPowerDraw() const;

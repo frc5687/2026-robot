@@ -4,13 +4,15 @@
 
 #include <frc/Timer.h>
 
+#include "ctre/phoenix6/signals/SpnEnums.hpp"
 #include "subsystem/feeder/FeederConstants.h"
 
 using namespace Constants::Feeder;
 using namespace ctre::phoenix6;
 
-CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
+CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower, const CANDevice &canRange)
     : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
+    m_canRange(canRange.id, canRange.bus),
       m_positionSignal(m_leader.GetPosition()),
       m_velocitySignal(m_leader.GetVelocity()),
       m_voltageSignal(m_leader.GetMotorVoltage()),
@@ -19,9 +21,10 @@ CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
       m_followerStatorSignal(m_follower.GetStatorCurrent()),
       m_followerSupplySignal(m_follower.GetSupplyCurrent()),
       m_followerVoltageSignal(m_follower.GetMotorVoltage()),
+      m_fuelDetected(m_canRange.GetIsDetected()),
       m_criticalSignals{&m_positionSignal,        &m_velocitySignal,
                         &m_voltageSignal,         &m_statorSignal,
-                        &m_followerStatorSignal,  &m_followerVoltageSignal},
+                        &m_followerStatorSignal,  &m_followerVoltageSignal, &m_fuelDetected},
       m_batchedSignals{&m_supplySignal, &m_followerSupplySignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
@@ -43,6 +46,17 @@ void CTREFeederIO::ConfigureDevices() {
 
   int leaderId = m_leader.GetDeviceID();
   ConfigureFollower(m_follower, leaderId, kFollowerOpposed);
+
+  ConfigureCANRange();
+}
+
+void CTREFeederIO::ConfigureCANRange(){
+        m_canRangeConfig.ToFParams.UpdateMode = signals::UpdateModeValue::ShortRange100Hz;
+        m_canRangeConfig.FovParams.FOVRangeX = 7.0_deg; // TODO: tune
+        m_canRangeConfig.FovParams.FOVRangeY = 7.0_deg; // TODO: tune
+        m_canRangeConfig.ProximityParams.ProximityHysteresis = 0.03_m;
+        m_canRangeConfig.ProximityParams.ProximityThreshold = 0.15_m; // TODO: Tune
+        m_canRange.GetConfigurator().Apply(m_canRangeConfig);
 }
 
 void CTREFeederIO::ConfigureClosedLoop() {
@@ -103,6 +117,7 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
   inputs.followerAppliedVolts = m_followerVoltageSignal.GetValue();
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
+  inputs.fuelDetected = m_fuelDetected.GetValue();
 }
 
 void CTREFeederIO::SetVoltage(units::volt_t voltage) {
