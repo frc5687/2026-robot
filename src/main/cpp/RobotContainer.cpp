@@ -92,7 +92,8 @@ std::unique_ptr<FeederIO> MakeFeederIO() {
   }
   return std::make_unique<CTREFeederIO>(
       HardwareMap::CAN::TalonFX::FeederLeader,
-      HardwareMap::CAN::TalonFX::FeederFollower);
+      HardwareMap::CAN::TalonFX::FeederFollower,
+      HardwareMap::CAN::CANRange::FeederCANRange);
 }
 
 std::unique_ptr<FloorIO> MakeFloorIO() {

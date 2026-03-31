@@ -10,6 +10,7 @@
 #include <cmath>
 #include <numbers>
 
+#include "subsystem/intake/IntakeConstants.h"
 #include "utils/Logger.h"
 
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
@@ -37,7 +38,7 @@ void ShootCommand::Initialize() {
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
   m_hasRetractedDeployer = false;
   m_shootSequenceActive = false;
-  m_shootBurstStartTime = 0_s;
+  m_lastPullIn = 0_s;
 }
 
 void ShootCommand::Execute() {
@@ -74,15 +75,15 @@ void ShootCommand::Execute() {
 
   if (!m_shootSequenceActive && solution.ready) {
     m_shootSequenceActive = true;
-    m_shootBurstStartTime = now;
+    m_lastPullIn = now;
     m_hasRetractedDeployer = false;
   }
 
-  if (m_shootSequenceActive) {
-    if (!m_hasRetractedDeployer &&
-        now - m_shootBurstStartTime >= kDeployerRetractDelay) {
-      m_deployer->RetractMid();
-      m_hasRetractedDeployer = true;
+  if (true) {
+    if (now - m_lastPullIn >= kDeployerRetractDelay) {
+      units::meter_t pullIn = std::clamp(m_deployer->GetPosition() - m_pullInAmount, Constants::IntakeDeployer::kMidExtension, Constants::IntakeDeployer::kDeployedExtension);
+      m_deployer->SetPosition(pullIn);
+     m_lastPullIn = now;
     }
   }
 
@@ -123,7 +124,7 @@ void ShootCommand::End(bool interrupted) {
   m_feeder->ClearIndexed();
   m_hasRetractedDeployer = false;
   m_shootSequenceActive = false;
-  m_shootBurstStartTime = 0_s;
+  m_lastPullIn = 0_s;
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }
