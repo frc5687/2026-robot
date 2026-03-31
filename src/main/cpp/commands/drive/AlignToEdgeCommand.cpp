@@ -34,7 +34,7 @@ AlignToEdgeCommand::AlignToEdgeCommand(DriveSubsystem *driveSubsystem,
     : m_driveSubsystem(driveSubsystem), m_throttleSupplier(throttle),
       m_strafeSupplier(strafe), m_enableSlewRate(enableSlewRate),
       m_driveController(
-          3.0, 0.0, 0.0,
+          5.0, 0.0, 0.0,
           frc::TrapezoidProfile<units::meters>::Constraints{
               units::meters_per_second_t{
                   Constants::SwerveDrive::kMaxLinearSpeed.value() *
@@ -80,6 +80,20 @@ bool IsOnField(frc::Pose2d intake) {
       (intake.Y() < Constants::Field::Zones::TopRightRed.Y());
   bool isValid = isOnFieldX && isOnFieldY;
   return isValid;
+}
+
+double InputClamped(double input, double deadzoneTolerance){
+    double clampedInput = 0;
+
+    if(abs(input) > deadzoneTolerance){
+        if (input < deadzoneTolerance) {
+          clampedInput = -1;
+          } else if (input > deadzoneTolerance) {
+            clampedInput = 1;
+        }
+    }
+
+    return clampedInput;
 }
 
 struct EdgeParams {
@@ -187,7 +201,7 @@ void AlignToEdgeCommand::Execute() {
   Logger::Instance().Log("AlignToEdge/leftIntakePose", leftIntake);
   Logger::Instance().Log("AlignToEdge/rightIntakePose", rightIntake);
 
-  frc::Rotation2d angleToFaceWall;
+  frc::Rotation2d angleToFaceWall = currentPose.Rotation();
 
   double maxHubSnap = 3.5;
 
@@ -215,8 +229,6 @@ void AlignToEdgeCommand::Execute() {
 
   bool isValidForBump = isValidForRedBump || isValidForBlueBump;
 
-  bool poseOnField = (IsOnField(rightIntake)) && (IsOnField(leftIntake));
-
   auto EdgeLeftIntake = CalculateEdge(leftIntake, isValidForBump,
                                       Constants::Geometry::kRobotToIntakeLeft);
   auto EdgeRightIntake = CalculateEdge(
@@ -242,77 +254,72 @@ void AlignToEdgeCommand::Execute() {
       alliance.value() == frc::DriverStation::Alliance::kRed) {
     flipInput = -1;
   }
-  double clampedYInput = yInput;
-  double clampedXInput = xInput;
-  bool clampedInputUsed = false;
 
-  if (yInput < 0) {
-    clampedYInput = -1;
-    clampedInputUsed = true;
-  } else if (yInput > 0) {
-    clampedYInput = 1;
-    clampedInputUsed = true;
-  }
-
-  if (xInput < 0) {
-    clampedXInput = -1;
-    clampedInputUsed = true;
-  } else if (xInput > 0) {
-    clampedXInput = 1;
-    clampedInputUsed = true;
-  }
+  double deadzoneTolerance = .1;
+  double input = 0;
 
   units::angle::degree_t angleOffset = 70_deg;
-  double wallOffsetWhenTurning = 0;
+  units::meter_t wallOffset = .3_m;
 
   switch (direction) {
   case 1: // east
-    angleToFaceWall = 180_deg + clampedYInput * angleOffset * flipInput;
+    input = InputClamped(yInput, deadzoneTolerance);
+    angleToFaceWall = 180_deg + input * angleOffset * flipInput;
     break;
 
   case 2: // west
-    angleToFaceWall = 0_deg - clampedYInput * angleOffset * flipInput;
+    input = InputClamped(yInput, deadzoneTolerance);
+    angleToFaceWall = 0_deg - input * angleOffset * flipInput;
     break;
 
   case 3: // north
-    angleToFaceWall = 270_deg - clampedXInput * angleOffset * flipInput;
+    input = InputClamped(xInput, deadzoneTolerance);
+    angleToFaceWall = 270_deg - input * angleOffset * flipInput;
     break;
 
   case 4: // south
-    angleToFaceWall = 90_deg + clampedXInput * angleOffset * flipInput;
+    input = InputClamped(xInput, deadzoneTolerance);
+    angleToFaceWall = 90_deg + input * angleOffset * flipInput;
     break;
   }
+  bool noInput = abs(input) == 0;
+
   frc::Pose2d tempPose = {Edge.targetPose.X(), Edge.targetPose.Y(),
-                          angleToFaceWall};
+                      angleToFaceWall};
 
   units::angle::degree_t angleTolerance = 10_deg;
-  units::angle::degree_t angleWayOffTolerance = 160_deg;
+  units::angle::degree_t angleWayOffTolerance = 145_deg;
   units::angle::degree_t angleDifference =
       currentPose.Rotation().RelativeTo(tempPose.Rotation()).Degrees();
-  bool isAngleValid = angleTolerance > units::math::abs(angleDifference);
+  bool isAngleValid = angleTolerance > units::math::abs(angleDifference) && !noInput;
   bool isAngleWayOff = angleWayOffTolerance < units::math::abs(angleDifference);
 
-  Logger::Instance().Log("AlignToEdge/beforeWallTransformTargetPose", tempPose);
-
   frc::Transform2d kRobotToIntakeWallSpacing{
-      frc::Translation2d{units::meter_t{.15 * wallOffsetWhenTurning},
+      frc::Translation2d{units::meter_t{wallOffset},
                          units::meter_t{0}},
       frc::Rotation2d{0_rad}};
 
   if (!isAngleValid) {
-    Edge.targetPose = Edge.targetPose.TransformBy(kRobotToIntakeWallSpacing);
+    tempPose = tempPose.TransformBy(kRobotToIntakeWallSpacing);
   }
 
-  if (clampedInputUsed) {
-    Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(),
-                       angleToFaceWall};
-  } else {
-    Edge.targetPose = {Edge.targetPose.X(), Edge.targetPose.Y(),
-                       currentPose.Rotation()};
+  frc::Pose2d goalPose = currentPose;
+
+  if(!noInput){
+      goalPose = {tempPose.X(), tempPose.Y(),
+                      tempPose.Rotation()};
   }
+  else {
+      goalPose = {tempPose.X(), tempPose.Y(),
+                      currentPose.Rotation()};
+  }
+
+  Logger::Instance().Log("AlignToEdge/goalPose", goalPose);
+
+  bool poseOnField = (IsOnField(goalPose));
 
   double currentDistance =
-      currentPose.Translation().Distance(Edge.targetPose.Translation()).value();
+      currentPose.Translation().Distance(goalPose.Translation()).value();
 
   frc::ChassisSpeeds fieldSpeeds = m_driveSubsystem->GetFieldRelativeSpeeds();
 
@@ -320,7 +327,7 @@ void AlignToEdgeCommand::Execute() {
                                    units::meter_t{fieldSpeeds.vy.value()}};
 
   frc::Rotation2d awayFromTargetAngle =
-      (currentPose.Translation() - Edge.targetPose.Translation()).Angle();
+      (currentPose.Translation() - goalPose.Translation()).Angle();
 
   if (m_enableSlewRate) {
     xInput = flipInput * m_xLimiter.Calculate(xInput);
@@ -357,40 +364,41 @@ void AlignToEdgeCommand::Execute() {
   double thetaVelocity =
       m_thetaController.GetSetpoint().velocity.value() * ffScaler +
       m_thetaController.Calculate(currentPose.Rotation().Radians(),
-                                  Edge.targetPose.Rotation().Radians());
+                                  goalPose.Rotation().Radians());
 
   m_thetaErrorAbs = std::abs(
-      (currentPose.Rotation() - Edge.targetPose.Rotation()).Radians().value());
+      (currentPose.Rotation() - goalPose.Rotation()).Radians().value());
 
   if (m_thetaErrorAbs < m_thetaController.GetPositionTolerance()) {
     thetaVelocity = 0.0;
   }
   frc::ChassisSpeeds robotSpeeds;
-  if (Edge.useXAxis && isAngleValid) {
+  if(poseOnField && !isAngleWayOff){
+
+      if (Edge.useXAxis && isAngleValid) {
+        robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+            vx, yVelocity, units::radians_per_second_t{thetaVelocity},
+            currentPose.Rotation());
+      } else if (!Edge.useXAxis && isAngleValid) {
+        robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+            xVelocity, vy, units::radians_per_second_t{thetaVelocity},
+            currentPose.Rotation());
+      } else if (!isAngleWayOff && !isAngleValid) {
+        robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+            vx, vy, units::radians_per_second_t{thetaVelocity},
+            currentPose.Rotation());
+      }
+  }
+  else{
     robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        vx, yVelocity, units::radians_per_second_t{thetaVelocity},
-        currentPose.Rotation());
-  } else if (!Edge.useXAxis && isAngleValid) {
-    robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        xVelocity, vy, units::radians_per_second_t{thetaVelocity},
-        currentPose.Rotation());
-  } else if (!isAngleValid && isAngleWayOff) {
-    robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        xVelocity, yVelocity, units::radians_per_second_t{0},
-        currentPose.Rotation());
-  } else if (Edge.useXAxis && !isAngleValid && !isAngleWayOff) {
-    robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        vx, vy, units::radians_per_second_t{thetaVelocity},
-        currentPose.Rotation());
-  } else if (!Edge.useXAxis && !isAngleValid && !isAngleWayOff) {
-    robotSpeeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-        vx, vy, units::radians_per_second_t{thetaVelocity},
-        currentPose.Rotation());
+            units::meters_per_second_t {0}, units::meters_per_second_t {0}, 
+            units::radians_per_second_t{0},
+            currentPose.Rotation());
   }
 
-  Logger::Instance().Log("AlignToEdge/angleDifference",
-                         angleDifference.value());
+
   Logger::Instance().Log("AlignToEdge/isAngleValid", isAngleValid);
+  Logger::Instance().Log("AlignToEdge/isAngleWayOff", isAngleWayOff);
   Logger::Instance().Log("AlignToEdge/poseOnField", poseOnField);
   Logger::Instance().Log("AlignToEdge/leftIntakeDistanceFromRedHub",
                          leftIntakeDistanceFromRedHub);
@@ -399,14 +407,11 @@ void AlignToEdgeCommand::Execute() {
   Logger::Instance().Log("AlignToEdge/minDistance", Edge.minDistance.value());
   Logger::Instance().Log("AlignToEdge/xMinDistance", Edge.xMinDistance.value());
   Logger::Instance().Log("AlignToEdge/yMinDistance", Edge.yMinDistance.value());
-  Logger::Instance().Log("AlignToEdge/targetPose", Edge.targetPose);
+  Logger::Instance().Log("AlignToEdge/targetPose", goalPose);
   Logger::Instance().Log("AlignToEdge/useXAxis", Edge.useXAxis);
   Logger::Instance().Log("AlignToEdge/direction", direction);
-  Logger::Instance().Log("AlignToEdge/xInput", xInput);
-  Logger::Instance().Log("AlignToEdge/yInput", yInput);
   Logger::Instance().Log("AlignToEdge/angleToFaceWall", angleToFaceWall);
   Logger::Instance().Log("AlignToEdge/currentPose", currentPose);
-  Logger::Instance().Log("AlignToEdge/targetPose", Edge.targetPose);
   Logger::Instance().Log("AlignToEdge/currentDistance", currentDistance);
   Logger::Instance().Log("AlignToEdge/robotSpeeds", robotSpeeds);
   Logger::Instance().Log("AlignToEdge/driveErrorAbs", m_driveErrorAbs);
