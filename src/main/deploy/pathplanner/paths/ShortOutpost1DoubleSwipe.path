@@ -64,12 +64,12 @@
     },
     {
       "anchor": {
-        "x": 2.9651497860199716,
-        "y": 2.6311554921540665
+        "x": 2.8898409090909087,
+        "y": 2.354988636363637
       },
       "prevControl": {
-        "x": 4.181383737517831,
-        "y": 2.6311554921540665
+        "x": 4.106074860588768,
+        "y": 2.354988636363637
       },
       "nextControl": null,
       "isLocked": false,
@@ -92,12 +92,25 @@
   ],
   "constraintZones": [
     {
-      "name": "Constraints Zone",
+      "name": "Bump",
       "minWaypointRelativePos": 2.992572586090478,
       "maxWaypointRelativePos": 3.8676569885212433,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Intaking Dense Balls",
+      "minWaypointRelativePos": 1.1743119266055073,
+      "maxWaypointRelativePos": 2.134556574923548,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 4.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
