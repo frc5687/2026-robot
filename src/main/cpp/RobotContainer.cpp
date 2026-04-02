@@ -346,7 +346,8 @@ void RobotContainer::ConfigureBindings() {
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
   m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder).ToPtr());
-  m_operator.R2().OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
+  (m_operator.R2() && !m_driver.R2())
+      .OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_operator.R1().OnTrue(
       RunOnce([] {
