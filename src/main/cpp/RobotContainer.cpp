@@ -287,7 +287,7 @@ void RobotContainer::ConfigureBindings() {
                     &m_intakeBottomRoller, &m_floor)
           .ToPtr()
           .AlongWith(
-              IndexFeederCommand(&m_feeder).ToPtr()));
+              IndexFeederCommand(&m_feeder, &m_hood).ToPtr()));
 
   m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
 
@@ -345,7 +345,7 @@ void RobotContainer::ConfigureBindings() {
 
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
-  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder).ToPtr());
+  m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_hood).ToPtr());
   (m_operator.R2() && !m_driver.R2())
       .OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 

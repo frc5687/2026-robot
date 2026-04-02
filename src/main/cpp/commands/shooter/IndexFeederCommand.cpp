@@ -4,13 +4,17 @@
 
 #include <units/math.h>
 
-IndexFeederCommand::IndexFeederCommand(FeederSubsystem *feeder)
-    : m_feeder(feeder) {
-  AddRequirements(m_feeder);
+IndexFeederCommand::IndexFeederCommand(FeederSubsystem *feeder,
+                                       HoodSubsystem *hood)
+    : m_feeder(feeder), m_hood(hood) {
+  AddRequirements({m_feeder, m_hood});
   SetName("IndexFeederCommand");
 }
 
 void IndexFeederCommand::Initialize() {
+  m_indexHoodAngle = 1_deg;
+  m_hood->SetPosition(m_indexHoodAngle);
+
   if (m_feeder->isFuelDetected()) {
     m_state = State::Done;
   } else {

@@ -9,6 +9,7 @@
 #include <frc/kinematics/SwerveModuleState.h>
 
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include "ModuleIO.h"
@@ -26,8 +27,8 @@ public:
 
   frc::SwerveModuleState GetState() const;
   frc::SwerveModulePosition GetPosition() const;
-  frc::SwerveModuleState GetOptimizedState() const { return m_optimizedState; }
-  const ModuleIOInputs &GetInputs() const { return m_inputs; }
+  frc::SwerveModuleState GetOptimizedState() const;
+  ModuleIOInputs GetInputs() const;
 
   const std::string &GetName() const { return m_name; }
   ModulePosition GetModulePosition() const { return m_position; }
@@ -36,15 +37,13 @@ public:
   void ResetDrivePosition() const;
   void SetBrakeMode(bool brake);
   units::ampere_t GetCurrentDraw() const;
-  units::newton_meter_t GetDriveTorque() const { return m_inputs.driveTorque; }
+  units::newton_meter_t GetDriveTorque() const;
   void ConfigureClosedLoop();
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
                        units::ampere_t steerSupplyCurrentLimit);
   bool IsConnected() const;
-  void SetIsBatchedSignals(const bool &isBatched) {
-    m_isSignalsBatched = isBatched;
-  }
-  bool IsBatched() const { return m_isSignalsBatched; }
+  void SetIsBatchedSignals(bool isBatched);
+  bool IsBatched() const;
   ModuleIO &GetModuleIO() { return *m_io; }
   const ModuleIO &GetModuleIO() const { return *m_io; }
 
@@ -68,9 +67,13 @@ private:
   units::millisecond_t m_lastUpdateTime{0};
   units::second_t m_lastLogTime{0};
   bool m_isSignalsBatched = false;
+  mutable std::mutex m_mutex;
 
   static constexpr units::meters_per_second_t kOptimizationThreshold = 0.01_mps;
 
-  void LogState();
+  frc::SwerveModuleState GetStateUnlocked() const;
+  units::ampere_t GetCurrentDrawUnlocked() const;
+  bool IsConnectedUnlocked() const;
+  void LogStateUnlocked();
   bool ShouldOptimize(const frc::SwerveModuleState &desired) const;
 };

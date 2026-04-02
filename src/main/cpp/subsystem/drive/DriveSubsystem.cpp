@@ -169,7 +169,7 @@ units::ampere_t DriveSubsystem::GetElectricalCurrentDraw() const {
 units::watt_t DriveSubsystem::GetElectricalPowerDraw() const {
   units::watt_t totalPower{0.0};
   for (const auto &module : m_modules) {
-    const auto &inputs = module->GetInputs();
+    const auto inputs = module->GetInputs();
     totalPower +=
         units::math::abs(inputs.driveCurrentDraw) * inputs.driveAppliedVolts +
         units::math::abs(inputs.steerCurrentDraw) * inputs.steerAppliedVolts;

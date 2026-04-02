@@ -8,11 +8,12 @@
 #include <units/voltage.h>
 
 #include "subsystem/feeder/FeederSubsystem.h"
+#include "subsystem/hood/HoodSubsystem.h"
 
 class IndexFeederCommand
     : public frc2::CommandHelper<frc2::Command, IndexFeederCommand> {
 public:
-  IndexFeederCommand(FeederSubsystem *feeder);
+  IndexFeederCommand(FeederSubsystem *feeder, HoodSubsystem *hood);
 
   void Initialize() override;
   void Execute() override;
@@ -23,6 +24,8 @@ private:
   enum class State { Feeding, JogForward, JogBackward, Done };
 
   FeederSubsystem *m_feeder;
+  HoodSubsystem *m_hood;
+  units::radian_t m_indexHoodAngle{0_rad};
 
   State m_state{State::Feeding};
   int m_currentCycle{0};
