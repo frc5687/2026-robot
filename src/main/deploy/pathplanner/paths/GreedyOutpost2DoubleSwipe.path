@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8898409090909087,
-        "y": 2.354988636363637
+        "x": 2.784289156626506,
+        "y": 2.472337349397591
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.997073434055245,
-        "y": 1.5010371385034365
+        "x": 1.891521681590842,
+        "y": 1.6183858515373903
       },
       "isLocked": false,
       "linkedName": "Outpost1-2Lazy"
@@ -207,7 +207,7 @@
     "maxVelocity": 3.6,
     "maxAcceleration": 4.5,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 520.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
