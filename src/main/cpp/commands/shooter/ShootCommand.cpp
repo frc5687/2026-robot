@@ -116,8 +116,3 @@ void ShootCommand::End(bool interrupted) {
 
 bool ShootCommand::IsFinished() { return false; }
 
-double ShootCommand::ApplyDeadband(double value, double deadband) {
-  if (std::abs(value) < deadband)
-    return 0.0;
-  return (value - std::copysign(deadband, value)) / (1.0 - deadband);
-}

@@ -18,6 +18,7 @@
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "utils/TunableDouble.h"
+#include "utils/Utils.h"
 
 class PassCommand
     : public frc2::CommandHelper<frc2::Command, PassCommand> {
@@ -73,5 +74,4 @@ private:
 
 
   units::degree_t m_targetHeading{90};
-  double ApplyDeadband(double value, double deadband);
 };

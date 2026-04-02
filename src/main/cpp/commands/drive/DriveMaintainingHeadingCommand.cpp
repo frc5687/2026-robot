@@ -143,14 +143,6 @@ void DriveMaintainingHeadingCommand::SetHeadingPID(double kP, double kI,
   m_headingController.SetPID(kP, kI, kD);
 }
 
-double DriveMaintainingHeadingCommand::ApplyDeadband(double value,
-                                                     double deadband) {
-  if (std::abs(value) < deadband) {
-    return 0.0;
-  }
-  return (value - std::copysign(deadband, value)) / (1.0 - deadband);
-}
-
 units::radians_per_second_t
 DriveMaintainingHeadingCommand::CalculateHeadingCorrection(
     frc::Rotation2d current, frc::Rotation2d target) {

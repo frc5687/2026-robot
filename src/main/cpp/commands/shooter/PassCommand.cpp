@@ -4,6 +4,7 @@
 
 #include <frc/Timer.h>
 #include <functional>
+#include <numbers>
 #include <units/angle.h>
 
 #include "frc/DriverStation.h"
@@ -22,6 +23,8 @@ PassCommand::PassCommand(DriveSubsystem *drive,
       m_strafe(strafe) {
   AddRequirements({drive, flywheel, hood, feeder, floor, deployer});
   SetName("PassCommand");
+  m_headingController.EnableContinuousInput(-std::numbers::pi,
+                                            std::numbers::pi);
 }
 
 void PassCommand::Initialize() {
@@ -55,7 +58,7 @@ void PassCommand::Execute() {
                                         .Rotation()
                                         .Radians()
                                         .value(),
-                                   m_targetHeading.value());
+                                   units::radian_t{m_targetHeading}.value());
   rotOutput =
       std::clamp(rotOutput, -Constants::SwerveDrive::kMaxAngularSpeed.value(),
                  Constants::SwerveDrive::kMaxAngularSpeed.value());
@@ -117,8 +120,3 @@ void PassCommand::End(bool interrupted) {
 
 bool PassCommand::IsFinished() { return false; }
 
-double PassCommand::ApplyDeadband(double value, double deadband) {
-  if (std::abs(value) < deadband)
-    return 0.0;
-  return (value - std::copysign(deadband, value)) / (1.0 - deadband);
-}

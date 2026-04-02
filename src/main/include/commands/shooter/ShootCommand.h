@@ -22,6 +22,7 @@
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
 #include "utils/TunableDouble.h"
+#include "utils/Utils.h"
 
 class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
 public:
@@ -68,11 +69,11 @@ private:
   // Deployer
   static constexpr units::second_t kDeployerExtendDelay = 1.5_s;
   static constexpr units::second_t kSlowRetractDuration = 1.0_s;
+
   static constexpr double kDeadband = 0.1;
 
   bool m_shootSequenceActive{false};
   bool m_slowRetractStarted{false};
   units::second_t m_shootSequenceStartTime{0_s};
 
-  double ApplyDeadband(double value, double deadband);
 };

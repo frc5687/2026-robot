@@ -15,6 +15,7 @@
 #include <optional>
 
 #include "subsystem/drive/DriveSubsystem.h"
+#include "utils/Utils.h"
 
 class DriveMaintainingHeadingCommand
     : public frc2::CommandHelper<frc2::Command,
@@ -56,8 +57,6 @@ private:
 
   // TODO: move to constants
   frc::PIDController m_headingController{5.0, 0.0, 0.0};
-
-  double ApplyDeadband(double value, double deadband);
 
   units::radians_per_second_t
   CalculateHeadingCorrection(frc::Rotation2d current, frc::Rotation2d target);
