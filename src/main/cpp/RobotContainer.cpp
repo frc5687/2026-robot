@@ -27,6 +27,7 @@
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/IndexFeederCommand.h"
 #include "commands/shooter/ManualShootCommand.h"
+#include "commands/shooter/PassCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/ShotCalculatedSpinUpCommand.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
@@ -333,6 +334,14 @@ void RobotContainer::ConfigureBindings() {
                                    &m_intakeTopRoller, &m_intakeBottomRoller,
                                    &m_floor)
                          .ToPtr()));
+
+  m_driver.Triangle().WhileTrue(PassCommand(
+                              &m_drive, &m_flywheel, &m_hood,
+                              &m_intakeTopRoller, &m_intakeBottomRoller,
+                              &m_feeder, &m_floor, &m_intakeDeployer,
+                              [this] { return -m_driver.GetLeftY(); },
+                              [this] { return -m_driver.GetLeftX(); })
+                              .ToPtr());
 
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
