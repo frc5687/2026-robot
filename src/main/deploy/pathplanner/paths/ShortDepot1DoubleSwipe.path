@@ -64,12 +64,12 @@
     },
     {
       "anchor": {
-        "x": 3.042781740370898,
-        "y": 5.4647218259629105
+        "x": 2.7952168674698794,
+        "y": 5.477457831325301
       },
       "prevControl": {
-        "x": 4.595420827389443,
-        "y": 5.490599144079885
+        "x": 4.347855954488424,
+        "y": 5.503335149442276
       },
       "nextControl": null,
       "isLocked": false,
@@ -100,6 +100,19 @@
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Intaking Dense Balls",
+      "minWaypointRelativePos": 1.3300248138957815,
+      "maxWaypointRelativePos": 2.274937965260535,
+      "constraints": {
+        "maxVelocity": 3.0,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 520.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -134,7 +147,7 @@
     "maxVelocity": 3.6,
     "maxAcceleration": 4.5,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 520.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
