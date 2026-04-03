@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.042781740370898,
-        "y": 5.4647218259629105
+        "x": 2.7952168674698794,
+        "y": 5.477457831325301
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.033566333808844,
-        "y": 6.875035663338089
+        "x": 1.7860014609078254,
+        "y": 6.88777166870048
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot 2-3Wide"
     },
     {
       "anchor": {

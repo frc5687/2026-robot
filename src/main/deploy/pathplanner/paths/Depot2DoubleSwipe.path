@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.042781740370898,
-        "y": 5.4647218259629105
+        "x": 2.7952168674698794,
+        "y": 5.477457831325301
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9910271041369465,
-        "y": 7.120870185449359
+        "x": 2.743462231235928,
+        "y": 7.13360619081175
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot1-2Wide"
     },
     {
       "anchor": {
@@ -96,12 +96,12 @@
     },
     {
       "anchor": {
-        "x": 3.042781740370898,
-        "y": 5.4647218259629105
+        "x": 2.7952168674698794,
+        "y": 5.477457831325301
       },
       "prevControl": {
-        "x": 4.284893009985733,
-        "y": 5.4517831669044226
+        "x": 4.037328137084716,
+        "y": 5.464519172266813
       },
       "nextControl": null,
       "isLocked": false,
@@ -199,7 +199,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -41.82016987907474
+    "rotation": -42.78795799795166
   },
   "useDefaultConstraints": true
 }
