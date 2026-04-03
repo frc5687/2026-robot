@@ -32,7 +32,6 @@ public:
   void CancelSlowRetract();
   bool IsSlowRetracting() const;
 
-  // Not tested at all
   void SetPosition(units::meter_t extension);
   void SetVoltage(units::volt_t voltage);
   void ZeroPosition();
@@ -58,4 +57,11 @@ private:
     units::second_t startTime;
   };
   std::optional<SlowRetractState> m_slowRetract;
+
+  // Compliant hold: full-force position control that yields to disturbances
+  enum class ComplianceState { Holding, Yielding };
+  std::optional<units::meter_t> m_compliantTarget;
+  ComplianceState m_complianceState{ComplianceState::Holding};
+
+  void DisableCompliantHold();
 };

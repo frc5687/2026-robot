@@ -59,6 +59,14 @@ inline constexpr double kP = 2.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 } // namespace SimPID
+
+namespace Compliance {
+inline constexpr units::ampere_t kCurrentThreshold = 30_A;
+inline constexpr units::turn_t kPositionErrorThreshold = 0.5_tr;
+inline constexpr units::ampere_t kRecoverCurrentThreshold = 5_A;
+inline constexpr units::turns_per_second_t kSettledVelocity = 0.5_tps;
+inline constexpr units::volt_t kYieldVoltage = 2.0_V;
+} // namespace Compliance
 } // namespace IntakeDeployer
 
 namespace IntakeTopRoller {

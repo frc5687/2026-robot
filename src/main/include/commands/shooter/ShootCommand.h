@@ -66,14 +66,22 @@ private:
   static constexpr units::volt_t kTopVoltage = 6_V;
   // Bottom Roller
   static constexpr units::volt_t kBottomVoltage = 6_V;
-  // Deployer
+  // Deployer pulse timing
   static constexpr units::second_t kDeployerExtendDelay = 1.5_s;
-  static constexpr units::second_t kSlowRetractDuration = 1.0_s;
+  static constexpr units::second_t kPulseRetractDuration = 0.3_s;
+  static constexpr units::second_t kFinalRetractDuration = 1.0_s;
+  static constexpr int kPulseCount = 1;
 
   static constexpr double kDeadband = 0.1;
 
   bool m_shootSequenceActive{false};
-  bool m_slowRetractStarted{false};
   units::second_t m_shootSequenceStartTime{0_s};
+
+  // Deployer pulse state
+  bool m_pulsingStarted{false};
+  bool m_pulseRetracted{false};
+  bool m_finalRetractStarted{false};
+  int m_pulsesCompleted{0};
+  units::second_t m_pulseStartTime{0_s};
 
 };

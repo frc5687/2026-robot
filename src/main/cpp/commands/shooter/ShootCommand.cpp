@@ -36,7 +36,10 @@ void ShootCommand::Initialize() {
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
   m_shootSequenceActive = false;
-  m_slowRetractStarted = false;
+  m_pulsingStarted = false;
+  m_pulseRetracted = false;
+  m_finalRetractStarted = false;
+  m_pulsesCompleted = 0;
 }
 
 void ShootCommand::Execute() {
@@ -73,15 +76,32 @@ void ShootCommand::Execute() {
 
   if (!m_shootSequenceActive && solution.ready) {
     m_shootSequenceActive = true;
-    m_slowRetractStarted = false;
+    m_pulsingStarted = false;
+    m_pulseRetracted = false;
+    m_pulsesCompleted = 0;
     m_shootSequenceStartTime = now;
     m_deployer->FullyExtend();
   }
 
-  if (m_shootSequenceActive && !m_slowRetractStarted &&
+  if (m_shootSequenceActive &&
       now - m_shootSequenceStartTime >= kDeployerExtendDelay) {
-    m_slowRetractStarted = true;
-    m_deployer->SlowRetract(kSlowRetractDuration);
+    if (m_pulsesCompleted < kPulseCount) {
+      if (!m_pulsingStarted) {
+        m_pulsingStarted = true;
+        m_pulseRetracted = false;
+        m_pulseStartTime = now;
+        m_deployer->SlowRetract(kPulseRetractDuration);
+      } else if (!m_pulseRetracted &&
+                 now - m_pulseStartTime >= kPulseRetractDuration) {
+        m_pulseRetracted = true;
+        m_deployer->FullyExtend();
+        m_pulsesCompleted++;
+        m_pulsingStarted = false;
+      }
+    } else if (!m_finalRetractStarted) {
+      m_finalRetractStarted = true;
+      m_deployer->SlowRetract(kFinalRetractDuration);
+    }
   }
 
   auto &log = Logger::Instance();
@@ -109,7 +129,10 @@ void ShootCommand::End(bool interrupted) {
   m_deployer->RetractMid();
   m_feeder->ClearIndexed();
   m_shootSequenceActive = false;
-  m_slowRetractStarted = false;
+  m_pulsingStarted = false;
+  m_pulseRetracted = false;
+  m_finalRetractStarted = false;
+  m_pulsesCompleted = 0;
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }
