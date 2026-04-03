@@ -35,6 +35,9 @@ void CTREIntakeDeployerIO::ConfigureDevices() {
   m_config.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
   m_config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+  m_config.CurrentLimits.SupplyCurrentLowerLimit = 20_A;
+  m_config.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
+
   m_config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kForwardSoftLimit;
   m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
   m_config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = kReverseSoftLimit;

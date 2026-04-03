@@ -67,7 +67,7 @@ void Robot::AutonomousExit() {}
 
 void Robot::TeleopInit() {
   MatchTracker::Instance().OnTeleopInit();
-  // m_container.SetTeleopDriveCurrentLimits();
+  m_container.SetTeleopDriveCurrentLimits();
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }

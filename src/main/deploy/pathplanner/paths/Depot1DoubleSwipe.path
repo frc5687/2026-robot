@@ -107,10 +107,10 @@
     {
       "name": "Intaking Dense Balls",
       "minWaypointRelativePos": 1.3088685015290533,
-      "maxWaypointRelativePos": 2.073394495412848,
+      "maxWaypointRelativePos": 2.2915336444007934,
       "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 4.5,
+        "maxVelocity": 2.25,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
