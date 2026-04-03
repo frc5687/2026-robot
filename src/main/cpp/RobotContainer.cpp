@@ -349,6 +349,10 @@ void RobotContainer::ConfigureBindings() {
   (m_operator.R2() && !m_driver.R2())
       .OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
+  m_operator.L2().WhileTrue(ManualShootCommand(&m_flywheel, &m_hood, &m_intakeTopRoller,
+                        &m_intakeBottomRoller, &m_feeder, &m_floor,
+                        &m_intakeDeployer)
+         .ToPtr());
   m_operator.R1().OnTrue(
       RunOnce([] {
         MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(true);

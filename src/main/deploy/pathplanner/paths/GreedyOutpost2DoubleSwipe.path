@@ -112,12 +112,12 @@
     },
     {
       "anchor": {
-        "x": 2.8898409090909087,
-        "y": 2.354988636363637
+        "x": 2.784289156626506,
+        "y": 2.472337349397591
       },
       "prevControl": {
-        "x": 4.338970723641549,
-        "y": 2.303234000129686
+        "x": 4.233418971177146,
+        "y": 2.4205827131636397
       },
       "nextControl": null,
       "isLocked": false,
@@ -166,8 +166,8 @@
     },
     {
       "name": "Bump",
-      "minWaypointRelativePos": 5.615124915597531,
-      "maxWaypointRelativePos": 6.825118163403093,
+      "minWaypointRelativePos": 6.204466501240695,
+      "maxWaypointRelativePos": 6.7880893300248095,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,

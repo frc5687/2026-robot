@@ -40,7 +40,7 @@ private:
   FloorSubsystem *m_floor;
   IntakeDeployerSubsystem *m_deployer;
 
-  TunableDouble m_tunableRPM{"ManualShoot", "FlywheelRPM", 1100.0};
+  TunableDouble m_tunableRPM{"ManualShoot", "FlywheelRPM", 1400.0};
   TunableDouble m_tunableHoodAngle{"ManualShoot", "HoodAngleDeg", 10.0};
 
   // Floor
