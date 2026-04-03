@@ -39,6 +39,7 @@ public:
 
   units::meter_t GetPosition() const;
   bool IsDeployed() const;
+  bool IsFullyExtended() const;
   bool IsRetracted() const;
   units::ampere_t GetElectricalCurrentDraw() const;
   units::watt_t GetElectricalPowerDraw() const;

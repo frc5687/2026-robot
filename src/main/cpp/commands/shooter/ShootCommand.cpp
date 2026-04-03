@@ -98,7 +98,7 @@ void ShootCommand::Execute() {
         m_pulsesCompleted++;
         m_pulsingStarted = false;
       }
-    } else if (!m_finalRetractStarted) {
+    } else if (!m_finalRetractStarted && m_deployer->IsFullyExtended()) {
       m_finalRetractStarted = true;
       m_deployer->SlowRetract(kFinalRetractDuration);
     }

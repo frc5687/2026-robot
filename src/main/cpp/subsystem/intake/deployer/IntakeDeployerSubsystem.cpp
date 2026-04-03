@@ -19,7 +19,7 @@ static units::turn_t ExtensionToMotorTurns(units::meter_t extension) {
 
 void IntakeDeployerSubsystem::FullyExtend() {
   CancelSlowRetract();
-  DisableCompliantHold();
+  //DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(kFullyExtend));
 }
 
@@ -32,13 +32,13 @@ void IntakeDeployerSubsystem::Deploy() {
 
 void IntakeDeployerSubsystem::RetractMid() {
   CancelSlowRetract();
-  DisableCompliantHold();
+  //DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(kMidExtension));
 }
 
 void IntakeDeployerSubsystem::Retract() {
   CancelSlowRetract();
-  DisableCompliantHold();
+  //DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
 }
 
@@ -60,7 +60,7 @@ bool IntakeDeployerSubsystem::IsSlowRetracting() const {
 
 void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {
   CancelSlowRetract();
-  DisableCompliantHold();
+  //DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(extension));
 }
 
@@ -77,7 +77,7 @@ void IntakeDeployerSubsystem::ZeroPosition() { m_io->ZeroPosition(); }
 
 void IntakeDeployerSubsystem::Stop() {
   CancelSlowRetract();
-  DisableCompliantHold();
+  //DisableCompliantHold();
   m_io->Stop();
 }
 
@@ -89,6 +89,10 @@ void IntakeDeployerSubsystem::DisableCompliantHold() {
 bool IntakeDeployerSubsystem::IsDeployed() const {
   return units::math::abs(GetPosition() - kDeployedExtension) <
          kExtensionTolerance;
+}
+
+bool IntakeDeployerSubsystem::IsFullyExtended() const {
+  return units::math::abs(GetPosition() - kFullyExtend) < kExtensionTolerance;
 }
 
 bool IntakeDeployerSubsystem::IsRetracted() const {
@@ -114,30 +118,30 @@ void IntakeDeployerSubsystem::UpdateInputs() {
     }
   }
 
-  if (m_compliantTarget) {
-    auto targetTurns = ExtensionToMotorTurns(*m_compliantTarget);
-    auto positionError = units::math::abs(targetTurns - m_inputs.motorPosition);
-    auto statorCurrent = units::math::abs(m_inputs.statorCurrent);
+  // if (m_compliantTarget) {
+  //   auto targetTurns = ExtensionToMotorTurns(*m_compliantTarget);
+  //   auto positionError = units::math::abs(targetTurns - m_inputs.motorPosition);
+  //   auto statorCurrent = units::math::abs(m_inputs.statorCurrent);
 
-    switch (m_complianceState) {
-    case ComplianceState::Holding:
-      if (statorCurrent > Compliance::kCurrentThreshold &&
-          positionError > Compliance::kPositionErrorThreshold) {
-        m_complianceState = ComplianceState::Yielding;
-        m_io->SetVoltage(Compliance::kYieldVoltage);
-      }
-      break;
-    case ComplianceState::Yielding:
-      m_io->SetVoltage(Compliance::kYieldVoltage);
-      if (statorCurrent < Compliance::kRecoverCurrentThreshold &&
-          units::math::abs(m_inputs.motorVelocity) <
-              Compliance::kSettledVelocity) {
-        m_complianceState = ComplianceState::Holding;
-        m_io->SetPosition(targetTurns);
-      }
-      break;
-    }
-  }
+  //   switch (m_complianceState) {
+  //   case ComplianceState::Holding:
+  //     if (statorCurrent > Compliance::kCurrentThreshold &&
+  //         positionError > Compliance::kPositionErrorThreshold) {
+  //       m_complianceState = ComplianceState::Yielding;
+  //       m_io->SetVoltage(Compliance::kYieldVoltage);
+  //     }
+  //     break;
+  //   case ComplianceState::Yielding:
+  //     m_io->SetVoltage(Compliance::kYieldVoltage);
+  //     if (statorCurrent < Compliance::kRecoverCurrentThreshold &&
+  //         units::math::abs(m_inputs.motorVelocity) <
+  //             Compliance::kSettledVelocity) {
+  //       m_complianceState = ComplianceState::Holding;
+  //       m_io->SetPosition(targetTurns);
+  //     }
+  //     break;
+  //   }
+  // }
 }
 
 void IntakeDeployerSubsystem::LogTelemetry() {
