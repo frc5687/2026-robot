@@ -31,7 +31,7 @@ private:
   IntakeBottomRollerSubsystem *m_bottomRoller;
   FloorSubsystem *m_floor;
 
-  static constexpr units::volt_t kTopRollerVoltage = 8_V;
+  static constexpr units::volt_t kTopRollerVoltage = 10_V;
   static constexpr units::volt_t kBottomRollerVoltage = 10_V;
 
   static constexpr units::ampere_t kTopRollerCurrent = 60_A;

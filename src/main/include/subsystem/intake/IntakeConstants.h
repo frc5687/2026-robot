@@ -44,14 +44,14 @@ inline constexpr units::second_t kPulseRetractDuration = 0.5_s;
 inline constexpr units::second_t kShootDeployerSettleDuration = 0.5_s;
 
 namespace PID {
-inline constexpr double kP = 35.0;
+inline constexpr double kP = 45.0;
 inline constexpr double kI = 0.0;
 inline constexpr double kD = 0.0;
 inline constexpr double kS = 0.0;
 inline constexpr double kV = 0.0;
 inline constexpr double kA = 0.0;
-inline constexpr double kCruiseVelocity = 50.0;
-inline constexpr double kAcceleration = 100.0;
+inline constexpr double kCruiseVelocity = 80.0;
+inline constexpr double kAcceleration = 500.0;
 } // namespace PID
 
 namespace SimPID {
