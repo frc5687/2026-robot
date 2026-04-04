@@ -146,8 +146,8 @@
     },
     {
       "name": "Bump",
-      "minWaypointRelativePos": 4.618501012829148,
-      "maxWaypointRelativePos": 5.76907494935854,
+      "minWaypointRelativePos": 5.169480081026309,
+      "maxWaypointRelativePos": 5.720459149223499,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,

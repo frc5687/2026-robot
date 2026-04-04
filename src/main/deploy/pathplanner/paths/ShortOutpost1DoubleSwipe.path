@@ -93,8 +93,8 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 2.992572586090478,
-      "maxWaypointRelativePos": 3.8676569885212433,
+      "minWaypointRelativePos": 3.1325062034739464,
+      "maxWaypointRelativePos": 3.759801488833751,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
@@ -107,10 +107,10 @@
     {
       "name": "Intaking Dense Balls",
       "minWaypointRelativePos": 1.1743119266055073,
-      "maxWaypointRelativePos": 2.3614624263261326,
+      "maxWaypointRelativePos": 2.134556574923548,
       "constraints": {
-        "maxVelocity": 2.25,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 3.0,
+        "maxAcceleration": 4.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,

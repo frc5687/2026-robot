@@ -75,8 +75,8 @@ std::unique_ptr<FlywheelIO> MakeFlywheelIO() {
     return std::make_unique<SimFlywheelIO>();
   }
   return std::make_unique<CTREFlywheelIO>(
-      HardwareMap::CAN::TalonFX::LeftLeaderFlywheel,
       HardwareMap::CAN::TalonFX::LeftFollowerFlywheel,
+      HardwareMap::CAN::TalonFX::LeftLeaderFlywheel,
       HardwareMap::CAN::TalonFX::RightFollowerFlywheel,
       HardwareMap::CAN::TalonFX::RightBottomFollowerFlywheel);
 }
@@ -346,7 +346,7 @@ void RobotContainer::ConfigureBindings() {
   /* -------------------- OPERATOR CONTROLLER COMMAND -------------------- */
 
   m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_hood).ToPtr());
-  (m_operator.R2() && !m_driver.R2())
+  (m_operator.R2() && !m_driver.R2() && !m_driver.Triangle())
       .OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
 
   m_operator.L2().WhileTrue(ManualShootCommand(&m_flywheel, &m_hood, &m_intakeTopRoller,
