@@ -19,6 +19,7 @@
 #include "commands/drive/AlignToEdgeCommand.h"
 #include "commands/drive/DriveThroughTrenchCommand.h"
 #include "commands/drive/DriveMaintainingHeadingCommand.h"
+#include "commands/drive/SetDRSMode.h"
 #include "commands/drive/SlowModeCommand.h"
 #include "commands/intake/EjectIntakeCommand.h"
 #include "commands/intake/IntakeCommand.h"
@@ -361,6 +362,8 @@ void RobotContainer::ConfigureBindings() {
       RunOnce([] {
         MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(false);
       }).IgnoringDisable(true));
+    
+  m_operator.Square().WhileTrue(SetDRSMode(&m_drive).ToPtr());
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */
   // m_debugger.Cross().OnTrue(
   //       m_flywheel.SysIdDynamic(frc2::sysid::Direction::kForward)

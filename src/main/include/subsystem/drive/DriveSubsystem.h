@@ -85,6 +85,7 @@ public:
   void SetAutoCurrentLimits();
 
   void SetTeleopCurrentLimits();
+  void SetDRSMode();
   bool IsAtPose(const frc::Pose2d &pose,
                 units::meter_t tolerance = 0.1_m) const;
   std::array<bool, Constants::SwerveDrive::kModuleCount>

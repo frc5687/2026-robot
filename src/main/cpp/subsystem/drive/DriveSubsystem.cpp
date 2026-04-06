@@ -342,6 +342,12 @@ void DriveSubsystem::SetTeleopCurrentLimits() {
       Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitTeleop);
 }
 
+void DriveSubsystem::SetDRSMode() {
+  SetCurrentLimits(
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitDRS,
+      Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitDRS);
+}
+
 frc2::CommandPtr DriveSubsystem::GetTrenchPathCommand(frc::Pose2d currentPose) {
 
   pathplanner::PathConstraints constraints = pathplanner::PathConstraints(

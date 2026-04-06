@@ -59,6 +59,9 @@ inline constexpr units::ampere_t kSteerSupplyCurrentLimitAuto = 20_A;
 inline constexpr units::ampere_t kDriveSupplyCurrentLimitTeleop = 30_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimitTeleop = 20_A;
 
+inline constexpr units::ampere_t kDriveSupplyCurrentLimitDRS = 50_A;
+inline constexpr units::ampere_t kSteerSupplyCurrentLimitDRS = 20_A;
+
 inline constexpr units::ampere_t kDriveSupplyCurrentLimit =
     kDriveSupplyCurrentLimitTeleop;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimit =
