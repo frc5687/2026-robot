@@ -16,15 +16,18 @@
 #include <wpi/raw_ostream.h>
 
 #include <ctre/phoenix6/SignalLogger.hpp>
-
 #include "frc/RobotController.h"
+#include "utils/Logger.h"
 #include "utils/MatchTracker.h"
+
+#include <networktables/NetworkTableInstance.h>
 
 Robot::Robot() {
   frc::LiveWindow::DisableAllTelemetry();
-  ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::DriverStation::SilenceJoystickConnectionWarning(true);
+  ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::RobotController::SetBrownoutVoltage(6.0_V);
+  Logger::Instance().EnableFileLogger();
 
   if (!frc::Notifier::SetHALThreadPriority(true, 40)) {
     wpi::errs() << "Failed to set HAL notifier thread priority\n";
