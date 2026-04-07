@@ -59,7 +59,7 @@ private:
       Constants::SwerveDrive::Shooting::kAimkD};
 
   // Floor
-  static constexpr units::volt_t kFloorVoltage = 8_V;
+  static constexpr units::volt_t kFloorVoltage = 12_V;
   // Feeder
   static constexpr units::turns_per_second_t kFeederRPS = 80_tps;
   // Top Roller
