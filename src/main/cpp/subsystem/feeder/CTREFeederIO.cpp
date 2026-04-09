@@ -10,9 +10,8 @@
 using namespace Constants::Feeder;
 using namespace ctre::phoenix6;
 
-CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower, const CANDevice &canRange)
+CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
     : m_leader(leader.id, leader.bus), m_follower(follower.id, follower.bus),
-      m_canRange(canRange.id, canRange.bus),
       m_positionSignal(m_leader.GetPosition()),
       m_velocitySignal(m_leader.GetVelocity()),
       m_voltageSignal(m_leader.GetMotorVoltage()),
@@ -21,7 +20,6 @@ CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower, c
       m_followerStatorSignal(m_follower.GetStatorCurrent()),
       m_followerSupplySignal(m_follower.GetSupplyCurrent()),
       m_followerVoltageSignal(m_follower.GetMotorVoltage()),
-      m_fuelDetected(m_canRange.GetIsDetected()),
       m_signals{&m_positionSignal,        &m_velocitySignal,
                 &m_voltageSignal,         &m_statorSignal,
                 &m_supplySignal,          &m_followerStatorSignal,
@@ -47,17 +45,17 @@ void CTREFeederIO::ConfigureDevices() {
 
   int leaderId = m_leader.GetDeviceID();
   ConfigureFollower(m_follower, leaderId, kFollowerOpposed);
-  ConfigureCANRange();
+  // ConfigureCANRange();
 }
 
-void CTREFeederIO::ConfigureCANRange() {
-  m_canRangeConfig.ToFParams.UpdateMode = signals::UpdateModeValue::ShortRange100Hz;
-  m_canRangeConfig.FovParams.FOVRangeX = 1.0_deg; // TODO: tune
-  m_canRangeConfig.FovParams.FOVRangeY = 1.0_deg; // TODO: tune
-  m_canRangeConfig.ProximityParams.ProximityHysteresis = 0.03_m;
-  m_canRangeConfig.ProximityParams.ProximityThreshold = 0.63_m; // TODO: Tune
-  m_canRange.GetConfigurator().Apply(m_canRangeConfig);
-}
+// void CTREFeederIO::ConfigureCANRange() {
+//   m_canRangeConfig.ToFParams.UpdateMode = signals::UpdateModeValue::ShortRange100Hz;
+//   m_canRangeConfig.FovParams.FOVRangeX = 1.0_deg; // TODO: tune
+//   m_canRangeConfig.FovParams.FOVRangeY = 1.0_deg; // TODO: tune
+//   m_canRangeConfig.ProximityParams.ProximityHysteresis = 0.03_m;
+//   m_canRangeConfig.ProximityParams.ProximityThreshold = 0.63_m; // TODO: Tune
+//   // m_canRange.GetConfigurator().Apply(m_canRangeConfig);
+// }
 
 void CTREFeederIO::ConfigureClosedLoop() {
   m_leaderConfig.Slot0.kS = VelocityPID::kS;
@@ -99,18 +97,15 @@ void CTREFeederIO::ConfigureSignalFrequencies() {
   m_followerVoltageSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
   m_followerSupplySignal.SetUpdateFrequency(50_Hz);
-  m_fuelDetected.SetUpdateFrequency(100_Hz);
+ 
 
   m_leader.OptimizeBusUtilization();
   m_follower.OptimizeBusUtilization();
-  m_canRange.OptimizeBusUtilization();
 }
 
 void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_signals);
     // different canbus cannot refresh all
-  BaseStatusSignal::RefreshAll(m_fuelDetected);
-
   inputs.motorPosition = m_positionSignal.GetValue();
   inputs.motorVelocity = m_velocitySignal.GetValue();
   inputs.appliedVolts = m_voltageSignal.GetValue();
@@ -119,7 +114,7 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.followerStatorCurrent = m_followerStatorSignal.GetValue();
   inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
   inputs.followerAppliedVolts = m_followerVoltageSignal.GetValue();
-  inputs.fuelDetected = m_fuelDetected.GetValue();
+  inputs.fuelDetected = m_laser.Get();
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 

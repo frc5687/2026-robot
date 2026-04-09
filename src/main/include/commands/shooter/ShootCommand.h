@@ -67,7 +67,7 @@ private:
   // Bottom Roller
   static constexpr units::volt_t kBottomVoltage = 6_V;
   // Deployer pulse timing
-  static constexpr units::second_t kDeployerExtendDelay = 1.0_s;
+  static constexpr units::second_t kDeployerExtendDelay = 1.5_s;
   static constexpr units::second_t kPulseRetractDuration = 0.3_s;
   static constexpr units::second_t kFinalRetractDuration = 1.0_s;
   static constexpr int kPulseCount = 1;

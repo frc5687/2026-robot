@@ -12,6 +12,8 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
+#include "frc/DigitalInput.h"
+
 #include "FeederIO.h"
 #include "ctre/phoenix6/CANrange.hpp"
 #include "ctre/phoenix6/controls/TorqueCurrentFOC.hpp"
@@ -20,7 +22,7 @@
 
 class CTREFeederIO : public FeederIO {
 public:
-  CTREFeederIO(const CANDevice &leader, const CANDevice &follower, const CANDevice &canRange);
+  CTREFeederIO(const CANDevice &leader, const CANDevice &follower);
 
   void UpdateInputs(FeederIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
@@ -33,7 +35,7 @@ private:
   ctre::phoenix6::hardware::TalonFX m_leader;
   ctre::phoenix6::hardware::TalonFX m_follower;
 
-  ctre::phoenix6::hardware::CANrange m_canRange;
+  // ctre::phoenix6::hardware::CANrange m_canRange;
 
   ctre::phoenix6::StatusSignal<units::turn_t> &m_positionSignal;
   ctre::phoenix6::StatusSignal<units::turns_per_second_t> &m_velocitySignal;
@@ -43,7 +45,7 @@ private:
   ctre::phoenix6::StatusSignal<units::ampere_t> &m_followerStatorSignal;
   ctre::phoenix6::StatusSignal<units::ampere_t> &m_followerSupplySignal;
   ctre::phoenix6::StatusSignal<units::volt_t> &m_followerVoltageSignal;
-  ctre::phoenix6::StatusSignal<bool> &m_fuelDetected;
+  // ctre::phoenix6::StatusSignal<bool> &m_fuelDetected;
 
   std::array<ctre::phoenix6::BaseStatusSignal *, 8> m_signals;
 
@@ -55,7 +57,8 @@ private:
 
   ctre::phoenix6::configs::TalonFXConfiguration m_leaderConfig{};
 
-  ctre::phoenix6::configs::CANrangeConfiguration m_canRangeConfig{};
+  frc::DigitalInput m_laser{0};
+  // ctre::phoenix6::configs::CANrangeConfiguration m_canRangeConfig{};
 
   void ConfigureDevices();
   void ConfigureCANRange();

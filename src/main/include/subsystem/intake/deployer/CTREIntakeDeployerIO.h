@@ -23,6 +23,7 @@ public:
   void SetVoltage(units::volt_t voltage) override;
   void ZeroPosition() override;
   void Stop() override;
+  void SetCurrentLimits(units::ampere_t currentLimit) override;
 
 private:
   ctre::phoenix6::hardware::TalonFX m_motor;

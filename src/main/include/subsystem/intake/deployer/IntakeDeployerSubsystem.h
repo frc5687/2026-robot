@@ -37,13 +37,15 @@ public:
   void ZeroPosition();
   void Stop();
 
+  void SetCurrentLimits(units::ampere_t currentlimit);
+
   units::meter_t GetPosition() const;
   bool IsDeployed() const;
   bool IsFullyExtended() const;
   bool IsRetracted() const;
   units::ampere_t GetElectricalCurrentDraw() const;
   units::watt_t GetElectricalPowerDraw() const;
-
+  
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;
@@ -63,6 +65,9 @@ private:
   enum class ComplianceState { Holding, Yielding };
   std::optional<units::meter_t> m_compliantTarget;
   ComplianceState m_complianceState{ComplianceState::Holding};
+
+
+  units::ampere_t m_lastStatorLimit{0_A};
 
   void DisableCompliantHold();
 };

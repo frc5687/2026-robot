@@ -100,6 +100,15 @@ bool IntakeDeployerSubsystem::IsRetracted() const {
          kExtensionTolerance;
 }
 
+void IntakeDeployerSubsystem::SetCurrentLimits(units::ampere_t currentLimit){
+  if(currentLimit == m_lastStatorLimit){
+    return;
+  }
+  
+  m_lastStatorLimit = currentLimit;
+  m_io->SetCurrentLimits(currentLimit);
+}
+
 void IntakeDeployerSubsystem::UpdateInputs() {
   m_io->UpdateInputs(m_inputs);
 

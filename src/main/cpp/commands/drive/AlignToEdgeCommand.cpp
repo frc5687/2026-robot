@@ -203,7 +203,7 @@ void AlignToEdgeCommand::Execute() {
 
   frc::Rotation2d angleToFaceWall = currentPose.Rotation();
 
-  double maxHubSnap = 3.5;
+  double maxHubSnap = 4.25;
 
   double leftIntakeDistanceFromRedHub =
       leftIntake.Translation()

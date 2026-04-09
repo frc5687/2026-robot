@@ -97,3 +97,10 @@ void CTREIntakeDeployerIO::SetVoltage(units::volt_t voltage) {
 void CTREIntakeDeployerIO::ZeroPosition() { m_motor.SetPosition(kDeployedMotorRotations); }
 
 void CTREIntakeDeployerIO::Stop() { m_motor.SetControl(m_neutralRequest); }
+
+void CTREIntakeDeployerIO::SetCurrentLimits(units::ampere_t currentLimit) {
+  m_config.CurrentLimits.StatorCurrentLimit = currentLimit;
+  m_config.CurrentLimits.StatorCurrentLimitEnable = true;
+
+  m_motor.GetConfigurator().Apply(m_config);
+}

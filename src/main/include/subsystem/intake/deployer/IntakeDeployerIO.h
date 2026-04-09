@@ -31,4 +31,5 @@ public:
   virtual void SetVoltage(units::volt_t voltage) = 0;
   virtual void ZeroPosition() = 0;
   virtual void Stop() = 0;
+  virtual void SetCurrentLimits(units::ampere_t currentlimits) = 0;
 };

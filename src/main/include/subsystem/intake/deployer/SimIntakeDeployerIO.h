@@ -20,6 +20,7 @@ public:
   void SetVoltage(units::volt_t voltage) override;
   void ZeroPosition() override;
   void Stop() override;
+  void SetCurrentLimits(units::ampere_t currentlimit) override;
 
 private:
   units::volt_t CalculateClosedLoop();
