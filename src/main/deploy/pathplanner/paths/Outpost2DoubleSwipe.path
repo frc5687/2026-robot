@@ -152,19 +152,6 @@
   ],
   "constraintZones": [
     {
-      "name": "Trench",
-      "minWaypointRelativePos": 0.6644159351789438,
-      "maxWaypointRelativePos": 2.2325581395349228,
-      "constraints": {
-        "maxVelocity": 2.5,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
       "name": "Bump",
       "minWaypointRelativePos": 6.276839972991218,
       "maxWaypointRelativePos": 6.760297766749381,
@@ -216,7 +203,7 @@
     "rotation": 41.34777721969365
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Regular",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 41.34777721969365

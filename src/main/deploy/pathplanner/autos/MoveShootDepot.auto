@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OutpostBoring"
+            "pathName": "MoveShootDepot"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "MoveShoot",
   "choreoAuto": false
 }

@@ -434,7 +434,7 @@
     "rotation": -37.39849568311024
   },
   "reversed": false,
-  "folder": null,
+  "folder": "MoveShoot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

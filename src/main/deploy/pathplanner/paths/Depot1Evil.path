@@ -95,7 +95,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 47.338702217588995
+      "rotationDegrees": 47.338702217589
     },
     {
       "waypointRelativePos": 2,
@@ -163,7 +163,7 @@
     "rotation": -42.78795799795166
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Evil",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0
