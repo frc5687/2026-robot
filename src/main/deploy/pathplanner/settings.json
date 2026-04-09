@@ -2,8 +2,23 @@
   "robotWidth": 0.735,
   "robotLength": 0.883,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "End Paths",
+    "Evil",
+    "Greedy",
+    "MoveShoot",
+    "Other",
+    "PathedMoveShoot",
+    "Regular",
+    "Short"
+  ],
+  "autoFolders": [
+    "Evil",
+    "Greedy",
+    "MoveShoot",
+    "Short",
+    "Regular"
+  ],
   "defaultMaxVel": 3.6,
   "defaultMaxAccel": 4.5,
   "defaultMaxAngVel": 540.0,

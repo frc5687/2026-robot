@@ -308,7 +308,7 @@
     "rotation": -36.99340883979402
   },
   "reversed": false,
-  "folder": null,
+  "folder": "PathedMoveShoot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -42.78795799795166
