@@ -7,6 +7,7 @@
 #include <numbers>
 #include <units/angle.h>
 
+#include "Constants.h"
 #include "frc/DriverStation.h"
 #include "subsystem/drive/DriveSubsystem.h"
 #include "utils/Logger.h"
@@ -46,10 +47,20 @@ void PassCommand::Execute() {
 
   auto alliance = frc::DriverStation::GetAlliance();
 
+  units::meter_t y = m_drive->GetPose().Y();
+
   if(alliance.has_value() && alliance == frc::DriverStation::kBlue){
-    m_targetHeading = 180_deg;
+    if(y >= Constants::Field::kFieldWidth/2.0){
+      m_targetHeading = 188_deg;
+    }else{
+      m_targetHeading = 172_deg;
+    }
   }else{
-    m_targetHeading = 0_deg;
+    if(y >= Constants::Field::kFieldWidth/2.0){
+      m_targetHeading = -8_deg;
+    }else{
+          m_targetHeading = 8_deg;
+    }
   }
 
  double rotOutput =

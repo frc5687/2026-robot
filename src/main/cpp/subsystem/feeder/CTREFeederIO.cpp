@@ -114,7 +114,7 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.followerStatorCurrent = m_followerStatorSignal.GetValue();
   inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
   inputs.followerAppliedVolts = m_followerVoltageSignal.GetValue();
-  inputs.fuelDetected = m_laser.Get();
+  inputs.fuelDetected = true;
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 
