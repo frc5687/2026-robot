@@ -20,12 +20,12 @@
         "y": 7.2095
       },
       "prevControl": {
-        "x": 5.706847168507553,
-        "y": 7.326209972632546
+        "x": 5.6984789667226385,
+        "y": 7.305001429372507
       },
       "nextControl": {
-        "x": 7.174874837893915,
-        "y": 6.679014978601997
+        "x": 7.651590909090908,
+        "y": 6.622011363636363
       },
       "isLocked": false,
       "linkedName": null
@@ -80,16 +80,16 @@
     },
     {
       "anchor": {
-        "x": 3.5185568181818176,
-        "y": 5.361212553495007
+        "x": 3.1578181818181816,
+        "y": 5.354272727272728
       },
       "prevControl": {
-        "x": 4.384329545454545,
-        "y": 5.405806818181818
+        "x": 4.02359090909091,
+        "y": 5.398866991959539
       },
       "nextControl": {
-        "x": 3.2688877946454626,
-        "y": 5.348352589015934
+        "x": 2.9081491582818266,
+        "y": 5.341412762793655
       },
       "isLocked": false,
       "linkedName": "PathedMoveShootDepotA"
@@ -204,7 +204,7 @@
     },
     {
       "name": "AutoShoot",
-      "waypointRelativePos": 5.0,
+      "waypointRelativePos": 5.1,
       "endWaypointRelativePos": 5.894075403949725,
       "command": {
         "type": "named",
@@ -227,7 +227,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "PathedMoveShoot",
+  "folder": "MoveShootDepot1",
   "idealStartingState": {
     "velocity": 2.0,
     "rotation": 179.9999999997047
