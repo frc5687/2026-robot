@@ -45,7 +45,7 @@ private:
   bool m_usingFlywheel{false};
   units::turn_t m_indexStartPosition{0_tr};
 
-  static constexpr units::volt_t kTopRollerVoltage = 8_V;
+  static constexpr units::volt_t kTopRollerVoltage = 10_V;
   static constexpr units::volt_t kBottomRollerVoltage = 10_V;
   static constexpr units::volt_t kFloorIntakeVoltage = 8_V;
 
@@ -53,11 +53,12 @@ private:
   static constexpr units::turn_t kFeederReverseDistance = 4_tr;
   static constexpr units::turn_t kPositionTolerance = 0.25_tr;
   static constexpr units::volt_t kFlywheelReverseVoltage = -1.5_V;
+  static constexpr units::volt_t kFeederVoltage = 2.0_V;
 
   static constexpr units::second_t kIntakeBeforeIndexDuration = 1.5_s;
 
   static constexpr units::revolutions_per_minute_t kFlywheelIdleThreshold =
-      50_rpm;
+      75_rpm;
 
   bool IsFlywheelIdle() const;
 };

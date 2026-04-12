@@ -48,8 +48,11 @@ void ShootCommand::Execute() {
   bool isRed = alliance == frc::DriverStation::Alliance::kRed;
 
   auto solution = m_shotCalculator.Calculate(now, isRed);
-
-  m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
+  // if(!(now - m_shootSequenceStartTime >= m_burstTime)){
+  //   m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed + m_burstOffset});
+  // }else{
+    m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
+ // }
   m_hood->SetPosition(units::radian_t{solution.hoodAngle});
 
   double throttle = ApplyDeadband(m_throttle(), kDeadband);

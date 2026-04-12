@@ -30,7 +30,7 @@ CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
 }
 
 void CTREFeederIO::ConfigureDevices() {
-  m_leaderConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
+  m_leaderConfig.MotorOutput.NeutralMode = signals::NeutralModeValue::Brake;
   m_leaderConfig.MotorOutput.Inverted =
       kLeaderInverted ? signals::InvertedValue::Clockwise_Positive
                       : signals::InvertedValue::CounterClockwise_Positive;

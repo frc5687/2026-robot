@@ -57,7 +57,7 @@ private:
 
   ctre::phoenix6::configs::TalonFXConfiguration m_leaderConfig{};
 
-  frc::DigitalInput m_laser{1};
+  frc::DigitalInput m_laser{0};
   // ctre::phoenix6::configs::CANrangeConfiguration m_canRangeConfig{};
 
   void ConfigureDevices();

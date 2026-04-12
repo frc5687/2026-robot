@@ -68,8 +68,8 @@ private:
   static constexpr units::volt_t kBottomVoltage = 6_V;
   // Deployer pulse timing
   static constexpr units::second_t kDeployerExtendDelay = 1.5_s;
-  static constexpr units::second_t kPulseRetractDuration = 0.3_s;
-  static constexpr units::second_t kFinalRetractDuration = 1.0_s;
+  static constexpr units::second_t kPulseRetractDuration = 0.2_s;
+  static constexpr units::second_t kFinalRetractDuration = 0.6_s;
   static constexpr int kPulseCount = 1;
 
   static constexpr double kDeadband = 0.1;
@@ -84,4 +84,6 @@ private:
   int m_pulsesCompleted{0};
   units::second_t m_pulseStartTime{0_s};
 
+  units::second_t m_burstTime{0.2_s};
+  double m_burstOffset{200};
 };

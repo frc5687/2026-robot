@@ -261,7 +261,7 @@ void RobotContainer::ConfigureAutoCommands() {
                         .ToPtr());
 
   pathplanner::NamedCommands::registerCommand(
-      "SpinUpFlywheel", ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
+      "SpinUpFlywheel", ShotCalculatedSpinUpCommand(&m_flywheel, &m_feeder).ToPtr());
 
 }
 
@@ -283,11 +283,9 @@ void RobotContainer::ConfigureBindings() {
       Run([this] { m_hood.SetPosition(0_deg); }, {&m_hood}));
 
   m_driver.L2().WhileTrue(
-      IntakeCommand(&m_drive, &m_intakeDeployer, &m_intakeTopRoller,
-                    &m_intakeBottomRoller, &m_floor)
-          .ToPtr()
-          .AlongWith(
-              IndexFeederCommand(&m_feeder, &m_hood).ToPtr()));
+      IntakeWithIndexCommand(&m_intakeDeployer, &m_intakeTopRoller,
+                    &m_intakeBottomRoller, &m_floor, &m_feeder, &m_flywheel)
+          .ToPtr());
 
   m_driver.Options().WhileTrue(Run([this] { m_drive.ResetHeading(0_deg); }));
 
@@ -347,7 +345,7 @@ void RobotContainer::ConfigureBindings() {
 
   m_operator.Circle().OnTrue(IndexFeederCommand(&m_feeder, &m_hood).ToPtr());
   (m_operator.R2() && !m_driver.R2() && !m_driver.Triangle())
-      .OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel).ToPtr());
+      .OnTrue(ShotCalculatedSpinUpCommand(&m_flywheel, &m_feeder).ToPtr());
 
   m_operator.L2().WhileTrue(ManualShootCommand(&m_flywheel, &m_hood, &m_intakeTopRoller,
                         &m_intakeBottomRoller, &m_feeder, &m_floor,

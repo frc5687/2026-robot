@@ -46,7 +46,7 @@ private:
   FloorSubsystem *m_floor;
   IntakeDeployerSubsystem *m_deployer;
 
-  TunableDouble m_tunableRPM{"PassCommand", "FlywheelRPM", 1400.0};
+  TunableDouble m_tunableRPM{"PassCommand", "FlywheelRPM", 1000.0};
   TunableDouble m_tunableHoodAngle{"PassCommand", "HoodAngleDeg", 20.0};
 
   std::function<double()> m_throttle;
