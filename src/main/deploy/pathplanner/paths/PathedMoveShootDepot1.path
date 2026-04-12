@@ -20,12 +20,12 @@
         "y": 7.240420454545455
       },
       "prevControl": {
-        "x": 8.237689808341027,
-        "y": 7.71653816678236
+        "x": 8.318356294032844,
+        "y": 7.747359756307551
       },
       "nextControl": {
-        "x": 8.702886363636363,
-        "y": 6.745693181818182
+        "x": 8.630738636363636,
+        "y": 6.6735454545454544
       },
       "isLocked": false,
       "linkedName": null
@@ -33,15 +33,15 @@
     {
       "anchor": {
         "x": 8.352454545454545,
-        "y": 5.230590909090909
+        "y": 5.034761363636364
       },
       "prevControl": {
         "x": 8.568897727272727,
-        "y": 5.704704545454546
+        "y": 5.5088750000000015
       },
       "nextControl": {
-        "x": 7.962543748906765,
-        "y": 4.376500592843388
+        "x": 7.962543748906764,
+        "y": 4.180671047388843
       },
       "isLocked": false,
       "linkedName": null
@@ -64,16 +64,16 @@
     },
     {
       "anchor": {
-        "x": 3.5185568181818176,
-        "y": 5.361212553495007
+        "x": 3.1578181818181816,
+        "y": 5.354272727272728
       },
       "prevControl": {
-        "x": 4.126019161299116,
-        "y": 5.386776232698942
+        "x": 3.7652805249354797,
+        "y": 5.379836406476663
       },
       "nextControl": {
-        "x": 3.2687778942026653,
-        "y": 5.350701172243389
+        "x": 2.9080392578390293,
+        "y": 5.34376134602111
       },
       "isLocked": false,
       "linkedName": "PathedMoveShootDepotA"
@@ -133,8 +133,8 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 3.199281867145421,
-      "maxWaypointRelativePos": 3.802513464991023,
+      "minWaypointRelativePos": 3.199281867145422,
+      "maxWaypointRelativePos": 3.61938958707361,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
@@ -197,7 +197,7 @@
     },
     {
       "name": "AutoShoot",
-      "waypointRelativePos": 4.03,
+      "waypointRelativePos": 4.1,
       "endWaypointRelativePos": 4.93,
       "command": {
         "type": "named",
@@ -220,7 +220,7 @@
     "rotation": 179.9999999997047
   },
   "reversed": false,
-  "folder": "PathedMoveShoot",
+  "folder": "MoveShootDepot1",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0
