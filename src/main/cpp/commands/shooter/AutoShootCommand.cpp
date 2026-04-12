@@ -73,10 +73,10 @@ void AutoShootCommand::Execute() {
   }
 
   if (solution.ready) {
-    m_floor->SetCurrent(kFloorCurrent);
+    m_floor->SetVoltage(kFloorVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
-    m_feeder->SetVelocity(kKickerRPS);
+    m_feeder->SetVoltage(kFeederVoltage);
   } else {
     m_floor->Stop();
     m_feeder->Stop();

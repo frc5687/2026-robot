@@ -53,9 +53,11 @@ private:
   bool m_deployerExtended{false};
 
   static constexpr units::ampere_t kFloorCurrent = 40_A;
+  static constexpr units::volt_t kFloorVoltage = 12_V;
   static constexpr units::volt_t kTopVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::turns_per_second_t kKickerRPS = 75_tps;
+  static constexpr units::volt_t kFeederVoltage = 12_V;
   static constexpr units::second_t kPulseExtendDuration = 0.3_s;
   static constexpr units::second_t kPulseRetractDuration = 0.25_s;
 };

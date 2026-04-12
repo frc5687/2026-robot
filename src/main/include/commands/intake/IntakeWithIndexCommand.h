@@ -53,12 +53,12 @@ private:
   static constexpr units::turn_t kFeederReverseDistance = 4_tr;
   static constexpr units::turn_t kPositionTolerance = 0.25_tr;
   static constexpr units::volt_t kFlywheelReverseVoltage = -1.5_V;
-  static constexpr units::volt_t kFeederVoltage = 2.0_V;
+  static constexpr units::volt_t kFeederVoltage = 1.5_V;
 
   static constexpr units::second_t kIntakeBeforeIndexDuration = 1.5_s;
 
   static constexpr units::revolutions_per_minute_t kFlywheelIdleThreshold =
-      75_rpm;
+      100_rpm;
 
   bool IsFlywheelIdle() const;
 };

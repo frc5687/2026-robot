@@ -43,8 +43,8 @@ namespace PID {
 constexpr double kS = 0.2664;  //< Static friction (V)
 constexpr double kV = 0.12;  //< Velocity FF (V / motor-RPS)
 constexpr double kA = 0.011385; //< Acceleration FF (V / motor-RPS²)
-constexpr double kP = 0.2;      //< Proportional (V / motor-RPS error)
-constexpr double kI = 0.0;      //< Integral
+constexpr double kP = 0.5;      //< Proportional (V / motor-RPS error)
+constexpr double kI = 0.05;      //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
