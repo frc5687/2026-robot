@@ -40,7 +40,7 @@ void ShotCalculatedSpinUpCommand::Execute() {
   auto solution = m_shotCalculator.Calculate(
       frc::Timer::GetFPGATimestamp(),
       *alliance == frc::DriverStation::Alliance::kRed);
-  double val = std::clamp(solution.flywheelSpeed, 0.0, 1200.0);
+  double val = std::clamp(solution.flywheelSpeed, 0.0, 1500.0);
   if(frc::Timer::GetFPGATimestamp() - m_startTime >= 0.25_s){
   m_feeder->SetVoltage(0_V);
   m_flywheel->SetRPM(units::revolutions_per_minute_t{val});

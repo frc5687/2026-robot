@@ -84,6 +84,6 @@ private:
   int m_pulsesCompleted{0};
   units::second_t m_pulseStartTime{0_s};
 
-  units::second_t m_burstTime{0.2_s};
-  double m_burstOffset{200};
+  units::second_t m_burstTime{0.3_s};
+  double m_burstOffset{300};
 };

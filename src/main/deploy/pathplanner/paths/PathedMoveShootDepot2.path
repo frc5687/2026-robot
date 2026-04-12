@@ -80,16 +80,16 @@
     },
     {
       "anchor": {
-        "x": 3.1578181818181816,
-        "y": 5.354272727272728
+        "x": 3.5185568181818176,
+        "y": 5.361212553495007
       },
       "prevControl": {
-        "x": 4.02359090909091,
-        "y": 5.398866991959539
+        "x": 4.384329545454546,
+        "y": 5.405806818181818
       },
       "nextControl": {
-        "x": 2.9081491582818266,
-        "y": 5.341412762793655
+        "x": 3.2688877946454626,
+        "y": 5.348352589015934
       },
       "isLocked": false,
       "linkedName": "PathedMoveShootDepotA"
@@ -227,7 +227,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "MoveShootDepot1",
+  "folder": null,
   "idealStartingState": {
     "velocity": 2.0,
     "rotation": 179.9999999997047

@@ -107,7 +107,7 @@ void PassCommand::Execute() {
 
   if (m_shootSequenceActive) {
     m_floor->SetVoltage(kFloorVoltage);
-    m_feeder->SetVelocity(kFeederRPS);
+    m_feeder->SetVoltage(kFeederVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
   } else {
