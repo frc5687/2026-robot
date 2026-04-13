@@ -43,17 +43,17 @@ void ShootCommand::Initialize() {
 }
 
 void ShootCommand::Execute() {
-  auto now = frc::Timer::GetFPGATimestamp();
+  units::second_t now = frc::Timer::GetFPGATimestamp();
   auto alliance = frc::DriverStation::GetAlliance();
   bool isRed = alliance == frc::DriverStation::Alliance::kRed;
 
   auto solution = m_shotCalculator.Calculate(now, isRed);
-  if(!(now - m_shootSequenceStartTime >= m_burstTime)){
-    m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed + m_burstOffset});
-    solution.ready = true;
-  }else{
+  // if(!(now - m_shootSequenceStartTime >= m_burstTime)){
+  //   m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed + m_burstOffset});
+  //   solution.ready = true;
+  // }else{
     m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
- }
+ //}
   m_hood->SetPosition(units::radian_t{solution.hoodAngle});
 
   double throttle = ApplyDeadband(m_throttle(), kDeadband);
@@ -112,11 +112,21 @@ void ShootCommand::Execute() {
   log.Log("ShootCommand/ShootSequenceActive", m_shootSequenceActive);
   log.Log("ShootCommand/SolutionReady", solution.ready);
 
+
+  if(m_feeder->isFuelDetected()){
+    m_lastBall = now;
+  }
+
   if (m_shootSequenceActive) {
     m_floor->SetVoltage(kFloorVoltage);
     m_feeder->SetVoltage(12_V);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
+
+    if(now - m_lastBall >= m_unjamTime){
+      m_floor->SetVoltage(kUnjamVoltage);
+      m_feeder->SetVoltage(kUnjamVoltage);
+    }
   } else {
     m_floor->Stop();
     m_feeder->Stop();

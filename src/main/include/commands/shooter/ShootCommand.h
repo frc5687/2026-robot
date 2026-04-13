@@ -77,6 +77,10 @@ private:
   bool m_shootSequenceActive{false};
   units::second_t m_shootSequenceStartTime{0_s};
 
+  static constexpr units::volt_t kUnjamVoltage = -12_V;
+  static constexpr units::second_t m_unjamTime = 0.5_s;
+  units::second_t m_lastBall = 0.0_s;
+
   // Deployer pulse state
   bool m_pulsingStarted{false};
   bool m_pulseRetracted{false};
