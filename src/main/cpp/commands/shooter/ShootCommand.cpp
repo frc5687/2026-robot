@@ -7,11 +7,10 @@
 #include <frc/kinematics/ChassisSpeeds.h>
 
 #include <algorithm>
+#include <cmath>
 #include <numbers>
 
-#include "subsystem/feeder/FeederConstants.h"
 #include "utils/Logger.h"
-#include "utils/Utils.h"
 
 ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
                            HoodSubsystem *hood,
@@ -32,75 +31,31 @@ ShootCommand::ShootCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
   m_headingController.SetTolerance(0.035); // ~2 deg
 }
 
-void ShootCommand::ResetSequenceState() {
-  m_phase = Phase::kIdle;
-  m_phaseStartTime = 0_s;
-}
-
-void ShootCommand::EnterPhase(Phase phase, units::second_t now) {
-  m_phase = phase;
-  m_phaseStartTime = now;
-}
-
-double ShootCommand::BurstOffset(units::second_t now) const {
-  if (!kEnableBurst) {
-    return 0.0;
-  }
-  if (m_phase != Phase::kExtendHold) {
-    return 0.0;
-  }
-  auto elapsed = now - m_phaseStartTime;
-  if (elapsed < kFeederStartDelay) {
-    return kBurstRpmOffset;
-  }
-  auto rampElapsed = elapsed - kFeederStartDelay;
-  if (rampElapsed >= kBurstRampDuration) {
-    return 0.0;
-  }
-  double frac = rampElapsed / kBurstRampDuration;
-  return kBurstRpmOffset * (1.0 - frac);
-}
-
-bool ShootCommand::FeedersShouldRun(units::second_t now) const {
-  if (m_phase == Phase::kIdle || m_phase == Phase::kPreClear) {
-    return false;
-  }
-  if (m_phase == Phase::kExtendHold &&
-      (now - m_phaseStartTime) < kFeederStartDelay) {
-    return false;
-  }
-  return true;
-}
-
 void ShootCommand::Initialize() {
   m_headingController.Reset();
   m_drive->SetMaxSpeeds(
       Constants::SwerveDrive::Shooting::kMaxSpeedsWhileShooting);
-  ResetSequenceState();
-  m_hasFedFuel = false;
-  m_feeder->SetIndexingActive(false);
-  // Preclear only if indexing is still needed.
-  if (m_feeder->NeedsIndexing()) {
-    auto now = frc::Timer::GetFPGATimestamp();
-    EnterPhase(Phase::kPreClear, now);
-    m_feeder->BeginClearance();
-  }
+  m_shootSequenceActive = false;
+  m_pulsingStarted = false;
+  m_pulseRetracted = false;
+  m_finalRetractStarted = false;
+  m_pulsesCompleted = 0;
 }
 
-void ShootCommand::UpdateFlywheelAndHood(const ShotSolution &solution,
-                                         units::second_t now) {
-  // Keep fuel off the wheel during preclear.
-  if (m_phase == Phase::kPreClear) {
-    m_flywheel->SetVoltage(kPreclearFlywheelReverseVoltage);
-    m_hood->SetPosition(1_deg);
-    return;
-  }
-  double targetRPM = solution.flywheelSpeed + BurstOffset(now);
-  m_flywheel->SetRPM(units::revolutions_per_minute_t{targetRPM});
+void ShootCommand::Execute() {
+  units::second_t now = frc::Timer::GetFPGATimestamp();
+  auto alliance = frc::DriverStation::GetAlliance();
+  bool isRed = alliance == frc::DriverStation::Alliance::kRed;
+
+  auto solution = m_shotCalculator.Calculate(now, isRed);
+  // if(!(now - m_shootSequenceStartTime >= m_burstTime)){
+  //   m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed + m_burstOffset});
+  //   solution.ready = true;
+  // }else{
+    m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
+ //}
   m_hood->SetPosition(units::radian_t{solution.hoodAngle});
-}
 
-void ShootCommand::UpdateDrive(const ShotSolution &solution) {
   double throttle = ApplyDeadband(m_throttle(), kDeadband);
   double strafe = ApplyDeadband(m_strafe(), kDeadband);
 
@@ -122,81 +77,60 @@ void ShootCommand::UpdateDrive(const ShotSolution &solution) {
 
   m_drive->DriveFieldRelative(
       frc::ChassisSpeeds{xVel, yVel, units::radians_per_second_t{rotOutput}});
-}
 
-void ShootCommand::UpdateSequence(units::second_t now, bool solutionReady) {
-  auto elapsed = now - m_phaseStartTime;
-  switch (m_phase) {
-  case Phase::kIdle:
-    if (solutionReady) {
-      EnterPhase(Phase::kExtendHold, now);
-      m_deployer->FullyExtend();
-    }
-    break;
-  case Phase::kPreClear:
-    if (m_feeder->IsCleared() ||
-        elapsed >= Constants::Feeder::kClearanceTimeout) {
-      if (!m_feeder->IsCleared()) {
-        Logger::Instance().Log("ShootCommand/ClearTimeout", true);
+  if (!m_shootSequenceActive && solution.ready) {
+    m_shootSequenceActive = true;
+    m_pulsingStarted = false;
+    m_pulseRetracted = false;
+    m_pulsesCompleted = 0;
+    m_shootSequenceStartTime = now;
+    m_deployer->FullyExtend();
+  }
+
+  if (m_shootSequenceActive &&
+      now - m_shootSequenceStartTime >= kDeployerExtendDelay) {
+    if (m_pulsesCompleted < kPulseCount) {
+      if (!m_pulsingStarted) {
+        m_pulsingStarted = true;
+        m_pulseRetracted = false;
+        m_pulseStartTime = now;
+        m_deployer->SlowRetract(kPulseRetractDuration);
+      } else if (!m_pulseRetracted &&
+                 now - m_pulseStartTime >= kPulseRetractDuration) {
+        m_pulseRetracted = true;
+        m_deployer->FullyExtend();
+        m_pulsesCompleted++;
+        m_pulsingStarted = false;
       }
-      m_feeder->SetIndexed();
-      m_feeder->Stop();
-      m_floor->Stop();
-      EnterPhase(Phase::kIdle, now);
-    } else {
-      m_floor->SetVoltage(kBackoffFloorVoltage);
-    }
-    break;
-  case Phase::kExtendHold:
-    if (elapsed >= kInitialExtendDuration) {
-      EnterPhase(Phase::kQuickRetract, now);
-      m_deployer->SlowRetract(kPulseRetractDuration);
-    }
-    break;
-  case Phase::kQuickRetract:
-    if (elapsed >= kPulseRetractDuration) {
-      EnterPhase(Phase::kReExtend, now);
-      m_deployer->FullyExtend();
-    }
-    break;
-  case Phase::kReExtend:
-    if (m_deployer->IsFullyExtended()) {
-      EnterPhase(Phase::kSlowRetract, now);
+    } else if (!m_finalRetractStarted && m_deployer->IsFullyExtended()) {
+      m_finalRetractStarted = true;
       m_deployer->SlowRetract(kFinalRetractDuration);
     }
-    break;
-  case Phase::kSlowRetract:
-    break;
-  }
-}
-
-void ShootCommand::RunFeeders() {
-  m_hasFedFuel = true;
-  m_floor->SetVoltage(kFloorVoltage);
-  m_feeder->SetVoltage(kFeederVoltage);
-  m_topRoller->SetVoltage(kTopVoltage);
-  m_bottomRoller->SetVoltage(kBottomVoltage);
-}
-
-void ShootCommand::Execute() {
-  auto now = frc::Timer::GetFPGATimestamp();
-  bool isRed =
-      frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed;
-
-  auto solution = m_shotCalculator.Calculate(now, isRed);
-
-  UpdateSequence(now, solution.ready);
-  UpdateFlywheelAndHood(solution, now);
-  UpdateDrive(solution);
-
-  if (FeedersShouldRun(now)) {
-    RunFeeders();
   }
 
   auto &log = Logger::Instance();
-  log.Log("ShootCommand/Phase", static_cast<int>(m_phase));
+  log.Log("ShootCommand/ShootSequenceActive", m_shootSequenceActive);
   log.Log("ShootCommand/SolutionReady", solution.ready);
-  log.Log("ShootCommand/BurstOffset", BurstOffset(now));
+
+
+  if(m_feeder->isFuelDetected()){
+    m_lastBall = now;
+  }
+
+  if (m_shootSequenceActive) {
+    m_floor->SetVoltage(kFloorVoltage);
+    m_feeder->SetVoltage(12_V);
+    m_topRoller->SetVoltage(kTopVoltage);
+    m_bottomRoller->SetVoltage(kBottomVoltage);
+
+    if(now - m_lastBall >= m_unjamTime){
+      m_floor->SetVoltage(kUnjamVoltage);
+      m_feeder->SetVoltage(kUnjamVoltage);
+    }
+  } else {
+    m_floor->Stop();
+    m_feeder->Stop();
+  }
 }
 
 void ShootCommand::End(bool interrupted) {
@@ -207,12 +141,15 @@ void ShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  if (m_hasFedFuel) {
-    m_feeder->ClearIndexed();
-  }
-  ResetSequenceState();
+  m_feeder->ClearIndexed();
+  m_shootSequenceActive = false;
+  m_pulsingStarted = false;
+  m_pulseRetracted = false;
+  m_finalRetractStarted = false;
+  m_pulsesCompleted = 0;
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();
 }
 
 bool ShootCommand::IsFinished() { return false; }
+
