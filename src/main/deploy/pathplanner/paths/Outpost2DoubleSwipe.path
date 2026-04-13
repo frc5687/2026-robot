@@ -16,6 +16,7 @@
     },
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 3.711,
         "y": 0.582
       },
@@ -26,12 +27,25 @@
       "nextControl": {
         "x": 4.4109999333649395,
         "y": 0.5823054326094073
+=======
+        "x": 3.817454545454545,
+        "y": 0.5822159090909098
+      },
+      "prevControl": {
+        "x": 3.1186353741621855,
+        "y": 0.5981145201705321
+      },
+      "nextControl": {
+        "x": 4.415956698451726,
+        "y": 0.5685995783551323
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 4.922834866627458,
         "y": 0.582
       },
@@ -42,6 +56,18 @@
       "nextControl": {
         "x": 5.19094831419212,
         "y": 0.603821531453842
+=======
+        "x": 5.184879049908557,
+        "y": 0.5685995783551323
+      },
+      "prevControl": {
+        "x": 4.741879049908557,
+        "y": 0.5685995783551323
+      },
+      "nextControl": {
+        "x": 5.443879049908557,
+        "y": 0.5685995783551323
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
@@ -143,7 +169,11 @@
     },
     {
       "waypointRelativePos": 5,
+<<<<<<< HEAD
       "rotationDegrees": 32.155
+=======
+      "rotationDegrees": 32.15546066698324
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
     },
     {
       "waypointRelativePos": 6.0,

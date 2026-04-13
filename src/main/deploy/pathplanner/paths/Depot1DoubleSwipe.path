@@ -64,11 +64,19 @@
     },
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 2.784,
         "y": 5.529488636363636
       },
       "prevControl": {
         "x": 4.3366390870185425,
+=======
+        "x": 2.848613636363636,
+        "y": 5.529488636363636
+      },
+      "prevControl": {
+        "x": 4.4012527233821785,
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
         "y": 5.555365954480611
       },
       "nextControl": null,

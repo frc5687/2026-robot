@@ -64,6 +64,7 @@
     },
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 8.367352415026835,
         "y": 4.318944543828264
       },
@@ -74,6 +75,18 @@
       "nextControl": {
         "x": 8.498483167994799,
         "y": 6.31042832167832
+=======
+        "x": 8.187545454545454,
+        "y": 4.5503409090909095
+      },
+      "prevControl": {
+        "x": 8.263730990257695,
+        "y": 3.9208077982055496
+      },
+      "nextControl": {
+        "x": 7.941710932434184,
+        "y": 6.581710381273506
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null

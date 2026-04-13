@@ -3,13 +3,22 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 2.784,
+=======
+        "x": 2.848613636363636,
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
         "y": 5.529488636363636
       },
       "prevControl": null,
       "nextControl": {
+<<<<<<< HEAD
         "x": 1.7619341525094017,
         "y": 6.512753209700428
+=======
+        "x": 2.118692223439211,
+        "y": 6.251462623220154
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": "Depot 2-3Wide"
@@ -84,12 +93,21 @@
         "y": 3.150715563506261
       },
       "prevControl": {
+<<<<<<< HEAD
         "x": 7.120814672420031,
         "y": 2.6498035371734225
       },
       "nextControl": {
         "x": 6.548339394805506,
         "y": 3.678906913525714
+=======
+        "x": 7.358293459432706,
+        "y": 2.6348511691022543
+      },
+      "nextControl": {
+        "x": 6.785818181818181,
+        "y": 3.663954545454546
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
@@ -112,11 +130,19 @@
     },
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 2.784,
         "y": 5.529488636363636
       },
       "prevControl": {
         "x": 4.026111269614835,
+=======
+        "x": 2.848613636363636,
+        "y": 5.529488636363636
+      },
+      "prevControl": {
+        "x": 4.090724905978471,
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
         "y": 5.516549977305148
       },
       "nextControl": null,
@@ -193,7 +219,11 @@
     },
     {
       "name": "SpinUpFlywheel",
+<<<<<<< HEAD
       "waypointRelativePos": 5.010128291694811,
+=======
+      "waypointRelativePos": 5.4,
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

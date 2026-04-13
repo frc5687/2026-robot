@@ -20,12 +20,21 @@
         "y": 0.613
       },
       "prevControl": {
+<<<<<<< HEAD
         "x": 2.2535235378031384,
         "y": 0.6644793152639099
       },
       "nextControl": {
         "x": 4.177957015777448,
         "y": 0.5942416896301153
+=======
+        "x": 2.871432041402978,
+        "y": 0.596903070698784
+      },
+      "nextControl": {
+        "x": 4.178193181818182,
+        "y": 0.6234431818181827
+>>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
