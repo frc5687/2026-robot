@@ -1,7 +1,7 @@
 // Team 5687 2026
 
 #include "utils/SubsystemBatteryLogger.h"
-
+#include "utils/Logger.h"
 #include <frc/RobotController.h>
 #include <units/math.h>
 
