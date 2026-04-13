@@ -7,12 +7,12 @@
 #include <units/current.h>
 #include <units/energy.h>
 #include <units/power.h>
+#include <units/voltage.h>
 
 #include <functional>
 #include <string>
 #include <vector>
 
-#include "utils/Logger.h"
 
 class SubsystemBatteryLogger {
 public:

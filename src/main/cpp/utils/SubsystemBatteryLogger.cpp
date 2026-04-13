@@ -1,7 +1,7 @@
 // Team 5687 2026
 
 #include "utils/SubsystemBatteryLogger.h"
-
+#include <frc/RobotController.h>
 #include <units/math.h>
 
 void SubsystemBatteryLogger::RegisterSubsystem(std::string name,
@@ -66,11 +66,26 @@ void SubsystemBatteryLogger::Update() {
                                accumulatedWh.value());
       }
 
+      const units::volt_t batteryVoltage =
+          frc::RobotController::GetBatteryVoltage();
+      const units::volt_t inputVoltage{
+          frc::RobotController::GetInputVoltage()};
+      const units::ampere_t inputCurrent{
+          frc::RobotController::GetInputCurrent()};
+      const units::watt_t inputPower = inputVoltage * inputCurrent;
+
+      auto &logger = Logger::Instance();
+
+      logger.Log("Power/RIO/BatteryVoltage", batteryVoltage.value());
+      logger.Log("Power/RIO/InputVoltage", inputVoltage.value());
+      logger.Log("Power/RIO/InputCurrent", inputCurrent.value());
+      logger.Log("Power/RIO/InputPower", inputPower.value());
+
       const units::watt_hour_t totalWh = m_totalEnergy;
 
-      Logger::Instance().Log("Power/Total/Current", totalCurrent.value());
-      Logger::Instance().Log("Power/Total/Power", totalPower.value());
-      Logger::Instance().Log("Power/Total/EnergyWattHours", totalWh.value());
+      logger.Log("Power/Total/Current", totalCurrent.value());
+      logger.Log("Power/Total/Power", totalPower.value());
+      logger.Log("Power/Total/EnergyWattHours", totalWh.value());
     }
   }
 
