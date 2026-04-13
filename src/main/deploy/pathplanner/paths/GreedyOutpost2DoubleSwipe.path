@@ -64,16 +64,16 @@
     },
     {
       "anchor": {
-        "x": 8.14061340941512,
-        "y": 4.274365192582025
+        "x": 8.187545454545454,
+        "y": 4.5503409090909095
       },
       "prevControl": {
-        "x": 8.216798945127362,
-        "y": 3.6448320816966655
+        "x": 8.263730990257695,
+        "y": 3.9208077982055496
       },
       "nextControl": {
-        "x": 7.8947788873038505,
-        "y": 6.305734664764622
+        "x": 7.941710932434184,
+        "y": 6.581710381273506
       },
       "isLocked": false,
       "linkedName": null
@@ -151,19 +151,6 @@
     }
   ],
   "constraintZones": [
-    {
-      "name": "Trench",
-      "minWaypointRelativePos": 0.6644159351789438,
-      "maxWaypointRelativePos": 2.2325581395349228,
-      "constraints": {
-        "maxVelocity": 2.5,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
     {
       "name": "Bump",
       "minWaypointRelativePos": 6.204466501240695,
