@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot1DoubleSwipe"
+            "pathName": "ShortDepot1DoubleSwipe"
           }
         },
         {
@@ -57,13 +57,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "extraDepot3DoubleSwipe"
+            "pathName": "Depot3DoubleSwipe"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Regular",
+  "folder": "Short",
   "choreoAuto": false
 }

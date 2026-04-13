@@ -227,7 +227,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "MoveShootDepot",
   "idealStartingState": {
     "velocity": 2.0,
     "rotation": 179.9999999997047

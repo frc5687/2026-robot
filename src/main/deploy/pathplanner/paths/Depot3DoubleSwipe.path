@@ -3,41 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.7952168674698794,
-        "y": 5.477457831325301
+        "x": 2.848613636363636,
+        "y": 5.529488636363636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7860014609078259,
-        "y": 6.88777166870048
+        "x": 2.2158295566829485,
+        "y": 5.946983262401793
       },
       "isLocked": false,
       "linkedName": "Depot 2-3Wide"
     },
     {
       "anchor": {
-        "x": 4.6601141226818825,
-        "y": 7.366704707560627
+        "x": 4.0132840909090906,
+        "y": 7.364102272727273
       },
       "prevControl": {
-        "x": 3.2886162624821687,
-        "y": 7.2890727532097
+        "x": 2.95216422030333,
+        "y": 7.3018048171297645
       },
       "nextControl": {
-        "x": 6.0945348637930525,
-        "y": 7.447898334415977
+        "x": 4.321534064629173,
+        "y": 7.382199369561203
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.32175463623395,
-        "y": 5.011868758915835
+        "x": 4.920064417760373,
+        "y": 7.380443183662386
       },
       "prevControl": {
-        "x": 7.597189728958627,
-        "y": 6.25398002853067
+        "x": 4.670115362028462,
+        "y": 7.38548991911468
+      },
+      "nextControl": {
+        "x": 6.005064561198273,
+        "y": 7.358535884698612
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.4763750000000995,
+        "y": 5.972681818177713
+      },
+      "prevControl": {
+        "x": 6.683729306879671,
+        "y": 6.644050988079298
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,6 +64,10 @@
     {
       "waypointRelativePos": 1,
       "rotationDegrees": -179.30972280213498
+    },
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [],
@@ -55,7 +75,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 1.0533423362592729,
+      "waypointRelativePos": 1.1,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
