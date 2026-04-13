@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.323708987161197,
+        "x": 5.323708987161198,
         "y": 0.4962767475035662
       },
       "isLocked": false,
@@ -16,15 +16,15 @@
     },
     {
       "anchor": {
-        "x": 8.395,
+        "x": 8.527670454545454,
         "y": 1.1903181818181827
       },
       "prevControl": {
-        "x": 8.180558889923779,
+        "x": 8.313229344469233,
         "y": 0.7078256841466859
       },
       "nextControl": {
-        "x": 8.601136363636362,
+        "x": 8.733806818181817,
         "y": 1.654125
       },
       "isLocked": false,
@@ -32,18 +32,6 @@
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 8.323722651916084,
-        "y": 3.2791545860534757
-      },
-      "prevControl": {
-        "x": 8.66922745746904,
-        "y": 2.752671072829921
-      },
-      "nextControl": {
-        "x": 8.107279470097904,
-        "y": 3.608972767871657
-=======
         "x": 8.280306818181817,
         "y": 3.1692272727272734
       },
@@ -54,36 +42,22 @@
       "nextControl": {
         "x": 8.063863636363637,
         "y": 3.499045454545455
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 6.84216457960644,
-        "y": 3.5076744186046502
+        "x": 7.064102272727272,
+        "y": 3.5093522727272726
       },
       "prevControl": {
-        "x": 7.172626309708402,
-        "y": 3.5076744186046502
+        "x": 7.3945640028292345,
+        "y": 3.5093522727272726
       },
       "nextControl": {
-        "x": 6.254675943242803,
-        "y": 3.5076744186046502
-=======
-        "x": 7.0022613636363635,
-        "y": 3.468125
-      },
-      "prevControl": {
-        "x": 7.331991173171719,
-        "y": 3.490106987302357
-      },
-      "nextControl": {
-        "x": 6.538454545454546,
-        "y": 3.437204545454546
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
+        "x": 6.476613636363635,
+        "y": 3.5093522727272726
       },
       "isLocked": false,
       "linkedName": null
@@ -132,13 +106,6 @@
       "rotationDegrees": 0.26583707381437804
     },
     {
-<<<<<<< HEAD
-=======
-      "waypointRelativePos": 3.3097484276729583,
-      "rotationDegrees": 41.73394456819664
-    },
-    {
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       "waypointRelativePos": 4.0,
       "rotationDegrees": 45.85509739626667
     }
@@ -146,11 +113,7 @@
   "constraintZones": [
     {
       "name": "Bump",
-<<<<<<< HEAD
-      "minWaypointRelativePos": 4.186440677966101,
-=======
       "minWaypointRelativePos": 4.166965888689408,
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       "maxWaypointRelativePos": 4.6624775583482965,
       "constraints": {
         "maxVelocity": 2.0,
@@ -163,19 +126,11 @@
     },
     {
       "name": "Intaking Dense Balls",
-<<<<<<< HEAD
-      "minWaypointRelativePos": 1.3728813559322033,
-      "maxWaypointRelativePos": 2.1864406779661016,
-      "constraints": {
-        "maxVelocity": 2.5,
-        "maxAcceleration": 2.0,
-=======
       "minWaypointRelativePos": 1.1743119266055073,
       "maxWaypointRelativePos": 2.5763016157989216,
       "constraints": {
         "maxVelocity": 2.5,
         "maxAcceleration": 4.5,
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
