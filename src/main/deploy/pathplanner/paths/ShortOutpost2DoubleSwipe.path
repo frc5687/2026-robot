@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6842225392296721,
-        "y": 1.6736947218259637
+        "x": 1.862368603189434,
+        "y": 1.943207793111576
       },
       "isLocked": false,
       "linkedName": "Outpost1-2Lazy"
@@ -20,12 +20,12 @@
         "y": 0.613
       },
       "prevControl": {
-        "x": 2.2535235378031384,
-        "y": 0.6644793152639099
+        "x": 2.871432041402978,
+        "y": 0.596903070698784
       },
       "nextControl": {
-        "x": 4.177957015777448,
-        "y": 0.5942416896301153
+        "x": 4.178193181818182,
+        "y": 0.6234431818181827
       },
       "isLocked": false,
       "linkedName": null
@@ -157,8 +157,8 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 6.169491525423731,
-      "maxWaypointRelativePos": 6.62033898305085,
+      "minWaypointRelativePos": 6.276839972991218,
+      "maxWaypointRelativePos": 6.760297766749381,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,

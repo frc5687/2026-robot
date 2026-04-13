@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.323708987161197,
+        "x": 5.323708987161198,
         "y": 0.4962767475035662
       },
       "isLocked": false,
@@ -16,32 +16,32 @@
     },
     {
       "anchor": {
-        "x": 8.395,
+        "x": 8.476136363636362,
         "y": 1.056329545454546
       },
       "prevControl": {
-        "x": 8.094420411628514,
-        "y": 0.6222374917903171
+        "x": 8.17328800524301,
+        "y": 0.623817266069958
       },
       "nextControl": {
-        "x": 8.70664511710711,
-        "y": 1.5064022520957538
+        "x": 8.828312295555904,
+        "y": 1.5592889006479869
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.994168157423971,
-        "y": 4.010661896243291
+        "x": 8.280306818181817,
+        "y": 3.5402727272727272
       },
       "prevControl": {
-        "x": 8.318676207513414,
-        "y": 3.5238998211091226
+        "x": 8.578306818181817,
+        "y": 3.024121586617202
       },
       "nextControl": {
-        "x": 7.37013043667059,
-        "y": 4.946718477373368
+        "x": 7.717806818181817,
+        "y": 4.514551306530222
       },
       "isLocked": false,
       "linkedName": null
@@ -93,8 +93,8 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 3.159322033898305,
-      "maxWaypointRelativePos": 3.7016949152542376,
+      "minWaypointRelativePos": 3.0610421836228316,
+      "maxWaypointRelativePos": 3.7836228287841243,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
@@ -106,11 +106,11 @@
     },
     {
       "name": "Intaking Dense Balls",
-      "minWaypointRelativePos": 1.3152542372881357,
-      "maxWaypointRelativePos": 2.0203389830508507,
+      "minWaypointRelativePos": 1.2029776674938037,
+      "maxWaypointRelativePos": 2.195533498759296,
       "constraints": {
-        "maxVelocity": 2.5,
-        "maxAcceleration": 2.0,
+        "maxVelocity": 3.0,
+        "maxAcceleration": 4.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 520.0,
         "nominalVoltage": 12.0,
