@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.684222539229672,
+        "x": 1.6842225392296721,
         "y": 1.6736947218259637
       },
       "isLocked": false,
@@ -157,8 +157,8 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 6.276839972991218,
-      "maxWaypointRelativePos": 6.760297766749381,
+      "minWaypointRelativePos": 6.169491525423731,
+      "maxWaypointRelativePos": 6.62033898305085,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
