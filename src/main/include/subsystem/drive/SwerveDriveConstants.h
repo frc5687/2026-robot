@@ -55,7 +55,7 @@ inline constexpr double test = kMaxModuleLinearSpeed.value();
 inline constexpr units::ampere_t kDriveSlipCurrent =
     80_A; // TODO: Tune, this is the max stator current to prevent sliping of
 // the wheels
-inline constexpr units::ampere_t kDriveSupplyCurrentLimitAuto = 40_A;
+inline constexpr units::ampere_t kDriveSupplyCurrentLimitAuto = 55_A;
 inline constexpr units::ampere_t kSteerSupplyCurrentLimitAuto = 20_A;
 
 inline constexpr units::ampere_t kDriveSupplyCurrentLimitTeleop = 45_A;
