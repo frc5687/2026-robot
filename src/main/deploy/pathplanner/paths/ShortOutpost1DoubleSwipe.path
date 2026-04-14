@@ -32,32 +32,32 @@
     },
     {
       "anchor": {
-        "x": 8.280306818181817,
-        "y": 3.1692272727272734
+        "x": 8.323722651916084,
+        "y": 3.2791545860534757
       },
       "prevControl": {
-        "x": 8.625811623734773,
-        "y": 2.642743759503719
+        "x": 8.66922745746904,
+        "y": 2.752671072829921
       },
       "nextControl": {
-        "x": 8.063863636363637,
-        "y": 3.499045454545455
+        "x": 8.107279470097904,
+        "y": 3.608972767871657
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.064102272727272,
-        "y": 3.5093522727272726
+        "x": 6.84216457960644,
+        "y": 3.5076744186046502
       },
       "prevControl": {
-        "x": 7.3945640028292345,
-        "y": 3.5093522727272726
+        "x": 7.172626309708402,
+        "y": 3.5076744186046502
       },
       "nextControl": {
-        "x": 6.476613636363635,
-        "y": 3.5093522727272726
+        "x": 6.254675943242803,
+        "y": 3.5076744186046502
       },
       "isLocked": false,
       "linkedName": null
@@ -113,7 +113,7 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 4.166965888689408,
+      "minWaypointRelativePos": 4.186440677966101,
       "maxWaypointRelativePos": 4.6624775583482965,
       "constraints": {
         "maxVelocity": 2.0,
@@ -126,8 +126,8 @@
     },
     {
       "name": "Intaking Dense Balls",
-      "minWaypointRelativePos": 1.1743119266055073,
-      "maxWaypointRelativePos": 2.5763016157989216,
+      "minWaypointRelativePos": 1.3728813559322033,
+      "maxWaypointRelativePos": 2.1864406779661016,
       "constraints": {
         "maxVelocity": 2.5,
         "maxAcceleration": 2.0,
