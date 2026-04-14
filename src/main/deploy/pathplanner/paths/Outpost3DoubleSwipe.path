@@ -8,13 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-<<<<<<< HEAD
         "x": 1.5289586305278173,
         "y": 1.583124108416548
-=======
-        "x": 2.106943586299898,
-        "y": 2.095822717954466
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": "Outpost2-3Lazy"
@@ -25,21 +20,12 @@
         "y": 0.6131363636363643
       },
       "prevControl": {
-<<<<<<< HEAD
         "x": 2.033566333808844,
         "y": 0.6774179743223976
       },
       "nextControl": {
         "x": 4.2916232295214565,
         "y": 0.6029353515853774
-=======
-        "x": 2.7350294057684903,
-        "y": 0.6738849411830663
-      },
-      "nextControl": {
-        "x": 4.291425102434321,
-        "y": 0.5980842276668943
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null

@@ -8,55 +8,30 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7431219331321228,
-        "y": 1.3160040009547658
+        "x": 1.6583452211126959,
+        "y": 1.3890442225392305
       },
       "isLocked": false,
       "linkedName": "Outpost1-2Lazy"
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 3.711,
-        "y": 0.582
-      },
-      "prevControl": {
-        "x": 2.7570000908140666,
-        "y": 0.5815837389866076
-      },
-      "nextControl": {
-        "x": 4.4109999333649395,
-        "y": 0.5823054326094073
-=======
         "x": 3.817454545454545,
         "y": 0.5822159090909098
       },
       "prevControl": {
-        "x": 3.1186353741621855,
-        "y": 0.5981145201705321
+        "x": 2.8616405135520675,
+        "y": 0.6256633380884445
       },
       "nextControl": {
-        "x": 4.415956698451726,
-        "y": 0.5685995783551323
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
+        "x": 4.415494040219478,
+        "y": 0.5550314593765621
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 4.922834866627458,
-        "y": 0.582
-      },
-      "prevControl": {
-        "x": 4.673658800117549,
-        "y": 0.561719766306838
-      },
-      "nextControl": {
-        "x": 5.19094831419212,
-        "y": 0.603821531453842
-=======
         "x": 5.184879049908557,
         "y": 0.5685995783551323
       },
@@ -67,71 +42,70 @@
       "nextControl": {
         "x": 5.443879049908557,
         "y": 0.5685995783551323
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.353,
-        "y": 0.9765116279069763
+        "x": 6.86,
+        "y": 1.195
       },
       "prevControl": {
-        "x": 5.858341820929491,
-        "y": 0.7807125322026087
+        "x": 6.587087985919188,
+        "y": 0.7856309335448577
       },
       "nextControl": {
-        "x": 7.575698318567142,
-        "y": 1.4604887159732236
+        "x": 7.403605231299178,
+        "y": 2.0104099291179667
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.931,
-        "y": 3.2
+        "x": 7.931240963855423,
+        "y": 3.8383012048192775
       },
       "prevControl": {
-        "x": 7.732895973072032,
-        "y": 2.349774268493994
+        "x": 8.061851608841023,
+        "y": 3.217900641137679
       },
       "nextControl": {
-        "x": 8.193323316298661,
-        "y": 4.325843007584127
+        "x": 7.800108433734941,
+        "y": 4.461180722891566
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.7285867620751345,
-        "y": 3.880858676207513
+        "x": 6.73,
+        "y": 3.951
       },
       "prevControl": {
-        "x": 7.094161950410409,
-        "y": 4.322088527502311
+        "x": 7.0538017434747395,
+        "y": 4.184138222783651
       },
       "nextControl": {
-        "x": 6.353441542631608,
-        "y": 3.4280783052453123
+        "x": 6.286902877350357,
+        "y": 3.631968747769741
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.941,
+        "x": 5.997036144578313,
         "y": 2.472337349397591
       },
       "prevControl": {
-        "x": 6.6827902624206,
-        "y": 2.5147190267827306
+        "x": 6.450296950956446,
+        "y": 2.498234094394702
       },
       "nextControl": {
-        "x": 5.3978857298024145,
-        "y": 2.4413068884318894
+        "x": 5.362071666920842,
+        "y": 2.436059089886219
       },
       "isLocked": false,
       "linkedName": null
@@ -142,8 +116,8 @@
         "y": 2.472337349397591
       },
       "prevControl": {
-        "x": 4.026099994010744,
-        "y": 2.450661460602485
+        "x": 4.233365664363396,
+        "y": 2.42059496130952
       },
       "nextControl": null,
       "isLocked": false,
@@ -161,30 +135,26 @@
     },
     {
       "waypointRelativePos": 3,
-      "rotationDegrees": -146.933
+      "rotationDegrees": -124.38
     },
     {
       "waypointRelativePos": 4.0,
-      "rotationDegrees": -93.468
+      "rotationDegrees": -72.35
     },
     {
       "waypointRelativePos": 5,
-<<<<<<< HEAD
-      "rotationDegrees": 32.155
-=======
       "rotationDegrees": 32.15546066698324
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
     },
     {
       "waypointRelativePos": 6.0,
-      "rotationDegrees": 42.138
+      "rotationDegrees": 29.476000000000003
     }
   ],
   "constraintZones": [
     {
       "name": "Bump",
       "minWaypointRelativePos": 6.276839972991218,
-      "maxWaypointRelativePos": 6.7152542372881365,
+      "maxWaypointRelativePos": 6.760297766749381,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,

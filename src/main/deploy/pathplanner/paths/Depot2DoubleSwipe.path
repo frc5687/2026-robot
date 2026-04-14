@@ -3,69 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 2.784,
-=======
         "x": 2.848613636363636,
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
         "y": 5.529488636363636
       },
       "prevControl": null,
       "nextControl": {
-<<<<<<< HEAD
-        "x": 1.7428327765056164,
-        "y": 6.685821984806461
-=======
-        "x": 2.5000444961664834,
-        "y": 6.529746714129244
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
+        "x": 1.7877318116975744,
+        "y": 6.668017118402283
       },
       "isLocked": false,
       "linkedName": "Depot1-2Wide"
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 3.710661896243291,
-        "y": 7.4991234347048294
-      },
-      "prevControl": {
-        "x": 2.757038614567763,
-        "y": 7.499535119311236
-      },
-      "nextControl": {
-        "x": 4.411828543450025,
-        "y": 7.4988207370665405
-=======
         "x": 3.724693181818181,
         "y": 7.456863636363637
       },
       "prevControl": {
-        "x": 3.2093522727272714,
-        "y": 7.4465568181818185
+        "x": 2.771069900142653,
+        "y": 7.4572753209700435
       },
       "nextControl": {
-        "x": 4.425719703076538,
-        "y": 7.470884166788804
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
+        "x": 4.425859829024915,
+        "y": 7.456560938725348
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 4.63550983899821,
-        "y": 7.4991234347048294
-      },
-      "prevControl": {
-        "x": 4.386333896939715,
-        "y": 7.51940519743052
-      },
-      "nextControl": {
-        "x": 4.904086607900106,
-        "y": 7.47726253491049
-=======
         "x": 4.631693181818182,
         "y": 7.456863636363637
       },
@@ -92,38 +58,21 @@
       "nextControl": {
         "x": 7.575666020740556,
         "y": 6.529671499359329
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.353,
-        "y": 7.013670454540591
-      },
-      "prevControl": {
-        "x": 5.858341820929491,
-        "y": 7.209469550244959
-      },
-      "nextControl": {
-        "x": 7.575698318567142,
-        "y": 6.529693366474343
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.931,
+        "x": 7.931240963855423,
         "y": 4.75622891566265
       },
       "prevControl": {
-        "x": 7.732900379626789,
+        "x": 7.733141343482211,
         "y": 5.606406453097682
       },
       "nextControl": {
-        "x": 8.193265060240964,
+        "x": 8.193506024096386,
         "y": 3.630674698795181
       },
       "isLocked": false,
@@ -135,27 +84,27 @@
         "y": 4.00265335235378
       },
       "prevControl": {
-        "x": 7.095877912258916,
-        "y": 3.5614261125297415
+        "x": 7.09600578778189,
+        "y": 3.5612717758039683
       },
       "nextControl": {
-        "x": 6.35515111820267,
-        "y": 4.455431043482114
+        "x": 6.355240768932649,
+        "y": 4.455322841382085
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.941,
+        "x": 5.941041369472182,
         "y": 5.4647218259629105
       },
       "prevControl": {
-        "x": 6.678503566333808,
+        "x": 6.6785449358059905,
         "y": 5.374151212553495
       },
       "nextControl": {
-        "x": 5.401017196355667,
+        "x": 5.401058565827849,
         "y": 5.531035503603443
       },
       "isLocked": false,
@@ -163,19 +112,11 @@
     },
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 2.784,
-        "y": 5.529488636363636
-      },
-      "prevControl": {
-        "x": 4.0261112696148365,
-=======
         "x": 2.848613636363636,
         "y": 5.529488636363636
       },
       "prevControl": {
         "x": 4.0907249059784725,
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
         "y": 5.516549977305148
       },
       "nextControl": null,
@@ -194,21 +135,6 @@
     },
     {
       "waypointRelativePos": 3.0,
-<<<<<<< HEAD
-      "rotationDegrees": 146.933
-    },
-    {
-      "waypointRelativePos": 4.0,
-      "rotationDegrees": 93.468
-    },
-    {
-      "waypointRelativePos": 5.0,
-      "rotationDegrees": -32.529
-    },
-    {
-      "waypointRelativePos": 6.0,
-      "rotationDegrees": -42.138
-=======
       "rotationDegrees": 146.93308768312752
     },
     {
@@ -222,7 +148,6 @@
     {
       "waypointRelativePos": 6.0,
       "rotationDegrees": -42.137594773888154
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
     }
   ],
   "constraintZones": [

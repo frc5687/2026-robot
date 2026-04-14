@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6842225392296721,
+        "x": 1.684222539229672,
         "y": 1.6736947218259637
       },
       "isLocked": false,
@@ -20,21 +20,12 @@
         "y": 0.613
       },
       "prevControl": {
-<<<<<<< HEAD
         "x": 2.2535235378031384,
         "y": 0.6644793152639099
       },
       "nextControl": {
         "x": 4.177957015777448,
         "y": 0.5942416896301153
-=======
-        "x": 2.871432041402978,
-        "y": 0.596903070698784
-      },
-      "nextControl": {
-        "x": 4.178193181818182,
-        "y": 0.6234431818181827
->>>>>>> e7d6837 (updated a bunch of auto stuff, short paths should pick up slightly more now, reduced shooting time to 3 seconds on everything)
       },
       "isLocked": false,
       "linkedName": null
@@ -166,8 +157,8 @@
   "constraintZones": [
     {
       "name": "Bump",
-      "minWaypointRelativePos": 6.169491525423731,
-      "maxWaypointRelativePos": 6.62033898305085,
+      "minWaypointRelativePos": 6.276839972991218,
+      "maxWaypointRelativePos": 6.760297766749381,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
