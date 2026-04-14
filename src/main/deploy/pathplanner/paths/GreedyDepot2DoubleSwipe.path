@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.118692223439211,
-        "y": 6.251462623220154
+        "x": 1.8265477888730377,
+        "y": 6.512753209700428
       },
       "isLocked": false,
       "linkedName": "Depot 2-3Wide"
@@ -193,7 +193,7 @@
     },
     {
       "name": "SpinUpFlywheel",
-      "waypointRelativePos": 5.4,
+      "waypointRelativePos": 5.010128291694811,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
