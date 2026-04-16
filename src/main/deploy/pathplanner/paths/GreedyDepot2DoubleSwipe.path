@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7619341525094017,
-        "y": 6.512753209700428
+        "x": 1.6845459046444466,
+        "y": 6.328288794229107
       },
       "isLocked": false,
       "linkedName": "Depot 2-3Wide"
     },
     {
       "anchor": {
-        "x": 3.9617499999999994,
-        "y": 7.405329545454546
+        "x": 3.935549215406562,
+        "y": 7.574
       },
       "prevControl": {
-        "x": 2.78439915225238,
-        "y": 7.387288579192963
+        "x": 2.758060151696971,
+        "y": 7.574
       },
       "nextControl": {
-        "x": 4.334768948918164,
-        "y": 7.411045447630382
+        "x": 4.308611955156454,
+        "y": 7.574
       },
       "isLocked": false,
       "linkedName": null
@@ -33,15 +33,15 @@
     {
       "anchor": {
         "x": 4.87318559376174,
-        "y": 7.407253781117399
+        "y": 7.574
       },
       "prevControl": {
-        "x": 4.623319858003432,
-        "y": 7.4154461003225896
+        "x": 4.62318559376174,
+        "y": 7.574
       },
       "nextControl": {
-        "x": 5.123051329520047,
-        "y": 7.399061461912209
+        "x": 5.12318559376174,
+        "y": 7.574
       },
       "isLocked": false,
       "linkedName": null
@@ -96,15 +96,15 @@
     },
     {
       "anchor": {
-        "x": 5.941041369472182,
+        "x": 5.95,
         "y": 5.4647218259629105
       },
       "prevControl": {
-        "x": 6.6785449358059905,
+        "x": 6.687503566333809,
         "y": 5.374151212553495
       },
       "nextControl": {
-        "x": 5.401058565827849,
+        "x": 5.410017196355668,
         "y": 5.531035503603443
       },
       "isLocked": false,
@@ -151,19 +151,6 @@
     }
   ],
   "constraintZones": [
-    {
-      "name": "Trench",
-      "minWaypointRelativePos": 0.5218837945590994,
-      "maxWaypointRelativePos": 0.8833034111310587,
-      "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 4.5,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
     {
       "name": "Bump",
       "minWaypointRelativePos": 6.169480081026309,
