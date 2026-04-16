@@ -27,9 +27,11 @@ ShotCalculator::ShotCalculator() {
 
   // TODO: Make this use units
 
+  double rpmBumpLow = 30;
+  double rpmBumpHigh = 75;
   std::vector<std::pair<double, double>> flyMap{
-      {1.443, 1225}, {2.136, 1300}, {2.959, 1350}, {3.56, 1450},
-      {4.49, 1600},  {5.0, 1690},   {5.49, 1650}};
+      {1.443, 1225+rpmBumpLow}, {2.136, 1300+rpmBumpLow}, {2.959, 1350+rpmBumpLow}, {3.56, 1450+rpmBumpLow},
+      {4.49, 1600+rpmBumpHigh},  {5.0, 1690+rpmBumpHigh},   {5.49, 1650+rpmBumpHigh}};
 
   m_flywheelMap.InsertValues(flyMap);
 

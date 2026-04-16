@@ -88,9 +88,9 @@ private:
 
   // Burst timing and offset.
   static constexpr bool kEnableBurst = true;
-  static constexpr units::second_t kFeederStartDelay = 0.1_s;
-  static constexpr units::second_t kBurstRampDuration = 0.15_s;
-  static constexpr double kBurstRpmOffset = 300.0;
+  static constexpr units::second_t kFeederStartDelay = 0.2_s;
+  static constexpr units::second_t kBurstRampDuration = 0.25_s;
+  static constexpr double kBurstRpmOffset = 100.0;
   static_assert(kFeederStartDelay + kBurstRampDuration < kInitialExtendDuration,
                 "Burst profile must fit within the initial extend hold");
 

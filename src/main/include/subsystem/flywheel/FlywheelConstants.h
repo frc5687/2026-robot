@@ -53,7 +53,7 @@ constexpr double kD = 0.0;      //< Derivative
 inline constexpr units::second_t kSpinupRampDuration = 0.7_s;
 constexpr units::revolutions_per_minute_t kSpinupRampThreshold{500_rpm};
 constexpr units::revolutions_per_minute_t kSpinupRetargetTolerance{10_rpm};
-constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};
+constexpr units::revolutions_per_minute_t kAtSetpointTolerance{35_rpm};
 
 constexpr double kSimKs = PID::kS;
 constexpr double kSimKv = PID::kV / (2.0 * std::numbers::pi);
