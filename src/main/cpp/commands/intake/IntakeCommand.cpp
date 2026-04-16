@@ -21,6 +21,7 @@ IntakeCommand::IntakeCommand(DriveSubsystem *drive,
 void IntakeCommand::Initialize() {
   // m_drive->SetMaxSpeeds(3.0_mps);
   m_feeder->SetIndexingActive(true);
+  m_feeder->SetIntaking(true);
   m_deployer->Deploy();
 }
 
@@ -35,6 +36,7 @@ void IntakeCommand::Execute() {
 void IntakeCommand::End(bool interrupted) {
   // m_deployer->RetractMid();
   // m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
+  m_feeder->SetIntaking(false);
   m_topRoller->Stop();
   m_bottomRoller->Stop();
 }

@@ -31,9 +31,11 @@ public:
 
   bool NeedsIndexing() const;
   bool ShouldIndex() const;
+  bool IsIntaking() const;
   void SetIndexed();
   void ClearIndexed();
   void SetIndexingActive(bool active);
+  void SetIntaking(bool intaking);
 
   // Sensorless flywheel-clearance handshake.
   void BeginClearance();
@@ -53,6 +55,7 @@ private:
   FeederState m_state{};
   bool m_needsIndexing{true};
   bool m_indexingActive{false};
+  bool m_isIntaking{false};
   units::turn_t m_clearanceTarget{0_tr};
   bool m_clearanceActive{false};
 

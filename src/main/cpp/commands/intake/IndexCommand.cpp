@@ -12,8 +12,10 @@ void IndexCommand::Initialize() {}
 
 void IndexCommand::Execute() {
   if (m_feeder->ShouldIndex()) {
+    auto floorVoltage =
+        m_feeder->IsIntaking() ? kFloorIntakeVoltage : kFloorIdleVoltage;
     m_feeder->SetVoltage(kFeederVoltage);
-    m_floor->SetVoltage(kFloorVoltage);
+    m_floor->SetVoltage(floorVoltage);
   } else {
     m_feeder->Stop();
     m_floor->Stop();

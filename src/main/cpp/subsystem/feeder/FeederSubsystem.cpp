@@ -44,11 +44,15 @@ bool FeederSubsystem::ShouldIndex() const {
   return m_needsIndexing && m_indexingActive;
 }
 
+bool FeederSubsystem::IsIntaking() const { return m_isIntaking; }
+
 void FeederSubsystem::SetIndexed() { m_needsIndexing = false; }
 
 void FeederSubsystem::ClearIndexed() { m_needsIndexing = true; }
 
 void FeederSubsystem::SetIndexingActive(bool active) { m_indexingActive = active; }
+
+void FeederSubsystem::SetIntaking(bool intaking) { m_isIntaking = intaking; }
 
 void FeederSubsystem::BeginClearance() {
   m_clearanceTarget = GetPosition() - Constants::Feeder::kClearanceRetract;
@@ -113,6 +117,7 @@ void FeederSubsystem::LogTelemetry() {
   Log("Power/Total", (leaderPower + followerPower).value());
   Log("NeedsIndexing", m_needsIndexing);
   Log("IndexingActive", m_indexingActive);
+  Log("IsIntaking", m_isIntaking);
   Log("ShouldIndex", ShouldIndex());
   Log("ClearanceActive", m_clearanceActive);
   Log("ClearanceTarget", m_clearanceTarget.value());

@@ -24,5 +24,6 @@ private:
   FloorSubsystem *m_floor;
 
   static constexpr units::volt_t kFeederVoltage = 1.5_V;
-  static constexpr units::volt_t kFloorVoltage = 8_V;
+  static constexpr units::volt_t kFloorIntakeVoltage = 8_V;
+  static constexpr units::volt_t kFloorIdleVoltage = 2.0_V;
 };
