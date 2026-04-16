@@ -23,6 +23,9 @@ public:
   void Execute() override;
   void End(bool interrupted) override;
   bool IsFinished() override;
+  InterruptionBehavior GetInterruptionBehavior() const override {
+    return InterruptionBehavior::kCancelIncoming;
+  }
 
 private:
   IntakeDeployerSubsystem *m_deployer;

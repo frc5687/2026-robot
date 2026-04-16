@@ -171,7 +171,11 @@ void ShootCommand::UpdateSequence(units::second_t now, bool solutionReady) {
 }
 
 void ShootCommand::RunFeeders() {
-  m_hasFedFuel = true;
+  if (!m_hasFedFuel) {
+    m_hasFedFuel = true;
+    // Re-arm indexing as soon as a feed starts.
+    m_feeder->ClearIndexed();
+  }
   m_floor->SetVoltage(kFloorVoltage);
   m_feeder->SetVoltage(kFeederVoltage);
   m_topRoller->SetVoltage(kTopVoltage);
@@ -207,9 +211,6 @@ void ShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  if (m_hasFedFuel) {
-    m_feeder->ClearIndexed();
-  }
   ResetSequenceState();
   m_drive->SetMaxSpeeds(Constants::SwerveDrive::kMaxLinearSpeed);
   m_drive->Stop();

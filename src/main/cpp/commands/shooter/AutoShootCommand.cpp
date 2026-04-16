@@ -100,7 +100,11 @@ void AutoShootCommand::Execute() {
   }
 
   if (solution.ready) {
-    m_hasFedFuel = true;
+    if (!m_hasFedFuel) {
+      m_hasFedFuel = true;
+      // Re-arm indexing as soon as a feed starts.
+      m_feeder->ClearIndexed();
+    }
     m_floor->SetVoltage(kFloorVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
@@ -119,9 +123,6 @@ void AutoShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  if (m_hasFedFuel) {
-    m_feeder->ClearIndexed();
-  }
 
   pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();
 }

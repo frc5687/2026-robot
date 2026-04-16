@@ -8,7 +8,7 @@ EjectIntakeCommand::EjectIntakeCommand(
     : m_deployer(deployer), m_topRoller(topRoller),
       m_bottomRoller(bottomRoller), m_floor(floor) {
   AddRequirements({deployer, topRoller, bottomRoller, floor});
-  SetName("IntakeCommand");
+  SetName("EjectIntakeCommand");
 }
 
 void EjectIntakeCommand::Initialize() { m_deployer->Deploy(); }

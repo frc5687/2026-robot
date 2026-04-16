@@ -29,6 +29,7 @@
 #include "commands/shooter/AutoShootCommand.h"
 #include "commands/shooter/ManualShootCommand.h"
 #include "commands/shooter/PassCommand.h"
+#include "commands/shooter/PreIndexCommand.h"
 #include "commands/shooter/ShootCommand.h"
 #include "commands/shooter/ShotCalculatedSpinUpCommand.h"
 #include "pathplanner/lib/auto/AutoBuilder.h"
@@ -344,20 +345,22 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(
           ShotCalculatedSpinUpCommand(&m_flywheel, &m_feeder, &m_floor)
               .ToPtr());
+  (m_operator.L1() && !m_driver.R2() && !m_driver.Triangle())
+      .OnTrue(PreIndexCommand(&m_flywheel, &m_feeder, &m_floor).ToPtr());
 
   m_operator.L2().WhileTrue(ManualShootCommand(&m_flywheel, &m_hood,
                                                &m_intakeTopRoller,
                                                &m_intakeBottomRoller, &m_feeder,
                                                &m_floor, &m_intakeDeployer)
                                 .ToPtr());
-  m_operator.R1().OnTrue(
-      RunOnce([] {
-        MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(true);
-      }).IgnoringDisable(true));
-  m_operator.L1().OnTrue(
-      RunOnce([] {
-        MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(false);
-      }).IgnoringDisable(true));
+ // m_operator.R1().OnTrue(
+ //     RunOnce([] {
+ //       MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(true);
+ //     }).IgnoringDisable(true));
+ // m_operator.L1().OnTrue(
+ //     RunOnce([] {
+ //       MatchTracker::Instance().SetAutoWinnerFromCurrentAlliance(false);
+ //     }).IgnoringDisable(true));
 
   m_operator.Square().WhileTrue(SetDRSMode(&m_drive).ToPtr());
   /* -------------------- DEBUG CONTROLLER COMMAND -------------------- */

@@ -135,7 +135,11 @@ void PassCommand::Execute() {
   }
 
   if (m_shootSequenceActive) {
-    m_hasFedFuel = true;
+    if (!m_hasFedFuel) {
+      m_hasFedFuel = true;
+      // Re-arm indexing as soon as a feed starts.
+      m_feeder->ClearIndexed();
+    }
     m_floor->SetVoltage(kFloorVoltage);
     m_feeder->SetVoltage(kFeederVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
@@ -154,9 +158,6 @@ void PassCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  if (m_hasFedFuel) {
-    m_feeder->ClearIndexed();
-  }
   m_shootSequenceActive = false;
   m_slowRetractStarted = false;
 }
