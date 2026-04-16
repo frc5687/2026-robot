@@ -1,6 +1,6 @@
-#pragma once
+// Team 5687 2026
 
-#include <numbers>
+#pragma once
 
 #include <frc/system/plant/DCMotor.h>
 #include <units/angle.h>
@@ -11,11 +11,13 @@
 #include <units/time.h>
 #include <units/velocity.h>
 
+#include <numbers>
+
 namespace Constants {
 
 namespace Flywheel {
 
-inline constexpr double kGearRatio = (50.0 / 36.0) * (51.0/30.0);
+inline constexpr double kGearRatio = (50.0 / 36.0) * (51.0 / 30.0);
 
 // 4 motors total: 1 leader + 3 followers
 inline constexpr frc::DCMotor kMotor = frc::DCMotor::KrakenX60FOC(4);
@@ -40,11 +42,11 @@ inline constexpr bool kEnableStatorCurrent = true;
 inline constexpr bool kEnableSupplyCurrent = true;
 
 namespace PID {
-constexpr double kS = 0.2664;  //< Static friction (V)
-constexpr double kV = 0.12;  //< Velocity FF (V / motor-RPS)
+constexpr double kS = 0.2664;   //< Static friction (V)
+constexpr double kV = 0.12;     //< Velocity FF (V / motor-RPS)
 constexpr double kA = 0.011385; //< Acceleration FF (V / motor-RPS²)
 constexpr double kP = 0.5;      //< Proportional (V / motor-RPS error)
-constexpr double kI = 0.05;      //< Integral
+constexpr double kI = 0.05;     //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 

@@ -6,6 +6,7 @@
 #include <units/math.h>
 
 #include "frc2/command/sysid/SysIdRoutine.h"
+#include "subsystem/feeder/FeederConstants.h"
 #include "units/current.h"
 
 using namespace frc2::sysid;
@@ -39,9 +40,29 @@ units::turn_t FeederSubsystem::GetPosition() const {
 
 bool FeederSubsystem::NeedsIndexing() const { return m_needsIndexing; }
 
+bool FeederSubsystem::ShouldIndex() const {
+  return m_needsIndexing && m_indexingActive;
+}
+
 void FeederSubsystem::SetIndexed() { m_needsIndexing = false; }
 
 void FeederSubsystem::ClearIndexed() { m_needsIndexing = true; }
+
+void FeederSubsystem::SetIndexingActive(bool active) { m_indexingActive = active; }
+
+void FeederSubsystem::BeginClearance() {
+  m_clearanceTarget = GetPosition() - Constants::Feeder::kClearanceRetract;
+  m_clearanceActive = true;
+  m_io->SetPosition(m_clearanceTarget);
+}
+
+bool FeederSubsystem::IsCleared() const {
+  if (!m_clearanceActive) {
+    return false;
+  }
+  return units::math::abs(GetPosition() - m_clearanceTarget) <
+         Constants::Feeder::kPositionTolerance;
+}
 
 frc2::CommandPtr FeederSubsystem::SysIdQuasistatic(Direction direction) {
   return m_sysIdRoutine.Quasistatic(direction);
@@ -56,10 +77,6 @@ void FeederSubsystem::SysIdDrive(units::volt_t voltage) {
 }
 void FeederSubsystem::SetCurrent(units::ampere_t current) {
   m_io->SetCurrent(current);
-}
-
-bool FeederSubsystem::isFuelDetected(){
-  return m_inputs.fuelDetected;
 }
 
 void FeederSubsystem::SysIdLog(frc::sysid::SysIdRoutineLog *log) {
@@ -79,9 +96,8 @@ void FeederSubsystem::UpdateInputs() {
 void FeederSubsystem::LogTelemetry() {
   const auto leaderPower =
       units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
-  const auto followerPower =
-      units::math::abs(m_inputs.followerSupplyCurrent) *
-      m_inputs.followerAppliedVolts;
+  const auto followerPower = units::math::abs(m_inputs.followerSupplyCurrent) *
+                             m_inputs.followerAppliedVolts;
 
   Log("Velocity", m_inputs.motorVelocity.value());
   Log("Position", m_inputs.motorPosition.value());
@@ -95,7 +111,12 @@ void FeederSubsystem::LogTelemetry() {
   Log("Power/Follower", followerPower.value());
   Log("Current/Total/Supply", GetElectricalCurrentDraw().value());
   Log("Power/Total", (leaderPower + followerPower).value());
-  Log("isFuelDetected", isFuelDetected());
+  Log("NeedsIndexing", m_needsIndexing);
+  Log("IndexingActive", m_indexingActive);
+  Log("ShouldIndex", ShouldIndex());
+  Log("ClearanceActive", m_clearanceActive);
+  Log("ClearanceTarget", m_clearanceTarget.value());
+  Log("IsCleared", IsCleared());
 }
 
 units::ampere_t FeederSubsystem::GetElectricalCurrentDraw() const {
@@ -105,9 +126,8 @@ units::ampere_t FeederSubsystem::GetElectricalCurrentDraw() const {
 units::watt_t FeederSubsystem::GetElectricalPowerDraw() const {
   const auto leaderPower =
       units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
-  const auto followerPower =
-      units::math::abs(m_inputs.followerSupplyCurrent) *
-      m_inputs.followerAppliedVolts;
+  const auto followerPower = units::math::abs(m_inputs.followerSupplyCurrent) *
+                             m_inputs.followerAppliedVolts;
 
   return leaderPower + followerPower;
 }

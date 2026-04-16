@@ -16,7 +16,7 @@ CTREFloorIO::CTREFloorIO(const CANDevice &motor)
       m_statorSignal(m_motor.GetStatorCurrent()),
       m_supplySignal(m_motor.GetSupplyCurrent()),
       m_signals{&m_positionSignal, &m_velocitySignal, &m_voltageSignal,
-                        &m_statorSignal, &m_supplySignal} {
+                &m_statorSignal, &m_supplySignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }

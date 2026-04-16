@@ -17,13 +17,13 @@
 #include <array>
 #include <memory>
 
-#include "frc/geometry/Rotation2d.h"
-#include "subsystem/drive/SwerveDriveConstants.h"
 #include "GyroIO.h"
 #include "OdometryThread.h"
+#include "frc/geometry/Rotation2d.h"
 #include "frc2/command/CommandPtr.h"
 #include "module/Module.h"
 #include "subsystem/LoggedSubsystem.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
 
@@ -47,7 +47,6 @@ public:
   void LockWheels();
   units::ampere_t GetElectricalCurrentDraw() const;
   units::watt_t GetElectricalPowerDraw() const;
-
 
   frc::Pose2d GetPose() const;
   frc::Rotation2d GetHeading() const;
@@ -81,7 +80,7 @@ public:
   void SetBrakeMode(bool brake);
   void ConfigureClosedLoop();
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                       units::ampere_t steerSupplyCurrentLimit);
+                        units::ampere_t steerSupplyCurrentLimit);
   void SetAutoCurrentLimits();
 
   void SetTeleopCurrentLimits();
@@ -100,6 +99,7 @@ public:
   frc2::CommandPtr GetTrenchPathCommand(frc::Pose2d currentPose);
 
   frc::Rotation2d GetIntakeRotationTarget();
+
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;

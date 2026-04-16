@@ -5,6 +5,7 @@
 #include <frc/Timer.h>
 #include <units/angle.h>
 
+#include "subsystem/feeder/FeederConstants.h"
 #include "utils/Logger.h"
 
 ManualShootCommand::ManualShootCommand(
@@ -22,16 +23,42 @@ ManualShootCommand::ManualShootCommand(
 void ManualShootCommand::Initialize() {
   m_shootSequenceActive = false;
   m_slowRetractStarted = false;
+  m_hasFedFuel = false;
+  m_clearanceStartTime = frc::Timer::GetFPGATimestamp();
+  m_feeder->SetIndexingActive(false);
+  if (m_feeder->NeedsIndexing()) {
+    m_clearanceComplete = false;
+    m_feeder->BeginClearance();
+  } else {
+    m_clearanceComplete = true;
+  }
 }
 
 void ManualShootCommand::Execute() {
   auto now = frc::Timer::GetFPGATimestamp();
 
-  auto rpm = units::revolutions_per_minute_t{m_tunableRPM.Get()};
   auto hoodAngle = units::degree_t{m_tunableHoodAngle.Get()};
 
-  m_flywheel->SetRPM(rpm);
+  // Preclear gate.
+  if (!m_clearanceComplete) {
+    m_flywheel->SetVoltage(kPreclearFlywheelReverseVoltage);
+    m_hood->SetPosition(1_deg);
+    if (m_feeder->IsCleared() ||
+        now - m_clearanceStartTime >= Constants::Feeder::kClearanceTimeout) {
+      m_clearanceComplete = true;
+      m_feeder->SetIndexed();
+      m_feeder->Stop();
+      m_floor->Stop();
+    } else {
+      m_floor->SetVoltage(kBackoffFloorVoltage);
+      return;
+    }
+  }
+
   m_hood->SetPosition(hoodAngle);
+
+  auto rpm = units::revolutions_per_minute_t{m_tunableRPM.Get()};
+  m_flywheel->SetRPM(rpm);
 
   bool flywheelReady = m_flywheel->AtSetpoint();
   bool hoodReady = m_hood->IsAtPosition(hoodAngle);
@@ -57,6 +84,7 @@ void ManualShootCommand::Execute() {
   }
 
   if (m_shootSequenceActive) {
+    m_hasFedFuel = true;
     m_floor->SetVoltage(kFloorVoltage);
     m_feeder->SetVelocity(kFeederRPS);
     m_topRoller->SetVoltage(kTopVoltage);
@@ -75,7 +103,9 @@ void ManualShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  m_feeder->ClearIndexed();
+  if (m_hasFedFuel) {
+    m_feeder->ClearIndexed();
+  }
   m_shootSequenceActive = false;
   m_slowRetractStarted = false;
 }

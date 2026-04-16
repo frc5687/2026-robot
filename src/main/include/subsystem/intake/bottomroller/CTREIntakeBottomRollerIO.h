@@ -11,8 +11,8 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "subsystem/intake/IntakeConstants.h"
 #include "IntakeBottomRollerIO.h"
+#include "subsystem/intake/IntakeConstants.h"
 #include "utils/CANDevice.h"
 
 class CTREIntakeBottomRollerIO : public IntakeBottomRollerIO {

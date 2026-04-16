@@ -7,7 +7,7 @@
 #include <units/voltage.h>
 
 #include "subsystem/drive/DriveSubsystem.h"
-#include "subsystem/floor/FloorSubsystem.h"
+#include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
@@ -17,7 +17,7 @@ public:
   IntakeCommand(DriveSubsystem *drive, IntakeDeployerSubsystem *deployer,
                 IntakeTopRollerSubsystem *topRoller,
                 IntakeBottomRollerSubsystem *bottomRoller,
-                FloorSubsystem *floor);
+                FeederSubsystem *feeder);
 
   void Initialize() override;
   void Execute() override;
@@ -29,7 +29,7 @@ private:
   IntakeDeployerSubsystem *m_deployer;
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
-  FloorSubsystem *m_floor;
+  FeederSubsystem *m_feeder;
 
   static constexpr units::volt_t kTopRollerVoltage = 10_V;
   static constexpr units::volt_t kBottomRollerVoltage = 10_V;
@@ -37,5 +37,4 @@ private:
   static constexpr units::ampere_t kTopRollerCurrent = 60_A;
   static constexpr units::ampere_t kBottomRollerCurrent = 40_A;
 
-  static constexpr units::volt_t kFloorVoltage = 8_V;
 };

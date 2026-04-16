@@ -2,18 +2,17 @@
 
 #pragma once
 
+#include <frc/Timer.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
-#include <units/length.h>
 #include <units/current.h>
+#include <units/length.h>
 #include <units/power.h>
 #include <units/time.h>
 #include <units/voltage.h>
 
-#include <optional>
 #include <memory>
-
-#include <frc/Timer.h>
+#include <optional>
 
 #include "subsystem/LoggedSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerIO.h"
@@ -27,7 +26,8 @@ public:
   void RetractMid();
   void Retract();
 
-  // Slowly retracts from current position to mid position over the given duration.
+  // Slowly retracts from current position to mid position over the given
+  // duration.
   void SlowRetract(units::second_t duration);
   void CancelSlowRetract();
   bool IsSlowRetracting() const;
@@ -45,7 +45,7 @@ public:
   bool IsRetracted() const;
   units::ampere_t GetElectricalCurrentDraw() const;
   units::watt_t GetElectricalPowerDraw() const;
-  
+
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;
@@ -65,7 +65,6 @@ private:
   enum class ComplianceState { Holding, Yielding };
   std::optional<units::meter_t> m_compliantTarget;
   ComplianceState m_complianceState{ComplianceState::Holding};
-
 
   units::ampere_t m_lastStatorLimit{0_A};
 

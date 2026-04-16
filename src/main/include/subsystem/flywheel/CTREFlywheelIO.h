@@ -14,8 +14,8 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "subsystem/flywheel/FlywheelConstants.h"
 #include "FlywheelIO.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 #include "utils/CANDevice.h"
 
 class CTREFlywheelIO : public FlywheelIO {

@@ -12,8 +12,8 @@
 #include <units/time.h>
 #include <units/voltage.h>
 
-#include "subsystem/flywheel/FlywheelConstants.h"
 #include "FlywheelIO.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 
 class SimFlywheelIO : public FlywheelIO {
 public:

@@ -158,9 +158,9 @@ void Module::LogStateUnlocked() {
              m_inputs.driveCurrentDraw.value());
   logger.Log(m_logPrefix + "SteerCurrent", m_inputs.steerCurrentDraw.value());
   logger.Log(m_logPrefix + "DriveTorque", driveTorque.value());
-  logger.Log(m_logPrefix + "DriveForce",
-             (driveTorque / Constants::SwerveDrive::Module::kWheelRadius)
-                 .value());
+  logger.Log(
+      m_logPrefix + "DriveForce",
+      (driveTorque / Constants::SwerveDrive::Module::kWheelRadius).value());
   logger.Log(m_logPrefix + "DriveVoltage", m_inputs.driveAppliedVolts.value());
   logger.Log(m_logPrefix + "SteerVoltage", m_inputs.steerAppliedVolts.value());
   logger.Log(m_logPrefix + "DriveTemp", m_inputs.driveTemperature.value());

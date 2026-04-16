@@ -20,22 +20,22 @@ ShotCalculator::ShotCalculator() {
   // 3/4/26
 
   std::vector<std::pair<double, double>> hoodMap{
-      {1.443, 1.2},    {2.136, 5.25},    {2.959, 8.0}, {3.56, 11},
-      {4.49, 15.5}, {5.0, 18}, {5.49, 18.0}};
+      {1.443, 1.2}, {2.136, 5.25}, {2.959, 8.0}, {3.56, 11},
+      {4.49, 15.5}, {5.0, 18},     {5.49, 18.0}};
 
   m_hoodAngleMap.InsertValues(hoodMap);
 
   // TODO: Make this use units
 
   std::vector<std::pair<double, double>> flyMap{
-      {1.443, 1225},    {2.136, 1300},    {2.959, 1350}, {3.56, 1450},
-      {4.49, 1600}, {5.0, 1690}, {5.49, 1650}};
+      {1.443, 1225}, {2.136, 1300}, {2.959, 1350}, {3.56, 1450},
+      {4.49, 1600},  {5.0, 1690},   {5.49, 1650}};
 
   m_flywheelMap.InsertValues(flyMap);
 
   std::vector<std::pair<double, double>> tofMap{
-      {1.443, 0.96},    {2.136, 0.97},    {2.959, 1.11}, {3.56, 1.23},
-      {4.49, 1.22}, {5.0, 1.26}, {5.49, 1.5}};
+      {1.443, 0.96}, {2.136, 0.97}, {2.959, 1.11}, {3.56, 1.23},
+      {4.49, 1.22},  {5.0, 1.26},   {5.49, 1.5}};
   m_tofMap.InsertValues(tofMap);
 }
 
@@ -112,8 +112,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
     effDist = newDist;
     tof = m_tofMap.GetValue(effDist);
   }
-Logger::Instance().Log(
-      "ShotCalculator/ShotDistance", effDist);
+  Logger::Instance().Log("ShotCalculator/ShotDistance", effDist);
 
   double hoodAngleDeg = m_hoodAngleMap.GetValue(effDist);
   double flywheelSpeed = m_flywheelMap.GetValue(effDist);

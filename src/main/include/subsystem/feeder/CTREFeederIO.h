@@ -12,12 +12,11 @@
 #include <ctre/phoenix6/controls/VelocityVoltage.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "frc/DigitalInput.h"
-
 #include "FeederIO.h"
 #include "ctre/phoenix6/CANrange.hpp"
 #include "ctre/phoenix6/controls/TorqueCurrentFOC.hpp"
 #include "ctre/phoenix6/core/CoreCANrange.hpp"
+#include "frc/DigitalInput.h"
 #include "utils/CANDevice.h"
 
 class CTREFeederIO : public FeederIO {
@@ -63,7 +62,7 @@ private:
   void ConfigureDevices();
   void ConfigureCANRange();
   void ConfigureFollower(ctre::phoenix6::hardware::TalonFX &follower,
-                        int leaderDeviceId, bool opposeLeader);
+                         int leaderDeviceId, bool opposeLeader);
   void ConfigureClosedLoop();
   void ConfigureSignalFrequencies();
 };

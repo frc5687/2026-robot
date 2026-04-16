@@ -61,5 +61,4 @@ private:
     // Otherwise use interpolation
     return *sample;
   }
-
 };

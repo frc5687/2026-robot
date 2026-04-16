@@ -2,8 +2,9 @@
 
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 
-#include <algorithm>
 #include <units/math.h>
+
+#include <algorithm>
 
 #include "subsystem/intake/IntakeConstants.h"
 
@@ -19,7 +20,7 @@ static units::turn_t ExtensionToMotorTurns(units::meter_t extension) {
 
 void IntakeDeployerSubsystem::FullyExtend() {
   CancelSlowRetract();
-  //DisableCompliantHold();
+  // DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(kFullyExtend));
 }
 
@@ -32,13 +33,13 @@ void IntakeDeployerSubsystem::Deploy() {
 
 void IntakeDeployerSubsystem::RetractMid() {
   CancelSlowRetract();
-  //DisableCompliantHold();
+  // DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(kMidExtension));
 }
 
 void IntakeDeployerSubsystem::Retract() {
   CancelSlowRetract();
-  //DisableCompliantHold();
+  // DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(kRetractedExtension));
 }
 
@@ -50,9 +51,7 @@ void IntakeDeployerSubsystem::SlowRetract(units::second_t duration) {
   };
 }
 
-void IntakeDeployerSubsystem::CancelSlowRetract() {
-  m_slowRetract.reset();
-}
+void IntakeDeployerSubsystem::CancelSlowRetract() { m_slowRetract.reset(); }
 
 bool IntakeDeployerSubsystem::IsSlowRetracting() const {
   return m_slowRetract.has_value();
@@ -60,7 +59,7 @@ bool IntakeDeployerSubsystem::IsSlowRetracting() const {
 
 void IntakeDeployerSubsystem::SetPosition(units::meter_t extension) {
   CancelSlowRetract();
-  //DisableCompliantHold();
+  // DisableCompliantHold();
   m_io->SetPosition(ExtensionToMotorTurns(extension));
 }
 
@@ -77,7 +76,7 @@ void IntakeDeployerSubsystem::ZeroPosition() { m_io->ZeroPosition(); }
 
 void IntakeDeployerSubsystem::Stop() {
   CancelSlowRetract();
-  //DisableCompliantHold();
+  // DisableCompliantHold();
   m_io->Stop();
 }
 
@@ -100,11 +99,11 @@ bool IntakeDeployerSubsystem::IsRetracted() const {
          kExtensionTolerance;
 }
 
-void IntakeDeployerSubsystem::SetCurrentLimits(units::ampere_t currentLimit){
-  if(currentLimit == m_lastStatorLimit){
+void IntakeDeployerSubsystem::SetCurrentLimits(units::ampere_t currentLimit) {
+  if (currentLimit == m_lastStatorLimit) {
     return;
   }
-  
+
   m_lastStatorLimit = currentLimit;
   m_io->SetCurrentLimits(currentLimit);
 }
@@ -115,9 +114,8 @@ void IntakeDeployerSubsystem::UpdateInputs() {
   if (m_slowRetract) {
     auto elapsed = units::second_t{frc::Timer::GetFPGATimestamp()} -
                    m_slowRetract->startTime;
-    double t =
-        std::clamp(static_cast<double>(elapsed / m_slowRetract->duration),
-                   0.0, 1.0);
+    double t = std::clamp(
+        static_cast<double>(elapsed / m_slowRetract->duration), 0.0, 1.0);
     units::meter_t target =
         m_slowRetract->startPosition * (1.0 - t) + kMidExtension * t;
     m_io->SetPosition(ExtensionToMotorTurns(target));
@@ -129,8 +127,9 @@ void IntakeDeployerSubsystem::UpdateInputs() {
 
   // if (m_compliantTarget) {
   //   auto targetTurns = ExtensionToMotorTurns(*m_compliantTarget);
-  //   auto positionError = units::math::abs(targetTurns - m_inputs.motorPosition);
-  //   auto statorCurrent = units::math::abs(m_inputs.statorCurrent);
+  //   auto positionError = units::math::abs(targetTurns -
+  //   m_inputs.motorPosition); auto statorCurrent =
+  //   units::math::abs(m_inputs.statorCurrent);
 
   //   switch (m_complianceState) {
   //   case ComplianceState::Holding:
@@ -163,9 +162,8 @@ void IntakeDeployerSubsystem::LogTelemetry() {
   Log("ExtensionMeters", GetPosition().value());
   Log("IsDeployed", IsDeployed());
   Log("IsRetracted", IsRetracted());
-  Log("ComplianceYielding",
-      m_compliantTarget.has_value() &&
-          m_complianceState == ComplianceState::Yielding);
+  Log("ComplianceYielding", m_compliantTarget.has_value() &&
+                                m_complianceState == ComplianceState::Yielding);
   Log("StatorCurrent", m_inputs.statorCurrent.value());
 }
 

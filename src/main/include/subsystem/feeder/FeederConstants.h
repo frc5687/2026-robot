@@ -1,3 +1,5 @@
+// Team 5687 2026
+
 #pragma once
 
 #include <frc/system/plant/DCMotor.h>
@@ -43,6 +45,11 @@ inline constexpr double kA = 0.0;
 } // namespace PositionPID
 
 inline constexpr double kGearRatio = (42.0 / 9.0);
+
+// Preclear retract and timeout settings.
+inline constexpr units::turn_t kClearanceRetract = 4_tr;
+inline constexpr units::turn_t kPositionTolerance = 0.25_tr;
+inline constexpr units::second_t kClearanceTimeout = 0.5_s;
 
 } // namespace Feeder
 

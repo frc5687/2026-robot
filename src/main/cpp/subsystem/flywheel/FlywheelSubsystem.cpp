@@ -30,18 +30,16 @@ void FlywheelSubsystem::SetRPM(units::revolutions_per_minute_t desiredRPM) {
   const auto deltaRPM = units::math::abs(desiredRPM - m_commandedRPM);
   const bool spinup =
       units::math::abs(desiredRPM) > units::math::abs(m_commandedRPM);
-  const bool rampInProgress =
-      units::math::abs(m_targetRPM - m_commandedRPM) >
-      Constants::Flywheel::kSpinupRetargetTolerance;
+  const bool rampInProgress = units::math::abs(m_targetRPM - m_commandedRPM) >
+                              Constants::Flywheel::kSpinupRetargetTolerance;
   const bool shouldStartRamp =
       spinup && deltaRPM >= Constants::Flywheel::kSpinupRampThreshold;
   // Keep an active spinup ramp alive even after remaining error drops.
   const bool shouldContinueRamp =
       rampInProgress &&
       units::math::abs(desiredRPM) >= units::math::abs(m_commandedRPM);
-  const bool shouldRamp =
-      Constants::Flywheel::kSpinupRampDuration > 0_s &&
-      (shouldStartRamp || shouldContinueRamp);
+  const bool shouldRamp = Constants::Flywheel::kSpinupRampDuration > 0_s &&
+                          (shouldStartRamp || shouldContinueRamp);
 
   if (!shouldRamp) {
     m_targetRPM = desiredRPM;

@@ -16,12 +16,12 @@
 #include <networktables/StringTopic.h>
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
+#include <stdint.h>
 #include <wpi/struct/Struct.h>
 
 #include <array>
 #include <atomic>
 #include <condition_variable>
-#include <cstdint>
 #include <deque>
 #include <functional>
 #include <mutex>
@@ -44,33 +44,30 @@ struct StringHash {
 };
 
 template <typename T>
-concept SupportedInteger =
-    std::is_integral_v<T> && !std::is_same_v<T, bool>;
+concept SupportedInteger = std::is_integral_v<T> && !std::is_same_v<T, bool>;
 
-template <class>
-inline constexpr bool always_false_v = false;
+template <class> inline constexpr bool always_false_v = false;
 
 class Logger {
- public:
-  static Logger& Instance() {
+public:
+  static Logger &Instance() {
     static Logger inst;
     return inst;
   }
 
   template <typename T>
-  void Log(std::string_view name, const T& value, int64_t ts = 0) {
+  void Log(std::string_view name, const T &value, int64_t ts = 0) {
     EnqueueLog(name, value, ts);
   }
 
   template <typename T>
-  void Log(std::string_view name, const std::vector<T>& values,
+  void Log(std::string_view name, const std::vector<T> &values,
            int64_t ts = 0) {
     EnqueueLog(name, values, ts);
   }
 
   template <typename T, size_t N>
-  void Log(std::string_view name, const std::array<T, N>& arr,
-           int64_t ts = 0) {
+  void Log(std::string_view name, const std::array<T, N> &arr, int64_t ts = 0) {
     EnqueueLog(name, arr, ts);
   }
 
@@ -84,7 +81,7 @@ class Logger {
     frc::DataLogManager::LogConsoleOutput(true);
   }
 
- private:
+private:
   template <typename PublisherT>
   using PublisherMap =
       std::unordered_map<std::string, PublisherT, StringHash, std::equal_to<>>;
@@ -107,19 +104,18 @@ class Logger {
     }
   }
 
-  Logger(const Logger&) = delete;
-  Logger& operator=(const Logger&) = delete;
+  Logger(const Logger &) = delete;
+  Logger &operator=(const Logger &) = delete;
 
   template <typename Value>
-  void EnqueueLog(std::string_view name, Value&& value, int64_t ts) {
+  void EnqueueLog(std::string_view name, Value &&value, int64_t ts) {
     std::string key{name};
     using Stored = std::decay_t<Value>;
     Stored stored = std::forward<Value>(value);
 
-    EnqueueTask(
-        [this, key = std::move(key), stored = std::move(stored), ts]() {
-          LogSync(key, stored, ts);
-        });
+    EnqueueTask([this, key = std::move(key), stored = std::move(stored), ts]() {
+      LogSync(key, stored, ts);
+    });
   }
 
   void WorkerLoop() {
@@ -155,34 +151,34 @@ class Logger {
   }
 
   template <typename T>
-  void LogSync(std::string_view name, const T& value, int64_t ts = 0) {
+  void LogSync(std::string_view name, const T &value, int64_t ts = 0) {
     if constexpr (std::is_same_v<T, bool>) {
-      auto& pub = GetOrCreatePublisher(name, m_boolPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_boolPubs, [&] {
         return m_instance.GetBooleanTopic(name).Publish();
       });
       pub.Set(value, ts);
     } else if constexpr (SupportedInteger<T>) {
-      auto& pub = GetOrCreatePublisher(name, m_intPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_intPubs, [&] {
         return m_instance.GetIntegerTopic(name).Publish();
       });
       pub.Set(static_cast<int64_t>(value), ts);
     } else if constexpr (std::is_same_v<T, float>) {
-      auto& pub = GetOrCreatePublisher(name, m_floatPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_floatPubs, [&] {
         return m_instance.GetFloatTopic(name).Publish();
       });
       pub.Set(value, ts);
     } else if constexpr (std::is_same_v<T, double>) {
-      auto& pub = GetOrCreatePublisher(name, m_doublePubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_doublePubs, [&] {
         return m_instance.GetDoubleTopic(name).Publish();
       });
       pub.Set(value, ts);
     } else if constexpr (std::is_same_v<T, std::string>) {
-      auto& pub = GetOrCreatePublisher(name, m_stringPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_stringPubs, [&] {
         return m_instance.GetStringTopic(name).Publish();
       });
       pub.Set(value, ts);
     } else if constexpr (wpi::StructSerializable<T>) {
-      auto& pub = GetOrCreatePublisher(name, GetStructMap<T>(), [&] {
+      auto &pub = GetOrCreatePublisher(name, GetStructMap<T>(), [&] {
         return m_instance.GetStructTopic<T>(name).Publish();
       });
       pub.Set(value, ts);
@@ -192,36 +188,36 @@ class Logger {
   }
 
   template <typename T>
-  void LogSync(std::string_view name, const std::vector<T>& values,
+  void LogSync(std::string_view name, const std::vector<T> &values,
                int64_t ts = 0) {
     if constexpr (std::is_same_v<T, bool>) {
-      auto& pub = GetOrCreatePublisher(name, m_boolArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_boolArrPubs, [&] {
         return m_instance.GetBooleanArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
     } else if constexpr (SupportedInteger<T>) {
       std::vector<int64_t> tmp(values.begin(), values.end());
-      auto& pub = GetOrCreatePublisher(name, m_intArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_intArrPubs, [&] {
         return m_instance.GetIntegerArrayTopic(name).Publish();
       });
       pub.Set(tmp, ts);
     } else if constexpr (std::is_same_v<T, float>) {
-      auto& pub = GetOrCreatePublisher(name, m_floatArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_floatArrPubs, [&] {
         return m_instance.GetFloatArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
     } else if constexpr (std::is_same_v<T, double>) {
-      auto& pub = GetOrCreatePublisher(name, m_doubleArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_doubleArrPubs, [&] {
         return m_instance.GetDoubleArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
     } else if constexpr (std::is_same_v<T, std::string>) {
-      auto& pub = GetOrCreatePublisher(name, m_stringArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_stringArrPubs, [&] {
         return m_instance.GetStringArrayTopic(name).Publish();
       });
       pub.Set(values, ts);
     } else if constexpr (wpi::StructSerializable<T>) {
-      auto& pub = GetOrCreatePublisher(name, GetStructArrMap<T>(), [&] {
+      auto &pub = GetOrCreatePublisher(name, GetStructArrMap<T>(), [&] {
         return m_instance.GetStructArrayTopic<T>(name).Publish();
       });
       pub.Set(values, ts);
@@ -231,20 +227,20 @@ class Logger {
   }
 
   template <typename T, size_t N>
-  void LogSync(std::string_view name, const std::array<T, N>& arr,
+  void LogSync(std::string_view name, const std::array<T, N> &arr,
                int64_t ts = 0) {
     if constexpr (wpi::StructSerializable<T>) {
-      auto& pub = GetOrCreatePublisher(name, GetStructArrMap<T>(), [&] {
+      auto &pub = GetOrCreatePublisher(name, GetStructArrMap<T>(), [&] {
         return m_instance.GetStructArrayTopic<T>(name).Publish();
       });
       pub.Set(arr, ts);
     } else if constexpr (std::is_same_v<T, double>) {
-      auto& pub = GetOrCreatePublisher(name, m_doubleArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_doubleArrPubs, [&] {
         return m_instance.GetDoubleArrayTopic(name).Publish();
       });
       pub.Set(std::span<const double>{arr.data(), N}, ts);
     } else if constexpr (std::is_same_v<T, float>) {
-      auto& pub = GetOrCreatePublisher(name, m_floatArrPubs, [&] {
+      auto &pub = GetOrCreatePublisher(name, m_floatArrPubs, [&] {
         return m_instance.GetFloatArrayTopic(name).Publish();
       });
       pub.Set(std::span<const float>{arr.data(), N}, ts);
@@ -255,8 +251,8 @@ class Logger {
   }
 
   template <class Map, class Factory>
-  typename Map::mapped_type& GetOrCreatePublisher(std::string_view name,
-                                                  Map& map, Factory&& make) {
+  typename Map::mapped_type &GetOrCreatePublisher(std::string_view name,
+                                                  Map &map, Factory &&make) {
     {
       std::shared_lock rl(m_lock);
       if (auto it = map.find(name); it != map.end()) {
@@ -275,14 +271,12 @@ class Logger {
     return it->second;
   }
 
-  template <typename T>
-  static auto& GetStructMap() {
+  template <typename T> static auto &GetStructMap() {
     static PublisherMap<nt::StructPublisher<T>> m;
     return m;
   }
 
-  template <typename T>
-  static auto& GetStructArrMap() {
+  template <typename T> static auto &GetStructArrMap() {
     static PublisherMap<nt::StructArrayPublisher<T>> m;
     return m;
   }

@@ -1,8 +1,11 @@
 // Team 5687 2026
 
 #include "utils/SubsystemBatteryLogger.h"
+
 #include <frc/RobotController.h>
 #include <units/math.h>
+
+#include "utils/Logger.h"
 
 void SubsystemBatteryLogger::RegisterSubsystem(std::string name,
                                                CurrentProvider currentProvider,
@@ -68,8 +71,7 @@ void SubsystemBatteryLogger::Update() {
 
       const units::volt_t batteryVoltage =
           frc::RobotController::GetBatteryVoltage();
-      const units::volt_t inputVoltage{
-          frc::RobotController::GetInputVoltage()};
+      const units::volt_t inputVoltage{frc::RobotController::GetInputVoltage()};
       const units::ampere_t inputCurrent{
           frc::RobotController::GetInputCurrent()};
       const units::watt_t inputPower = inputVoltage * inputCurrent;

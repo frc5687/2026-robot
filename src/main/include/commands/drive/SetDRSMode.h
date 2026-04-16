@@ -7,12 +7,9 @@
 
 #include "subsystem/drive/DriveSubsystem.h"
 
-
-class SetDRSMode
-    : public frc2::CommandHelper<frc2::Command, SetDRSMode> {
+class SetDRSMode : public frc2::CommandHelper<frc2::Command, SetDRSMode> {
 public:
-    SetDRSMode(DriveSubsystem *drive);
-
+  SetDRSMode(DriveSubsystem *drive);
 
   void Initialize() override;
   void Execute() override;
@@ -21,5 +18,4 @@ public:
 
 private:
   DriveSubsystem *m_drive;
-
 };

@@ -1,10 +1,13 @@
+// Team 5687 2026
+
 #pragma once
+
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <units/time.h>
+#include <units/voltage.h>
 
 #include "frc/apriltag/AprilTagFieldLayout.h"
 #include "frc/geometry/Transform3d.h"
-#include <units/time.h>
-#include <units/voltage.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
 
 namespace Constants {
 
@@ -64,42 +67,43 @@ inline const frc::Translation3d kInnerCenterPoint{
     kInnerHeight};
 } // namespace Hub
 
-namespace Trench{
-    inline constexpr frc::Pose2d InsideTopBlue{3_m, 7.5_m, 0_deg};
-    inline constexpr frc::Pose2d OutsideTopBlue{6_m, 7.5_m, 0_deg};
+namespace Trench {
+inline constexpr frc::Pose2d InsideTopBlue{3_m, 7.5_m, 0_deg};
+inline constexpr frc::Pose2d OutsideTopBlue{6_m, 7.5_m, 0_deg};
 
-    inline constexpr frc::Pose2d InsideBottomBlue{3_m, 0.5_m, 0_deg};
-    inline constexpr frc::Pose2d OutsideBottomBlue{6_m, 0.5_m, 0_deg};
+inline constexpr frc::Pose2d InsideBottomBlue{3_m, 0.5_m, 0_deg};
+inline constexpr frc::Pose2d OutsideBottomBlue{6_m, 0.5_m, 0_deg};
 
-    inline constexpr frc::Pose2d InsideTopRed{13_m, 7.5_m, 0_deg};
-    inline constexpr frc::Pose2d OutsideTopRed{10_m, 7.5_m, 0_deg};
+inline constexpr frc::Pose2d InsideTopRed{13_m, 7.5_m, 0_deg};
+inline constexpr frc::Pose2d OutsideTopRed{10_m, 7.5_m, 0_deg};
 
-    inline constexpr frc::Pose2d InsideBottomRed{13_m, 0.5_m, 0_deg};
-    inline constexpr frc::Pose2d OutsideBottomRed{10_m, 0.5_m, 0_deg};
-} // namespace Field
+inline constexpr frc::Pose2d InsideBottomRed{13_m, 0.5_m, 0_deg};
+inline constexpr frc::Pose2d OutsideBottomRed{10_m, 0.5_m, 0_deg};
+} // namespace Trench
 
-namespace Zones{
-    inline constexpr frc::Pose2d BottomLeftBlue{0_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d TopRightBlue{4_m, 8.07_m, 0_deg};
+namespace Zones {
+inline constexpr frc::Pose2d BottomLeftBlue{0_m, 0_m, 0_deg};
+inline constexpr frc::Pose2d TopRightBlue{4_m, 8.07_m, 0_deg};
 
-    inline constexpr frc::Pose2d BottomLeftNeutral{5.2225_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d TopRightNeutral{11.318_m, 8.07_m, 0_deg};
+inline constexpr frc::Pose2d BottomLeftNeutral{5.2225_m, 0_m, 0_deg};
+inline constexpr frc::Pose2d TopRightNeutral{11.318_m, 8.07_m, 0_deg};
 
-    inline constexpr frc::Pose2d BottomLeftRed{12.563_m, 0_m, 0_deg};
-    inline constexpr frc::Pose2d TopRightRed{16.54_m, 8.07_m, 0_deg};
+inline constexpr frc::Pose2d BottomLeftRed{12.563_m, 0_m, 0_deg};
+inline constexpr frc::Pose2d TopRightRed{16.54_m, 8.07_m, 0_deg};
 
-    inline constexpr frc::Pose2d BottomLeftBlueBump{4.0286_m, 1.2659_m, 0_deg};
-    inline constexpr frc::Pose2d TopRightBlueBump{5.2225_m, 6.80339_m, 0_deg};
+inline constexpr frc::Pose2d BottomLeftBlueBump{4.0286_m, 1.2659_m, 0_deg};
+inline constexpr frc::Pose2d TopRightBlueBump{5.2225_m, 6.80339_m, 0_deg};
 
-    inline constexpr frc::Pose2d BottomLeftRedBump{11.27_m, 1.2659_m, 0_deg};
-    inline constexpr frc::Pose2d TopRightRedBump{12.4968_m, 6.80339_m, 0_deg};
+inline constexpr frc::Pose2d BottomLeftRedBump{11.27_m, 1.2659_m, 0_deg};
+inline constexpr frc::Pose2d TopRightRedBump{12.4968_m, 6.80339_m, 0_deg};
 
-    inline constexpr frc::Pose2d BlueHub{4.6228_m, 4.034663_m, 0_deg};
-    inline constexpr frc::Pose2d RedHub{11.915394_m, 4.034663_m, 0_deg};
+inline constexpr frc::Pose2d BlueHub{4.6228_m, 4.034663_m, 0_deg};
+inline constexpr frc::Pose2d RedHub{11.915394_m, 4.034663_m, 0_deg};
 
-    inline constexpr std::array<frc::Pose2d,2>kZonesExcludingBumps={BottomLeftBlue, TopRightRed};
-    inline constexpr std::array<frc::Pose2d,4>kZonesIncludingBumps={BottomLeftBlueBump, TopRightBlueBump, BottomLeftRedBump, TopRightRedBump};
-}
+inline constexpr std::array<frc::Pose2d, 2> kZonesExcludingBumps = {
+    BottomLeftBlue, TopRightRed};
+inline constexpr std::array<frc::Pose2d, 4> kZonesIncludingBumps = {
+    BottomLeftBlueBump, TopRightBlueBump, BottomLeftRedBump, TopRightRedBump};
+} // namespace Zones
 } // namespace Field
 } // namespace Constants
-

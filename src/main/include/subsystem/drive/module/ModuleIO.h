@@ -41,7 +41,7 @@ public:
   virtual void Stop() = 0;
   virtual void SetBrakeMode(bool brake) {}
   virtual void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                               units::ampere_t steerSupplyCurrentLimit) {}
+                                units::ampere_t steerSupplyCurrentLimit) {}
   virtual void ResetDriveEncoder() {}
   virtual void ConfigureClosedLoop() {}
 };

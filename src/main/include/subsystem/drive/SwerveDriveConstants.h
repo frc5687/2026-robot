@@ -1,7 +1,6 @@
-#pragma once
+// Team 5687 2026
 
-#include <array>
-#include <numbers>
+#pragma once
 
 #include <frc/geometry/Translation2d.h>
 #include <frc/system/plant/DCMotor.h>
@@ -16,11 +15,14 @@
 #include <units/velocity.h>
 #include <units/voltage.h>
 
+#include <array>
+#include <numbers>
+
 namespace Constants {
 
 namespace SwerveDrive {
 namespace Module {
-//inline constexpr units::meter_t kWheelRadius = 0.0548_m;
+// inline constexpr units::meter_t kWheelRadius = 0.0548_m;
 inline constexpr units::meter_t kWheelRadius = 0.05045075_m;
 inline constexpr auto kWheelCircumference =
     kWheelRadius * 2.0 * std::numbers::pi_v<double>;
@@ -141,9 +143,9 @@ inline constexpr std::array<frc::Translation2d, kModuleCount>
 
 inline constexpr std::array<units::turn_t, 4> kEncoderOffsets{
     -0.216064453125_tr + 0.5_tr, // FL
-    -0.132324421875_tr+ 0.5_tr, // FR
-    -0.23681640625_tr + 0.5_tr, // BL
-    -0.422119140625_tr + 0.5_tr // BR
+    -0.132324421875_tr + 0.5_tr, // FR
+    -0.23681640625_tr + 0.5_tr,  // BL
+    -0.422119140625_tr + 0.5_tr  // BR
 };
 
 /*
@@ -191,4 +193,3 @@ inline constexpr double kD = 0.0;
 } // namespace SwerveDrive
 
 } // namespace Constants
-

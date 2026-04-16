@@ -5,9 +5,9 @@
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
 
-#include "subsystem/drive/SwerveDriveConstants.h"
 #include "GyroIO.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "units/angle.h"
 #include "units/angular_velocity.h"
 #include "units/temperature.h"

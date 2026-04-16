@@ -62,12 +62,12 @@ inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
 } // namespace Pidgeon2
 
 namespace CANdle {
-    inline constexpr CANDevice CANdle{0, Bus::kRio};
-}
+inline constexpr CANDevice CANdle{0, Bus::kRio};
+} // namespace CANdle
 
 namespace CANRange {
-    inline constexpr CANDevice FeederCANRange{1, Bus::kDriveTrain};
-}
+inline constexpr CANDevice FeederCANRange{1, Bus::kDriveTrain};
+} // namespace CANRange
 } // namespace CAN
 
 } // namespace HardwareMap

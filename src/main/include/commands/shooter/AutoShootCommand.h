@@ -51,9 +51,14 @@ private:
 
   units::second_t m_pulseStartTime{0_s};
   bool m_deployerExtended{false};
+  bool m_clearanceComplete{false};
+  units::second_t m_clearanceStartTime{0_s};
+  bool m_hasFedFuel{false};
 
   static constexpr units::ampere_t kFloorCurrent = 40_A;
   static constexpr units::volt_t kFloorVoltage = 12_V;
+  static constexpr units::volt_t kBackoffFloorVoltage = -2.0_V;
+  static constexpr units::volt_t kPreclearFlywheelReverseVoltage = -1.5_V;
   static constexpr units::volt_t kTopVoltage = 10_V;
   static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::turns_per_second_t kKickerRPS = 75_tps;

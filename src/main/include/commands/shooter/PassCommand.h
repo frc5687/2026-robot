@@ -20,16 +20,14 @@
 #include "utils/TunableDouble.h"
 #include "utils/Utils.h"
 
-class PassCommand
-    : public frc2::CommandHelper<frc2::Command, PassCommand> {
+class PassCommand : public frc2::CommandHelper<frc2::Command, PassCommand> {
 public:
-  PassCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel, HoodSubsystem *hood,
-                     IntakeTopRollerSubsystem *topRoller,
-                     IntakeBottomRollerSubsystem *bottomRoller,
-                     FeederSubsystem *feeder, FloorSubsystem *floor,
-                     IntakeDeployerSubsystem *deployer,
-                     std::function<double()> throttle, std::function<double()> strafe
-                    );
+  PassCommand(DriveSubsystem *drive, FlywheelSubsystem *flywheel,
+              HoodSubsystem *hood, IntakeTopRollerSubsystem *topRoller,
+              IntakeBottomRollerSubsystem *bottomRoller,
+              FeederSubsystem *feeder, FloorSubsystem *floor,
+              IntakeDeployerSubsystem *deployer,
+              std::function<double()> throttle, std::function<double()> strafe);
 
   void Initialize() override;
   void Execute() override;
@@ -60,6 +58,8 @@ private:
   // Feeder
   static constexpr units::turns_per_second_t kFeederRPS = 80_tps;
   static constexpr units::volt_t kFeederVoltage = 12_V;
+  static constexpr units::volt_t kBackoffFloorVoltage = -2.0_V;
+  static constexpr units::volt_t kPreclearFlywheelReverseVoltage = -1.5_V;
   // Top Roller
   static constexpr units::volt_t kTopVoltage = 6_V;
   // Bottom Roller
@@ -70,9 +70,11 @@ private:
 
   bool m_shootSequenceActive{false};
   bool m_slowRetractStarted{false};
+  bool m_clearanceComplete{false};
+  units::second_t m_clearanceStartTime{0_s};
   units::second_t m_shootSequenceStartTime{0_s};
+  bool m_hasFedFuel{false};
   static constexpr double kDeadband = 0.1;
-
 
   units::degree_t m_targetHeading{90};
 };

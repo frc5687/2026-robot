@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include <frc2/command/CommandPtr.h>
 #include <frc2/command/Command.h>
+#include <frc2/command/CommandPtr.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
-#include <units/current.h>
 #include <units/angular_velocity.h>
+#include <units/current.h>
 #include <units/power.h>
 #include <units/voltage.h>
 
@@ -30,10 +30,14 @@ public:
   frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction);
 
   bool NeedsIndexing() const;
+  bool ShouldIndex() const;
   void SetIndexed();
   void ClearIndexed();
+  void SetIndexingActive(bool active);
 
-  bool isFuelDetected();
+  // Sensorless flywheel-clearance handshake.
+  void BeginClearance();
+  bool IsCleared() const;
 
   const FeederState &GetState() const { return m_state; }
   units::ampere_t GetElectricalCurrentDraw() const;
@@ -48,6 +52,9 @@ private:
   FeederIOInputs m_inputs{};
   FeederState m_state{};
   bool m_needsIndexing{true};
+  bool m_indexingActive{false};
+  units::turn_t m_clearanceTarget{0_tr};
+  bool m_clearanceActive{false};
 
   frc2::sysid::SysIdRoutine m_sysIdRoutine;
   void SysIdDrive(units::volt_t voltage);

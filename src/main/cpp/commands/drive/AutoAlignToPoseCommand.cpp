@@ -16,10 +16,11 @@
 static constexpr double kMaxTranslationalAccel = 3.0; // m/s²
 static constexpr double kMaxAngularAccel = 10.0;      // rad/s²
 
-AutoAlignToPoseCommand::AutoAlignToPoseCommand(DriveSubsystem *driveSubsystem,
-                                               std::function<frc::Pose2d()> targetPoseFunction,
-                                               double constraintFactor)
-    : m_driveSubsystem(driveSubsystem), m_targetPoseFunction(targetPoseFunction),
+AutoAlignToPoseCommand::AutoAlignToPoseCommand(
+    DriveSubsystem *driveSubsystem,
+    std::function<frc::Pose2d()> targetPoseFunction, double constraintFactor)
+    : m_driveSubsystem(driveSubsystem),
+      m_targetPoseFunction(targetPoseFunction),
       m_driveController(
           Constants::SwerveDrive::PID::Translation::kP, 0.0, 0.0,
           frc::TrapezoidProfile<units::meters>::Constraints{

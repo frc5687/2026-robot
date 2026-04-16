@@ -76,6 +76,4 @@ void SimIntakeDeployerIO::Stop() {
   m_voltageCommand = 0_V;
 }
 
-void SimIntakeDeployerIO::SetCurrentLimits(units::ampere_t currentlimits){
-  
-}
+void SimIntakeDeployerIO::SetCurrentLimits(units::ampere_t currentlimits) {}

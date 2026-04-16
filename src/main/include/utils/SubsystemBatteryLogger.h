@@ -3,7 +3,6 @@
 #pragma once
 
 #include <frc/Timer.h>
-
 #include <units/current.h>
 #include <units/energy.h>
 #include <units/power.h>
@@ -13,7 +12,6 @@
 #include <string>
 #include <vector>
 
-
 class SubsystemBatteryLogger {
 public:
   using CurrentProvider = std::function<units::ampere_t()>;
@@ -22,8 +20,7 @@ public:
   void RegisterSubsystem(std::string name, CurrentProvider currentProvider,
                          PowerProvider powerProvider);
 
-  void RegisterAggregateGroup(std::string name,
-                              CurrentProvider currentProvider,
+  void RegisterAggregateGroup(std::string name, CurrentProvider currentProvider,
                               PowerProvider powerProvider);
 
   void Update();

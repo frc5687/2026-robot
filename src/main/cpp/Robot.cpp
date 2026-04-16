@@ -10,17 +10,17 @@
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/RunCommand.h>
+#include <networktables/NetworkTableInstance.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 #include <wpi/raw_ostream.h>
 
 #include <ctre/phoenix6/SignalLogger.hpp>
+
 #include "frc/RobotController.h"
 #include "utils/Logger.h"
 #include "utils/MatchTracker.h"
-
-#include <networktables/NetworkTableInstance.h>
 
 Robot::Robot() {
   frc::LiveWindow::DisableAllTelemetry();

@@ -13,10 +13,10 @@
 #include <ctre/phoenix6/sim/CANcoderSimState.hpp>
 #include <ctre/phoenix6/sim/TalonFXSimState.hpp>
 
-#include "subsystem/drive/SwerveDriveConstants.h"
 #include "ModuleConfig.h"
 #include "ModuleIO.h"
 #include "ctre/phoenix6/core/CoreTalonFX.hpp"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "utils/CANDevice.h"
 
 class CTREModuleIO : public ModuleIO {
@@ -36,7 +36,7 @@ public:
   void ResetDriveEncoder() override;
   void ConfigureClosedLoop() override;
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                       units::ampere_t steerSupplyCurrentLimit) override;
+                        units::ampere_t steerSupplyCurrentLimit) override;
   ModuleConfig GetModuleConfig() override;
   std::array<ctre::phoenix6::BaseStatusSignal *,
              Constants::SwerveDrive::Odometry::kSignalsPerModule>

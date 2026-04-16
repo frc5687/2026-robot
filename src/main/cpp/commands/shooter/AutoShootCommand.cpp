@@ -9,6 +9,7 @@
 
 #include "RobotState.h"
 #include "subsystem/drive/SwerveDriveConstants.h"
+#include "subsystem/feeder/FeederConstants.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
 AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
@@ -27,7 +28,16 @@ AutoShootCommand::AutoShootCommand(FlywheelSubsystem *flywheel,
 void AutoShootCommand::Initialize() {
   m_deployer->RetractMid();
   m_deployerExtended = false;
+  m_hasFedFuel = false;
   m_pulseStartTime = frc::Timer::GetFPGATimestamp();
+  m_clearanceStartTime = m_pulseStartTime;
+  m_feeder->SetIndexingActive(false);
+  if (m_feeder->NeedsIndexing()) {
+    m_clearanceComplete = false;
+    m_feeder->BeginClearance();
+  } else {
+    m_clearanceComplete = true;
+  }
   pathplanner::PPHolonomicDriveController::overrideRotationFeedback(
       [this]() { return m_rotationFeedback; });
 }
@@ -40,8 +50,25 @@ void AutoShootCommand::Execute() {
 
   auto solution = m_shotCalculator.Calculate(now, isRed);
 
-  m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
+  // Preclear gate.
+  if (!m_clearanceComplete) {
+    m_flywheel->SetVoltage(kPreclearFlywheelReverseVoltage);
+    m_hood->SetPosition(1_deg);
+    if (m_feeder->IsCleared() ||
+        now - m_clearanceStartTime >= Constants::Feeder::kClearanceTimeout) {
+      m_clearanceComplete = true;
+      m_feeder->SetIndexed();
+      m_feeder->Stop();
+      m_floor->Stop();
+    } else {
+      m_floor->SetVoltage(kBackoffFloorVoltage);
+      return;
+    }
+  }
+
   m_hood->SetPosition(units::radian_t{solution.hoodAngle});
+
+  m_flywheel->SetRPM(units::revolutions_per_minute_t{solution.flywheelSpeed});
 
   auto elapsed = now - m_pulseStartTime;
 
@@ -73,6 +100,7 @@ void AutoShootCommand::Execute() {
   }
 
   if (solution.ready) {
+    m_hasFedFuel = true;
     m_floor->SetVoltage(kFloorVoltage);
     m_topRoller->SetVoltage(kTopVoltage);
     m_bottomRoller->SetVoltage(kBottomVoltage);
@@ -91,7 +119,9 @@ void AutoShootCommand::End(bool interrupted) {
   m_feeder->Stop();
   m_floor->Stop();
   m_deployer->RetractMid();
-  m_feeder->ClearIndexed();
+  if (m_hasFedFuel) {
+    m_feeder->ClearIndexed();
+  }
 
   pathplanner::PPHolonomicDriveController::clearRotationFeedbackOverride();
 }

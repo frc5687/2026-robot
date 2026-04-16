@@ -1,6 +1,6 @@
-#pragma once
+// Team 5687 2026
 
-#include <numbers>
+#pragma once
 
 #include <frc/system/plant/DCMotor.h>
 #include <units/angle.h>
@@ -8,6 +8,8 @@
 #include <units/length.h>
 #include <units/mass.h>
 #include <units/moment_of_inertia.h>
+
+#include <numbers>
 
 namespace Constants {
 
@@ -35,7 +37,8 @@ inline constexpr units::meter_t kMidExtension = 0.185_m;
 inline constexpr units::meter_t kDeployedExtension = 0.285_m; // 0.29
 inline constexpr units::meter_t kFullyExtend = 0.3_m;
 inline constexpr units::turn_t kDeployedMotorRotations = 13.625_tr;
-inline constexpr double kMetersPerMotorRotation = 0.3 / kDeployedMotorRotations.value();
+inline constexpr double kMetersPerMotorRotation =
+    0.3 / kDeployedMotorRotations.value();
 
 inline constexpr units::meter_t kExtensionTolerance = 0.005_m;
 

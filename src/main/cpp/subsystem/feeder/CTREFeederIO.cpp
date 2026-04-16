@@ -20,11 +20,12 @@ CTREFeederIO::CTREFeederIO(const CANDevice &leader, const CANDevice &follower)
       m_followerStatorSignal(m_follower.GetStatorCurrent()),
       m_followerSupplySignal(m_follower.GetSupplyCurrent()),
       m_followerVoltageSignal(m_follower.GetMotorVoltage()),
-      m_signals{&m_positionSignal,        &m_velocitySignal,
-                &m_voltageSignal,         &m_statorSignal,
-                &m_supplySignal,          &m_followerStatorSignal,
-                &m_followerSupplySignal,  &m_followerVoltageSignal,
-                } {
+      m_signals{
+          &m_positionSignal,       &m_velocitySignal,
+          &m_voltageSignal,        &m_statorSignal,
+          &m_supplySignal,         &m_followerStatorSignal,
+          &m_followerSupplySignal, &m_followerVoltageSignal,
+      } {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -49,7 +50,8 @@ void CTREFeederIO::ConfigureDevices() {
 }
 
 // void CTREFeederIO::ConfigureCANRange() {
-//   m_canRangeConfig.ToFParams.UpdateMode = signals::UpdateModeValue::ShortRange100Hz;
+//   m_canRangeConfig.ToFParams.UpdateMode =
+//   signals::UpdateModeValue::ShortRange100Hz;
 //   m_canRangeConfig.FovParams.FOVRangeX = 1.0_deg; // TODO: tune
 //   m_canRangeConfig.FovParams.FOVRangeY = 1.0_deg; // TODO: tune
 //   m_canRangeConfig.ProximityParams.ProximityHysteresis = 0.03_m;
@@ -97,7 +99,6 @@ void CTREFeederIO::ConfigureSignalFrequencies() {
   m_followerVoltageSignal.SetUpdateFrequency(100_Hz);
   m_supplySignal.SetUpdateFrequency(50_Hz);
   m_followerSupplySignal.SetUpdateFrequency(50_Hz);
- 
 
   m_leader.OptimizeBusUtilization();
   m_follower.OptimizeBusUtilization();
@@ -105,7 +106,7 @@ void CTREFeederIO::ConfigureSignalFrequencies() {
 
 void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   BaseStatusSignal::RefreshAll(m_signals);
-    // different canbus cannot refresh all
+  // different canbus cannot refresh all
   inputs.motorPosition = m_positionSignal.GetValue();
   inputs.motorVelocity = m_velocitySignal.GetValue();
   inputs.appliedVolts = m_voltageSignal.GetValue();
@@ -114,7 +115,6 @@ void CTREFeederIO::UpdateInputs(FeederIOInputs &inputs) {
   inputs.followerStatorCurrent = m_followerStatorSignal.GetValue();
   inputs.followerSupplyCurrent = m_followerSupplySignal.GetValue();
   inputs.followerAppliedVolts = m_followerVoltageSignal.GetValue();
-  inputs.fuelDetected = true;
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }
 
@@ -124,13 +124,14 @@ void CTREFeederIO::SetVoltage(units::volt_t voltage) {
 }
 
 void CTREFeederIO::SetVelocity(units::turns_per_second_t rps) {
- m_leader.SetControl(
+  m_leader.SetControl(
       m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(
           kEnableFOC));
 }
 
 void CTREFeederIO::SetCurrent(units::ampere_t current) {
-  m_leader.SetControl(m_currentRequest.WithOutput(current).WithMaxAbsDutyCycle(1.0));
+  m_leader.SetControl(
+      m_currentRequest.WithOutput(current).WithMaxAbsDutyCycle(1.0));
 }
 
 void CTREFeederIO::SetPosition(units::turn_t position) {

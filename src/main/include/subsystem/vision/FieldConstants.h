@@ -1,3 +1,5 @@
+// Team 5687 2026
+
 #pragma once
 
 #include <frc/apriltag/AprilTagFieldLayout.h>
@@ -32,19 +34,18 @@ inline const frc::Translation3d kInnerCenterPoint{
 } // namespace Hub
 
 namespace Trench {
-    inline constexpr frc::Pose2d InsideTopBlue{3_m, 7.5_m, 0_deg};
-    inline constexpr frc::Pose2d OutsideTopBlue{6_m, 7.5_m, 180_deg};
+inline constexpr frc::Pose2d InsideTopBlue{3_m, 7.5_m, 0_deg};
+inline constexpr frc::Pose2d OutsideTopBlue{6_m, 7.5_m, 180_deg};
 
-    inline constexpr frc::Pose2d InsideBottomBlue{3_m, 0.5_m, 0_deg};
-    inline constexpr frc::Pose2d OutsideBottomBlue{6_m, 0.5_m, 180_deg};
+inline constexpr frc::Pose2d InsideBottomBlue{3_m, 0.5_m, 0_deg};
+inline constexpr frc::Pose2d OutsideBottomBlue{6_m, 0.5_m, 180_deg};
 
-    inline constexpr frc::Pose2d InsideTopRed{13_m, 7.5_m, 180_deg};
-    inline constexpr frc::Pose2d OutsideTopRed{10_m, 7.5_m, 0_deg};
+inline constexpr frc::Pose2d InsideTopRed{13_m, 7.5_m, 180_deg};
+inline constexpr frc::Pose2d OutsideTopRed{10_m, 7.5_m, 0_deg};
 
-    inline constexpr frc::Pose2d InsideBottomRed{13_m, 0.5_m, 180_deg};
-    inline constexpr frc::Pose2d OutsideBottomRed{10_m, 0.5_m, 0_deg};
+inline constexpr frc::Pose2d InsideBottomRed{13_m, 0.5_m, 180_deg};
+inline constexpr frc::Pose2d OutsideBottomRed{10_m, 0.5_m, 0_deg};
 } // namespace Trench
 } // namespace Field
 
 } // namespace Constants
-

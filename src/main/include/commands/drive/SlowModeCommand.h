@@ -8,10 +8,10 @@
 
 #include "subsystem/drive/DriveSubsystem.h"
 
-class SlowModeCommand : public frc2::CommandHelper<frc2::Command, SlowModeCommand> {
+class SlowModeCommand
+    : public frc2::CommandHelper<frc2::Command, SlowModeCommand> {
 public:
-  SlowModeCommand(
-    DriveSubsystem *drive);
+  SlowModeCommand(DriveSubsystem *drive);
 
   void Initialize() override;
   void Execute() override;
@@ -20,5 +20,4 @@ public:
 
 private:
   DriveSubsystem *m_drive;
-
 };

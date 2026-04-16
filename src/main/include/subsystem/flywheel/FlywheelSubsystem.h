@@ -5,10 +5,10 @@
 #include <frc/filter/LinearFilter.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
-#include <units/current.h>
-#include <units/time.h>
 #include <units/angular_velocity.h>
+#include <units/current.h>
 #include <units/power.h>
+#include <units/time.h>
 #include <units/voltage.h>
 
 #include <memory>

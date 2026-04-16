@@ -40,7 +40,7 @@ public:
   units::newton_meter_t GetDriveTorque() const;
   void ConfigureClosedLoop();
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                       units::ampere_t steerSupplyCurrentLimit);
+                        units::ampere_t steerSupplyCurrentLimit);
   bool IsConnected() const;
   void SetIsBatchedSignals(bool isBatched);
   bool IsBatched() const;

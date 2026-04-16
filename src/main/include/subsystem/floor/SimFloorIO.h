@@ -7,8 +7,8 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "subsystem/floor/FloorConstants.h"
 #include "FloorIO.h"
+#include "subsystem/floor/FloorConstants.h"
 
 class SimFloorIO : public FloorIO {
 public:
