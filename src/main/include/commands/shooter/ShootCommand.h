@@ -21,8 +21,6 @@
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
-#include "utils/TunableDouble.h"
-#include "utils/Utils.h"
 
 class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
 public:
@@ -40,6 +38,25 @@ public:
   bool IsFinished() override;
 
 private:
+  // Shoot sequence phases.
+  enum class Phase {
+    kIdle,         // wait for solution
+    kPreClear,     // clear feeder path
+    kExtendHold,   // initial feed window
+    kQuickRetract, // short retract pulse
+    kReExtend,     // extend again
+    kSlowRetract,  // final retract
+  };
+
+  void ResetSequenceState();
+  void UpdateFlywheelAndHood(const ShotSolution &solution, units::second_t now);
+  void UpdateDrive(const ShotSolution &solution);
+  void UpdateSequence(units::second_t now, bool solutionReady);
+  void EnterPhase(Phase phase, units::second_t now);
+  double BurstOffset(units::second_t now) const;
+  bool FeedersShouldRun(units::second_t now) const;
+  void RunFeeders();
+
   DriveSubsystem *m_drive;
   FlywheelSubsystem *m_flywheel;
   HoodSubsystem *m_hood;
@@ -58,36 +75,28 @@ private:
       Constants::SwerveDrive::Shooting::kAimkP, 0.0,
       Constants::SwerveDrive::Shooting::kAimkD};
 
-  // Floor
   static constexpr units::volt_t kFloorVoltage = 12_V;
-  // Feeder
-  static constexpr units::turns_per_second_t kFeederRPS = 80_tps;
-  // Top Roller
+  static constexpr units::volt_t kFeederVoltage = 12_V;
   static constexpr units::volt_t kTopVoltage = 6_V;
-  // Bottom Roller
   static constexpr units::volt_t kBottomVoltage = 6_V;
-  // Deployer pulse timing
-  static constexpr units::second_t kDeployerExtendDelay = 1.5_s;
+  static constexpr units::volt_t kBackoffFloorVoltage = -2.0_V;
+  static constexpr units::volt_t kPreclearFlywheelReverseVoltage = -1.5_V;
+
+  static constexpr units::second_t kInitialExtendDuration = 1.5_s;
   static constexpr units::second_t kPulseRetractDuration = 0.2_s;
   static constexpr units::second_t kFinalRetractDuration = 0.6_s;
-  static constexpr int kPulseCount = 1;
+
+  // Burst timing and offset.
+  static constexpr bool kEnableBurst = true;
+  static constexpr units::second_t kFeederStartDelay = 0.1_s;
+  static constexpr units::second_t kBurstRampDuration = 0.15_s;
+  static constexpr double kBurstRpmOffset = 300.0;
+  static_assert(kFeederStartDelay + kBurstRampDuration < kInitialExtendDuration,
+                "Burst profile must fit within the initial extend hold");
 
   static constexpr double kDeadband = 0.1;
 
-  bool m_shootSequenceActive{false};
-  units::second_t m_shootSequenceStartTime{0_s};
-
-  static constexpr units::volt_t kUnjamVoltage = -12_V;
-  static constexpr units::second_t m_unjamTime = 0.5_s;
-  units::second_t m_lastBall = 0.0_s;
-
-  // Deployer pulse state
-  bool m_pulsingStarted{false};
-  bool m_pulseRetracted{false};
-  bool m_finalRetractStarted{false};
-  int m_pulsesCompleted{0};
-  units::second_t m_pulseStartTime{0_s};
-
-  units::second_t m_burstTime{0.3_s};
-  double m_burstOffset{300};
+  Phase m_phase{Phase::kIdle};
+  units::second_t m_phaseStartTime{0_s};
+  bool m_hasFedFuel{false};
 };

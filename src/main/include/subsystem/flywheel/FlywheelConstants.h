@@ -50,7 +50,7 @@ constexpr double kI = 0.05;     //< Integral
 constexpr double kD = 0.0;      //< Derivative
 } // namespace PID
 
-inline constexpr units::second_t kSpinupRampDuration = 0.7_s;
+inline constexpr units::second_t kSpinupRampDuration = 1.0_s;
 constexpr units::revolutions_per_minute_t kSpinupRampThreshold{500_rpm};
 constexpr units::revolutions_per_minute_t kSpinupRetargetTolerance{10_rpm};
 constexpr units::revolutions_per_minute_t kAtSetpointTolerance{75_rpm};

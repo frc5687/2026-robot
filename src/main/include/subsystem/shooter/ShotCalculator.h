@@ -37,7 +37,6 @@ struct ShotSolution {
 
   units::degree_t hoodAngle{0};
   double flywheelSpeed = 0;
-  double burstOffset = 0;
 
   units::meter_t effectiveDistance{0};
   units::second_t timeOfFlight{0};
