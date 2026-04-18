@@ -27,7 +27,7 @@ Robot::Robot() {
   frc::DriverStation::SilenceJoystickConnectionWarning(true);
   ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::RobotController::SetBrownoutVoltage(6.0_V);
-  Logger::Instance().EnableFileLogger();
+  //Logger::Instance().EnableFileLogger();
 
   if (!frc::Notifier::SetHALThreadPriority(true, 40)) {
     wpi::errs() << "Failed to set HAL notifier thread priority\n";
