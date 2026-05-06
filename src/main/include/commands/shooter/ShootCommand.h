@@ -21,6 +21,7 @@
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 #include "subsystem/shooter/ShotCalculator.h"
+#include "utils/TunableDouble.h"
 
 class ShootCommand : public frc2::CommandHelper<frc2::Command, ShootCommand> {
 public:
@@ -99,4 +100,5 @@ private:
   Phase m_phase{Phase::kIdle};
   units::second_t m_phaseStartTime{0_s};
   bool m_hasFedFuel{false};
+  TunableDouble rmpBumpTune{"rpmBump", 0.0};
 };
