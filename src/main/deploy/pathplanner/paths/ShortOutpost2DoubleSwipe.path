@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.443328102710413,
-        "y": 0.522
+        "y": 0.5220000000000001
       },
       "nextControl": {
         "x": 4.0746273232764105,
@@ -167,6 +167,19 @@
         "nominalVoltage": 12.0,
         "unlimited": false
       }
+    },
+    {
+      "name": "Turn to trench",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 180.0,
+        "maxAngularAcceleration": 7.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
   "pointTowardsZones": [],
@@ -197,8 +210,8 @@
   "globalConstraints": {
     "maxVelocity": 3.6,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 520.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

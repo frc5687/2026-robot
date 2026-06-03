@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6845459046444464,
+        "x": 1.6845459046444466,
         "y": 6.328288794229107
       },
       "isLocked": false,
@@ -36,24 +36,24 @@
         "y": 7.574
       },
       "prevControl": {
-        "x": 4.670115362028461,
-        "y": 7.579046735452294
+        "x": 4.670460324251797,
+        "y": 7.559935985503365
       },
       "nextControl": {
-        "x": 6.005064561198273,
-        "y": 7.5520927010362255
+        "x": 5.723843373493976,
+        "y": 7.619289156626506
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.4763750000000995,
-        "y": 5.972681818177713
+        "x": 7.647120481924192,
+        "y": 5.947349397596425
       },
       "prevControl": {
-        "x": 6.683729306879671,
-        "y": 6.644050988079298
+        "x": 7.242795180719371,
+        "y": 6.701361445789198
       },
       "nextControl": null,
       "isLocked": false,
@@ -70,7 +70,21 @@
       "rotationDegrees": 180.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Turning to trench",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.585927770859266,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 180.0,
+        "maxAngularAcceleration": 10.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -88,14 +102,14 @@
   "globalConstraints": {
     "maxVelocity": 3.6,
     "maxAcceleration": 4.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 520.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 128.29016319224317
+    "rotation": 123.6900675259796
   },
   "reversed": false,
   "folder": "End Paths",
