@@ -36,24 +36,24 @@
         "y": 0.522
       },
       "prevControl": {
-        "x": 4.6091192815799715,
-        "y": 0.512642067469544
+        "x": 4.609362707259642,
+        "y": 0.5068982911106593
       },
       "nextControl": {
-        "x": 5.930352272730588,
-        "y": 0.5554697880531905
+        "x": 5.8892867332382295,
+        "y": 0.5739087018544944
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.334693295292439,
-        "y": 4.170855920114123
+        "x": 8.282938659058486,
+        "y": 0.522
       },
       "prevControl": {
-        "x": 7.428987161198288,
-        "y": 2.954621968616263
+        "x": 5.915164051355206,
+        "y": 0.5739087018544947
       },
       "nextControl": null,
       "isLocked": false,
@@ -63,15 +63,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 179.9718319749778
+      "rotationDegrees": -3.5341357241225895
     },
     {
       "waypointRelativePos": 2,
-      "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 2.2835820895522403,
-      "rotationDegrees": -140.1161390169325
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
@@ -89,8 +85,8 @@
       }
     },
     {
-      "name": "slow for battlecry doot",
-      "minWaypointRelativePos": 2.89264010803511,
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 2.819716407832539,
       "maxWaypointRelativePos": 3.0,
       "constraints": {
         "maxVelocity": 2.0,
@@ -126,7 +122,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -129.28940686250036
+    "rotation": 0.029662737330802682
   },
   "reversed": false,
   "folder": "End Paths",

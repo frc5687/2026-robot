@@ -20,11 +20,11 @@ inline constexpr units::kilogram_square_meter_t kInertia{0.001_kg_sq_m};
 
 inline constexpr bool kInverted = false;
 inline constexpr bool kEnableFOC = false;
-inline constexpr units::ampere_t kStatorCurrentLimit = 120_A;
-inline constexpr units::ampere_t kSupplyCurrentLimit = 80_A;
+inline constexpr units::ampere_t kStatorCurrentLimit = 60_A;
+inline constexpr units::ampere_t kSupplyCurrentLimit = 40_A;
 
-inline constexpr units::ampere_t kDeployedStatorCurrentLimit = 30_A;
-inline constexpr units::ampere_t kDeployedSupplyCurrentLimit = 20_A;
+inline constexpr units::ampere_t kDeployedStatorCurrentLimit = 50_A;
+inline constexpr units::ampere_t kDeployedSupplyCurrentLimit = 30_A;
 
 inline constexpr units::meter_t kPinionRadius =
     0.5_in; // TODO: set to actual pinion pitch radius

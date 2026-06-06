@@ -261,14 +261,20 @@ void RobotContainer::ConfigureAutoCommands() {
   pathplanner::NamedCommands::registerCommand(
       "SpinUpFlywheel",
       ShotCalculatedSpinUpCommand(&m_flywheel, &m_feeder, &m_floor).ToPtr());
-}
+  
+  // pathplanner::NamedCommands::registerCommand(
+  //   "park", 
+
+
+  // )
+    }
 
 void RobotContainer::ConfigureBindings() {
   using frc2::cmd::Run;
   using frc2::cmd::RunOnce;
 
-  m_feeder.SetDefaultCommand(IndexCommand(&m_feeder, &m_floor).ToPtr());
-  m_flywheel.SetDefaultCommand(FlywheelHardstopCommand(&m_flywheel).ToPtr());
+  // m_feeder.SetDefaultCommand(IndexCommand(&m_feeder, &m_floor).ToPtr());
+  // m_flywheel.SetDefaultCommand(FlywheelHardstopCommand(&m_flywheel).ToPtr());
 
   m_drive.SetDefaultCommand(DriveMaintainingHeadingCommand(
       &m_drive, [this] { return -m_driver.GetLeftY(); },

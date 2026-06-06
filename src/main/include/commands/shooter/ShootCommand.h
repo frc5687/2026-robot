@@ -79,7 +79,7 @@ private:
   static constexpr units::volt_t kFloorVoltage = 12_V;
   static constexpr units::volt_t kFeederVoltage = 12_V;
   static constexpr units::volt_t kTopVoltage = 6_V;
-  static constexpr units::volt_t kBottomVoltage = 6_V;
+  static constexpr units::volt_t kBottomVoltage = 10_V;
   static constexpr units::volt_t kBackoffFloorVoltage = -2.0_V;
   static constexpr units::volt_t kPreclearFlywheelReverseVoltage = -1.5_V;
 

@@ -3,57 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.784289156626506,
-        "y": 2.472337349397591
+        "x": 2.784,
+        "y": 5.529488636363636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6848350612709524,
-        "y": 1.6735371915321198
+        "x": 1.6845459046444466,
+        "y": 6.328288794229107
       },
       "isLocked": false,
-      "linkedName": "Outpost2-3Lazy"
+      "linkedName": "Depot 2-3Wide"
     },
     {
       "anchor": {
-        "x": 3.982363636363636,
-        "y": 0.522
+        "x": 4.0132840909090906,
+        "y": 7.574
       },
       "prevControl": {
-        "x": 2.8659708047086823,
-        "y": 0.558824522120922
+        "x": 2.8974650202019356,
+        "y": 7.522650205003123
       },
       "nextControl": {
-        "x": 4.2916232295214565,
-        "y": 0.5117989879490131
+        "x": 4.321738387122029,
+        "y": 7.588195011800974
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.897811021875887,
-        "y": 0.522
+        "x": 4.920064417760373,
+        "y": 7.574
       },
       "prevControl": {
-        "x": 4.6091192815799715,
-        "y": 0.512642067469544
+        "x": 4.670460324251796,
+        "y": 7.559935985503365
       },
       "nextControl": {
-        "x": 5.930352272730588,
-        "y": 0.5554697880531905
+        "x": 5.723843373493976,
+        "y": 7.619289156626506
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.334693295292439,
-        "y": 4.170855920114123
+        "x": 8.438202567760342,
+        "y": 4.028530670470756
       },
       "prevControl": {
-        "x": 7.428987161198288,
-        "y": 2.954621968616263
+        "x": 7.946533523537802,
+        "y": 4.675463623395149
       },
       "nextControl": null,
       "isLocked": false,
@@ -63,22 +63,22 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 179.9718319749778
+      "rotationDegrees": -179.30972280213498
     },
     {
-      "waypointRelativePos": 2,
+      "waypointRelativePos": 2.0,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 2.2835820895522403,
-      "rotationDegrees": -140.1161390169325
+      "waypointRelativePos": 2.257995735607684,
+      "rotationDegrees": 126.90810484739224
     }
   ],
   "constraintZones": [
     {
       "name": "Turning to trench",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.6531755915317263,
+      "maxWaypointRelativePos": 1.585927770859266,
       "constraints": {
         "maxVelocity": 3.6,
         "maxAcceleration": 4.5,
@@ -89,8 +89,8 @@
       }
     },
     {
-      "name": "slow for battlecry doot",
-      "minWaypointRelativePos": 2.89264010803511,
+      "name": "slow to doot",
+      "minWaypointRelativePos": 2.8764348413234115,
       "maxWaypointRelativePos": 3.0,
       "constraints": {
         "maxVelocity": 2.0,
@@ -106,7 +106,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 1.6,
+      "waypointRelativePos": 1.1,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -126,13 +126,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -129.28940686250036
+    "rotation": 127.62623363866982
   },
   "reversed": false,
   "folder": "End Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 41.34777721969365
+    "rotation": -42.78795799795166
   },
   "useDefaultConstraints": true
 }

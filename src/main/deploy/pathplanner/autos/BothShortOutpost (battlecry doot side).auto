@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ShortDepot1DoubleSwipe"
+            "pathName": "ShortOutpost1DoubleSwipe"
           }
         },
         {
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ShortDepot2DoubleSwipe"
+            "pathName": "ShortOutpost2DoubleSwipe"
           }
         },
         {
@@ -42,7 +42,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 2.5
                 }
               },
               {
@@ -57,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot3DoubleSwipe battlecry doot"
+            "pathName": "Outpost3DoubleSwipe battlecry doot side"
           }
         }
       ]
