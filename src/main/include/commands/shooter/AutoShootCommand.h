@@ -60,7 +60,7 @@ private:
   static constexpr units::volt_t kBackoffFloorVoltage = -2.0_V;
   static constexpr units::volt_t kPreclearFlywheelReverseVoltage = -1.5_V;
   static constexpr units::volt_t kTopVoltage = 10_V;
-  static constexpr units::volt_t kBottomVoltage = 10_V;
+  static constexpr units::volt_t kBottomVoltage = 12_V;
   static constexpr units::turns_per_second_t kKickerRPS = 75_tps;
   static constexpr units::volt_t kFeederVoltage = 12_V;
   static constexpr units::second_t kPulseExtendDuration = 0.3_s;

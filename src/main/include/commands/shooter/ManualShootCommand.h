@@ -52,7 +52,7 @@ private:
   // Top Roller
   static constexpr units::volt_t kTopVoltage = 6_V;
   // Bottom Roller
-  static constexpr units::volt_t kBottomVoltage = 10_V;
+  static constexpr units::volt_t kBottomVoltage = 12_V;
   // Deployer
   static constexpr units::second_t kDeployerExtendDelay = 1.5_s;
   static constexpr units::second_t kSlowRetractDuration = 1.0_s;
