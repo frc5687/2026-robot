@@ -10,7 +10,7 @@
 #include <units/length.h>
 #include <units/time.h>
 
-#include "Constants.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "utils/InterpolatingTreeMap.h"
 
 struct ShotConfig {
@@ -37,6 +37,7 @@ struct ShotSolution {
 
   units::degree_t hoodAngle{0};
   double flywheelSpeed = 0;
+  double burstOffset = 0;
 
   units::meter_t effectiveDistance{0};
   units::second_t timeOfFlight{0};

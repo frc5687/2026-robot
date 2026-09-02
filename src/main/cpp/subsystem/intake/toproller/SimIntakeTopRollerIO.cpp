@@ -7,7 +7,7 @@
 
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeTopRoller;
 
@@ -56,12 +56,19 @@ void SimIntakeTopRollerIO::UpdateInputs(IntakeTopRollerIOInputs &inputs) {
   inputs.appliedVolts = voltage;
   inputs.statorCurrent = m_motorSim.GetCurrentDraw();
   inputs.supplyCurrent = m_motorSim.GetCurrentDraw();
+  inputs.followerAppliedVolts = voltage;
+  inputs.followerStatorCurrent = m_motorSim.GetCurrentDraw();
+  inputs.followerSupplyCurrent = m_motorSim.GetCurrentDraw();
   inputs.timestamp = frc::Timer::GetFPGATimestamp();
 }
 
 void SimIntakeTopRollerIO::SetVoltage(units::volt_t voltage) {
   m_mode = Mode::kVoltage;
   m_voltageCommand = voltage;
+}
+
+void SimIntakeTopRollerIO::SetCurrent(units::ampere_t /* current */) {
+  m_mode = Mode::kVoltage;
 }
 
 void SimIntakeTopRollerIO::SetVelocity(units::turns_per_second_t rps) {

@@ -39,8 +39,7 @@ inline constexpr CANDevice LeftFollowerFlywheel{23, Bus::kShooter};
 inline constexpr CANDevice FeederLeader{24, Bus::kShooter};
 inline constexpr CANDevice FeederFollower{25, Bus::kShooter};
 
-inline constexpr CANDevice KickerLeader{27, Bus::kShooter};   // left
-inline constexpr CANDevice KickerFollower{26, Bus::kShooter}; // right
+inline constexpr CANDevice FloorMotor{29, Bus::kDriveTrain};
 
 inline constexpr CANDevice IntakeDeployer{19, Bus::kDriveTrain};
 
@@ -63,8 +62,12 @@ inline constexpr CANDevice IMU{0, Bus::kDriveTrain};
 } // namespace Pidgeon2
 
 namespace CANdle {
-    inline constexpr CANDevice CANdle{0, Bus::kRio};
-}
+inline constexpr CANDevice CANdle{0, Bus::kRio};
+} // namespace CANdle
+
+namespace CANRange {
+inline constexpr CANDevice FeederCANRange{1, Bus::kDriveTrain};
+} // namespace CANRange
 } // namespace CAN
 
 } // namespace HardwareMap

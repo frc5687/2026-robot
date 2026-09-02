@@ -6,8 +6,8 @@
 
 #include <numbers>
 
-#include "Constants.h"
 #include "RobotState.h"
+#include "subsystem/hood/HoodConstants.h"
 
 using namespace Constants::Hood;
 
@@ -56,7 +56,14 @@ void HoodSubsystem::LogTelemetry() {
   Log("MotorPosition", m_inputs.motorPosition.value());
   Log("MotorVelocity", m_inputs.motorVelocity.value());
   Log("AppliedVolts", m_inputs.appliedVolts.value());
-  Log("StatorCurrent", m_inputs.statorCurrent.value());
-  Log("SupplyCurrent", m_inputs.supplyCurrent.value());
+  Log("Current/Leader/Supply", m_inputs.supplyCurrent.value());
   Log("MechanismAngleRad", GetPosition().value());
+}
+
+units::ampere_t HoodSubsystem::GetElectricalCurrentDraw() const {
+  return m_inputs.supplyCurrent;
+}
+
+units::watt_t HoodSubsystem::GetElectricalPowerDraw() const {
+  return units::math::abs(m_inputs.supplyCurrent) * m_inputs.appliedVolts;
 }

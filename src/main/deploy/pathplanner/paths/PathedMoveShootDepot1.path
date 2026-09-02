@@ -1,0 +1,242 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.37546362339515,
+        "y": 7.53490727532097
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.37546362339515,
+        "y": 7.53490727532097
+      },
+      "isLocked": false,
+      "linkedName": "Depot Start"
+    },
+    {
+      "anchor": {
+        "x": 8.395,
+        "y": 7.240420454545455
+      },
+      "prevControl": {
+        "x": 8.247526748578299,
+        "y": 7.747359756307551
+      },
+      "nextControl": {
+        "x": 8.559909090909091,
+        "y": 6.6735454545454544
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.352454545454545,
+        "y": 5.034761363636364
+      },
+      "prevControl": {
+        "x": 8.568897727272727,
+        "y": 5.5088750000000015
+      },
+      "nextControl": {
+        "x": 7.962543748906764,
+        "y": 4.180671047388843
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.8892867332382295,
+        "y": 5.361212553495007
+      },
+      "prevControl": {
+        "x": 6.777093174953264,
+        "y": 5.349888957653342
+      },
+      "nextControl": {
+        "x": 4.817215909090908,
+        "y": 5.374886363636364
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.5185568181818176,
+        "y": 5.361212553495007
+      },
+      "prevControl": {
+        "x": 4.126019161299116,
+        "y": 5.386776232698942
+      },
+      "nextControl": {
+        "x": 3.2687778942026653,
+        "y": 5.350701172243389
+      },
+      "isLocked": false,
+      "linkedName": "PathedMoveShootDepotA"
+    },
+    {
+      "anchor": {
+        "x": 3.1799546992413976,
+        "y": 6.879471548338082
+      },
+      "prevControl": {
+        "x": 3.1125482534069953,
+        "y": 6.6387302534591734
+      },
+      "nextControl": {
+        "x": 3.2778288585929496,
+        "y": 7.229027908502258
+      },
+      "isLocked": false,
+      "linkedName": "PathedMoveShootDepotB"
+    },
+    {
+      "anchor": {
+        "x": 4.28645271719147,
+        "y": 7.335823838227095
+      },
+      "prevControl": {
+        "x": 4.03645271719147,
+        "y": 7.335823838227095
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "PathedMoveShootDepot1-2"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 79.69515353123418
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 60.751173663453024
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -34.21570213243726
+    },
+    {
+      "waypointRelativePos": 4,
+      "rotationDegrees": -48.80482129799519
+    },
+    {
+      "waypointRelativePos": 5,
+      "rotationDegrees": -63.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Bump",
+      "minWaypointRelativePos": 3.199281867145422,
+      "maxWaypointRelativePos": 3.61938958707361,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Intaking Dense Balls",
+      "minWaypointRelativePos": 1.3300248138957815,
+      "maxWaypointRelativePos": 2.274937965260535,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 520.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Shoot",
+      "minWaypointRelativePos": 4.028725314183125,
+      "maxWaypointRelativePos": 4.9551166965888775,
+      "constraints": {
+        "maxVelocity": 0.37,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 520.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Turning to trench",
+      "minWaypointRelativePos": 4.0535491905354775,
+      "maxWaypointRelativePos": 6.0,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 180.0,
+        "maxAngularAcceleration": 10.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.13144985465116282,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 2.919210053859963,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
+    },
+    {
+      "name": "AutoShoot",
+      "waypointRelativePos": 4.1,
+      "endWaypointRelativePos": 4.93,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "AutoShoot"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 2.0,
+    "rotation": 179.9999999997047
+  },
+  "reversed": false,
+  "folder": "MoveShootDepot",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": true
+}

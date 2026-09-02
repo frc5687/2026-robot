@@ -9,4 +9,5 @@ cppSrcFileInclude {
 }
 modifiableFileExclude {
    gradle/
+   src/main/deploy/
 }

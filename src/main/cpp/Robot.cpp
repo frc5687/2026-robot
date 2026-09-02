@@ -10,6 +10,7 @@
 #include <frc2/command/CommandScheduler.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/RunCommand.h>
+#include <networktables/NetworkTableInstance.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -18,14 +19,15 @@
 #include <ctre/phoenix6/SignalLogger.hpp>
 
 #include "frc/RobotController.h"
-#include "subsystem/CoordinatedSystemManager.h"
+#include "utils/Logger.h"
 #include "utils/MatchTracker.h"
 
 Robot::Robot() {
   frc::LiveWindow::DisableAllTelemetry();
-  ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::DriverStation::SilenceJoystickConnectionWarning(true);
+  ctre::phoenix6::SignalLogger::EnableAutoLogging(false);
   frc::RobotController::SetBrownoutVoltage(6.0_V);
+  //Logger::Instance().EnableFileLogger();
 
   if (!frc::Notifier::SetHALThreadPriority(true, 40)) {
     wpi::errs() << "Failed to set HAL notifier thread priority\n";
@@ -43,7 +45,6 @@ void Robot::RobotPeriodic() {
 
   frc2::CommandScheduler::GetInstance().Run();
   m_container.Periodic();
-  CoordinatedSystemManager::Instance().UpdateAll();
 
   auto endTime = frc::Timer::GetFPGATimestamp();
   MatchTracker::Instance().LogState(endTime);
@@ -57,7 +58,7 @@ void Robot::DisabledExit() {}
 
 void Robot::AutonomousInit() {
   MatchTracker::Instance().OnAutonomousInit();
-  m_container.SetAutoDriveCurrentLimits();
+  // m_container.SetAutoDriveCurrentLimits();
   m_autonomousCommand = m_container.GetAutonomousCommand();
   if (m_autonomousCommand != nullptr) {
     frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand);

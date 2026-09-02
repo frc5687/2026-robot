@@ -12,17 +12,20 @@
 
 #include "Constants.h"
 #include "frc/DriverStation.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
+#include "units/angle.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
 
 DriveMaintainingHeadingCommand::DriveMaintainingHeadingCommand(
     DriveSubsystem *driveSubsystem, std::function<double()> throttle,
     std::function<double()> strafe, std::function<double()> turn,
-    std::function<bool()> headingFlag, bool enableSlewRate)
+    std::function<bool()> headingFlag, std::function<bool()> intakeFlag,
+    bool enableSlewRate)
     : m_driveSubsystem(driveSubsystem), m_throttleSupplier(throttle),
       m_strafeSupplier(strafe), m_turnSupplier(turn),
       m_enableSlewRate(enableSlewRate), m_joystickLastTouched(-1.0),
-      m_headingFlag(headingFlag) {
+      m_headingFlag(headingFlag), m_intakeFlag(intakeFlag) {
   AddRequirements(driveSubsystem);
   SetName("Drive Maintaining Heading");
 
@@ -44,7 +47,7 @@ void DriveMaintainingHeadingCommand::Initialize() {
 }
 
 void DriveMaintainingHeadingCommand::Execute() {
-  frc::Rotation2d heading = m_driveSubsystem->GetHeading();
+  frc::Rotation2d heading = m_driveSubsystem->GetEstimatedHeading();
   auto currentSpeeds = m_driveSubsystem->GetChassisSpeeds();
 
   std::optional<frc::DriverStation::Alliance> alliance =
@@ -91,7 +94,7 @@ void DriveMaintainingHeadingCommand::Execute() {
 
   units::radians_per_second_t rotVelocity;
 
-  if (m_headingFlag) {
+  if (m_headingFlag()) {
     m_headingSetpoint = std::nullopt;
     m_headingController.Reset();
   }
@@ -106,8 +109,22 @@ void DriveMaintainingHeadingCommand::Execute() {
       m_headingController.Reset();
     }
 
+    if (m_intakeFlag()) {
+      auto angle = std::atan2(strafe, throttle);
+      m_headingSetpoint = frc::Rotation2d(units::radian_t{angle});
+      if (alliance.has_value() &&
+          alliance.value() == frc::DriverStation::Alliance::kBlue) {
+        m_headingSetpoint = m_headingSetpoint->RotateBy(180_deg);
+      }
+      if (throttle == 0.0 && strafe == 0.0) {
+        m_headingSetpoint = heading;
+      }
+    }
     rotVelocity =
         CalculateHeadingCorrection(heading, m_headingSetpoint.value());
+  }
+  if (m_headingSetpoint.has_value()) {
+    Logger::Instance().Log("desired heading", m_headingSetpoint.value());
   }
   m_driveSubsystem->DriveFieldRelative(
       frc::ChassisSpeeds{xVelocity, yVelocity, rotVelocity});
@@ -124,14 +141,6 @@ bool DriveMaintainingHeadingCommand::IsFinished() { return false; }
 void DriveMaintainingHeadingCommand::SetHeadingPID(double kP, double kI,
                                                    double kD) {
   m_headingController.SetPID(kP, kI, kD);
-}
-
-double DriveMaintainingHeadingCommand::ApplyDeadband(double value,
-                                                     double deadband) {
-  if (std::abs(value) < deadband) {
-    return 0.0;
-  }
-  return (value - std::copysign(deadband, value)) / (1.0 - deadband);
 }
 
 units::radians_per_second_t

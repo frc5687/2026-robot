@@ -1,0 +1,84 @@
+// Team 5687 2026
+
+#include "subsystem/floor/CTREFloorIO.h"
+
+#include <frc/Timer.h>
+
+#include "subsystem/floor/FloorConstants.h"
+
+using namespace Constants::Floor;
+using namespace ctre::phoenix6;
+
+CTREFloorIO::CTREFloorIO(const CANDevice &motor)
+    : m_motor(motor.id, motor.bus), m_positionSignal(m_motor.GetPosition()),
+      m_velocitySignal(m_motor.GetVelocity()),
+      m_voltageSignal(m_motor.GetMotorVoltage()),
+      m_statorSignal(m_motor.GetStatorCurrent()),
+      m_supplySignal(m_motor.GetSupplyCurrent()),
+      m_signals{&m_positionSignal, &m_velocitySignal, &m_voltageSignal,
+                &m_statorSignal, &m_supplySignal} {
+  ConfigureDevices();
+  ConfigureSignalFrequencies();
+}
+
+void CTREFloorIO::ConfigureDevices() {
+  m_config.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
+  m_config.MotorOutput.Inverted =
+      kInverted ? signals::InvertedValue::Clockwise_Positive
+                : signals::InvertedValue::CounterClockwise_Positive;
+
+  m_config.CurrentLimits.StatorCurrentLimit = kStatorCurrentLimit;
+  m_config.CurrentLimits.StatorCurrentLimitEnable = true;
+  m_config.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
+  m_config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+  ConfigureClosedLoop();
+  m_motor.GetConfigurator().Apply(m_config);
+}
+
+void CTREFloorIO::ConfigureClosedLoop() {
+  m_config.Slot0.kS = PID::kS;
+  m_config.Slot0.kV = PID::kV;
+  m_config.Slot0.kA = PID::kA;
+  m_config.Slot0.kP = PID::kP;
+  m_config.Slot0.kI = PID::kI;
+  m_config.Slot0.kD = PID::kD;
+}
+
+void CTREFloorIO::ConfigureSignalFrequencies() {
+  m_positionSignal.SetUpdateFrequency(100_Hz);
+  m_velocitySignal.SetUpdateFrequency(100_Hz);
+  m_voltageSignal.SetUpdateFrequency(100_Hz);
+  m_statorSignal.SetUpdateFrequency(100_Hz);
+  m_supplySignal.SetUpdateFrequency(50_Hz);
+
+  m_motor.OptimizeBusUtilization();
+}
+
+void CTREFloorIO::UpdateInputs(FloorIOInputs &inputs) {
+  BaseStatusSignal::RefreshAll(m_signals);
+
+  inputs.motorPosition = m_positionSignal.GetValue();
+  inputs.motorVelocity = m_velocitySignal.GetValue();
+  inputs.appliedVolts = m_voltageSignal.GetValue();
+  inputs.statorCurrent = m_statorSignal.GetValue();
+  inputs.supplyCurrent = m_supplySignal.GetValue();
+  inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
+}
+
+void CTREFloorIO::SetVoltage(units::volt_t voltage) {
+  m_motor.SetControl(
+      m_voltageRequest.WithOutput(voltage).WithEnableFOC(kEnableFOC));
+}
+
+void CTREFloorIO::SetCurrent(units::ampere_t current) {
+  m_motor.SetControl(m_currentRequest.WithOutput(current));
+}
+
+void CTREFloorIO::SetVelocity(units::turns_per_second_t rps) {
+  m_motor.SetControl(
+      m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
+}
+
+void CTREFloorIO::Stop() { m_motor.SetControl(m_neutralRequest); }

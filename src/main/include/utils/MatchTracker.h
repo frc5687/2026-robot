@@ -1,3 +1,5 @@
+// Team 5687 2026
+
 #pragma once
 
 #include <frc/DriverStation.h>
@@ -56,15 +58,15 @@ public:
   void LogState(units::second_t timestamp);
 
   std::string MatchPhaseToString(MatchPhase phase) const;
-  std::string MatchAllianceToString(
-      frc::DriverStation::Alliance alliance) const;
+  std::string
+  MatchAllianceToString(frc::DriverStation::Alliance alliance) const;
 
 private:
   MatchTracker() = default;
 
   MatchPhase GetMatchPhaseAt(units::second_t elapsed) const;
-  std::optional<frc::DriverStation::Alliance> GetActiveAllianceForPhase(
-      MatchPhase phase) const;
+  std::optional<frc::DriverStation::Alliance>
+  GetActiveAllianceForPhase(MatchPhase phase) const;
   std::optional<frc::DriverStation::Alliance> GetCurrentAlliance() const;
   std::optional<frc::DriverStation::Alliance> ParseAllianceFromGameData() const;
 

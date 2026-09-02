@@ -7,8 +7,8 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "Constants.h"
 #include "FeederIO.h"
+#include "subsystem/feeder/FeederConstants.h"
 
 class SimFeederIO : public FeederIO {
 public:
@@ -18,6 +18,8 @@ public:
   void UpdateInputs(FeederIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
   void SetVelocity(units::turns_per_second_t rps) override;
+  void SetCurrent(units::ampere_t current) override;
+  void SetPosition(units::turn_t position) override;
   void Stop() override;
 
 private:

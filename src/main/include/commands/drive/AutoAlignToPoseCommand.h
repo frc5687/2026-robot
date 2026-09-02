@@ -17,27 +17,27 @@
 class AutoAlignToPoseCommand
     : public frc2::CommandHelper<frc2::Command, AutoAlignToPoseCommand> {
 public:
-    AutoAlignToPoseCommand(DriveSubsystem* driveSubsystem,
-                           frc::Pose2d targetPose,
-                           double constraintFactor = 1.0);
+  AutoAlignToPoseCommand(DriveSubsystem *driveSubsystem,
+                         std::function<frc::Pose2d()> targetPoseFunction,
+                         double constraintFactor = 1.0);
 
-    void Initialize() override;
-    void Execute() override;
-    void End(bool interrupted) override;
-    bool IsFinished() override;
+  void Initialize() override;
+  void Execute() override;
+  void End(bool interrupted) override;
+  bool IsFinished() override;
 
 private:
-    DriveSubsystem* m_driveSubsystem;
-    frc::Pose2d m_targetPose;
+  DriveSubsystem *m_driveSubsystem;
+  std::function<frc::Pose2d()> m_targetPoseFunction;
 
-    frc::ProfiledPIDController<units::meters> m_driveController;
-    frc::ProfiledPIDController<units::radians> m_thetaController;
+  frc::ProfiledPIDController<units::meters> m_driveController;
+  frc::ProfiledPIDController<units::radians> m_thetaController;
 
-    double m_driveErrorAbs{0.0};
-    double m_thetaErrorAbs{0.0};
+  double m_driveErrorAbs{0.0};
+  double m_thetaErrorAbs{0.0};
 
-    // Feedforward fades from 1 (at ffMaxRadius and beyond) to 0 (at ffMinRadius
-    // and closer), preventing the ff term from fighting the PID near the goal.
-    static constexpr units::meter_t kFfMinRadius = 0.0_m;
-    static constexpr units::meter_t kFfMaxRadius = 0.1_m;
+  // Feedforward fades from 1 (at ffMaxRadius and beyond) to 0 (at ffMinRadius
+  // and closer), preventing the ff term from fighting the PID near the goal.
+  static constexpr units::meter_t kFfMinRadius = 0.0_m;
+  static constexpr units::meter_t kFfMaxRadius = 0.1_m;
 };

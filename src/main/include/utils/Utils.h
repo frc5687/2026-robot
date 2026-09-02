@@ -40,3 +40,9 @@ template <typename T> // LerpSupported later
 T Lerp(const T &start, const T &end, double t) {
   return start + (end - start) * t;
 }
+
+inline double ApplyDeadband(double value, double deadband) {
+  if (std::abs(value) < deadband)
+    return 0.0;
+  return (value - std::copysign(deadband, value)) / (1.0 - deadband);
+}

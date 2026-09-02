@@ -4,7 +4,7 @@
 
 #include <frc/RobotController.h>
 
-#include "Constants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "utils/Utils.h"
 
 using namespace Constants::SwerveDrive::Module;
@@ -22,6 +22,7 @@ CTREModuleIO::CTREModuleIO(const DeviceIDs &ids, const ModuleConfig &config)
       m_driveTempSignal(m_driveMotor.GetDeviceTemp()),
       m_steerPositionSignal(m_steerMotor.GetPosition()),
       m_steerVelocitySignal(m_steerMotor.GetVelocity()),
+      m_steerCurrentSignal(m_steerMotor.GetSupplyCurrent()),
       m_steerVoltageSignal(m_steerMotor.GetMotorVoltage()),
       m_steerTempSignal(m_steerMotor.GetDeviceTemp()),
       m_encoderPositionSignal(m_encoder.GetAbsolutePosition()),
@@ -31,7 +32,8 @@ CTREModuleIO::CTREModuleIO(const DeviceIDs &ids, const ModuleConfig &config)
       m_batchedSignals{
           &m_driveCurrentSignal, &m_driveTorqueCurrentSignal,
           &m_driveVoltageSignal, &m_driveTempSignal,
-          &m_steerVoltageSignal, &m_steerTempSignal,
+          &m_steerCurrentSignal, &m_steerVoltageSignal,
+          &m_steerTempSignal,
       } {
   ConfigureDevices();
   ConfigureSignalFrequencies();
@@ -53,8 +55,9 @@ void CTREModuleIO::ConfigureDevices() {
   m_driveConfig.CurrentLimits.StatorCurrentLimit = kDriveSlipCurrent;
   m_driveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-  SetCurrentLimits(Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
-                  Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
+  SetCurrentLimits(
+      Constants::SwerveDrive::Module::kDriveSupplyCurrentLimitAuto,
+      Constants::SwerveDrive::Module::kSteerSupplyCurrentLimitAuto);
 
   m_steerConfig.MotorOutput.Inverted =
       kSteerInverted ? signals::InvertedValue::Clockwise_Positive
@@ -119,6 +122,7 @@ void CTREModuleIO::UpdateInputs(ModuleIOInputs &inputs, bool isBatched) {
   inputs.steerPosition = steerTurnsWrapped;
 
   inputs.driveCurrentDraw = m_driveCurrentSignal.GetValue();
+  inputs.steerCurrentDraw = m_steerCurrentSignal.GetValue();
   inputs.driveTorque =
       kDriveMotor.Torque(m_driveTorqueCurrentSignal.GetValue());
   inputs.driveAppliedVolts = m_driveVoltageSignal.GetValue();
@@ -135,8 +139,9 @@ void CTREModuleIO::UpdateInputs(ModuleIOInputs &inputs, bool isBatched) {
 void CTREModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
   // --- Steer: command in TURNS, enable wrap in config
   const units::turn_t targetSteerTurns = state.angle.Radians();
-  m_steerMotor.SetControl(
-      m_steerPosition.WithPosition(targetSteerTurns).WithSlot(0).WithEnableFOC(kSteerFOC));
+  m_steerMotor.SetControl(m_steerPosition.WithPosition(targetSteerTurns)
+                              .WithSlot(0)
+                              .WithEnableFOC(kSteerFOC));
 
   // --- Drive: convert wheel velocity to motor rotor velocity
   constexpr auto metersPerTurn = kMeterPerTurn;
@@ -148,7 +153,9 @@ void CTREModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
   // Convert wheel turns per second to motor rotor turns per second
   const units::turns_per_second_t motorRps = wheelRps * driveGearRatio;
 
-  m_driveMotor.SetControl(m_driveVelocity.WithVelocity(motorRps).WithSlot(0).WithEnableFOC(kDriveFOC));
+  m_driveMotor.SetControl(
+      m_driveVelocity.WithVelocity(motorRps).WithSlot(0).WithEnableFOC(
+          kDriveFOC));
 }
 
 void CTREModuleIO::Stop() {
@@ -212,6 +219,7 @@ void CTREModuleIO::ConfigureSignalFrequencies() {
   m_driveVelocitySignal.SetUpdateFrequency(250_Hz);
   m_drivePositionSignal.SetUpdateFrequency(250_Hz);
   m_driveCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_steerCurrentSignal.SetUpdateFrequency(50_Hz);
   m_driveVoltageSignal.SetUpdateFrequency(50_Hz);
   m_driveTempSignal.SetUpdateFrequency(4_Hz);
 

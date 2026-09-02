@@ -16,8 +16,6 @@ public:
   RobotViz() : m_robotState(RobotState::Instance()) {}
   void Update();
 
-  void FutureViz(units::second_t futureDt);
-
 private:
   RobotState &m_robotState;
 

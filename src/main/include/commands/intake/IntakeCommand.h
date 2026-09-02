@@ -7,17 +7,17 @@
 #include <units/voltage.h>
 
 #include "subsystem/drive/DriveSubsystem.h"
+#include "subsystem/feeder/FeederSubsystem.h"
 #include "subsystem/intake/bottomroller/IntakeBottomRollerSubsystem.h"
 #include "subsystem/intake/deployer/IntakeDeployerSubsystem.h"
 #include "subsystem/intake/toproller/IntakeTopRollerSubsystem.h"
 
 class IntakeCommand : public frc2::CommandHelper<frc2::Command, IntakeCommand> {
 public:
-  IntakeCommand(
-    DriveSubsystem *drive,
-    IntakeDeployerSubsystem *deployer,
+  IntakeCommand(DriveSubsystem *drive, IntakeDeployerSubsystem *deployer,
                 IntakeTopRollerSubsystem *topRoller,
-                IntakeBottomRollerSubsystem *bottomRoller);
+                IntakeBottomRollerSubsystem *bottomRoller,
+                FeederSubsystem *feeder);
 
   void Initialize() override;
   void Execute() override;
@@ -29,8 +29,12 @@ private:
   IntakeDeployerSubsystem *m_deployer;
   IntakeTopRollerSubsystem *m_topRoller;
   IntakeBottomRollerSubsystem *m_bottomRoller;
+  FeederSubsystem *m_feeder;
 
-  static constexpr units::volt_t kTopRollerVoltage = 7_V;
-  static constexpr units::volt_t kBottomRollerVoltage = 7_V;
-  static constexpr units::volt_t kFeederVoltage = 8_V;
+  static constexpr units::volt_t kTopRollerVoltage = 10_V;
+  static constexpr units::volt_t kBottomRollerVoltage = 10_V;
+
+  static constexpr units::ampere_t kTopRollerCurrent = 60_A;
+  static constexpr units::ampere_t kBottomRollerCurrent = 40_A;
+
 };

@@ -3,7 +3,11 @@
 #pragma once
 
 #include <frc2/command/Command.h>
+#include <frc2/command/CommandPtr.h>
+#include <frc2/command/sysid/SysIdRoutine.h>
 #include <units/angular_velocity.h>
+#include <units/current.h>
+#include <units/power.h>
 #include <units/voltage.h>
 
 #include <memory>
@@ -17,10 +21,29 @@ public:
   explicit FeederSubsystem(std::unique_ptr<FeederIO> io);
 
   void SetVoltage(units::volt_t voltage);
+  void SetCurrent(units::ampere_t current);
   void SetVelocity(units::turns_per_second_t rps);
+  void SetPosition(units::turn_t position);
   void Stop();
+  units::turn_t GetPosition() const;
+  frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);
+  frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction);
+
+  bool NeedsIndexing() const;
+  bool ShouldIndex() const;
+  bool IsIntaking() const;
+  void SetIndexed();
+  void ClearIndexed();
+  void SetIndexingActive(bool active);
+  void SetIntaking(bool intaking);
+
+  // Sensorless flywheel-clearance handshake.
+  void BeginClearance();
+  bool IsCleared() const;
 
   const FeederState &GetState() const { return m_state; }
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
 protected:
   void UpdateInputs() override;
@@ -30,4 +53,13 @@ private:
   std::unique_ptr<FeederIO> m_io;
   FeederIOInputs m_inputs{};
   FeederState m_state{};
+  bool m_needsIndexing{true};
+  bool m_indexingActive{false};
+  bool m_isIntaking{false};
+  units::turn_t m_clearanceTarget{0_tr};
+  bool m_clearanceActive{false};
+
+  frc2::sysid::SysIdRoutine m_sysIdRoutine;
+  void SysIdDrive(units::volt_t voltage);
+  void SysIdLog(frc::sysid::SysIdRoutineLog *log);
 };

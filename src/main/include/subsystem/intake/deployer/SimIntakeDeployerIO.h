@@ -7,8 +7,8 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "Constants.h"
 #include "IntakeDeployerIO.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 class SimIntakeDeployerIO : public IntakeDeployerIO {
 public:
@@ -20,6 +20,7 @@ public:
   void SetVoltage(units::volt_t voltage) override;
   void ZeroPosition() override;
   void Stop() override;
+  void SetCurrentLimits(units::ampere_t currentlimit) override;
 
 private:
   units::volt_t CalculateClosedLoop();

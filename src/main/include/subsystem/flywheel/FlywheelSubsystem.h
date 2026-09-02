@@ -5,8 +5,10 @@
 #include <frc/filter/LinearFilter.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
-#include <units/time.h>
 #include <units/angular_velocity.h>
+#include <units/current.h>
+#include <units/power.h>
+#include <units/time.h>
 #include <units/voltage.h>
 
 #include <memory>
@@ -20,13 +22,17 @@ public:
   explicit FlywheelSubsystem(std::unique_ptr<FlywheelIO> io);
 
   void SetRPM(units::revolutions_per_minute_t desiredRPM);
+  void SetVoltage(units::volt_t voltage);
   bool AtSetpoint() const;
+  units::revolutions_per_minute_t GetFilteredRPM() const;
 
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);
   frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction);
 
   void UpdateInputs();
   void LogTelemetry();
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
 private:
   std::unique_ptr<FlywheelIO> m_io;

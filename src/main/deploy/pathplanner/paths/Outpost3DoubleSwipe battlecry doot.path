@@ -1,0 +1,138 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.784289156626506,
+        "y": 2.472337349397591
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6848350612709524,
+        "y": 1.6735371915321198
+      },
+      "isLocked": false,
+      "linkedName": "Outpost2-3Lazy"
+    },
+    {
+      "anchor": {
+        "x": 3.982363636363636,
+        "y": 0.522
+      },
+      "prevControl": {
+        "x": 2.8659708047086823,
+        "y": 0.558824522120922
+      },
+      "nextControl": {
+        "x": 4.2916232295214565,
+        "y": 0.5117989879490131
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.897811021875887,
+        "y": 0.522
+      },
+      "prevControl": {
+        "x": 4.6091192815799715,
+        "y": 0.512642067469544
+      },
+      "nextControl": {
+        "x": 5.930352272730588,
+        "y": 0.5554697880531905
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.334693295292439,
+        "y": 4.170855920114123
+      },
+      "prevControl": {
+        "x": 7.428987161198288,
+        "y": 2.954621968616263
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 179.9718319749778
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 2.2835820895522403,
+      "rotationDegrees": -140.1161390169325
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Turning to trench",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.6531755915317263,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 180.0,
+        "maxAngularAcceleration": 10.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "slow for battlecry doot",
+      "minWaypointRelativePos": 2.89264010803511,
+      "maxWaypointRelativePos": 3.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 120.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 1.6,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -129.28940686250036
+  },
+  "reversed": false,
+  "folder": "End Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 41.34777721969365
+  },
+  "useDefaultConstraints": true
+}

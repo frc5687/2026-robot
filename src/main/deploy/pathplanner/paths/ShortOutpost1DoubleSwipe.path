@@ -1,0 +1,185 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.323708987161198,
+        "y": 0.4962767475035662
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.323708987161197,
+        "y": 0.4962767475035662
+      },
+      "isLocked": false,
+      "linkedName": "Outpost Start"
+    },
+    {
+      "anchor": {
+        "x": 7.881840228245363,
+        "y": 1.0785164051355207
+      },
+      "prevControl": {
+        "x": 7.667403235872312,
+        "y": 0.5960220773947673
+      },
+      "nextControl": {
+        "x": 8.087972633646489,
+        "y": 1.542324982512772
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.192368045649072,
+        "y": 3.174579172610556
+      },
+      "prevControl": {
+        "x": 8.537872851202028,
+        "y": 2.6480956593870015
+      },
+      "nextControl": {
+        "x": 7.975924863830892,
+        "y": 3.5043973544287375
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.84216457960644,
+        "y": 3.5076744186046502
+      },
+      "prevControl": {
+        "x": 7.172626309708402,
+        "y": 3.5076744186046502
+      },
+      "nextControl": {
+        "x": 6.254675943242803,
+        "y": 3.5076744186046502
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.897965260545906,
+        "y": 2.609602977667494
+      },
+      "prevControl": {
+        "x": 6.392692533273179,
+        "y": 2.609602977667494
+      },
+      "nextControl": {
+        "x": 4.808348857282874,
+        "y": 2.609602977667494
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.784289156626506,
+        "y": 2.472337349397591
+      },
+      "prevControl": {
+        "x": 4.000523108124365,
+        "y": 2.472337349397591
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Outpost1-2Lazy"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -87.13759477388825
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -57.994616791916606
+    },
+    {
+      "waypointRelativePos": 2.8066037735849014,
+      "rotationDegrees": 0.26583707381437804
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": 45.85509739626667
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Bump",
+      "minWaypointRelativePos": 4.186440677966101,
+      "maxWaypointRelativePos": 4.6624775583482965,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Intaking Dense Balls",
+      "minWaypointRelativePos": 1.3728813559322033,
+      "maxWaypointRelativePos": 2.1864406779661016,
+      "constraints": {
+        "maxVelocity": 1.75,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 3.9,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 41.34777721969365
+  },
+  "reversed": false,
+  "folder": "Short",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "useDefaultConstraints": true
+}

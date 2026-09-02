@@ -13,10 +13,10 @@
 #include <ctre/phoenix6/sim/CANcoderSimState.hpp>
 #include <ctre/phoenix6/sim/TalonFXSimState.hpp>
 
-#include "Constants.h"
 #include "ModuleConfig.h"
 #include "ModuleIO.h"
 #include "ctre/phoenix6/core/CoreTalonFX.hpp"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "utils/CANDevice.h"
 
 class CTREModuleIO : public ModuleIO {
@@ -36,7 +36,7 @@ public:
   void ResetDriveEncoder() override;
   void ConfigureClosedLoop() override;
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                       units::ampere_t steerSupplyCurrentLimit) override;
+                        units::ampere_t steerSupplyCurrentLimit) override;
   ModuleConfig GetModuleConfig() override;
   std::array<ctre::phoenix6::BaseStatusSignal *,
              Constants::SwerveDrive::Odometry::kSignalsPerModule>
@@ -60,6 +60,7 @@ private:
   ctre::phoenix6::StatusSignal<units::turn_t> &m_steerPositionSignal;
   ctre::phoenix6::StatusSignal<units::turns_per_second_t>
       &m_steerVelocitySignal;
+  ctre::phoenix6::StatusSignal<units::ampere_t> &m_steerCurrentSignal;
   ctre::phoenix6::StatusSignal<units::volt_t> &m_steerVoltageSignal;
   ctre::phoenix6::StatusSignal<units::celsius_t> &m_steerTempSignal;
   ctre::phoenix6::StatusSignal<units::turn_t> &m_encoderPositionSignal;
@@ -67,7 +68,7 @@ private:
   std::array<ctre::phoenix6::BaseStatusSignal *,
              Constants::SwerveDrive::Odometry::kSignalsPerModule>
       m_synchedSignals;
-  std::array<ctre::phoenix6::BaseStatusSignal *, 6> m_batchedSignals;
+  std::array<ctre::phoenix6::BaseStatusSignal *, 7> m_batchedSignals;
 
   ctre::phoenix6::controls::VelocityVoltage m_driveVelocity{0_tps};
   ctre::phoenix6::controls::PositionVoltage m_steerPosition{0_tr};

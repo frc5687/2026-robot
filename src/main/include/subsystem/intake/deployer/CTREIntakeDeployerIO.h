@@ -10,8 +10,8 @@
 #include <ctre/phoenix6/controls/NeutralOut.hpp>
 #include <ctre/phoenix6/controls/VoltageOut.hpp>
 
-#include "Constants.h"
 #include "IntakeDeployerIO.h"
+#include "subsystem/intake/IntakeConstants.h"
 #include "utils/CANDevice.h"
 
 class CTREIntakeDeployerIO : public IntakeDeployerIO {
@@ -23,6 +23,7 @@ public:
   void SetVoltage(units::volt_t voltage) override;
   void ZeroPosition() override;
   void Stop() override;
+  void SetCurrentLimits(units::ampere_t currentLimit) override;
 
 private:
   ctre::phoenix6::hardware::TalonFX m_motor;

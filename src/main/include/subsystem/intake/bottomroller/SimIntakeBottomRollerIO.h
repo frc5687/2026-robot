@@ -7,8 +7,8 @@
 #include <frc/system/plant/DCMotor.h>
 #include <frc/system/plant/LinearSystemId.h>
 
-#include "Constants.h"
 #include "IntakeBottomRollerIO.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 class SimIntakeBottomRollerIO : public IntakeBottomRollerIO {
 public:
@@ -17,6 +17,7 @@ public:
 
   void UpdateInputs(IntakeBottomRollerIOInputs &inputs) override;
   void SetVoltage(units::volt_t voltage) override;
+  void SetCurrent(units::ampere_t current) override;
   void SetVelocity(units::turns_per_second_t rps) override;
   void Stop() override;
 

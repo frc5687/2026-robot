@@ -11,17 +11,19 @@
 #include <pathplanner/lib/config/RobotConfig.h>
 #include <units/acceleration.h>
 #include <units/current.h>
+#include <units/power.h>
 #include <units/temperature.h>
 
 #include <array>
 #include <memory>
 
-#include "Constants.h"
 #include "GyroIO.h"
 #include "OdometryThread.h"
+#include "frc/geometry/Rotation2d.h"
 #include "frc2/command/CommandPtr.h"
 #include "module/Module.h"
 #include "subsystem/LoggedSubsystem.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
 
@@ -43,6 +45,8 @@ public:
 
   void Stop();
   void LockWheels();
+  units::ampere_t GetElectricalCurrentDraw() const;
+  units::watt_t GetElectricalPowerDraw() const;
 
   frc::Pose2d GetPose() const;
   frc::Rotation2d GetHeading() const;
@@ -76,9 +80,11 @@ public:
   void SetBrakeMode(bool brake);
   void ConfigureClosedLoop();
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                       units::ampere_t steerSupplyCurrentLimit);
+                        units::ampere_t steerSupplyCurrentLimit);
   void SetAutoCurrentLimits();
+
   void SetTeleopCurrentLimits();
+  void SetDRSMode();
   bool IsAtPose(const frc::Pose2d &pose,
                 units::meter_t tolerance = 0.1_m) const;
   std::array<bool, Constants::SwerveDrive::kModuleCount>
@@ -90,7 +96,10 @@ public:
     return m_odometryThread;
   }
 
-  frc2::CommandPtr GetPathCommand(frc::Pose2d currentPose);
+  frc2::CommandPtr GetTrenchPathCommand(frc::Pose2d currentPose);
+
+  frc::Rotation2d GetIntakeRotationTarget();
+
 protected:
   void UpdateInputs() override;
   void LogTelemetry() override;

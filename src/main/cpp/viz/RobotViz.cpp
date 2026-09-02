@@ -4,7 +4,6 @@
 
 #include <frc/geometry/Rotation3d.h>
 
-#include "Constants.h"
 #include "frc/Timer.h"
 
 void RobotViz::Update() {

@@ -6,6 +6,8 @@
 #include <frc/interpolation/TimeInterpolatableBuffer.h>
 #include <units/time.h>
 
+#include <optional>
+
 #include "subsystem/drive/OdometryData.h"
 #include "subsystem/flywheel/FlywheelState.h"
 #include "subsystem/hood/HoodState.h"
@@ -39,17 +41,24 @@ private:
   frc::TimeInterpolatableBuffer<OdometryData> m_driveBuffer;
   frc::TimeInterpolatableBuffer<FlywheelState> m_flywheelBuffer;
   frc::TimeInterpolatableBuffer<HoodState> m_hoodBuffer;
+  std::optional<OdometryData> m_lastDriveState;
+  std::optional<FlywheelState> m_lastFlywheelState;
+  std::optional<HoodState> m_lastHoodState;
 
   template <typename T>
   T GetState(const frc::TimeInterpolatableBuffer<T> &buffer,
-             units::second_t timestamp) {
+             const std::optional<T> &lastState, units::second_t timestamp) {
+    auto sample = buffer.Sample(timestamp);
+    if (!sample.has_value()) {
+      return lastState.value_or(T{});
+    }
+
     auto currentTime = frc::Timer::GetFPGATimestamp();
     // We are looking to the future, extrapolate state
     if (currentTime < timestamp) {
-      return buffer.Sample(timestamp).value().Extrapolate(timestamp - currentTime);
+      return sample->Extrapolate(timestamp - currentTime);
     }
     // Otherwise use interpolation
-    return buffer.Sample(timestamp).value();
+    return *sample;
   }
-
 };

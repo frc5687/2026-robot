@@ -10,10 +10,10 @@
 #include <memory>
 #include <mutex>
 
-#include "Constants.h"
 #include "ctre/phoenix6/StatusSignal.hpp"
 #include "subsystem/drive/PigeonIO.h"
 #include "subsystem/drive/PoseEstimator.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "subsystem/drive/module/CTREModuleIO.h"
 #include "utils/Logger.h"
 
@@ -157,6 +157,10 @@ bool OdometryThread::SetupBatchedSignals() {
   }
 
   auto *pigeon = dynamic_cast<PigeonIO *>(m_gyro.get());
+  if (!pigeon) {
+    m_allModulesAreCTRE = false;
+    return false;
+  }
   auto imuSignals = pigeon->GetBatchedSignals();
   for (auto *signal : imuSignals) {
     if (writeIdx >= Constants::SwerveDrive::Odometry::kTotalSignals) {
@@ -373,7 +377,7 @@ void OdometryThread::AddVisionMeasurement(const frc::Pose3d &pose3d,
 }
 
 void OdometryThread::SetVisionEnabled(bool enabled) {
-  std::shared_lock lock(m_dataMutex);
+  std::unique_lock lock(m_dataMutex);
   m_estimator.SetVisionEnabled(enabled);
 }
 

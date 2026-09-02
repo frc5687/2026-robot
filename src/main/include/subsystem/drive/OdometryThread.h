@@ -15,11 +15,11 @@
 
 #include <ctre/phoenix6/StatusSignal.hpp>
 
-#include "Constants.h"
 #include "GyroIO.h"
 #include "OdometryData.h"
 #include "PoseEstimator.h"
 #include "module/Module.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 
 class OdometryThread {
 public:

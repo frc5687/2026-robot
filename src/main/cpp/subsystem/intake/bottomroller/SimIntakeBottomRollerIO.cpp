@@ -7,7 +7,7 @@
 
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeBottomRoller;
 
@@ -62,6 +62,10 @@ void SimIntakeBottomRollerIO::UpdateInputs(IntakeBottomRollerIOInputs &inputs) {
 void SimIntakeBottomRollerIO::SetVoltage(units::volt_t voltage) {
   m_mode = Mode::kVoltage;
   m_voltageCommand = voltage;
+}
+
+void SimIntakeBottomRollerIO::SetCurrent(units::ampere_t /* current */) {
+  m_mode = Mode::kVoltage;
 }
 
 void SimIntakeBottomRollerIO::SetVelocity(units::turns_per_second_t rps) {

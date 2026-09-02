@@ -4,7 +4,7 @@
 
 #include <random>
 
-#include "Constants.h"
+#include "subsystem/drive/SwerveDriveConstants.h"
 #include "units/angle.h"
 #include "units/angular_velocity.h"
 #include "units/length.h"
@@ -70,6 +70,8 @@ void SimModuleIO::UpdateInputs(ModuleIOInputs &inputs, bool IsBatched) {
   inputs.steerAppliedVolts = m_steerAppliedVolts;
   inputs.driveCurrentDraw =
       units::ampere_t{std::abs(m_driveSim.GetCurrentDraw().value())};
+  inputs.steerCurrentDraw =
+      units::ampere_t{std::abs(m_steerSim.GetCurrentDraw().value())};
   inputs.driveTorque = m_driveSim.GetTorque();
   inputs.driveTemperature = 25_degC;
   inputs.steerTemperature = 25_degC;
@@ -103,7 +105,7 @@ void SimModuleIO::SetDesiredState(const frc::SwerveModuleState &state) {
 }
 
 void SimModuleIO::SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                                  units::ampere_t steerSupplyCurrentLimit) {
+                                   units::ampere_t steerSupplyCurrentLimit) {
   (void)driveSupplyCurrentLimit;
   (void)steerSupplyCurrentLimit;
 }

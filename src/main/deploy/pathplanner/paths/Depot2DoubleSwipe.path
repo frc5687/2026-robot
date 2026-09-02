@@ -1,0 +1,225 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.784,
+        "y": 5.529488636363636
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6845459046444466,
+        "y": 6.328288794229107
+      },
+      "isLocked": false,
+      "linkedName": "Depot1-2Wide"
+    },
+    {
+      "anchor": {
+        "x": 3.710661896243291,
+        "y": 7.574
+      },
+      "prevControl": {
+        "x": 2.593661896243291,
+        "y": 7.574
+      },
+      "nextControl": {
+        "x": 4.41182860878817,
+        "y": 7.574
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.63550983899821,
+        "y": 7.574
+      },
+      "prevControl": {
+        "x": 4.38550983899821,
+        "y": 7.574
+      },
+      "nextControl": {
+        "x": 4.904974826953232,
+        "y": 7.574
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.353,
+        "y": 7.013670454540591
+      },
+      "prevControl": {
+        "x": 5.858341820929491,
+        "y": 7.209469550244959
+      },
+      "nextControl": {
+        "x": 7.575698318567142,
+        "y": 6.529693366474343
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.931,
+        "y": 4.75622891566265
+      },
+      "prevControl": {
+        "x": 7.732900379626789,
+        "y": 5.606406453097682
+      },
+      "nextControl": {
+        "x": 8.193265060240964,
+        "y": 3.630674698795181
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.730299572039942,
+        "y": 4.00265335235378
+      },
+      "prevControl": {
+        "x": 7.095877912258916,
+        "y": 3.5614261125297415
+      },
+      "nextControl": {
+        "x": 6.35515111820267,
+        "y": 4.455431043482114
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.95,
+        "y": 5.4647218259629105
+      },
+      "prevControl": {
+        "x": 6.687503566333809,
+        "y": 5.374151212553495
+      },
+      "nextControl": {
+        "x": 5.410017196355668,
+        "y": 5.531035503603443
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.784,
+        "y": 5.529488636363636
+      },
+      "prevControl": {
+        "x": 4.0261112696148365,
+        "y": 5.516549977305148
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Depot 2-3Wide"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 179.44103451916786
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 146.933
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": 93.468
+    },
+    {
+      "waypointRelativePos": 5.0,
+      "rotationDegrees": -32.529
+    },
+    {
+      "waypointRelativePos": 6.0,
+      "rotationDegrees": -42.138
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Bump",
+      "minWaypointRelativePos": 6.25050641458473,
+      "maxWaypointRelativePos": 6.734987593052109,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Turning to trench",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.747820672478219,
+      "constraints": {
+        "maxVelocity": 3.6,
+        "maxAcceleration": 4.5,
+        "maxAngularVelocity": 180.0,
+        "maxAngularAcceleration": 7.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake",
+      "waypointRelativePos": 1.4746792707629885,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "name": "SpinUpFlywheel",
+      "waypointRelativePos": 5.4,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "SpinUpFlywheel"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.6,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 120.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -42.78795799795166
+  },
+  "reversed": false,
+  "folder": "Regular",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -42.78795799795166
+  },
+  "useDefaultConstraints": true
+}

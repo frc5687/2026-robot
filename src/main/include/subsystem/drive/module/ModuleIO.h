@@ -20,6 +20,7 @@ struct ModuleIOInputs {
   frc::Rotation2d steerAngle{0_rad};
   units::turn_t steerPosition{0.0_tr};
   units::ampere_t driveCurrentDraw{0.0};
+  units::ampere_t steerCurrentDraw{0.0};
   units::newton_meter_t driveTorque{0.0};
   units::volt_t driveAppliedVolts{0.0};
   units::volt_t steerAppliedVolts{0.0};
@@ -40,7 +41,7 @@ public:
   virtual void Stop() = 0;
   virtual void SetBrakeMode(bool brake) {}
   virtual void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                               units::ampere_t steerSupplyCurrentLimit) {}
+                                units::ampere_t steerSupplyCurrentLimit) {}
   virtual void ResetDriveEncoder() {}
   virtual void ConfigureClosedLoop() {}
 };

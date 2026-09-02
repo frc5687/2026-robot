@@ -4,7 +4,7 @@
 
 #include <frc/Timer.h>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 
 using namespace Constants::Flywheel;
 using namespace ctre::phoenix6;
@@ -26,13 +26,17 @@ CTREFlywheelIO::CTREFlywheelIO(const CANDevice &leader,
       m_follower1SupplyCurrentSignal(m_follower1.GetSupplyCurrent()),
       m_follower2SupplyCurrentSignal(m_follower2.GetSupplyCurrent()),
       m_follower3SupplyCurrentSignal(m_follower3.GetSupplyCurrent()),
+      m_follower1VoltageSignal(m_follower1.GetMotorVoltage()),
+      m_follower2VoltageSignal(m_follower2.GetMotorVoltage()),
+      m_follower3VoltageSignal(m_follower3.GetMotorVoltage()),
 
       m_signals{
-        &m_leaderVelocitySignal, &m_leaderPositionSignal,
-        &m_leaderVoltageSignal, &m_leaderStatorCurrentSignal,
-        &m_leaderSupplyCurrentSignal,
-        &m_follower1SupplyCurrentSignal,
-        &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal} {
+          &m_leaderVelocitySignal,         &m_leaderPositionSignal,
+          &m_leaderVoltageSignal,          &m_leaderStatorCurrentSignal,
+          &m_leaderSupplyCurrentSignal,    &m_follower1SupplyCurrentSignal,
+          &m_follower2SupplyCurrentSignal, &m_follower3SupplyCurrentSignal,
+          &m_follower1VoltageSignal,       &m_follower2VoltageSignal,
+          &m_follower3VoltageSignal} {
   ConfigureDevices();
   ConfigureSignalFrequencies();
 }
@@ -97,6 +101,9 @@ void CTREFlywheelIO::ConfigureSignalFrequencies() {
   m_follower1SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
   m_follower2SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
   m_follower3SupplyCurrentSignal.SetUpdateFrequency(50_Hz);
+  m_follower1VoltageSignal.SetUpdateFrequency(100_Hz);
+  m_follower2VoltageSignal.SetUpdateFrequency(100_Hz);
+  m_follower3VoltageSignal.SetUpdateFrequency(100_Hz);
 
   m_leader.OptimizeBusUtilization();
   m_follower1.OptimizeBusUtilization();
@@ -116,6 +123,9 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   inputs.follower1SupplyCurrent = m_follower1SupplyCurrentSignal.GetValue();
   inputs.follower2SupplyCurrent = m_follower2SupplyCurrentSignal.GetValue();
   inputs.follower3SupplyCurrent = m_follower3SupplyCurrentSignal.GetValue();
+  inputs.follower1AppliedVolts = m_follower1VoltageSignal.GetValue();
+  inputs.follower2AppliedVolts = m_follower2VoltageSignal.GetValue();
+  inputs.follower3AppliedVolts = m_follower3VoltageSignal.GetValue();
 
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 
@@ -124,7 +134,9 @@ void CTREFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   } else if (m_setpoint.value() <= 0) {
     m_leader.SetControl(m_neutralRequest);
   } else {
-    m_leader.SetControl(m_velocityRequest.WithVelocity(m_setpoint).WithSlot(0));
+    m_leader.SetControl(m_velocityRequest.WithVelocity(m_setpoint)
+                            .WithSlot(0)
+                            .WithEnableFOC(kEnableFOC));
   }
 }
 

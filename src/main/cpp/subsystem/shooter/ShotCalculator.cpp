@@ -5,8 +5,8 @@
 #include <cmath>
 #include <numbers>
 
-#include "Constants.h"
 #include "RobotState.h"
+#include "subsystem/vision/FieldConstants.h"
 #include "utils/Logger.h"
 
 ShotCalculator::ShotCalculator() {
@@ -17,25 +17,27 @@ ShotCalculator::ShotCalculator() {
   // 13 feet, 1520 rpm, 60 rps, 12 deg
   // 16 feet, 1650 rpm, 60 rps, 19 deg
 
-  //3/4/26
-
+  // 3/4/26
 
   std::vector<std::pair<double, double>> hoodMap{
-      {1.52, 1.0}, {2.13, 5}, {3.048, 10.0}, {3.66, 15.0}, {4.2672, 16.0}, {4.88, 14.0}, {5.49, 18.0}
-  };
+      {1.443, 1.2}, {2.136, 5.25}, {2.959, 8.0}, {3.56, 11},
+      {4.49, 15.5}, {5.0, 18},     {5.49, 18.0}};
 
   m_hoodAngleMap.InsertValues(hoodMap);
 
   // TODO: Make this use units
 
+  double rpmBumpLow = 30;
+  double rpmBumpHigh = 75;
   std::vector<std::pair<double, double>> flyMap{
-      {1.52, 1150}, {2.13, 1250}, {3.048, 1400}, {3.66, 1425}, {4.2672, 1500}, {4.88, 1570}, {5.49, 1650.0}
-  };
+      {1.443, 1225+rpmBumpLow}, {2.136, 1300+rpmBumpLow}, {2.959, 1350+rpmBumpLow}, {3.56, 1450+rpmBumpLow},
+      {4.49, 1600+rpmBumpHigh},  {5.0, 1690+rpmBumpHigh},   {5.49, 1650+rpmBumpHigh}};
 
   m_flywheelMap.InsertValues(flyMap);
 
   std::vector<std::pair<double, double>> tofMap{
-      {1.52, 1.2}, {2.13, 1.2}, {3.048, 1.2}, {3.66, 1.2}, {4.2672, 1.25},{4.88, 1.3}, {5.49, 1.5}};
+      {1.443, 0.96}, {2.136, 0.97}, {2.959, 1.11}, {3.56, 1.23},
+      {4.49, 1.22},  {5.0, 1.26},   {5.49, 1.5}};
   m_tofMap.InsertValues(tofMap);
 }
 
@@ -112,6 +114,7 @@ ShotSolution ShotCalculator::Calculate(units::second_t now, bool isRed) {
     effDist = newDist;
     tof = m_tofMap.GetValue(effDist);
   }
+  Logger::Instance().Log("ShotCalculator/ShotDistance", effDist);
 
   double hoodAngleDeg = m_hoodAngleMap.GetValue(effDist);
   double flywheelSpeed = m_flywheelMap.GetValue(effDist);

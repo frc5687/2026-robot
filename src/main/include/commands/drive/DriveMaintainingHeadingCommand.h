@@ -15,6 +15,7 @@
 #include <optional>
 
 #include "subsystem/drive/DriveSubsystem.h"
+#include "utils/Utils.h"
 
 class DriveMaintainingHeadingCommand
     : public frc2::CommandHelper<frc2::Command,
@@ -25,6 +26,7 @@ public:
                                  std::function<double()> strafe,
                                  std::function<double()> turn,
                                  std::function<bool()> reset,
+                                 std::function<bool()> intakeFlag,
                                  bool enableSlewRate = true);
 
   void Initialize() override;
@@ -44,6 +46,7 @@ private:
   std::optional<frc::Rotation2d> m_headingSetpoint;
   double m_joystickLastTouched;
   std::function<double()> m_headingFlag;
+  std::function<double()> m_intakeFlag;
 
   // We are currently just limiting the joysticks, not the MPS of robot
   // If we want to later, change to MPS and limit velocity not joysticks input
@@ -54,8 +57,6 @@ private:
 
   // TODO: move to constants
   frc::PIDController m_headingController{5.0, 0.0, 0.0};
-
-  double ApplyDeadband(double value, double deadband);
 
   units::radians_per_second_t
   CalculateHeadingCorrection(frc::Rotation2d current, frc::Rotation2d target);

@@ -79,7 +79,7 @@ protected:
   }
 
   std::string m_name;
-  std::string m_prefix; // "m_name/" — built once in constructor
+  std::string m_prefix; // "<name>/" — built once in constructor
 
 private:
   std::shared_ptr<nt::NetworkTable> m_table;

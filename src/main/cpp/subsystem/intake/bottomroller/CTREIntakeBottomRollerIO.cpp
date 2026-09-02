@@ -4,7 +4,7 @@
 
 #include <frc/Timer.h>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeBottomRoller;
 using namespace ctre::phoenix6;
@@ -73,8 +73,14 @@ void CTREIntakeBottomRollerIO::SetVoltage(units::volt_t voltage) {
   m_motor.SetControl(m_voltageRequest.WithOutput(voltage));
 }
 
+void CTREIntakeBottomRollerIO::SetCurrent(units::ampere_t current) {
+  m_motor.SetControl(m_currentRequest.WithOutput(current));
+}
+
 void CTREIntakeBottomRollerIO::SetVelocity(units::turns_per_second_t rps) {
-  m_motor.SetControl(m_velocityRequest.WithVelocity(rps).WithSlot(0));
+  m_motor.SetControl(
+      m_velocityRequest.WithVelocity(rps).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
 }
 
 void CTREIntakeBottomRollerIO::Stop() { m_motor.SetControl(m_neutralRequest); }

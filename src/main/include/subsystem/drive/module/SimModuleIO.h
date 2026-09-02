@@ -20,7 +20,7 @@ public:
   void UpdateInputs(ModuleIOInputs &inputs, bool isBatched) override;
   void SetDesiredState(const frc::SwerveModuleState &state) override;
   void SetCurrentLimits(units::ampere_t driveSupplyCurrentLimit,
-                       units::ampere_t steerSupplyCurrentLimit) override;
+                        units::ampere_t steerSupplyCurrentLimit) override;
   ModuleConfig GetModuleConfig() override;
   void Stop() override;
 

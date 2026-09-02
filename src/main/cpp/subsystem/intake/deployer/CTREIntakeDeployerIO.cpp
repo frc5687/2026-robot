@@ -5,7 +5,7 @@
 #include <frc/Timer.h>
 #include <units/angular_acceleration.h>
 
-#include "Constants.h"
+#include "subsystem/intake/IntakeConstants.h"
 
 using namespace Constants::IntakeDeployer;
 using namespace ctre::phoenix6;
@@ -25,7 +25,7 @@ CTREIntakeDeployerIO::CTREIntakeDeployerIO(const CANDevice &motor)
 }
 
 void CTREIntakeDeployerIO::ConfigureDevices() {
-  m_config.MotorOutput.NeutralMode = signals::NeutralModeValue::Brake;
+  m_config.MotorOutput.NeutralMode = signals::NeutralModeValue::Coast;
   m_config.MotorOutput.Inverted =
       kInverted ? signals::InvertedValue::Clockwise_Positive
                 : signals::InvertedValue::CounterClockwise_Positive;
@@ -34,6 +34,9 @@ void CTREIntakeDeployerIO::ConfigureDevices() {
   m_config.CurrentLimits.StatorCurrentLimitEnable = true;
   m_config.CurrentLimits.SupplyCurrentLimit = kSupplyCurrentLimit;
   m_config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+  m_config.CurrentLimits.SupplyCurrentLowerLimit = 20_A;
+  m_config.CurrentLimits.SupplyCurrentLowerTime = 0.5_s;
 
   m_config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = kForwardSoftLimit;
   m_config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
@@ -82,13 +85,24 @@ void CTREIntakeDeployerIO::UpdateInputs(IntakeDeployerIOInputs &inputs) {
 }
 
 void CTREIntakeDeployerIO::SetPosition(units::turn_t position) {
-  m_motor.SetControl(m_positionRequest.WithPosition(position).WithSlot(0));
+  m_motor.SetControl(
+      m_positionRequest.WithPosition(position).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
 }
 
 void CTREIntakeDeployerIO::SetVoltage(units::volt_t voltage) {
   m_motor.SetControl(m_voltageRequest.WithOutput(voltage));
 }
 
-void CTREIntakeDeployerIO::ZeroPosition() { m_motor.SetPosition(7.564_tr); }
+void CTREIntakeDeployerIO::ZeroPosition() {
+  m_motor.SetPosition(kDeployedMotorRotations);
+}
 
 void CTREIntakeDeployerIO::Stop() { m_motor.SetControl(m_neutralRequest); }
+
+void CTREIntakeDeployerIO::SetCurrentLimits(units::ampere_t currentLimit) {
+  m_config.CurrentLimits.StatorCurrentLimit = currentLimit;
+  m_config.CurrentLimits.StatorCurrentLimitEnable = true;
+
+  m_motor.GetConfigurator().Apply(m_config);
+}

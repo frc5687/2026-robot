@@ -7,7 +7,7 @@
 
 #include <numbers>
 
-#include "Constants.h"
+#include "subsystem/flywheel/FlywheelConstants.h"
 
 SimFlywheelIO::SimMotor::SimMotor(const frc::LinearSystem<1, 1, 1> &plant,
                                   const frc::DCMotor &motor, double gearRatio,
@@ -93,6 +93,9 @@ void SimFlywheelIO::UpdateInputs(FlywheelIOInputs &inputs) {
   inputs.follower1SupplyCurrent = followerCurrent;
   inputs.follower2SupplyCurrent = followerCurrent;
   inputs.follower3SupplyCurrent = followerCurrent;
+  inputs.follower1AppliedVolts = inputs.leaderAppliedVolts;
+  inputs.follower2AppliedVolts = inputs.leaderAppliedVolts;
+  inputs.follower3AppliedVolts = inputs.leaderAppliedVolts;
 
   inputs.timestamp = units::second_t{frc::Timer::GetFPGATimestamp().value()};
 }

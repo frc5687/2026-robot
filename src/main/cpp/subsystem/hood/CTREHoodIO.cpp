@@ -5,7 +5,7 @@
 #include <frc/Timer.h>
 #include <units/angular_acceleration.h>
 
-#include "Constants.h"
+#include "subsystem/hood/HoodConstants.h"
 
 using namespace Constants::Hood;
 using namespace ctre::phoenix6;
@@ -83,7 +83,9 @@ void CTREHoodIO::UpdateInputs(HoodIOInputs &inputs) {
 }
 
 void CTREHoodIO::SetPosition(units::turn_t position) {
-  m_motor.SetControl(m_positionRequest.WithPosition(position).WithSlot(0));
+  m_motor.SetControl(
+      m_positionRequest.WithPosition(position).WithSlot(0).WithEnableFOC(
+          kEnableFOC));
 }
 
 void CTREHoodIO::SetVoltage(units::volt_t voltage) {
